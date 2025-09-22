@@ -53,12 +53,7 @@ router.get("/comingsoon", (req, res) => {
 router.get("/email", (req, res) => {
   res.render("email", { title: "Email", subTitle: "Components / Email" });
 });
-// router.get("/leads-management", (req, res) => {
-//   res.render("leadsManagement", { title: "Leads Management", subTitle: "Leads Management" });
-// });
-//  router.get('/seo-management',(req, res)=>{
-//       res.render('seoManagement', {title: "SEO Management", subTitle:"SEO Management"})
-//   });
+
 
 router.get("/faqs", (req, res) => {
   res.render("faqs", { title: "Faq", subTitle: "Faq" });

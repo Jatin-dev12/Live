@@ -127,6 +127,16 @@ td.title-table {
 .modal-dialog.cms-modal {
     max-width: 1050px;
 }
+.addblog-btn {
+    margin-left: auto;
+    display: table;
+    margin-bottom: 20px;
+}
+
+.addblog-btn a.btn-primary {
+    display: inline-block;
+    width: max-content;
+}
 @media (max-width:576px){
     .sign-form {
     padding: 40px 30px;
