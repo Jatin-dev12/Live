@@ -19,8 +19,10 @@ const table = require("./table");
 const users = require("./users");
 const leads = require("./leads");
 const pagemaster = require("./page-master");
+const menumanage = require("./menu-management");
 const seo = require("./seo");
 const cms = require("./cms");
+const media = require("./media");
 
 router.get("/", (req, res) => {
   res.render("index", { title: "Dashboard", subTitle: "AI" });
@@ -117,8 +119,10 @@ router.use("/table", table);
 router.use("/users", users);
 router.use("/leads", leads);
 router.use("/page-master", pagemaster);
+router.use("/menu-management", menumanage);
 router.use("/seo", seo);
 router.use("/cms", cms);
+router.use("/media", media);
 
 // Export the router
 module.exports = function (app) {

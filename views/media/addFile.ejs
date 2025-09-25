@@ -1,0 +1,31 @@
+<div class="custom-upload-media">
+    <nav class="custom-upload-widget">
+        <span class="upload-heading">Upload New Media</span>
+        <div class="ml-auto">
+            <button id="triggerInput" class="btn btn-primary btn-sm">
+                <i class="fas fa-upload mr-1"></i> Select Files
+            </button>
+            <input id="fileInput" class="d-none" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+                multiple>
+        </div>
+    </nav>
+
+    <main class="dragdrop-widget">
+        <div class="row">
+            <div class="col-lg-9">
+                <div id="dropzone" class="dropzone text-center">
+                    <div>
+                        <p class="lead mb-2">Drop files to upload</p>
+                        <p class="text-muted mb-3">or</p>
+                        <button id="selectFilesBtn" class="btn btn-outline-primary btn-sm">Select Files</button>
+                        <p class="text-muted mt-3 mb-0"><small>Maximum upload file size: 10 MB.</small></p>
+                    </div>
+                </div>
+
+                <div id="uploads" class="uploads mt-4"></div>
+
+            </div>
+
+        </div>
+    </main>
+</div>
