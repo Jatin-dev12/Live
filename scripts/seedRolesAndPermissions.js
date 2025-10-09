@@ -5,10 +5,7 @@ const Permission = require('../models/Permission');
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Acrm-admin:Jatin444%23%40@acrm.fjukxzf.mongodb.net/crm_system?retryWrites=true&w=majority';
 
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+mongoose.connect(MONGODB_URI);
 
 // Define all permissions
 const permissionsData = [

@@ -4,10 +4,7 @@ const connectDB = async () => {
     try {
         const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://Acrm-admin:Jatin444%23%40@acrm.fjukxzf.mongodb.net/crm_system?retryWrites=true&w=majority';
         
-        await mongoose.connect(mongoURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
+        await mongoose.connect(mongoURI);
         
         console.log('✅ MongoDB connected successfully');
         
