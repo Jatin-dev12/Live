@@ -22,7 +22,9 @@ const pagemaster = require("./page-master");
 const menumanage = require("./menu-management");
 const seo = require("./seo");
 const cms = require("./cms");
+const ads = require("./ads");
 const media = require("./media");
+const roles = require("./roles");
 
 router.get("/", (req, res) => {
   res.render("index", { title: "Dashboard", subTitle: "AI" });
@@ -122,7 +124,9 @@ router.use("/page-master", pagemaster);
 router.use("/menu-management", menumanage);
 router.use("/seo", seo);
 router.use("/cms", cms);
+router.use("/ads", ads);
 router.use("/media", media);
+router.use("/roles", roles);
 
 // Export the router
 module.exports = function (app) {

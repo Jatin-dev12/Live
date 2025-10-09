@@ -1,0 +1,149 @@
+
+<div class="row gy-4">
+    <div class="col-md-12">
+        <div class="card">
+            <!-- <div class="card-header">
+                <h5 class="card-title mb-0">SEO Management Form</h5>
+            </div> -->
+            <div class="card-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <label class="form-label">ID (PK)</label>
+                        <input type="number" name="" class="form-control" placeholder="Enter Ads ID">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="" class="form-control" placeholder="Enter Title">
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <label class="form-label">Media URL</label>
+                        <input type="text" name="" class="form-control" placeholder="Enter media url">
+                    </div> -->
+                    <div class="col-md-12">
+                        <label class="form-label">Media URL</label>
+                        <div class="upload-image-wrapper">
+                            <div class="uploaded-img d-none position-relative h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                </button>
+                                <img id="uploaded-img__preview" class="w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                            </div>
+                            <label class="upload-file h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file">
+                                <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                                <span class="fw-semibold text-secondary-light">Upload</span>
+                                <input id="upload-file" type="file" hidden>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" placeholder="Enter a description..."></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Ad Type</label>
+                        <select class="form-select">
+                                <option value="0">Select</option>
+                                <option value="1">Banner</option>
+                                <option value="2">Video</option>
+                                <option value="3">Native</option>
+                                <option value="4">Popup</option>
+                            </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Placement Id</label>
+                        <input type="text" name="" class="form-control" placeholder="Enter placement id">
+                    </div>
+                     <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select class="form-select">
+                                <option value="0">Select</option>
+                                <option value="1">Active</option>
+                                <option value="2">Paused</option>
+                                <option value="3">Expired</option>
+                                <option value="3">Pending</option>
+                                <option value="3">Rejected</option>
+                            </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="" class="form-control" placeholder="Enter Start Date">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="" class="form-control" placeholder="Enter End Date">
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <label class="form-label">Budget</label>
+                        <input type="number" name="" class="form-control" placeholder="Enter budget">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Max Impressions</label>
+                        <input type="text" name="" class="form-control" placeholder="Enter max impressions">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Max Clicks</label>
+                        <input type="number" name="" class="form-control" placeholder="Enter max clicks">
+                    </div> -->
+                    <!-- <div class="col-md-4">
+                        <label class="form-label">Created By</label>
+                        <select class="form-select">
+                                <option value="0">Select</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Advertiser</option>
+                            </select>
+                    </div> -->
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary-600">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+
+
+
+<% script = `
+    <script src='/js/editor.highlighted.min.js'></script>
+    <script src='/js/editor.quill.js'></script>
+    <script src='/js/editor.katex.min.js'></script>
+        <script>
+    // Editor Js Start
+    const quill = new Quill('#editor', {
+      modules: {
+        syntax: true,
+        toolbar: '#toolbar-container',
+      },
+      placeholder: 'Compose an epic...',
+      theme: 'snow',
+    });
+    // Editor Js End
+  
+
+    // =============================== Upload Single Image js start here ================================================
+    const fileInput = document.getElementById('upload-file');
+    const imagePreview = document.getElementById('uploaded-img__preview');
+    const uploadedImgContainer = document.querySelector('.uploaded-img');
+    const removeButton = document.querySelector('.uploaded-img__remove');
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+        const src = URL.createObjectURL(e.target.files[0]);
+        imagePreview.src = src;
+        uploadedImgContainer.classList.remove('d-none');
+        }
+    });
+    removeButton.addEventListener('click', () => {
+        imagePreview.src = '';
+        uploadedImgContainer.classList.add('d-none');
+        fileInput.value = ''; 
+    });
+    // =============================== Upload Single Image js End here ================================================
+
+  </script>
+` %>

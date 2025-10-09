@@ -1,0 +1,69 @@
+<div class="row gy-4">
+    <div class="col-lg-6">
+        <div class="card">
+          
+            <div class="card-body p-24">
+                <form action="#" class="d-flex flex-column gap-20"><div class="col-md-12">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="role_name" class="form-control" placeholder="Enter Role Name" value="Blog User">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Permission</label>
+                        <select class="form-select">
+                                <option value="0">Select Permission</option>
+                                <option value="1">Role List</option>
+                                <option value="2">Role Create</option>
+                                <option value="3">Role Edit</option>
+                                <option value="4">Role Delete</option>
+                            </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-600 radius-8">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Start -->
+    
+</div>
+
+<% script = `
+    <script src='/js/editor.highlighted.min.js'></script>
+    <script src='/js/editor.quill.js'></script>
+    <script src='/js/editor.katex.min.js'></script>
+        <script>
+    // Editor Js Start
+    const quill = new Quill('#editor', {
+      modules: {
+        syntax: true,
+        toolbar: '#toolbar-container',
+      },
+      placeholder: 'Compose an epic...',
+      theme: 'snow',
+    });
+    // Editor Js End
+  
+
+    // =============================== Upload Single Image js start here ================================================
+    const fileInput = document.getElementById('upload-file');
+    const imagePreview = document.getElementById('uploaded-img__preview');
+    const uploadedImgContainer = document.querySelector('.uploaded-img');
+    const removeButton = document.querySelector('.uploaded-img__remove');
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+        const src = URL.createObjectURL(e.target.files[0]);
+        imagePreview.src = src;
+        uploadedImgContainer.classList.remove('d-none');
+        }
+    });
+    removeButton.addEventListener('click', () => {
+        imagePreview.src = '';
+        uploadedImgContainer.classList.add('d-none');
+        fileInput.value = ''; 
+    });
+    // =============================== Upload Single Image js End here ================================================
+
+  </script>
+` %>
