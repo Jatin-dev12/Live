@@ -1,8 +1,8 @@
 /** ================================= Table Of Contents =================================== /
-1. Abstract Css 
-    1.1 Function Css 
-    1.2 Variables Css 
-    1.3 Mixins Css 
+1. Abstract Css
+    1.1 Function Css
+    1.2 Variables Css
+    1.3 Mixins Css
 
 
 2. Component Css
@@ -15092,5 +15092,11 @@ td.fc-header-center {
   background-color: var(--white);
   margin-block-start: auto;
 }
-
+.modal-backdrop{
+  z-index: unset !important;
+  opacity: unset;
+}
+.modal-backdrop.show{
+  opacity: 0;
+}
 /* === footer css end === */

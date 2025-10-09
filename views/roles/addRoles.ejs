@@ -1,69 +1,241 @@
 <div class="row gy-4">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="card">
-          
+            <div class="card-header">
+                <h5 class="card-title mb-0">Create New User</h5>
+            </div>
             <div class="card-body p-24">
-                <form action="#" class="d-flex flex-column gap-20"><div class="col-md-12">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="role_name" class="form-control" placeholder="Enter Role Name" value="Blog User">
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Permission</label>
-                        <select class="form-select">
-                                <option value="0">Select Permission</option>
-                                <option value="1">Role List</option>
-                                <option value="2">Role Create</option>
-                                <option value="3">Role Edit</option>
-                                <option value="4">Role Delete</option>
-                            </select>
+                <form id="addUserForm" class="d-flex flex-column gap-20">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger-600">*</span></label>
+                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email <span class="text-danger-600">*</span></label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required>
+                            <div class="invalid-feedback">Valid email is required</div>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary-600 radius-8">Submit</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Password <span class="text-danger-600">*</span></label>
+                            <div class="position-relative">
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required minlength="8">
+                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" onclick="togglePassword('password')" style="background: none; border: none;">
+                                    <i class="ri-eye-line" id="password-icon"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character</small>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Confirm Password <span class="text-danger-600">*</span></label>
+                            <div class="position-relative">
+                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm password" required minlength="8">
+                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" onclick="togglePassword('confirmPassword')" style="background: none; border: none;">
+                                    <i class="ri-eye-line" id="confirmPassword-icon"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted d-block">Re-enter your password</small>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Select Role <span class="text-danger-600">*</span></label>
+                            <select name="role" class="form-select" required>
+                                <option value="">Select Role</option>
+                                <% if (typeof roles !== 'undefined' && roles.length > 0) { %>
+                                    <% roles.forEach(role => { %>
+                                        <option value="<%= role._id %>"><%= role.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                            <div class="invalid-feedback">Please select a role</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="Enter phone number">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label fw-semibold mb-0">Permissions</label>
+                            <div class="permission-actions">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="selectAllPermissions()">
+                                    <i class="ri-checkbox-multiple-line me-1"></i> Select All
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions()">
+                                    <i class="ri-checkbox-blank-line me-1"></i> Deselect All
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="permissions-container">
+                            <% if (typeof groupedPermissions !== 'undefined' && Object.keys(groupedPermissions).length > 0) { %>
+                                <% Object.keys(groupedPermissions).forEach(module => { %>
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox module-header-checkbox">
+                                            <input type="checkbox" id="module_<%= module %>" data-module="<%= module %>" onchange="toggleModulePermissions(this)">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">
+                                                <%= module.replace('-', ' ') %>
+                                                <span class="permission-count-badge"><%= groupedPermissions[module].length %></span>
+                                            </span>
+                                        </label>
+
+                                        <div class="permission-grid">
+                                            <% groupedPermissions[module].forEach(permission => { %>
+                                                <label class="permission-checkbox">
+                                                    <input type="checkbox" name="permissions[]" value="<%= permission._id %>" id="perm_<%= permission._id %>" data-module="<%= module %>">
+                                                    <span class="checkmark"></span>
+                                                    <span class="permission-label"><%= permission.name %></span>
+                                                </label>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="alert alert-warning">No permissions available. Please seed the database first.</div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-secondary px-4" onclick="window.history.back()">
+                            <i class="ri-close-line me-1"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary-600 radius-8 px-4">
+                            <span class="btn-text">
+                                <i class="ri-user-add-line me-1"></i> Create User
+                            </span>
+                            <span class="btn-spinner d-none">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- Sidebar Start -->
-    
 </div>
 
 <% script = `
-    <script src='/js/editor.highlighted.min.js'></script>
-    <script src='/js/editor.quill.js'></script>
-    <script src='/js/editor.katex.min.js'></script>
-        <script>
-    // Editor Js Start
-    const quill = new Quill('#editor', {
-      modules: {
-        syntax: true,
-        toolbar: '#toolbar-container',
-      },
-      placeholder: 'Compose an epic...',
-      theme: 'snow',
-    });
-    // Editor Js End
-  
-
-    // =============================== Upload Single Image js start here ================================================
-    const fileInput = document.getElementById('upload-file');
-    const imagePreview = document.getElementById('uploaded-img__preview');
-    const uploadedImgContainer = document.querySelector('.uploaded-img');
-    const removeButton = document.querySelector('.uploaded-img__remove');
-
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) {
-        const src = URL.createObjectURL(e.target.files[0]);
-        imagePreview.src = src;
-        uploadedImgContainer.classList.remove('d-none');
+    <script>
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + '-icon');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            }
         }
-    });
-    removeButton.addEventListener('click', () => {
-        imagePreview.src = '';
-        uploadedImgContainer.classList.add('d-none');
-        fileInput.value = ''; 
-    });
-    // =============================== Upload Single Image js End here ================================================
 
-  </script>
+        // Select/Deselect all permissions
+        function selectAllPermissions() {
+            document.querySelectorAll('input[name="customPermissions[]"]').forEach(cb => cb.checked = true);
+            document.querySelectorAll('input[data-module]').forEach(cb => cb.checked = true);
+        }
+
+        function deselectAllPermissions() {
+            document.querySelectorAll('input[name="customPermissions[]"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('input[data-module]').forEach(cb => cb.checked = false);
+        }
+
+        function toggleModulePermissions(checkbox) {
+            const module = checkbox.dataset.module;
+            const isChecked = checkbox.checked;
+            document.querySelectorAll('input[name="customPermissions[]"][data-module="' + module + '"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const addUserForm = document.getElementById('addUserForm');
+            
+            if (addUserForm) {
+                console.log('Form found, attaching submit handler');
+                
+                addUserForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    
+                    // Get form data
+                    const formData = new FormData(addUserForm);
+                    const userData = {};
+                    
+                    formData.forEach((value, key) => {
+                        userData[key] = value;
+                    });
+                    
+                    // Get custom permissions
+                    const customPermissions = [];
+                    const permissionCheckboxes = addUserForm.querySelectorAll('input[name="customPermissions[]"]:checked');
+                    permissionCheckboxes.forEach(checkbox => {
+                        customPermissions.push(checkbox.value);
+                    });
+                    
+                    if (customPermissions.length > 0) {
+                        userData.customPermissions = customPermissions;
+                    }
+                    
+                    console.log('User data:', userData);
+                    
+                    // Show loading state
+                    const submitBtn = addUserForm.querySelector('button[type="submit"]');
+                    const btnText = submitBtn.querySelector('.btn-text');
+                    const btnSpinner = submitBtn.querySelector('.btn-spinner');
+                    
+                    submitBtn.disabled = true;
+                    btnText.classList.add('d-none');
+                    btnSpinner.classList.remove('d-none');
+                    
+                    try {
+                        const response = await fetch('/api/users', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(userData)
+                        });
+                        
+                        const result = await response.json();
+                        console.log('Response:', result);
+                        
+                        if (response.ok && result.success) {
+                            alert('User created successfully!');
+                            window.location.href = '/roles/roles-management';
+                        } else {
+                            alert('Error: ' + (result.message || 'Failed to create user'));
+                            submitBtn.disabled = false;
+                            btnText.classList.remove('d-none');
+                            btnSpinner.classList.add('d-none');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while creating the user');
+                        submitBtn.disabled = false;
+                        btnText.classList.remove('d-none');
+                        btnSpinner.classList.add('d-none');
+                    }
+                });
+            } else {
+                console.error('Form not found!');
+            }
+        });
+    </script>
 ` %>

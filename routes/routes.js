@@ -1,5 +1,6 @@
 // Import required modules
 const express = require("express");
+const { optionalAuth, isAuthenticated } = require("../middleware/auth");
 
 // Create a router
 const router = express.Router();
@@ -26,27 +27,27 @@ const ads = require("./ads");
 const media = require("./media");
 const roles = require("./roles");
 
-router.get("/", (req, res) => {
+router.get("/", isAuthenticated, (req, res) => {
   res.render("index", { title: "Dashboard", subTitle: "AI" });
 });
 
-router.get("/index", (req, res) => {
+router.get("/index", isAuthenticated, (req, res) => {
   res.render("index", { title: "Dashboard", subTitle: "AI" });
 });
 
-router.get("/blankpage", (req, res) => {
+router.get("/blankpage", isAuthenticated, (req, res) => {
   res.render("blankpage", { title: "Blank Page", subTitle: "Blank Page" });
 });
 
-router.get("/calendar", (req, res) => {
+router.get("/calendar", isAuthenticated, (req, res) => {
   res.render("calendar", { title: "Calendar", subTitle: "Components / Calendar" });
 });
 
-router.get("/chat", (req, res) => {
+router.get("/chat", isAuthenticated, (req, res) => {
   res.render("chat", { title: "Chat", subTitle: "Chat" });
 });
 
-router.get("/chat-profile", (req, res) => {
+router.get("/chat-profile", isAuthenticated, (req, res) => {
   res.render("chatProfile", { title: "Dashboard", subTitle: "subTitle" });
 });
 
@@ -54,20 +55,20 @@ router.get("/comingsoon", (req, res) => {
   res.render("comingsoon", { title: "Dashboard", subTitle: "subTitle", layout: "../views/layout/layout2" });
 });
 
-router.get("/email", (req, res) => {
+router.get("/email", isAuthenticated, (req, res) => {
   res.render("email", { title: "Email", subTitle: "Components / Email" });
 });
 
 
-router.get("/faqs", (req, res) => {
+router.get("/faqs", isAuthenticated, (req, res) => {
   res.render("faqs", { title: "Faq", subTitle: "Faq" });
 });
 
-router.get("/gallery", (req, res) => {
+router.get("/gallery", isAuthenticated, (req, res) => {
   res.render("gallery", { title: "Gallery", subTitle: "Gallery" });
 });
 
-router.get("/kanban", (req, res) => {
+router.get("/kanban", isAuthenticated, (req, res) => {
   res.render("kanban", { title: "Kanban", subTitle: "Kanban" });
 });
 
@@ -79,27 +80,27 @@ router.get("/not-found", (req, res) => {
   res.render("notFound", { title: "404", subTitle: "404" });
 });
 
-router.get("/pricing", (req, res) => {
+router.get("/pricing", isAuthenticated, (req, res) => {
   res.render("pricing", { title: "Pricing", subTitle: "Pricing" });
 });
 
-router.get("/stared", (req, res) => {
+router.get("/stared", isAuthenticated, (req, res) => {
   res.render("stared", { title: "Dashboard", subTitle: "subTitle" });
 });
 
-router.get("/terms-and-conditions", (req, res) => {
+router.get("/terms-and-conditions", isAuthenticated, (req, res) => {
   res.render("termsAndConditions", { title: "Terms & Conditions", subTitle: "Terms & Conditions" });
 });
 
-router.get("/testimonials", (req, res) => {
+router.get("/testimonials", isAuthenticated, (req, res) => {
   res.render("testimonials", { title: "Testimonials", subTitle: "Testimonials" });
 });
 
-router.get("/view-details", (req, res) => {
+router.get("/view-details", isAuthenticated, (req, res) => {
   res.render("viewDetails", { title: "Dashboard", subTitle: "subTitle" });
 });
 
-router.get("/widgets", (req, res) => {
+router.get("/widgets", isAuthenticated, (req, res) => {
   res.render("widgets", { title: "Widgets", subTitle: "Widgets" });
 });
 // router.get("/content-management", (req, res) => {

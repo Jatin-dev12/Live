@@ -75,6 +75,16 @@
 .sidebar-menu li  a i {
     padding-right: 9px;
 }
+.dashboard-main-body {
+    height: 100vh;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding-bottom: 80px !important;
+}
+
+main.dashboard-main {
+    overflow: hidden;
+}
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;
@@ -193,11 +203,11 @@ td.title-table {
     background-color: #ce1126;
     box-shadow: none;
     border-color: #ce1126;
-    
+
 }
 .form-check-input[type=checkbox]:focus {
     box-shadow: none;
-    
+
 }
 .custom-menu-list label.list-group-item span {
     margin-left: 8px;

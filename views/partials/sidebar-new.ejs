@@ -1,0 +1,196 @@
+<aside class="sidebar">
+    <button type="button" class="sidebar-close-btn">
+        <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
+    </button>
+    <div>
+        <a href="/index" class="sidebar-logo">
+            <img src="/images/logo.png" alt="site logo" class="light-logo">
+            <img src="/images/logo-light.png" alt="site logo" class="dark-logo">
+            <img src="/images/logo-icon.png" alt="site logo" class="logo-icon">
+        </a>
+    </div>
+    <div class="sidebar-menu-area">
+        <ul class="sidebar-menu" id="sidebar-menu">
+            <!-- Dashboard - Always visible for authenticated users -->
+            <% if (typeof userPermissions !== 'undefined' && (userRole === 'super-admin' || userPermissions.includes('dashboard'))) { %>
+            <li class="active-pagee">
+                <a href="/index">
+                    <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Manage Roles - Only for super-admin or users with roles permission -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('roles')))) { %>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                   <iconify-icon icon="oui:app-users-roles" width="22" height="22" class="menu-icon"></iconify-icon>
+                    <span>Manage Roles</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/roles/roles-management"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Roles List</a>
+                    </li>
+                </ul>
+            </li>
+            <% } %>
+            
+            <!-- Users Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('users')))) { %>
+            <li>
+                <a href="/users/user-management">
+                     <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>
+                    <span>Users Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Website Page Master -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('cms')))) { %>
+            <li>
+                <a href="/page-master/web-page-master">
+                     <iconify-icon icon="fluent-mdl2:page-data" class="menu-icon"></iconify-icon>
+                    <span>Website Page Master</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Content Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('cms')))) { %>
+            <li>
+                <a href="/cms/content-management">
+                    <iconify-icon icon="streamline-ultimate:content-paper-edit" width="23" height="23" class="menu-icon"></iconify-icon>
+                    <span>Content Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Menu Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('cms')))) { %>
+            <li>
+                <a href="/menu-management/nav-menus">
+                    <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
+                    <span>Menu Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Media -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('media')))) { %>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                   <iconify-icon icon="iconoir:media-image-folder" width="21" height="22" class="menu-icon"></iconify-icon>
+                    <span>Media</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/media/add-file"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Add Media</a>
+                    </li>
+                    <li>
+                        <a href="/media/library"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Media Library</a>
+                    </li>
+                </ul>
+            </li>
+            <% } %>
+            
+            <!-- SEO Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('seo')))) { %>
+            <li>
+                <a href="/seo/seo-management">
+                    <iconify-icon icon="mingcute:storage-line" class="menu-icon"></iconify-icon>
+                    <span>SEO Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Ads Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('ads')))) { %>
+            <li>
+                <a href="/ads/ads-management">
+                    <iconify-icon icon="streamline-logos:google-ads-logo" width="22" height="22" class="menu-icon"></iconify-icon>
+                    <span>Ads Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Leads Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('leads')))) { %>
+            <li>
+                <a href="/leads/leads-management">
+                    <iconify-icon icon="material-symbols-light:leaderboard-outline" width="26" height="26" class="menu-icon"></iconify-icon>
+                    <span>Leads Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Resources & Publications (Blog) -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('blog')))) { %>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <i class="ri-news-line text-xl me-6 d-flex w-auto"></i>
+                    <span>Resources & Publications</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/blog/blog"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Blogs</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Newsletter</a>
+                    </li>
+                </ul>
+            </li>
+            <% } %>
+            
+            <!-- Subscribed Users -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('users')))) { %>
+            <li>
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Subscribed Users</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Events Management -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('dashboard')))) { %>
+            <li>
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
+                    <span>Events Management</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Forms & Enquiries -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('dashboard')))) { %>
+            <li>
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="heroicons:document" class="menu-icon"></iconify-icon>
+                    <span> Forms & Enquiries</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Reports & Analytics -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('reports')))) { %>
+            <li>
+                <a href="javascript:void(0)">
+                     <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
+                    <span>Reports & Analytics</span>
+                </a>
+            </li>
+            <% } %>
+            
+            <!-- Site Settings -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('settings')))) { %>
+            <li>
+                <a href="/settings/company">
+                     <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
+                    <span>Site Settings</span>
+                </a>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+</aside>

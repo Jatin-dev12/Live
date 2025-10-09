@@ -1,0 +1,205 @@
+/* Modern Custom Checkbox Styles for Permissions */
+
+.permission-checkbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 8px;
+}
+
+.permission-checkbox:hover {
+
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.permission-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.permission-checkbox .checkmark {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+.permission-checkbox:hover .checkmark {
+    border-color: #dc3545;
+}
+
+.permission-checkbox input[type="checkbox"]:checked ~ .checkmark {
+       background-color: #dc3545;
+    border-color: #ce1126;
+}
+
+.permission-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.permission-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+    display: block;
+}
+
+.permission-checkbox .permission-label {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    user-select: none;
+}
+
+.permission-checkbox input[type="checkbox"]:checked ~ .permission-label {
+    color: #dc3545;
+}
+
+/* Module Header Checkbox */
+.module-header-checkbox {
+    padding: 16px 20px;
+      background: linear-gradient(135deg, #ce1126 0%, #dc3545 100%);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.2);
+}
+
+.module-header-checkbox .checkmark {
+    height: 24px;
+    width: 24px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.module-header-checkbox:hover .checkmark {
+    border-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.module-header-checkbox input[type="checkbox"]:checked ~ .checkmark {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.module-header-checkbox .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border-color: #667eea;
+}
+
+.module-header-checkbox .permission-label {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Permission Card */
+.permission-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.permission-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.permission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* Badge for permission count */
+.permission-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    margin-left: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .permission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .permission-checkbox {
+        padding: 10px 12px;
+    }
+
+    .module-header-checkbox {
+        padding: 14px 16px;
+    }
+}
+
+/* Animation for checkbox check */
+@keyframes checkAnim {
+    0% {
+        transform: scale(0) rotate(45deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(45deg);
+    }
+    100% {
+        transform: scale(1) rotate(45deg);
+    }
+}
+
+.permission-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+    animation: checkAnim 0.3s ease;
+}
+
+/* Select All / Deselect All Buttons */
+.permission-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.permission-actions .btn {
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+}

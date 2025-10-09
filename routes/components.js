@@ -1,87 +1,88 @@
   const express = require('express');
   const router = express.Router();
+  const { isAuthenticated } = require('../middleware/auth');
   
-  router.get('/alerts',(req, res)=>{
+  router.get('/alerts', isAuthenticated, (req, res)=>{
       res.render('components/alerts', {title: "Alerts", subTitle:"Components / Alerts"})
   });
 
-  router.get('/avatars',(req, res)=>{
+  router.get('/avatars', isAuthenticated, (req, res)=>{
       res.render('components/avatars', {title: "Avatars", subTitle:"Components / Avatars"})
   });
 
-  router.get('/badges',(req, res)=>{
+  router.get('/badges', isAuthenticated, (req, res)=>{
       res.render('components/badges', {title: "Badges", subTitle:"Components / Badges"})
   });
 
-  router.get('/button',(req, res)=>{
+  router.get('/button', isAuthenticated, (req, res)=>{
       res.render('components/button', {title: "Button", subTitle:"Components / Button"})
   });
 
-  router.get('/calendar',(req, res)=>{
+  router.get('/calendar', isAuthenticated, (req, res)=>{
       res.render('components/calendar', {title: "Calendar", subTitle:"Components / Calendar"})
   });
 
-  router.get('/card',(req, res)=>{
+  router.get('/card', isAuthenticated, (req, res)=>{
       res.render('components/card', {title: "Card", subTitle:"Components / Card"})
   });
 
-  router.get('/carousel',(req, res)=>{
+  router.get('/carousel', isAuthenticated, (req, res)=>{
       res.render('components/carousel', {title: "Carousel", subTitle:"Components / Carousel"})
   });
 
-  router.get('/colors',(req, res)=>{
+  router.get('/colors', isAuthenticated, (req, res)=>{
       res.render('components/colors', {title: "Colors", subTitle:"Components / Colors"})
   });
 
-  router.get('/dropdown',(req, res)=>{
+  router.get('/dropdown', isAuthenticated, (req, res)=>{
       res.render('components/dropdown', {title: "Dropdown", subTitle:"Components / Dropdown"})
   });
 
-  router.get('/list',(req, res)=>{
+  router.get('/list', isAuthenticated, (req, res)=>{
       res.render('components/list', {title: "List", subTitle:"Components / List"})
   });
 
-  router.get('/pagination',(req, res)=>{
+  router.get('/pagination', isAuthenticated, (req, res)=>{
       res.render('components/pagination', {title: "Pagination", subTitle:"Components / Pagination"})
   });
 
-  router.get('/progressbar',(req, res)=>{
+  router.get('/progressbar', isAuthenticated, (req, res)=>{
       res.render('components/progressbar', {title: "Progress Bar", subTitle:"Components / Progress Bar"})
   });
 
-  router.get('/radio',(req, res)=>{
+  router.get('/radio', isAuthenticated, (req, res)=>{
       res.render('components/radio', {title: "Radio", subTitle:"Components / Radio"})
   });
 
-  router.get('/star-ratings',(req, res)=>{
+  router.get('/star-ratings', isAuthenticated, (req, res)=>{
       res.render('components/starRatings', {title: "Star Ratings", subTitle:"Components / Star Ratings"})
   });
 
-  router.get('/switch',(req, res)=>{
+  router.get('/switch', isAuthenticated, (req, res)=>{
       res.render('components/switch', {title: "Switch", subTitle:"Components / Switch"})
   });
 
-  router.get('/tab-and-accordion',(req, res)=>{
+  router.get('/tab-and-accordion', isAuthenticated, (req, res)=>{
       res.render('components/tabAndAccordion', {title: "Tab & Accordion", subTitle:"Components / Tab & Accordion"})
   });
 
-  router.get('/tags',(req, res)=>{
+  router.get('/tags', isAuthenticated, (req, res)=>{
       res.render('components/tags', {title: "Tags", subTitle:"Components / Tags"})
   });
 
-  router.get('/tooltip',(req, res)=>{
+  router.get('/tooltip', isAuthenticated, (req, res)=>{
       res.render('components/tooltip', {title: "Tooltip & Popover", subTitle:"Components / Tooltip & Popover"})
   });
 
-  router.get('/typography',(req, res)=>{
+  router.get('/typography', isAuthenticated, (req, res)=>{
       res.render('components/typography', {title: "Typography", subTitle:"Components / Typography"})
   });
 
-  router.get('/upload',(req, res)=>{
+  router.get('/upload', isAuthenticated, (req, res)=>{
       res.render('components/upload', {title: "Upload", subTitle:"Components / Upload"})
   });
 
-  router.get('/videos',(req, res)=>{
+  router.get('/videos', isAuthenticated, (req, res)=>{
       res.render('components/videos', {title: "Videos", subTitle:"Components / Videos"})
   });
 

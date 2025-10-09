@@ -24,10 +24,12 @@
                 <option>Inactive</option>
             </select>
         </div>
+        <% if (typeof canCreate === 'function' && canCreate('cms')) { %>
         <a href="/cms/add-content-management" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
             Add Content
         </a>
+        <% } %>
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
@@ -51,15 +53,21 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                <% if (typeof canRead === 'function' && canRead('cms') && !canUpdate('cms')) { %>
+                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                     <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                </button>
+                                <% } %>
+                                <% if (typeof canUpdate === 'function' && canUpdate('cms')) { %>
+                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                     <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                 </button>
+                                <% } %>
+                                <% if (typeof canDelete === 'function' && canDelete('cms')) { %>
                                 <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                     <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                 </button>
+                                <% } %>
                             </div>
                         </td>
                     </tr>

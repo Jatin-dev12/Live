@@ -31,4 +31,26 @@
 <script src="/js/media-js.js"></script>
 <script src="/js/media-library.js"></script>
 
+<!-- Logout functionality -->
+<script>
+$(document).ready(function() {
+    $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: '/api/auth/logout',
+            type: 'POST',
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.redirectUrl || '/authentication/sign-in';
+                }
+            },
+            error: function() {
+                // Even if there's an error, redirect to login page
+                window.location.href = '/authentication/sign-in';
+            }
+        });
+    });
+});
+</script>
 

@@ -6,7 +6,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "seed": "node scripts/seedDatabase.js",
+    "seed:roles": "node scripts/seedRolesAndPermissions.js"
   },
   "author": "Pixcels Themes",
   "license": "ISC",
@@ -14,9 +16,14 @@
     "nodemon": "^3.1.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.1.0",
     "ejs": "^3.1.9",
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.0.1",
+    "mongoose": "^8.1.0",
     "path": "^0.12.7"
   }
 }
