@@ -10,6 +10,16 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
     try {
         const { email, password } = req.body;
         
+        // Check MongoDB connection
+        const mongoose = require('mongoose');
+        if (mongoose.connection.readyState !== 1) {
+            console.error('❌ MongoDB not connected. ReadyState:', mongoose.connection.readyState);
+            return res.status(503).json({
+                success: false,
+                message: 'Database connection unavailable. Please try again later.'
+            });
+        }
+        
         // Find user with password field
         const user = await User.findOne({ email: email.toLowerCase() })
             .select('+password')

@@ -50,6 +50,17 @@ app.set('layout', './layout/layout');
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    const mongoose = require('mongoose');
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.json({
+        status: 'ok',
+        database: dbStatus,
+        timestamp: new Date().toISOString()
+    });
+});
+
 // API Routes
 const authApi = require('./routes/api/authApi');
 const userApi = require('./routes/api/userApi');

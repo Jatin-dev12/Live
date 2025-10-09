@@ -7,6 +7,7 @@ const connectDB = async () => {
         await mongoose.connect(mongoURI);
         
         console.log('✅ MongoDB connected successfully');
+        console.log('📊 Database:', mongoose.connection.name);
         
         // Handle connection events
         mongoose.connection.on('error', (err) => {
@@ -26,7 +27,14 @@ const connectDB = async () => {
         
     } catch (error) {
         console.error('❌ MongoDB connection failed:', error.message);
-        process.exit(1);
+        console.error('💡 Please check:');
+        console.error('   1. MongoDB Atlas IP whitelist (add 0.0.0.0/0)');
+        console.error('   2. MONGODB_URI environment variable is set correctly');
+        console.error('   3. Database credentials are valid');
+        // Don't exit in production, let the app run
+        if (process.env.NODE_ENV !== 'production') {
+            process.exit(1);
+        }
     }
 };
 
