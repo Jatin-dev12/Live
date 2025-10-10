@@ -50,12 +50,35 @@ exports.isAuthenticated = async (req, res, next) => {
         res.locals.user = user;
         
         // Extract user permissions for sidebar filtering and button visibility
-        const userPermissions = user.role && user.role.permissions 
-            ? user.role.permissions.map(p => p.slug) 
-            : [];
-        const userModules = user.role && user.role.permissions 
-            ? user.role.permissions.map(p => p.module) 
-            : [];
+        let userPermissions = [];
+        let userModules = [];
+        
+        if (user.role && user.role.permissions) {
+            // Handle both old ObjectId-based permissions and new string-based permissions
+            userPermissions = user.role.permissions.map(p => {
+                // If it's an object with slug property (old system)
+                if (typeof p === 'object' && p.slug) {
+                    return p.slug;
+                }
+                // If it's a string (new system)
+                if (typeof p === 'string') {
+                    return p;
+                }
+                return null;
+            }).filter(Boolean);
+            
+            userModules = user.role.permissions.map(p => {
+                // If it's an object with module property (old system)
+                if (typeof p === 'object' && p.module) {
+                    return p.module;
+                }
+                // If it's a string (new system), it IS the module
+                if (typeof p === 'string') {
+                    return p;
+                }
+                return null;
+            }).filter(Boolean);
+        }
         
         res.locals.userPermissions = userPermissions; // All permission slugs
         res.locals.userModules = [...new Set(userModules)]; // Unique modules
@@ -168,7 +191,19 @@ exports.hasPermission = (...permissions) => {
                 return next();
             }
 
-            const userPermissions = userRole.permissions.map(p => p.slug);
+            // Handle both old ObjectId-based permissions and new string-based permissions
+            const userPermissions = userRole.permissions.map(p => {
+                // If it's an object with slug property (old system)
+                if (typeof p === 'object' && p.slug) {
+                    return p.slug;
+                }
+                // If it's a string (new system)
+                if (typeof p === 'string') {
+                    return p;
+                }
+                return null;
+            }).filter(Boolean);
+            
             const hasPermission = permissions.some(permission => userPermissions.includes(permission));
 
             if (!hasPermission) {

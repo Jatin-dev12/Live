@@ -22,8 +22,7 @@ const roleSchema = new mongoose.Schema({
         maxlength: [500, 'Description cannot exceed 500 characters']
     },
     permissions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Permission'
+        type: mongoose.Schema.Types.Mixed // Support both ObjectId and String
     }],
     level: {
         type: Number,

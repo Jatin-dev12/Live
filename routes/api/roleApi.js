@@ -96,24 +96,48 @@ router.get('/:id', isAuthenticated, hasPermission('roles-read', 'roles-manage'),
 router.post('/', 
     isAuthenticated, 
     isSuperAdmin,
-    validateCreateRole,
-    handleValidationErrors,
     async (req, res) => {
         try {
             const { name, description, permissions, level } = req.body;
             
+            // Validate required fields
+            if (!name || !name.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Role name is required'
+                });
+            }
+            
+            if (!level || level < 1 || level > 5) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Valid role level (1-5) is required'
+                });
+            }
+            
+            // Check if role name already exists
+            const existingRole = await Role.findOne({ 
+                name: { $regex: new RegExp(`^${name.trim()}$`, 'i') } 
+            });
+            
+            if (existingRole) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Role name already exists'
+                });
+            }
+            
             const role = new Role({
-                name,
-                description,
+                name: name.trim(),
+                description: description ? description.trim() : '',
                 permissions: permissions || [],
-                level: level || 3,
+                level: parseInt(level),
                 createdBy: req.user._id
             });
             
             await role.save();
             
             const populatedRole = await Role.findById(role._id)
-                .populate('permissions', 'name slug module action')
                 .populate('createdBy', 'fullName email');
             
             res.status(201).json({

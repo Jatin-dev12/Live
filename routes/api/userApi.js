@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../../models/User');
 const Role = require('../../models/Role');
+const Permission = require('../../models/Permission');
 const { isAuthenticated, isSuperAdmin, hasPermission } = require('../../middleware/auth');
 const { 
     validateCreateUser, 
@@ -9,6 +10,7 @@ const {
     validateChangePassword,
     handleValidationErrors 
 } = require('../../middleware/validators');
+const mongoose = require('mongoose'); // Added for ObjectId validation
 
 // Get all users
 router.get('/', isAuthenticated, hasPermission('users-read', 'users-manage'), async (req, res) => {
@@ -104,7 +106,8 @@ router.get('/:id', isAuthenticated, hasPermission('users-read', 'users-manage'),
 });
 
 // Create new user
-router.post('/',
+router.post(
+    '/',
     isAuthenticated,
     hasPermission('users-create', 'users-manage'),
     validateCreateUser,
@@ -112,57 +115,137 @@ router.post('/',
     async (req, res) => {
         try {
             const { fullName, email, password, phone, role, department, designation, description, customPermissions } = req.body;
-            
+
+            // Log request body for debugging
+            console.log('Request body:', req.body);
+
             // Check if the user creating this has permission to assign this role
             const targetRole = await Role.findById(role);
+            if (!targetRole) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid role ID',
+                });
+            }
             const creatorRole = await Role.findById(req.user.role);
-            
+            if (!creatorRole) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Creator role not found',
+                });
+            }
+
             // Super admin can create any role
             // Other admins can only create roles with level >= their level
             if (creatorRole.slug !== 'super-admin' && targetRole.level < creatorRole.level) {
                 return res.status(403).json({
                     success: false,
-                    message: 'You cannot assign a role with higher privileges than your own'
+                    message: 'You cannot assign a role with higher privileges than your own',
                 });
             }
-            
+
+            // Handle customPermissions: parse if string, then find permissions by _id, slug, or name
+            let customPermissionsIds = [];
+            let perms = customPermissions || []; // Default to empty array if undefined
+
+            // If customPermissions is a string, try to parse it
+            if (typeof perms === 'string') {
+                try {
+                    perms = JSON.parse(perms);
+                } catch (e) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid customPermissions format: must be a valid JSON array',
+                    });
+                }
+            }
+
+            // Ensure perms is an array
+            if (!Array.isArray(perms)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'customPermissions must be an array',
+                });
+            }
+
+            // If perms array is not empty, query permissions
+            if (perms.length > 0) {
+                // Filter valid ObjectIds and non-ObjectIds
+                const validObjectIds = perms.filter((id) => mongoose.Types.ObjectId.isValid(id));
+                const nonObjectIds = perms.filter((id) => !mongoose.Types.ObjectId.isValid(id));
+
+                // Log for debugging
+                console.log('Valid ObjectIds:', validObjectIds);
+                console.log('Non-ObjectIds:', nonObjectIds);
+
+                // Build query dynamically
+                const query = {
+                    $or: [],
+                };
+                if (validObjectIds.length > 0) {
+                    query.$or.push({ _id: { $in: validObjectIds } });
+                }
+                if (nonObjectIds.length > 0) {
+                    query.$or.push({ slug: { $in: nonObjectIds } });
+                    query.$or.push({ name: { $in: nonObjectIds } });
+                }
+
+                // If no valid conditions, avoid querying
+                if (query.$or.length === 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'No valid permissions provided',
+                    });
+                }
+
+                const permissions = await Permission.find(query);
+                console.log('Found permissions:', permissions);
+
+                if (permissions.length === 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'No valid permissions found for the provided values',
+                    });
+                }
+                customPermissionsIds = permissions.map((p) => p._id);
+            }
+
             const user = new User({
                 fullName,
                 email: email.toLowerCase(),
                 password,
                 phone,
                 role,
-                customPermissions: customPermissions || [],
+                customPermissions: customPermissionsIds,
                 department,
                 designation,
                 description,
-                createdBy: req.user._id
+                createdBy: req.user._id,
             });
-            
+
             await user.save();
-            
+
             const createdUser = await User.findById(user._id)
                 .populate('role', 'name slug level')
                 .populate('customPermissions', 'name slug module action')
                 .populate('createdBy', 'fullName email')
                 .select('-password');
-            
+
             res.status(201).json({
                 success: true,
                 message: 'User created successfully',
-                data: createdUser
+                data: createdUser,
             });
         } catch (error) {
             console.error('Create user error:', error);
             res.status(500).json({
                 success: false,
                 message: 'Error creating user',
-                error: error.message
+                error: error.message,
             });
         }
     }
 );
-
 // Update user
 router.put('/:id',
     isAuthenticated,

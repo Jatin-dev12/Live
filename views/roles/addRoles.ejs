@@ -5,7 +5,7 @@
                 <h5 class="card-title mb-0">Create New User</h5>
             </div>
             <div class="card-body p-24">
-                <form id="addUserForm" class="d-flex flex-column gap-20">
+                <form id="addUserForm" class="d-flex flex-column gap-20" onsubmit="return false;">
                     <div class="row">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Full Name <span class="text-danger-600">*</span></label>
@@ -24,9 +24,17 @@
                             <label class="form-label fw-semibold">Password <span class="text-danger-600">*</span></label>
                             <div class="position-relative">
                                 <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required minlength="8">
-                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" onclick="togglePassword('password')" style="background: none; border: none;">
-                                    <i class="ri-eye-line" id="password-icon"></i>
-                                </button>
+                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
+                                    var field = document.getElementById('password');
+                                    var btn = this;
+                                    if (field.type === 'password') {
+                                        field.type = 'text';
+                                        btn.innerHTML = '👁️‍🗨️';
+                                    } else {
+                                        field.type = 'password';
+                                        btn.innerHTML = '👁️';
+                                    }
+                                ">👁️</button>
                             </div>
                             <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character</small>
                             <div class="invalid-feedback"></div>
@@ -35,9 +43,17 @@
                             <label class="form-label fw-semibold">Confirm Password <span class="text-danger-600">*</span></label>
                             <div class="position-relative">
                                 <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm password" required minlength="8">
-                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" onclick="togglePassword('confirmPassword')" style="background: none; border: none;">
-                                    <i class="ri-eye-line" id="confirmPassword-icon"></i>
-                                </button>
+                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
+                                    var field = document.getElementById('confirmPassword');
+                                    var btn = this;
+                                    if (field.type === 'password') {
+                                        field.type = 'text';
+                                        btn.innerHTML = '👁️‍🗨️';
+                                    } else {
+                                        field.type = 'password';
+                                        btn.innerHTML = '👁️';
+                                    }
+                                ">👁️</button>
                             </div>
                             <small class="text-muted d-block">Re-enter your password</small>
                             <div class="invalid-feedback"></div>
@@ -66,7 +82,7 @@
 
                     <div class="col-md-12">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-label fw-semibold mb-0">Permissions</label>
+                            <label class="form-label fw-semibold mb-0">Sidebar Access Permissions</label>
                             <div class="permission-actions">
                                 <button type="button" class="btn btn-sm btn-primary" onclick="selectAllPermissions()">
                                     <i class="ri-checkbox-multiple-line me-1"></i> Select All
@@ -78,32 +94,143 @@
                         </div>
 
                         <div class="permissions-container">
-                            <% if (typeof groupedPermissions !== 'undefined' && Object.keys(groupedPermissions).length > 0) { %>
-                                <% Object.keys(groupedPermissions).forEach(module => { %>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="permission-card">
-                                        <label class="permission-checkbox module-header-checkbox">
-                                            <input type="checkbox" id="module_<%= module %>" data-module="<%= module %>" onchange="toggleModulePermissions(this)">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="dashboard" id="perm_dashboard">
                                             <span class="checkmark"></span>
-                                            <span class="permission-label">
-                                                <%= module.replace('-', ' ') %>
-                                                <span class="permission-count-badge"><%= groupedPermissions[module].length %></span>
-                                            </span>
+                                            <span class="permission-label">Dashboard</span>
                                         </label>
-
-                                        <div class="permission-grid">
-                                            <% groupedPermissions[module].forEach(permission => { %>
-                                                <label class="permission-checkbox">
-                                                    <input type="checkbox" name="permissions[]" value="<%= permission._id %>" id="perm_<%= permission._id %>" data-module="<%= module %>">
-                                                    <span class="checkmark"></span>
-                                                    <span class="permission-label"><%= permission.name %></span>
-                                                </label>
-                                            <% }); %>
-                                        </div>
                                     </div>
-                                <% }); %>
-                            <% } else { %>
-                                <div class="alert alert-warning">No permissions available. Please seed the database first.</div>
-                            <% } %>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="users" id="perm_users">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Users Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="cms" id="perm_cms">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Website Page Master</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="content" id="perm_content">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Content Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="menu" id="perm_menu">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Menu Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="media" id="perm_media">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Media</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="seo" id="perm_seo">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">SEO Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="ads" id="perm_ads">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Ads Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="leads" id="perm_leads">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Leads Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="blog" id="perm_blog">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Resources & Publications</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="subscribers" id="perm_subscribers">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Subscribed Users</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="events" id="perm_events">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Events Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="forms" id="perm_forms">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Forms & Enquiries</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="reports" id="perm_reports">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Reports & Analytics</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="permissions[]" value="settings" id="perm_settings">
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Site Settings</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -111,7 +238,7 @@
                         <button type="button" class="btn btn-outline-secondary px-4" onclick="window.history.back()">
                             <i class="ri-close-line me-1"></i> Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary-600 radius-8 px-4">
+                        <button type="button" class="btn btn-primary-600 radius-8 px-4" onclick="submitUserForm()">
                             <span class="btn-text">
                                 <i class="ri-user-add-line me-1"></i> Create User
                             </span>
@@ -127,70 +254,326 @@
 </div>
 
 <% script = `
+    <style>
+        .permission-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f9fafb;
+            transition: all 0.2s ease;
+        }
+        
+        .permission-card:hover {
+            border-color: #d1d5db;
+            background: #f3f4f6;
+        }
+        
+        .permission-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .permission-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.1);
+        }
+        
+        .permission-label {
+            font-weight: 500;
+            color: #374151;
+            user-select: none;
+        }
+        
+        .permission-checkbox input[type="checkbox"]:checked + .checkmark + .permission-label {
+            color: #059669;
+        }
+        
+        .permissions-container .row {
+            margin: 0;
+        }
+        
+        .permissions-container .col-md-6 {
+            padding: 5px;
+        }
+        
+        /* Password toggle button styles */
+        .position-relative .btn {
+            z-index: 10 !important;
+            cursor: pointer !important;
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 4px 8px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+        
+        .position-relative .btn:hover {
+            background: rgba(0,0,0,0.1) !important;
+            border-radius: 4px;
+        }
+        
+        .position-relative .btn:focus {
+            outline: 2px solid #007bff;
+            outline-offset: 2px;
+        }
+        
+        .position-relative .btn i {
+            font-size: 18px !important;
+            color: #6b7280 !important;
+            pointer-events: none;
+        }
+        
+        #togglePasswordBtn, #toggleConfirmPasswordBtn {
+            right: 8px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+        }
+    </style>
     <script>
-        // Toggle password visibility
-        function togglePassword(fieldId) {
+        // Simple password toggle function
+        function togglePasswordField(fieldId) {
+            console.log('Toggle called for:', fieldId);
             const field = document.getElementById(fieldId);
-            const icon = document.getElementById(fieldId + '-icon');
+            const toggleText = document.getElementById(fieldId + '-icon');
             
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.classList.remove('ri-eye-line');
-                icon.classList.add('ri-eye-off-line');
+            console.log('Field found:', field);
+            console.log('Toggle text found:', toggleText);
+            
+            if (field && toggleText) {
+                console.log('Current field type:', field.type);
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    toggleText.innerHTML = 'HIDE';
+                    console.log('Password shown');
+                } else {
+                    field.type = 'password';
+                    toggleText.innerHTML = 'SHOW';
+                    console.log('Password hidden');
+                }
             } else {
-                field.type = 'password';
-                icon.classList.remove('ri-eye-off-line');
-                icon.classList.add('ri-eye-line');
+                console.error('Field or toggle text not found!');
+                alert('Toggle not working - check console');
             }
         }
 
         // Select/Deselect all permissions
         function selectAllPermissions() {
-            document.querySelectorAll('input[name="customPermissions[]"]').forEach(cb => cb.checked = true);
-            document.querySelectorAll('input[data-module]').forEach(cb => cb.checked = true);
+            document.querySelectorAll('input[name="permissions[]"]').forEach(cb => cb.checked = true);
         }
 
         function deselectAllPermissions() {
-            document.querySelectorAll('input[name="customPermissions[]"]').forEach(cb => cb.checked = false);
-            document.querySelectorAll('input[data-module]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('input[name="permissions[]"]').forEach(cb => cb.checked = false);
         }
 
-        function toggleModulePermissions(checkbox) {
-            const module = checkbox.dataset.module;
-            const isChecked = checkbox.checked;
-            document.querySelectorAll('input[name="customPermissions[]"][data-module="' + module + '"]').forEach(cb => {
-                cb.checked = isChecked;
+        // Direct submit function (called by button onclick)
+        async function submitUserForm() {
+            console.log('Direct submit function called');
+            const addUserForm = document.getElementById('addUserForm');
+            
+            if (!addUserForm) {
+                console.error('Form not found!');
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(addUserForm);
+            
+            // Validate form
+            const validationErrors = validateForm(formData);
+            if (validationErrors.length > 0) {
+                validationErrors.forEach(error => {
+                    showToast(error, 'error');
+                });
+                return;
+            }
+            
+            const userData = {};
+            
+            // Get basic form fields
+            userData.fullName = formData.get('fullName');
+            userData.email = formData.get('email');
+            userData.password = formData.get('password');
+            userData.confirmPassword = formData.get('confirmPassword');
+            userData.role = formData.get('role');
+            userData.phone = formData.get('phone');
+            
+            // Get selected permissions
+            const permissions = [];
+            const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
+            permissionCheckboxes.forEach(checkbox => {
+                permissions.push(checkbox.value);
             });
+            
+            if (permissions.length > 0) {
+                userData.customPermissions = permissions;
+            }
+            
+            console.log('User data:', userData);
+            
+            // Show loading state
+            const submitBtn = addUserForm.querySelector('button[onclick="submitUserForm()"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnSpinner = submitBtn.querySelector('.btn-spinner');
+            
+            submitBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnSpinner.classList.remove('d-none');
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                if (response.ok && result.success) {
+                    // Clear the form first
+                    addUserForm.reset();
+                    
+                    // Show success toast
+                    showToast('🎉 User created successfully!', 'success');
+                    
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+                    
+                    // Redirect after longer delay to see toast
+                    setTimeout(() => {
+                        window.location.href = '/roles/roles-management';
+                    }, 3000);
+                } else {
+                    // Show error toast for API validation errors
+                    if (result.errors && Array.isArray(result.errors)) {
+                        result.errors.forEach(error => {
+                            showToast(error.message, 'error');
+                        });
+                    } else {
+                        const errorMessage = result.message || 'Failed to create user';
+                        showToast(errorMessage, 'error');
+                    }
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An error occurred while creating the user', 'error');
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        }
+
+        // Validate form fields
+        function validateForm(formData) {
+            const errors = [];
+            
+            // Validate full name
+            if (!formData.get('fullName') || formData.get('fullName').trim().length < 2) {
+                errors.push('Full name must be at least 2 characters long');
+            }
+            
+            // Validate email
+            const email = formData.get('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                errors.push('Please enter a valid email address');
+            }
+            
+            // Validate password
+            const password = formData.get('password');
+            if (!password || password.length < 8) {
+                errors.push('Password must be at least 8 characters long');
+            } else {
+                const hasLowercase = /[a-z]/.test(password);
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+                
+                if (!hasLowercase) {
+                    errors.push('Password must contain at least one lowercase letter');
+                }
+                if (!hasUppercase) {
+                    errors.push('Password must contain at least one uppercase letter');
+                }
+                if (!hasNumber) {
+                    errors.push('Password must contain at least one number');
+                }
+                if (!hasSpecialChar) {
+                    errors.push('Password must contain at least one special character');
+                }
+            }
+            
+            // Validate confirm password
+            const confirmPassword = formData.get('confirmPassword');
+            if (password !== confirmPassword) {
+                errors.push('Passwords do not match');
+            }
+            
+            // Validate role selection
+            if (!formData.get('role')) {
+                errors.push('Please select a role');
+            }
+            
+            return errors;
         }
 
         // Handle form submission
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, looking for form...');
             const addUserForm = document.getElementById('addUserForm');
             
             if (addUserForm) {
-                console.log('Form found, attaching submit handler');
+                console.log('User form found, attaching submit handler');
+                
+                // Remove any existing event listeners
+                addUserForm.onsubmit = null;
                 
                 addUserForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    console.log('Form submitted');
+                    console.log('User form submitted');
                     
                     // Get form data
                     const formData = new FormData(addUserForm);
+                    
+                    // Validate form
+                    const validationErrors = validateForm(formData);
+                    if (validationErrors.length > 0) {
+                        validationErrors.forEach(error => {
+                            showToast(error, 'error');
+                        });
+                        return;
+                    }
+                    
                     const userData = {};
                     
-                    formData.forEach((value, key) => {
-                        userData[key] = value;
-                    });
+                    // Get basic form fields
+                    userData.fullName = formData.get('fullName');
+                    userData.email = formData.get('email');
+                    userData.password = formData.get('password');
+                    userData.confirmPassword = formData.get('confirmPassword');
+                    userData.role = formData.get('role');
+                    userData.phone = formData.get('phone');
                     
-                    // Get custom permissions
-                    const customPermissions = [];
-                    const permissionCheckboxes = addUserForm.querySelectorAll('input[name="customPermissions[]"]:checked');
+                    // Get selected permissions
+                    const permissions = [];
+                    const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
                     permissionCheckboxes.forEach(checkbox => {
-                        customPermissions.push(checkbox.value);
+                        permissions.push(checkbox.value);
                     });
                     
-                    if (customPermissions.length > 0) {
-                        userData.customPermissions = customPermissions;
+                    if (permissions.length > 0) {
+                        userData.customPermissions = permissions;
                     }
                     
                     console.log('User data:', userData);
@@ -217,25 +600,216 @@
                         console.log('Response:', result);
                         
                         if (response.ok && result.success) {
-                            alert('User created successfully!');
-                            window.location.href = '/roles/roles-management';
+                            // Clear the form first
+                            addUserForm.reset();
+                            
+                            // Show success toast
+                            showToast('🎉 User created successfully!', 'success');
+                            
+                            // Reset button state
+                            submitBtn.disabled = false;
+                            btnText.classList.remove('d-none');
+                            btnSpinner.classList.add('d-none');
+                            
+                            // Redirect after longer delay to see toast
+                            setTimeout(() => {
+                                window.location.href = '/roles/roles-management';
+                            }, 3000);
                         } else {
-                            alert('Error: ' + (result.message || 'Failed to create user'));
+                            // Show error toast for API validation errors
+                            if (result.errors && Array.isArray(result.errors)) {
+                                result.errors.forEach(error => {
+                                    showToast(error.message, 'error');
+                                });
+                            } else {
+                                const errorMessage = result.message || 'Failed to create user';
+                                showToast(errorMessage, 'error');
+                            }
                             submitBtn.disabled = false;
                             btnText.classList.remove('d-none');
                             btnSpinner.classList.add('d-none');
                         }
                     } catch (error) {
                         console.error('Error:', error);
-                        alert('An error occurred while creating the user');
+                        showToast('An error occurred while creating the user', 'error');
                         submitBtn.disabled = false;
                         btnText.classList.remove('d-none');
                         btnSpinner.classList.add('d-none');
                     }
                 });
             } else {
-                console.error('Form not found!');
+                console.error('User form not found!');
             }
         });
+
+        // Enhanced toast notification function
+        function showToast(message, type = 'info') {
+            // Remove any existing toasts first
+            const existingToasts = document.querySelectorAll('.custom-toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+            toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+            toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+            
+            // Set border color based on type
+            if (type === 'success') {
+                toast.style.borderColor = '#28a745';
+                toast.style.backgroundColor = '#d4edda';
+                toast.style.color = '#155724';
+            } else if (type === 'error') {
+                toast.style.borderColor = '#dc3545';
+                toast.style.backgroundColor = '#f8d7da';
+                toast.style.color = '#721c24';
+            }
+            
+            const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            toast.innerHTML = '<div class="d-flex align-items-center">' +
+                '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+                '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+                '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+                '</div>';
+            
+            document.body.appendChild(toast);
+            
+            // Add entrance animation
+            toast.style.transform = 'translateX(100%)';
+            toast.style.transition = 'transform 0.3s ease-out';
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Auto remove after duration based on type
+            const duration = type === 'success' ? 4000 : 6000;
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
     </script>
 ` %>
+
+<script>
+// Global function for form submission - outside EJS template
+async function submitUserForm() {
+    console.log('Global submitUserForm called');
+    
+    const addUserForm = document.getElementById('addUserForm');
+    if (!addUserForm) {
+        alert('Form not found!');
+        return;
+    }
+    
+    // Get form data
+    const formData = new FormData(addUserForm);
+    
+    // Basic validation
+    const fullName = formData.get('fullName');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    const role = formData.get('role');
+    
+    if (!fullName || fullName.trim().length < 2) {
+        alert('Full name must be at least 2 characters long');
+        return;
+    }
+    
+    if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    if (!password || password.length < 8) {
+        alert('Password must be at least 8 characters long');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (!role) {
+        alert('Please select a role');
+        return;
+    }
+    
+    // Prepare user data
+    const userData = {
+        fullName: fullName.trim(),
+        email: email.toLowerCase().trim(),
+        password: password,
+        confirmPassword: confirmPassword,
+        role: role,
+        phone: formData.get('phone') || ''
+    };
+    
+    // Get selected permissions
+    const permissions = [];
+    const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
+    permissionCheckboxes.forEach(checkbox => {
+        permissions.push(checkbox.value);
+    });
+    
+    if (permissions.length > 0) {
+        userData.customPermissions = permissions;
+    }
+    
+    console.log('Submitting user data:', userData);
+    
+    // Show loading state
+    const submitBtn = document.querySelector('button[onclick="submitUserForm()"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnSpinner = submitBtn.querySelector('.btn-spinner');
+    
+    submitBtn.disabled = true;
+    btnText.classList.add('d-none');
+    btnSpinner.classList.remove('d-none');
+    
+    try {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        const result = await response.json();
+        console.log('API Response:', result);
+        
+        if (response.ok && result.success) {
+            // Success
+            alert('✅ User created successfully!');
+            addUserForm.reset();
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = '/roles/roles-management';
+            }, 1000);
+        } else {
+            // Error
+            const errorMessage = result.message || 'Failed to create user';
+            alert('❌ Error: ' + errorMessage);
+            
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+        }
+    } catch (error) {
+        console.error('Network Error:', error);
+        alert('❌ Network error occurred while creating user');
+        
+        // Reset button state
+        submitBtn.disabled = false;
+        btnText.classList.remove('d-none');
+        btnSpinner.classList.add('d-none');
+    }
+}
+</script>
