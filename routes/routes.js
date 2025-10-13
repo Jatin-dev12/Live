@@ -129,6 +129,44 @@ router.use("/ads", ads);
 router.use("/media", media);
 router.use("/roles", roles);
 
+// Dynamic page rendering - This should be last to catch all dynamic routes
+router.get('/:slug', isAuthenticated, async (req, res, next) => {
+  try {
+    const Page = require('../models/Page');
+    const Content = require('../models/Content');
+    
+    // Try to find a page with this slug or path
+    const page = await Page.findOne({
+      $or: [
+        { slug: req.params.slug },
+        { path: `/${req.params.slug}` }
+      ],
+      status: 'active'
+    });
+    
+    if (!page) {
+      return next(); // Let it fall through to 404
+    }
+    
+    // Get all active content for this page
+    const contents = await Content.find({
+      page: page._id,
+      status: 'active'
+    }).sort({ order: 1, createdAt: -1 });
+    
+    // Render the page with its content
+    res.render('dynamic-page/dynamicPage', {
+      title: page.metaTitle || page.name,
+      subTitle: page.name,
+      page: page,
+      contents: contents
+    });
+  } catch (error) {
+    console.error('Error rendering dynamic page:', error);
+    next();
+  }
+});
+
 // Export the router
 module.exports = function (app) {
   app.use("/", router);

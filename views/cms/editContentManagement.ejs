@@ -1,44 +1,210 @@
 <div class="row gy-4">
-    <div class="col-md-6">
+    <div class="col-lg-12">
         <div class="card">
-            <!-- <div class="card-header">
-                <h5 class="card-title mb-0">SEO Management Form</h5>
-            </div> -->
-            <div class="card-body">
-                <div class="row gy-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Page Name</label>
-                        <select class="form-select">
-                                <option value="0">Home</option>
-                                <option value="1">About</option>
-                                <option value="2">Contact</option>
-                                <option value="3">Blog</option>
-                            </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Meta Title</label>
-                        <input type="text" name="meta_title" class="form-control" placeholder="Enter Meta Title">
-                    </div>
+            <div class="card-header border-bottom">
+                <h6 class="text-xl mb-0">Edit Content</h6>
+            </div>
+            <div class="card-body p-24">
+                <form id="editContentForm" class="d-flex flex-column gap-20">
+                    <input type="hidden" id="contentId" value="<%= content._id %>">
                     
-                    <div class="col-md-6">
-                        <label class="form-label">Alt Tags</label>
-                        <input type="email" name="alt_tags" class="form-control" placeholder="Enter Alt Tags">
+                    <div>
+                        <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
+                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
+                            <option value="">-- Select a Page --</option>
+                            <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
+                                <% pages.forEach(page => { %>
+                                    <option value="<%= page._id %>" <%= content.page && content.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %> (<%= page.path %>)</option>
+                                <% }) %>
+                            <% } %>
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Canonical Tags</label>
-                        <input type="email" name="canonical_tags" class="form-control" placeholder="Enter Canonical Tags">
+                    <div>
+                        <label class="form-label" for="title">Content Title: <span class="text-danger-600">*</span></label>
+                        <input type="text" class="form-control border border-neutral-200 radius-8" id="title" name="title" value="<%= content.title %>" placeholder="Enter Content Title" required>
                     </div>
-                   <div class="col-md-12">
-                        <label class="form-label">Meta Description</label>
-                        <textarea name="meta_description" class="form-control" placeholder="Enter a description..."></textarea>
+                    <div>
+                        <label class="form-label" for="category">Category: </label>
+                        <input type="text" class="form-control border border-neutral-200 radius-8" id="category" name="category" value="<%= content.category || '' %>" placeholder="Enter Category (optional)">
                     </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary-600">Submit</button>
+                    <div>
+                        <label class="form-label">Content Description: </label>
+                        <div class="border border-neutral-200 radius-8 overflow-hidden">
+                            <div class="height-200">
+                                <!-- Editor Toolbar Start -->
+                                <div id="toolbar-container">
+                                    <span class="ql-formats">
+                                        <select class="ql-font"></select>
+                                        <select class="ql-size"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-color"></select>
+                                        <select class="ql-background"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-script" value="sub"></button>
+                                        <button class="ql-script" value="super"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-header" value="1"></button>
+                                        <button class="ql-header" value="2"></button>
+                                        <button class="ql-blockquote"></button>
+                                        <button class="ql-code-block"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-list" value="ordered"></button>
+                                        <button class="ql-list" value="bullet"></button>
+                                        <button class="ql-indent" value="-1"></button>
+                                        <button class="ql-indent" value="+1"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-direction" value="rtl"></button>
+                                        <select class="ql-align"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-link"></button>
+                                        <button class="ql-image"></button>
+                                        <button class="ql-video"></button>
+                                        <button class="ql-formula"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-clean"></button>
+                                    </span>
+                                </div>
+                                <!-- Editor Toolbar End -->
+                                <!-- Editor start -->
+                                <div id="editor">
+                                    <%- content.content || '<p>Enter your content here...</p>' %>
+                                </div>
+                                <!-- Edit End -->
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <div>
+                        <label class="form-label">Status: </label>
+                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                            <option value="active" <%= content.status === 'active' ? 'selected' : '' %>>Active</option>
+                            <option value="inactive" <%= content.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label fw-bold text-neutral-900">Upload Thumbnail </label>
+                        <div class="upload-image-wrapper">
+                            <div class="uploaded-img <%= content.thumbnail ? '' : 'd-none' %> position-relative h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                </button>
+                                <img id="uploaded-img__preview" class="w-100 h-100 object-fit-cover" src="<%= content.thumbnail || '/images/user.png' %>" alt="image">
+                            </div>
+                            <label class="upload-file h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file">
+                                <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                                <span class="fw-semibold text-secondary-light">Upload</span>
+                                <input id="upload-file" type="file" hidden>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <a href="/cms/content-management" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                            Update
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    
+
+    <!-- Sidebar Start -->
     
 </div>
+
+<% script = `
+    <script src='/js/editor.highlighted.min.js'></script>
+    <script src='/js/editor.quill.js'></script>
+    <script src='/js/editor.katex.min.js'></script>
+        <script>
+    // Editor Js Start
+    const quill = new Quill('#editor', {
+      modules: {
+        syntax: true,
+        toolbar: '#toolbar-container',
+      },
+      placeholder: 'Compose an epic...',
+      theme: 'snow',
+    });
+    // Editor Js End
+  
+
+    // =============================== Upload Single Image js start here ================================================
+    const fileInput = document.getElementById('upload-file');
+    const imagePreview = document.getElementById('uploaded-img__preview');
+    const uploadedImgContainer = document.querySelector('.uploaded-img');
+    const removeButton = document.querySelector('.uploaded-img__remove');
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+        const src = URL.createObjectURL(e.target.files[0]);
+        imagePreview.src = src;
+        uploadedImgContainer.classList.remove('d-none');
+        }
+    });
+    removeButton.addEventListener('click', () => {
+        imagePreview.src = '';
+        uploadedImgContainer.classList.add('d-none');
+        fileInput.value = ''; 
+    });
+    // =============================== Upload Single Image js End here ================================================
+
+    // Handle form submission
+    $('#editContentForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const contentId = $('#contentId').val();
+        const formData = {
+            pageId: $('#pageId').val(),
+            title: $('#title').val(),
+            category: $('#category').val(),
+            description: quill.root.innerHTML,
+            content: quill.root.innerHTML,
+            status: $('#status').val()
+        };
+
+        if (!formData.pageId) {
+            showToast('Please select a page', 'warning');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/content/' + contentId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Content updated successfully!', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/cms/content-management';
+                    }, 1000);
+                } else {
+                    showToast('Error: ' + response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                showToast('Error updating content: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+            }
+        });
+    });
+
+  </script>
+` %>

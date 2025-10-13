@@ -22,27 +22,35 @@
                         </div> -->
                         <!-- Upload Image End -->
 
-                        <form action="#">
+                        <form id="addPageForm">
                             <div class="mb-20">
                                 <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page Name <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="name" placeholder="Enter Page Name">
+                                <input type="text" class="form-control radius-8" id="name" name="name" placeholder="Enter Page Name" required>
                             </div>
                             <div class="mb-20">
-                                <label for="path" class="form-label fw-semibold text-primary-light text-sm mb-8">Path <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="path" placeholder="Enter Path">
+                                <label for="path" class="form-label fw-semibold text-primary-light text-sm mb-8">Path</label>
+                                <input type="text" class="form-control radius-8" id="path" name="path" placeholder="e.g., /about or /services">
+                                <small class="text-muted">Path will be auto-generated from page name if left empty</small>
                             </div>
                             <div class="mb-20">
-                                <label for="template" class="form-label fw-semibold text-primary-light text-sm mb-8">Template</label>
-                                <input type="text" class="form-control radius-8" id="template" placeholder="Enter Template Name">
+                                <label for="status" class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
+                                <select class="form-control radius-8" id="status" name="status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
                             </div>
                             <div class="mb-20">
-                                <label for="date" class="form-label fw-semibold text-primary-light text-sm mb-8">Date</label>
-                                <input type="date" class="form-control radius-8" id="template" placeholder="Enter Date">
+                                <label for="metaTitle" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Title</label>
+                                <input type="text" class="form-control radius-8" id="metaTitle" name="metaTitle" placeholder="Enter Meta Title for SEO">
+                            </div>
+                            <div class="mb-20">
+                                <label for="metaDescription" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Description</label>
+                                <textarea class="form-control radius-8" id="metaDescription" name="metaDescription" rows="3" placeholder="Enter Meta Description for SEO"></textarea>
                             </div>
                             <div class="d-flex align-items-center justify-content-center gap-3">
-                                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                <a href="/page-master/web-page-master" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
                                     Cancel
-                                </button>
+                                </a>
                                 <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
                                     Save
                                 </button>
@@ -54,3 +62,66 @@
         </div>
     </div>
 </div>
+
+<% script = `
+<script>
+    $(document).ready(function() {
+        // Auto-generate path from page name
+        $('#name').on('input', function() {
+            const name = $(this).val();
+            const slug = name.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            const path = slug === 'home' ? '/' : '/' + slug;
+            $('#path').val(path);
+        });
+
+        // Handle form submission
+        $('#addPageForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: $('#name').val(),
+                path: $('#path').val() || undefined,
+                status: $('#status').val(),
+                metaTitle: $('#metaTitle').val(),
+                metaDescription: $('#metaDescription').val()
+            };
+
+            $.ajax({
+                url: '/api/pages',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response.success) {
+                        showToast('Page created successfully!', 'success');
+                        setTimeout(function() {
+                            window.location.href = '/page-master/web-page-master';
+                        }, 1000);
+                    } else {
+                        showToast('Error: ' + response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Full error:', xhr);
+                    let errorMessage = 'Unknown error';
+                    
+                    if (xhr.responseJSON) {
+                        errorMessage = xhr.responseJSON.message || xhr.responseJSON.error || 'Unknown error';
+                    } else if (xhr.responseText) {
+                        try {
+                            const errorData = JSON.parse(xhr.responseText);
+                            errorMessage = errorData.message || errorData.error || 'Unknown error';
+                        } catch (e) {
+                            errorMessage = xhr.responseText;
+                        }
+                    }
+                    
+                    showToast('Error creating page: ' + errorMessage, 'error');
+                }
+            });
+        });
+    });
+</script>
+` %>

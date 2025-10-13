@@ -66,11 +66,15 @@ const authApi = require('./routes/api/authApi');
 const userApi = require('./routes/api/userApi');
 const roleApi = require('./routes/api/roleApi');
 const permissionApi = require('./routes/api/permissionApi');
+const pageApi = require('./routes/api/pageApi');
+const contentApi = require('./routes/api/contentApi');
 
 app.use('/api/auth', authApi);
 app.use('/api/users', userApi);
 app.use('/api/roles', roleApi);
 app.use('/api/permissions', permissionApi);
+app.use('/api/pages', pageApi);
+app.use('/api/content', contentApi);
 
 // Import Page Router & Define All Routes
 const pageRouter = require('./routes/routes');

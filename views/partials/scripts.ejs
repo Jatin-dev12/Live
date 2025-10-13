@@ -23,6 +23,8 @@
 <script src="/js/lib/file-upload.js"></script>
 <!-- audioplayer -->
 <script src="/js/lib/audioplayer.js"></script>
+<!-- Toastify JS -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <!-- main js -->
 <script src="/js/app.js"></script>
@@ -30,6 +32,31 @@
 <script src="/js/menu-js.js"></script>
 <script src="/js/media-js.js"></script>
 <script src="/js/media-library.js"></script>
+
+<!-- Global Toast Notification Function -->
+<script>
+// Toast notification function
+function showToast(message, type = 'success') {
+    const colors = {
+        success: 'linear-gradient(to right, #00b09b, #96c93d)',
+        error: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+        warning: 'linear-gradient(to right, #f7971e, #ffd200)',
+        info: 'linear-gradient(to right, #4facfe, #00f2fe)'
+    };
+
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+            background: colors[type] || colors.success,
+        },
+        onClick: function(){} // Callback after click
+    }).showToast();
+}
+</script>
 
 <!-- Logout functionality -->
 <script>

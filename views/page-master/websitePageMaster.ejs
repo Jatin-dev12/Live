@@ -1,28 +1,10 @@
 <div class="card h-100 p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-            </select>
             <form class="navbar-search">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search">
+                <input type="text" id="pageSearch" class="bg-base h-40-px w-auto" placeholder="Search pages...">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-            </select>
         </div>
         <a href="/page-master/add-page" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
@@ -36,135 +18,45 @@
                     <tr>
                         <th scope="col">Page</th>
                         <th scope="col">Path</th>
-                        <th scope="col">Template</th>
                         <th scope="col">Updated</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Home</td>
-                        <td>/</td>
-                        <td>home.html</td>
-                        <td>Sep 17, 2025</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                       
-                       <td>About</td>
-                        <td>/about</td>
-                        <td>about.html</td>
-                        <td>Sep 18, 2025</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                       
-                         <td>Blog</td>
-                        <td>/blog</td>
-                        <td>blog.html</td>
-                        <td>Sep 17, 2025</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                       
-                        <td>Contact</td>
-                        <td>/contact</td>
-                        <td>contact.html</td>
-                        <td>Sep 18, 2025</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                       
-                         <td>Services</td>
-                        <td>/services</td>
-                        <td>services.html</td>
-                        <td>Sep 18, 2025</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    
-
-                    
-
-                    
+                <tbody id="pagesTableBody">
+                    <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
+                        <% pages.forEach(page => { %>
+                            <tr data-page-id="<%= page._id %>">
+                                <td><%= page.name %></td>
+                                <td><%= page.path %></td>
+                                <td><%= new Date(page.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                <td class="text-center">
+                                    <% if (page.status === 'active') { %>
+                                        <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
+                                    <% } else { %>
+                                        <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <a href="<%= page.path %>" target="_blank" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                            <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                        </a>
+                                        <a href="/page-master/edit-page/<%= page._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                                        </a>
+                                        <button type="button" class="delete-page-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-page-id="<%= page._id %>">
+                                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center">No pages found. Create your first page!</td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
@@ -203,8 +95,51 @@
 </div>
 <% script = `
 <script>
-    $('.remove-item-btn').on('click', function () {
-        $(this).closest('tr').addClass('d-none')
+    // Search functionality
+    $('#pageSearch').on('keyup', function() {
+        const searchValue = $(this).val().toLowerCase();
+        
+        $('#pagesTableBody tr').each(function() {
+            const row = $(this);
+            const pageName = row.find('td:eq(0)').text().toLowerCase();
+            const path = row.find('td:eq(1)').text().toLowerCase();
+            
+            if (pageName.includes(searchValue) || path.includes(searchValue)) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    });
+
+    // Delete page functionality
+    $(document).on('click', '.delete-page-btn', function () {
+        const pageId = $(this).data('page-id');
+        const row = $(this).closest('tr');
+        
+        if (confirm('Are you sure you want to delete this page? All associated content will also be deleted.')) {
+            $.ajax({
+                url: '/api/pages/' + pageId,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        showToast('Page deleted successfully!', 'success');
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+                            // Check if table is empty
+                            if ($('#pagesTableBody tr').length === 0) {
+                                $('#pagesTableBody').html('<tr><td colspan="5" class="text-center">No pages found. Create your first page!</td></tr>');
+                            }
+                        });
+                    } else {
+                        showToast('Error: ' + response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    showToast('Error deleting page: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+                }
+            });
+        }
     });
 </script>
 ` %>

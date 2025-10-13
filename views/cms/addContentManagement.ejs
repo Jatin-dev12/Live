@@ -1,26 +1,32 @@
 <div class="row gy-4">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="card">
             <div class="card-header border-bottom">
                 <h6 class="text-xl mb-0">Add Content</h6>
             </div>
             <div class="card-body p-24">
-                <form action="#" class="d-flex flex-column gap-20">
+                <form id="addContentForm" class="d-flex flex-column gap-20">
                     <div>
-                        <label class="form-label" for="title">Page Title: </label>
-                        <input type="text" class="form-control border border-neutral-200 radius-8" id="title" placeholder="Enter Post Title">
-                    </div>
-                    <div>
-                        <label class="form-label">Page Category: </label>
-                        <select class="form-control ">
-                            <option value="">Technology</option>
-                            <option value="">Business</option>
-                            <option value="">Course</option>
-                            <option value="">Fashion</option>
+                        <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
+                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
+                            <option value="">-- Select a Page --</option>
+                            <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
+                                <% pages.forEach(page => { %>
+                                    <option value="<%= page._id %>"><%= page.name %> (<%= page.path %>)</option>
+                                <% }) %>
+                            <% } %>
                         </select>
                     </div>
                     <div>
-                        <label class="form-label">Page Description </label>
+                        <label class="form-label" for="title">Content Title: <span class="text-danger-600">*</span></label>
+                        <input type="text" class="form-control border border-neutral-200 radius-8" id="title" name="title" placeholder="Enter Content Title" required>
+                    </div>
+                    <div>
+                        <label class="form-label" for="category">Category: </label>
+                        <input type="text" class="form-control border border-neutral-200 radius-8" id="category" name="category" placeholder="Enter Category (optional)">
+                    </div>
+                    <div>
+                        <label class="form-label">Content Description: </label>
                         <div class="border border-neutral-200 radius-8 overflow-hidden">
                             <div class="height-200">
                                 <!-- Editor Toolbar Start -->
@@ -69,15 +75,23 @@
                                         <button class="ql-clean"></button>
                                     </span>
                                 </div>
-                                <!-- Editor Toolbar Start -->
+                                <!-- Editor Toolbar End -->
                                 <!-- Editor start -->
                                 <div id="editor">
-                                    <p class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis dolores explicabo corrupti, fuga</p>
+                                    <p class="">Enter your content here...</p>
                                     <p><br></p>
                                 </div>
                                 <!-- Edit End -->
                             </div>
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Status: </label>
+                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
                     </div>
 
                     <div>
@@ -143,6 +157,45 @@
         fileInput.value = ''; 
     });
     // =============================== Upload Single Image js End here ================================================
+
+    // Handle form submission
+    $('#addContentForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            pageId: $('#pageId').val(),
+            title: $('#title').val(),
+            category: $('#category').val(),
+            description: quill.root.innerHTML,
+            content: quill.root.innerHTML,
+            status: $('#status').val()
+        };
+
+        if (!formData.pageId) {
+            showToast('Please select a page', 'warning');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/content',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Content created successfully!', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/cms/content-management';
+                    }, 1000);
+                } else {
+                    showToast('Error: ' + response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                showToast('Error creating content: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+            }
+        });
+    });
 
   </script>
 ` %>

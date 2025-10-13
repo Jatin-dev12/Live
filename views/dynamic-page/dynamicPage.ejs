@@ -1,0 +1,89 @@
+<div class="card h-100 p-0 radius-12">
+    <div class="card-body p-24">
+        <!-- Page Header -->
+        <div class="mb-24">
+            <h2 class="text-2xl fw-bold mb-8"><%= page.name %></h2>
+            <% if (page.metaDescription) { %>
+                <p class="text-secondary-light"><%= page.metaDescription %></p>
+            <% } %>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <% if (typeof contents !== 'undefined' && contents.length > 0) { %>
+                <% contents.forEach(content => { %>
+                    <div class="content-section mb-32 p-24 bg-base radius-12 border">
+                        <% if (content.title) { %>
+                            <h3 class="text-xl fw-semibold mb-16"><%= content.title %></h3>
+                        <% } %>
+                        
+                        <% if (content.thumbnail) { %>
+                            <div class="mb-16">
+                                <img src="<%= content.thumbnail %>" alt="<%= content.title %>" class="w-100 radius-8" style="max-height: 400px; object-fit: cover;">
+                            </div>
+                        <% } %>
+                        
+                        <% if (content.description) { %>
+                            <div class="content-description mb-16">
+                                <p class="text-secondary-light"><%= content.description %></p>
+                            </div>
+                        <% } %>
+                        
+                        <% if (content.content) { %>
+                            <div class="content-body">
+                                <%- content.content %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (content.category) { %>
+                            <div class="mt-16">
+                                <span class="badge bg-primary-600 text-white px-12 py-4 radius-4"><%= content.category %></span>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="text-center py-48">
+                    <iconify-icon icon="solar:document-outline" class="text-6xl text-secondary-light mb-16"></iconify-icon>
+                    <h4 class="text-xl text-secondary-light">No content available for this page yet.</h4>
+                    <p class="text-secondary-light">Content will be displayed here once added.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<style>
+    .content-body {
+        line-height: 1.8;
+    }
+    .content-body h1, .content-body h2, .content-body h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    .content-body p {
+        margin-bottom: 1rem;
+    }
+    .content-body ul, .content-body ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .content-body img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    .content-body a {
+        color: var(--primary-600);
+        text-decoration: underline;
+    }
+    .content-body blockquote {
+        border-left: 4px solid var(--primary-600);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: var(--secondary-light);
+    }
+</style>
