@@ -109,6 +109,16 @@ main.dashboard-main {
     gap: 7px;
 }
 
+.swal2-title {
+    font-size: 22px !important;
+}
+.swal2-icon {
+    width: 60px;
+    height: 60px;
+}
+.swal2-icon-content {
+    font-size: 40px !important;
+}
 
 @media (max-width:1649px){
     .sidebar-menu li  a i {
@@ -509,3 +519,4 @@ td.title-table {
             width: 145px;
 }
 }
+

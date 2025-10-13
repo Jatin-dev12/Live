@@ -43,16 +43,16 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
         console.log('=== SENDING TO TEMPLATE ===');
         
         res.render('roles/rolesManagement', {
-            title: "Roles Management", 
-            subTitle: "Roles Management",
+            title: "Users Management", 
+            subTitle: "Users Management",
             users: users
         });
         
     } catch (error) {
         console.error('Error loading users:', error);
         res.render('roles/rolesManagement', {
-            title: "Roles Management", 
-            subTitle: "Roles Management",
+            title: "Users Management", 
+            subTitle: "Users Management",
             users: []
         });
     }

@@ -135,7 +135,7 @@ exports.validateCreateUser = [
             const hasLowercase = /[a-z]/.test(value);
             const hasUppercase = /[A-Z]/.test(value);
             const hasNumber = /\d/.test(value);
-            const hasSpecialChar = /[@$!%*?&]/.test(value);
+            const hasSpecialChar = /[@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]/.test(value);
             
             console.log('Validation results:', {
                 hasLowercase,
@@ -158,13 +158,13 @@ exports.validateCreateUser = [
             }
             if (!hasSpecialChar) {
                 console.log('FAILED: No special char');
-                throw new Error('Password must contain at least one special character (@$!%*?&)');
+                throw new Error('Password must contain at least one special character');
             }
             
-            // Only allow alphanumeric and the specified special characters
-            if (!/^[A-Za-z\d@$!%*?&]+$/.test(value)) {
+            // Allow alphanumeric and common special characters
+            if (!/^[A-Za-z\d@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]+$/.test(value)) {
                 console.log('FAILED: Invalid characters');
-                throw new Error('Password can only contain letters, numbers, and special characters (@$!%*?&)');
+                throw new Error('Password contains invalid characters');
             }
             
             console.log('Password validation PASSED');
@@ -292,7 +292,7 @@ exports.validateChangePassword = [
             const hasLowercase = /[a-z]/.test(value);
             const hasUppercase = /[A-Z]/.test(value);
             const hasNumber = /\d/.test(value);
-            const hasSpecialChar = /[@$!%*?&]/.test(value);
+            const hasSpecialChar = /[@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]/.test(value);
             
             if (!hasLowercase) {
                 throw new Error('Password must contain at least one lowercase letter');

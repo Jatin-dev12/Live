@@ -100,55 +100,9 @@ exports.isAuthenticated = async (req, res, next) => {
             userModules = [...userModules, ...customPerms];
         }
         
-        // Default permissions for "Admin" role - almost everything except super admin features
-        if (user.role && user.role.slug === 'admin') {
-            const adminModules = [
-                // 'users' removed - only Super Admin can manage users
-                'cms',           // Website Page Master
-                'content',       // Content Management
-                'menu',          // Menu Management
-                'media',         // Media
-                'seo',           // SEO Management
-                'ads',           // Ads Management
-                'leads',         // Leads Management
-                'blog',          // Resources & Publications
-                'subscribers',   // Subscribed Users
-                'events',        // Events Management
-                'forms',         // Forms & Enquiries
-                'reports',       // Reports & Analytics
-                'settings'       // Site Settings
-            ];
-            userModules = [...new Set([...userModules, ...adminModules])];
-        }
-        
-        // Default permissions for "Manager" role - management-related modules
-        if (user.role && user.role.slug === 'manager') {
-            const managerModules = [
-                'cms',           // Website Page Master
-                'content',       // Content Management
-                'media',         // Media
-                'leads',         // Leads Management
-                'blog',          // Resources & Publications
-                'subscribers',   // Subscribed Users
-                'events',        // Events Management
-                'forms',         // Forms & Enquiries
-                'reports'        // Reports & Analytics
-            ];
-            userModules = [...new Set([...userModules, ...managerModules])];
-        }
-        
-        // Default permissions for "Content Manager" role - content-related modules
-        if (user.role && user.role.slug === 'content-manager') {
-            const contentManagerModules = [
-                'cms',           // Website Page Master
-                'content',       // Content Management
-                'menu',          // Menu Management
-                'media',         // Media
-                'seo',           // SEO Management
-                'blog'           // Resources & Publications
-            ];
-            userModules = [...new Set([...userModules, ...contentManagerModules])];
-        }
+        // No default permissions for any role except Super Admin
+        // All users (Admin, Manager, Content Manager, User, etc.) will only see
+        // the sidebar tabs based on checkboxes selected during user creation
         
         res.locals.userPermissions = [...new Set(userPermissions)]; // All permission slugs (unique)
         res.locals.userModules = [...new Set(userModules)]; // Unique modules
