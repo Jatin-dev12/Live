@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public API Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .results {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .page-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .page-card h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .page-meta {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .meta-item strong {
+            color: #667eea;
+        }
+        
+        .content-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .content-item h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .content-item .category {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .content-body {
+            color: #333;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #c33;
+        }
+        
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #3c3;
+            margin-bottom: 20px;
+        }
+        
+        .api-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .api-info code {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+        
+        .thumbnail {
+            max-width: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Public API Test</h1>
+            <p>Test your Page Master API endpoints</p>
+            
+            <div class="buttons">
+                <button onclick="fetchAllPages()">📄 Get All Pages</button>
+                <button onclick="fetchPageBySlug()">🔍 Get Page by Slug</button>
+                <button onclick="clearResults()">🗑️ Clear Results</button>
+            </div>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api/pages';
+        
+        function showLoading() {
+            document.getElementById('results').innerHTML = '<div class="loading">Loading data</div>';
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function fetchAllPages() {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/public/all`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAllPages(data);
+                } else {
+                    showError('Failed to fetch pages');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+        
+        async function fetchPageBySlug() {
+            const slug = prompt('Enter page slug (e.g., "about-us", "home"):');
+            
+            if (!slug) return;
+            
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/public/slug/${slug}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displaySinglePage(data);
+                } else {
+                    showError(data.message || 'Page not found');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+        
+        function displayAllPages(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = `
+                <div class="results">
+                    <div class="success">
+                        ✅ Successfully fetched ${data.total} page(s)
+                    </div>
+                    
+                    <div class="api-info">
+                        <strong>API Endpoint:</strong> <code>GET ${API_BASE}/public/all</code>
+                    </div>
+            `;
+            
+            data.data.forEach(page => {
+                html += `
+                    <div class="page-card">
+                        <h2>${page.name}</h2>
+                        
+                        <div class="page-meta">
+                            <span class="meta-item"><strong>Slug:</strong> ${page.slug}</span>
+                            <span class="meta-item"><strong>Path:</strong> ${page.path}</span>
+                            <span class="meta-item"><strong>Contents:</strong> ${page.contents.length}</span>
+                        </div>
+                        
+                        ${page.metaDescription ? `<p><strong>Description:</strong> ${page.metaDescription}</p>` : ''}
+                        
+                        ${page.contents.length > 0 ? `
+                            <h3 style="margin-top: 20px; color: #764ba2;">Content Items:</h3>
+                            ${page.contents.map(content => `
+                                <div class="content-item">
+                                    <h3>${content.title}</h3>
+                                    ${content.category ? `<span class="category">${content.category}</span>` : ''}
+                                    ${content.description ? `<p><em>${content.description}</em></p>` : ''}
+                                    <div class="content-body">${content.content}</div>
+                                    ${content.thumbnail ? `<img src="${content.thumbnail}" class="thumbnail" alt="${content.title}">` : ''}
+                                </div>
+                            `).join('')}
+                        ` : '<p><em>No content available for this page.</em></p>'}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+        
+        function displaySinglePage(data) {
+            const resultsDiv = document.getElementById('results');
+            const page = data.data;
+            
+            let html = `
+                <div class="results">
+                    <div class="success">
+                        ✅ Successfully fetched page: ${page.name}
+                    </div>
+                    
+                    <div class="api-info">
+                        <strong>API Endpoint:</strong> <code>GET ${API_BASE}/public/slug/${page.slug}</code>
+                    </div>
+                    
+                    <div class="page-card">
+                        <h2>${page.name}</h2>
+                        
+                        <div class="page-meta">
+                            <span class="meta-item"><strong>Slug:</strong> ${page.slug}</span>
+                            <span class="meta-item"><strong>Path:</strong> ${page.path}</span>
+                            <span class="meta-item"><strong>Contents:</strong> ${page.contents.length}</span>
+                        </div>
+                        
+                        ${page.metaTitle ? `<p><strong>Meta Title:</strong> ${page.metaTitle}</p>` : ''}
+                        ${page.metaDescription ? `<p><strong>Meta Description:</strong> ${page.metaDescription}</p>` : ''}
+                        
+                        ${page.contents.length > 0 ? `
+                            <h3 style="margin-top: 20px; color: #764ba2;">Content Items:</h3>
+                            ${page.contents.map(content => `
+                                <div class="content-item">
+                                    <h3>${content.title}</h3>
+                                    ${content.category ? `<span class="category">${content.category}</span>` : ''}
+                                    ${content.description ? `<p><em>${content.description}</em></p>` : ''}
+                                    <div class="content-body">${content.content}</div>
+                                    ${content.thumbnail ? `<img src="${content.thumbnail}" class="thumbnail" alt="${content.title}">` : ''}
+                                </div>
+                            `).join('')}
+                        ` : '<p><em>No content available for this page.</em></p>'}
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        function showError(message) {
+            document.getElementById('results').innerHTML = `
+                <div class="results">
+                    <div class="error">
+                        ❌ ${message}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

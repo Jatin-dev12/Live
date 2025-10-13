@@ -69,6 +69,10 @@ const permissionApi = require('./routes/api/permissionApi');
 const pageApi = require('./routes/api/pageApi');
 const contentApi = require('./routes/api/contentApi');
 
+// Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
+const pageRouter = require('./routes/routes');
+
+// Register API routes FIRST (before page router to prevent conflicts with dynamic routes)
 app.use('/api/auth', authApi);
 app.use('/api/users', userApi);
 app.use('/api/roles', roleApi);
@@ -76,8 +80,7 @@ app.use('/api/permissions', permissionApi);
 app.use('/api/pages', pageApi);
 app.use('/api/content', contentApi);
 
-// Import Page Router & Define All Routes
-const pageRouter = require('./routes/routes');
+// Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function
 
 // Error handling middleware

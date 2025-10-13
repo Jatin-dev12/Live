@@ -1,9 +1,134 @@
 const express = require('express');
 const router = express.Router();
 const Page = require('../../models/Page');
+const Content = require('../../models/Content');
 const { isAuthenticated } = require('../../middleware/auth');
 
-// Get all pages
+// Public API - Get all active pages with content (no authentication required)
+router.get('/public/all', async (req, res) => {
+    try {
+        const pages = await Page.find({ status: 'active' })
+            .select('name slug path metaTitle metaDescription metaKeywords createdAt updatedAt')
+            .sort({ createdAt: -1 });
+        
+        // Get content for each page
+        const pagesWithContent = await Promise.all(
+            pages.map(async (page) => {
+                const contents = await Content.find({ 
+                    page: page._id, 
+                    status: 'active' 
+                })
+                .select('title category description content thumbnail order createdAt updatedAt')
+                .sort({ order: 1, createdAt: -1 });
+                
+                return {
+                    _id: page._id,
+                    name: page.name,
+                    slug: page.slug,
+                    path: page.path,
+                    metaTitle: page.metaTitle,
+                    metaDescription: page.metaDescription,
+                    metaKeywords: page.metaKeywords,
+                    createdAt: page.createdAt,
+                    updatedAt: page.updatedAt,
+                    contents: contents.map(content => ({
+                        _id: content._id,
+                        title: content.title,
+                        category: content.category,
+                        description: content.description,
+                        content: content.content,
+                        thumbnail: content.thumbnail,
+                        order: content.order,
+                        createdAt: content.createdAt,
+                        updatedAt: content.updatedAt
+                    }))
+                };
+            })
+        );
+        
+        // Set proper content type and send JSON without escaping HTML
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        const response = {
+            success: true,
+            data: pagesWithContent,
+            total: pagesWithContent.length,
+            timestamp: new Date().toISOString()
+        };
+        res.send(JSON.stringify(response, null, 2));
+    } catch (error) {
+        console.error('Error fetching public pages:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pages',
+            error: error.message
+        });
+    }
+});
+
+// Public API - Get single page by slug (no authentication required)
+router.get('/public/slug/:slug', async (req, res) => {
+    try {
+        const page = await Page.findOne({ 
+            slug: req.params.slug, 
+            status: 'active' 
+        })
+        .select('name slug path metaTitle metaDescription metaKeywords createdAt updatedAt');
+        
+        if (!page) {
+            return res.status(404).json({
+                success: false,
+                message: 'Page not found'
+            });
+        }
+        
+        // Get content for this page
+        const contents = await Content.find({ 
+            page: page._id, 
+            status: 'active' 
+        })
+        .select('title category description content thumbnail order createdAt updatedAt')
+        .sort({ order: 1, createdAt: -1 });
+        
+        // Set proper content type and send JSON without escaping HTML
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        const response = {
+            success: true,
+            data: {
+                _id: page._id,
+                name: page.name,
+                slug: page.slug,
+                path: page.path,
+                metaTitle: page.metaTitle,
+                metaDescription: page.metaDescription,
+                metaKeywords: page.metaKeywords,
+                createdAt: page.createdAt,
+                updatedAt: page.updatedAt,
+                contents: contents.map(content => ({
+                    _id: content._id,
+                    title: content.title,
+                    category: content.category,
+                    description: content.description,
+                    content: content.content,
+                    thumbnail: content.thumbnail,
+                    order: content.order,
+                    createdAt: content.createdAt,
+                    updatedAt: content.updatedAt
+                }))
+            },
+            timestamp: new Date().toISOString()
+        };
+        res.send(JSON.stringify(response, null, 2));
+    } catch (error) {
+        console.error('Error fetching page by slug:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching page',
+            error: error.message
+        });
+    }
+});
+
+// Get all pages (authenticated)
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const { status, search, page = 1, limit = 10 } = req.query;

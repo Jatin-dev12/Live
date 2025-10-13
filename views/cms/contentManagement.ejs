@@ -31,7 +31,7 @@
                             <tr data-content-id="<%= content._id %>">
                                 <td><%= content.page ? content.page.name : 'N/A' %></td>
                                 <td class="title-table"><%= content.title %></td>
-                                <td class="desc-table"><%= content.description || 'No description' %></td>
+                                <td class="desc-table"><%= content.description ? content.description.replace(/<[^>]*>/g, '').substring(0, 100) : 'No description' %><%= content.description && content.description.replace(/<[^>]*>/g, '').length > 100 ? '...' : '' %></td>
                                 <td class="text-center">
                                     <% if (content.status === 'active') { %>
                                         <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
