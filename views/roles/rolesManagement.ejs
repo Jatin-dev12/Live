@@ -1,28 +1,10 @@
 <div class="card h-100 p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-            </select>
             <form class="navbar-search">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search">
+                <input type="text" id="searchInput" class="bg-base h-40-px w-auto" name="search" placeholder="Search by name or email...">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <!-- <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-            </select> -->
         </div>
         <a href="/roles/add-roles" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
@@ -110,9 +92,9 @@
         </div>
 
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-            <span>
+            <span id="entriesInfo">
                 <% if (typeof users !== 'undefined' && users && users.length > 0) { %>
-                    Showing 1 to <%= users.length %> of <%= users.length %> entries
+                    Showing <span id="visibleCount"><%= users.length %></span> of <span id="totalCount"><%= users.length %></span> entries
                 <% } else { %>
                     No entries found
                 <% } %>
@@ -226,15 +208,17 @@
     $(document).on('click', '.toggle-status-btn', function () {
         const userId = $(this).data('user-id');
         const userName = $(this).data('user-name');
-        const currentStatus = $(this).data('current-status') === 'true';
+        const currentStatusAttr = $(this).data('current-status');
+        const currentStatus = currentStatusAttr === true || currentStatusAttr === 'true';
         const newStatus = !currentStatus;
-        const actionText = newStatus ? 'activate' : 'deactivate';
+        const actionText = currentStatus ? 'deactivate' : 'activate';
         const button = $(this);
         const row = button.closest('tr');
         
         console.log('Toggle Status:', {
             userId: userId,
             userName: userName,
+            currentStatusAttr: currentStatusAttr,
             currentStatus: currentStatus,
             newStatus: newStatus,
             actionText: actionText
@@ -273,28 +257,26 @@
                     
                     // Update the button and status badge
                     const statusBadge = row.find('td:nth-child(4) span');
-                    const buttonIcon = button.find('iconify-icon');
                     
                     if (newStatus) {
-                        // User is now active
+                        // User is now active - show eye-off icon to deactivate
                         statusBadge.removeClass('bg-danger-100 text-danger-600').addClass('bg-success-100 text-success-600');
                         statusBadge.html('<i class="ri-check-line me-1"></i> Active');
-                        buttonIcon.attr('icon', 'mdi:eye-off');
+                        button.html('<iconify-icon icon="mdi:eye-off" class="icon text-xl"></iconify-icon>');
                         button.attr('title', 'Deactivate User');
                         row.removeClass('table-danger');
                     } else {
-                        // User is now inactive
+                        // User is now inactive - show eye icon to activate
                         statusBadge.removeClass('bg-success-100 text-success-600').addClass('bg-danger-100 text-danger-600');
                         statusBadge.html('<i class="ri-close-line me-1"></i> Inactive');
-                        buttonIcon.attr('icon', 'mdi:eye');
+                        button.html('<iconify-icon icon="mdi:eye" class="icon text-xl"></iconify-icon>');
                         button.attr('title', 'Activate User');
                         row.addClass('table-danger');
                     }
                     
-                    // Update data attribute and restore button quickly
+                    // Update data attribute and restore button
                     button.data('current-status', newStatus);
                     button.prop('disabled', false);
-                    button.html(originalHtml);
                 } else {
                     showToast('Failed to update user status: ' + (result.message || 'Unknown error'), 'error');
                     // Reset button quickly
@@ -381,12 +363,63 @@
         });
     });
 
-    // Update row numbers after deletion
+    // Update row numbers after deletion or search
     function updateRowNumbers() {
-        $('tbody tr').each(function(index) {
-            $(this).find('td:first').text(String(index + 1).padStart(2, '0'));
+        let visibleIndex = 1;
+        $('tbody tr:visible').each(function() {
+            if (!$(this).hasClass('no-results-row') && $(this).find('td').length > 1) {
+                $(this).find('td:first').text(String(visibleIndex).padStart(2, '0'));
+                visibleIndex++;
+            }
         });
     }
+
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        const searchTerm = $(this).val().toLowerCase().trim();
+        let visibleCount = 0;
+        
+        $('tbody tr').each(function() {
+            // Skip the "no users found" row
+            if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+                return;
+            }
+            
+            const name = $(this).find('td:nth-child(2)').text().toLowerCase();
+            const email = $(this).find('td:nth-child(3) strong').text().toLowerCase();
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                $(this).show();
+                visibleCount++;
+            } else {
+                $(this).hide();
+            }
+        });
+        
+        // Update visible count
+        $('#visibleCount').text(visibleCount);
+        
+        // Show/hide "no results" message
+        if (visibleCount === 0 && searchTerm !== '') {
+            if ($('.no-results-row').length === 0) {
+                $('tbody').append(
+                    '<tr class="no-results-row">' +
+                    '<td colspan="5" class="text-center py-4">' +
+                    '<div class="text-muted">' +
+                    '<iconify-icon icon="mdi:magnify-close" class="text-4xl mb-2"></iconify-icon>' +
+                    '<p>No users found matching "' + searchTerm + '"</p>' +
+                    '</div>' +
+                    '</td>' +
+                    '</tr>'
+                );
+            }
+        } else {
+            $('.no-results-row').remove();
+        }
+        
+        // Update row numbers for visible rows
+        updateRowNumbers();
+    });
 
     // Toast notification function
     function showToast(message, type = 'info') {

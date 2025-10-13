@@ -127,8 +127,49 @@ exports.validateCreateUser = [
     body('password')
         .notEmpty().withMessage('Password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+        .custom((value) => {
+            console.log('=== PASSWORD VALIDATION ===');
+            console.log('Password value:', value);
+            console.log('Password type:', typeof value);
+            
+            const hasLowercase = /[a-z]/.test(value);
+            const hasUppercase = /[A-Z]/.test(value);
+            const hasNumber = /\d/.test(value);
+            const hasSpecialChar = /[@$!%*?&]/.test(value);
+            
+            console.log('Validation results:', {
+                hasLowercase,
+                hasUppercase,
+                hasNumber,
+                hasSpecialChar
+            });
+            
+            if (!hasLowercase) {
+                console.log('FAILED: No lowercase');
+                throw new Error('Password must contain at least one lowercase letter');
+            }
+            if (!hasUppercase) {
+                console.log('FAILED: No uppercase');
+                throw new Error('Password must contain at least one uppercase letter');
+            }
+            if (!hasNumber) {
+                console.log('FAILED: No number');
+                throw new Error('Password must contain at least one number');
+            }
+            if (!hasSpecialChar) {
+                console.log('FAILED: No special char');
+                throw new Error('Password must contain at least one special character (@$!%*?&)');
+            }
+            
+            // Only allow alphanumeric and the specified special characters
+            if (!/^[A-Za-z\d@$!%*?&]+$/.test(value)) {
+                console.log('FAILED: Invalid characters');
+                throw new Error('Password can only contain letters, numbers, and special characters (@$!%*?&)');
+            }
+            
+            console.log('Password validation PASSED');
+            return true;
+        }),
     
     body('confirmPassword')
         .notEmpty().withMessage('Please confirm your password')
@@ -247,8 +288,32 @@ exports.validateChangePassword = [
     body('newPassword')
         .notEmpty().withMessage('New password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+        .custom((value) => {
+            const hasLowercase = /[a-z]/.test(value);
+            const hasUppercase = /[A-Z]/.test(value);
+            const hasNumber = /\d/.test(value);
+            const hasSpecialChar = /[@$!%*?&]/.test(value);
+            
+            if (!hasLowercase) {
+                throw new Error('Password must contain at least one lowercase letter');
+            }
+            if (!hasUppercase) {
+                throw new Error('Password must contain at least one uppercase letter');
+            }
+            if (!hasNumber) {
+                throw new Error('Password must contain at least one number');
+            }
+            if (!hasSpecialChar) {
+                throw new Error('Password must contain at least one special character (@$!%*?&)');
+            }
+            
+            // Only allow alphanumeric and the specified special characters
+            if (!/^[A-Za-z\d@$!%*?&]+$/.test(value)) {
+                throw new Error('Password can only contain letters, numbers, and special characters (@$!%*?&)');
+            }
+            
+            return true;
+        }),
     
     body('confirmPassword')
         .notEmpty().withMessage('Please confirm your new password')

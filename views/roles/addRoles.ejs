@@ -9,12 +9,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Full Name <span class="text-danger-600">*</span></label>
-                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name" required>
+                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name" required autocomplete="off">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Email <span class="text-danger-600">*</span></label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required>
+                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required autocomplete="off">
                             <div class="invalid-feedback">Valid email is required</div>
                         </div>
                     </div>
@@ -23,7 +23,7 @@
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Password <span class="text-danger-600">*</span></label>
                             <div class="position-relative">
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required minlength="8">
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required minlength="8" autocomplete="new-password">
                                 <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
                                     var field = document.getElementById('password');
                                     var btn = this;
@@ -36,13 +36,13 @@
                                     }
                                 ">👁️</button>
                             </div>
-                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character</small>
+                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character (@$!%*?&)</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Confirm Password <span class="text-danger-600">*</span></label>
                             <div class="position-relative">
-                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm password" required minlength="8">
+                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm password" required minlength="8" autocomplete="new-password">
                                 <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
                                     var field = document.getElementById('confirmPassword');
                                     var btn = this;
@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Phone</label>
-                            <input type="tel" name="phone" class="form-control" placeholder="Enter phone number">
+                            <input type="tel" name="phone" class="form-control" required placeholder="Enter phone number">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -263,42 +263,42 @@
             background: #f9fafb;
             transition: all 0.2s ease;
         }
-        
+
         .permission-card:hover {
             border-color: #d1d5db;
             background: #f3f4f6;
         }
-        
+
         .permission-checkbox {
             display: flex;
             align-items: center;
             cursor: pointer;
             margin: 0;
         }
-        
+
         .permission-checkbox input[type="checkbox"] {
             margin-right: 8px;
             transform: scale(1.1);
         }
-        
+
         .permission-label {
             font-weight: 500;
             color: #374151;
             user-select: none;
         }
-        
+
         .permission-checkbox input[type="checkbox"]:checked + .checkmark + .permission-label {
-            color: #059669;
+            color: #dc3545;
         }
-        
+
         .permissions-container .row {
             margin: 0;
         }
-        
+
         .permissions-container .col-md-6 {
             padding: 5px;
         }
-        
+
         /* Password toggle button styles */
         .position-relative .btn {
             z-index: 10 !important;
@@ -310,23 +310,23 @@
             width: auto !important;
             height: auto !important;
         }
-        
+
         .position-relative .btn:hover {
             background: rgba(0,0,0,0.1) !important;
             border-radius: 4px;
         }
-        
+
         .position-relative .btn:focus {
             outline: 2px solid #007bff;
             outline-offset: 2px;
         }
-        
+
         .position-relative .btn i {
             font-size: 18px !important;
             color: #6b7280 !important;
             pointer-events: none;
         }
-        
+
         #togglePasswordBtn, #toggleConfirmPasswordBtn {
             right: 8px !important;
             top: 50% !important;
@@ -339,10 +339,10 @@
             console.log('Toggle called for:', fieldId);
             const field = document.getElementById(fieldId);
             const toggleText = document.getElementById(fieldId + '-icon');
-            
+
             console.log('Field found:', field);
             console.log('Toggle text found:', toggleText);
-            
+
             if (field && toggleText) {
                 console.log('Current field type:', field.type);
                 if (field.type === 'password') {
@@ -362,26 +362,38 @@
 
         // Select/Deselect all permissions
         function selectAllPermissions() {
-            document.querySelectorAll('input[name="permissions[]"]').forEach(cb => cb.checked = true);
+            console.log('Select All clicked');
+            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            console.log('Found checkboxes:', checkboxes.length);
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+                console.log('Checked:', cb.value);
+            });
         }
 
         function deselectAllPermissions() {
-            document.querySelectorAll('input[name="permissions[]"]').forEach(cb => cb.checked = false);
+            console.log('Deselect All clicked');
+            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            console.log('Found checkboxes:', checkboxes.length);
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                console.log('Unchecked:', cb.value);
+            });
         }
 
         // Direct submit function (called by button onclick)
         async function submitUserForm() {
             console.log('Direct submit function called');
             const addUserForm = document.getElementById('addUserForm');
-            
+
             if (!addUserForm) {
                 console.error('Form not found!');
                 return;
             }
-            
+
             // Get form data
             const formData = new FormData(addUserForm);
-            
+
             // Validate form
             const validationErrors = validateForm(formData);
             if (validationErrors.length > 0) {
@@ -390,9 +402,9 @@
                 });
                 return;
             }
-            
+
             const userData = {};
-            
+
             // Get basic form fields
             userData.fullName = formData.get('fullName');
             userData.email = formData.get('email');
@@ -400,29 +412,29 @@
             userData.confirmPassword = formData.get('confirmPassword');
             userData.role = formData.get('role');
             userData.phone = formData.get('phone');
-            
+
             // Get selected permissions
             const permissions = [];
             const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
             permissionCheckboxes.forEach(checkbox => {
                 permissions.push(checkbox.value);
             });
-            
+
             if (permissions.length > 0) {
                 userData.customPermissions = permissions;
             }
-            
+
             console.log('User data:', userData);
-            
+
             // Show loading state
             const submitBtn = addUserForm.querySelector('button[onclick="submitUserForm()"]');
             const btnText = submitBtn.querySelector('.btn-text');
             const btnSpinner = submitBtn.querySelector('.btn-spinner');
-            
+
             submitBtn.disabled = true;
             btnText.classList.add('d-none');
             btnSpinner.classList.remove('d-none');
-            
+
             try {
                 const response = await fetch('/api/users', {
                     method: 'POST',
@@ -431,22 +443,22 @@
                     },
                     body: JSON.stringify(userData)
                 });
-                
+
                 const result = await response.json();
                 console.log('Response:', result);
-                
+
                 if (response.ok && result.success) {
                     // Clear the form first
                     addUserForm.reset();
-                    
+
                     // Show success toast
                     showToast('🎉 User created successfully!', 'success');
-                    
+
                     // Reset button state
                     submitBtn.disabled = false;
                     btnText.classList.remove('d-none');
                     btnSpinner.classList.add('d-none');
-                    
+
                     // Redirect after longer delay to see toast
                     setTimeout(() => {
                         window.location.href = '/roles/roles-management';
@@ -477,29 +489,47 @@
         // Validate form fields
         function validateForm(formData) {
             const errors = [];
-            
+
             // Validate full name
             if (!formData.get('fullName') || formData.get('fullName').trim().length < 2) {
                 errors.push('Full name must be at least 2 characters long');
             }
-            
+
             // Validate email
             const email = formData.get('email');
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || !emailRegex.test(email)) {
                 errors.push('Please enter a valid email address');
             }
-            
+
             // Validate password
             const password = formData.get('password');
+            console.log('Validating password:', password);
+            console.log('Password type:', typeof password);
+            console.log('Password length:', password?.length);
+            if (password) {
+                console.log('Password chars:', password.split('').map(function(c, i) {
+                    return '[' + i + ']=\'' + c + '\' (' + c.charCodeAt(0) + ')';
+                }));
+            }
+
             if (!password || password.length < 8) {
                 errors.push('Password must be at least 8 characters long');
             } else {
                 const hasLowercase = /[a-z]/.test(password);
                 const hasUppercase = /[A-Z]/.test(password);
                 const hasNumber = /\d/.test(password);
-                const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-                
+                const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+                console.log('Testing number regex on password:', /\d/.test(password));
+                console.log('Testing number regex on "123":', /\d/.test('123'));
+                console.log('Password checks:', {
+                    hasLowercase,
+                    hasUppercase,
+                    hasNumber,
+                    hasSpecialChar
+                });
+
                 if (!hasLowercase) {
                     errors.push('Password must contain at least one lowercase letter');
                 }
@@ -510,21 +540,21 @@
                     errors.push('Password must contain at least one number');
                 }
                 if (!hasSpecialChar) {
-                    errors.push('Password must contain at least one special character');
+                    errors.push('Password must contain at least one special character (@$!%*?&)');
                 }
             }
-            
+
             // Validate confirm password
             const confirmPassword = formData.get('confirmPassword');
             if (password !== confirmPassword) {
                 errors.push('Passwords do not match');
             }
-            
+
             // Validate role selection
             if (!formData.get('role')) {
                 errors.push('Please select a role');
             }
-            
+
             return errors;
         }
 
@@ -532,20 +562,20 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, looking for form...');
             const addUserForm = document.getElementById('addUserForm');
-            
+
             if (addUserForm) {
                 console.log('User form found, attaching submit handler');
-                
+
                 // Remove any existing event listeners
                 addUserForm.onsubmit = null;
-                
+
                 addUserForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     console.log('User form submitted');
-                    
+
                     // Get form data
                     const formData = new FormData(addUserForm);
-                    
+
                     // Validate form
                     const validationErrors = validateForm(formData);
                     if (validationErrors.length > 0) {
@@ -554,9 +584,9 @@
                         });
                         return;
                     }
-                    
+
                     const userData = {};
-                    
+
                     // Get basic form fields
                     userData.fullName = formData.get('fullName');
                     userData.email = formData.get('email');
@@ -564,30 +594,31 @@
                     userData.confirmPassword = formData.get('confirmPassword');
                     userData.role = formData.get('role');
                     userData.phone = formData.get('phone');
-                    
+
                     // Get selected permissions
                     const permissions = [];
                     const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
                     permissionCheckboxes.forEach(checkbox => {
                         permissions.push(checkbox.value);
                     });
-                    
+
                     if (permissions.length > 0) {
                         userData.customPermissions = permissions;
                     }
-                    
+
                     console.log('User data:', userData);
-                    
+
                     // Show loading state
                     const submitBtn = addUserForm.querySelector('button[type="submit"]');
                     const btnText = submitBtn.querySelector('.btn-text');
                     const btnSpinner = submitBtn.querySelector('.btn-spinner');
-                    
+
                     submitBtn.disabled = true;
                     btnText.classList.add('d-none');
                     btnSpinner.classList.remove('d-none');
-                    
+
                     try {
+                        console.log('Sending to API:', userData);
                         const response = await fetch('/api/users', {
                             method: 'POST',
                             headers: {
@@ -595,22 +626,23 @@
                             },
                             body: JSON.stringify(userData)
                         });
-                        
+
                         const result = await response.json();
-                        console.log('Response:', result);
-                        
+                        console.log('API Response:', result);
+                        console.log('Response status:', response.status);
+
                         if (response.ok && result.success) {
                             // Clear the form first
                             addUserForm.reset();
-                            
+
                             // Show success toast
                             showToast('🎉 User created successfully!', 'success');
-                            
+
                             // Reset button state
                             submitBtn.disabled = false;
                             btnText.classList.remove('d-none');
                             btnSpinner.classList.add('d-none');
-                            
+
                             // Redirect after longer delay to see toast
                             setTimeout(() => {
                                 window.location.href = '/roles/roles-management';
@@ -647,13 +679,13 @@
             // Remove any existing toasts first
             const existingToasts = document.querySelectorAll('.custom-toast');
             existingToasts.forEach(toast => toast.remove());
-            
+
             // Create toast element
             const toast = document.createElement('div');
             const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
             toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
             toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
-            
+
             // Set border color based on type
             if (type === 'success') {
                 toast.style.borderColor = '#28a745';
@@ -664,23 +696,23 @@
                 toast.style.backgroundColor = '#f8d7da';
                 toast.style.color = '#721c24';
             }
-            
+
             const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
             toast.innerHTML = '<div class="d-flex align-items-center">' +
                 '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
                 '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
                 '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
                 '</div>';
-            
+
             document.body.appendChild(toast);
-            
+
             // Add entrance animation
             toast.style.transform = 'translateX(100%)';
             toast.style.transition = 'transform 0.3s ease-out';
             setTimeout(() => {
                 toast.style.transform = 'translateX(0)';
             }, 10);
-            
+
             // Auto remove after duration based on type
             const duration = type === 'success' ? 4000 : 6000;
             setTimeout(() => {
@@ -694,51 +726,121 @@
 ` %>
 
 <script>
+// Global Select/Deselect all permissions functions
+function selectAllPermissions() {
+    console.log('Select All clicked');
+    const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+    console.log('Found checkboxes:', checkboxes.length);
+    checkboxes.forEach(cb => {
+        cb.checked = true;
+        console.log('Checked:', cb.value);
+    });
+}
+
+function deselectAllPermissions() {
+    console.log('Deselect All clicked');
+    const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+    console.log('Found checkboxes:', checkboxes.length);
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+        console.log('Unchecked:', cb.value);
+    });
+}
+
+// Global toast notification function
+function showToast(message, type = 'info') {
+    // Remove any existing toasts first
+    const existingToasts = document.querySelectorAll('.custom-toast');
+    existingToasts.forEach(toast => toast.remove());
+
+    // Create toast element
+    const toast = document.createElement('div');
+    const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+    toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+    toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+    // Set border color based on type
+    if (type === 'success') {
+        toast.style.borderColor = '#28a745';
+        toast.style.backgroundColor = '#d4edda';
+        toast.style.color = '#155724';
+    } else if (type === 'error') {
+        toast.style.borderColor = '#dc3545';
+        toast.style.backgroundColor = '#f8d7da';
+        toast.style.color = '#721c24';
+    }
+
+    const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+    toast.innerHTML = '<div class="d-flex align-items-center">' +
+        '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+        '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+        '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+        '</div>';
+
+    document.body.appendChild(toast);
+
+    // Add entrance animation
+    toast.style.transform = 'translateX(100%)';
+    toast.style.transition = 'transform 0.3s ease-out';
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+
+    // Auto remove after duration based on type
+    const duration = type === 'success' ? 4000 : 6000;
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, duration);
+}
+
 // Global function for form submission - outside EJS template
 async function submitUserForm() {
     console.log('Global submitUserForm called');
-    
+
     const addUserForm = document.getElementById('addUserForm');
     if (!addUserForm) {
-        alert('Form not found!');
+        showToast('Form not found!', 'error');
         return;
     }
-    
+
     // Get form data
     const formData = new FormData(addUserForm);
-    
+
     // Basic validation
     const fullName = formData.get('fullName');
     const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirmPassword');
     const role = formData.get('role');
-    
+
     if (!fullName || fullName.trim().length < 2) {
         alert('Full name must be at least 2 characters long');
         return;
     }
-    
+
     if (!email || !email.includes('@')) {
         alert('Please enter a valid email address');
         return;
     }
-    
+
     if (!password || password.length < 8) {
         alert('Password must be at least 8 characters long');
         return;
     }
-    
+
     if (password !== confirmPassword) {
         alert('Passwords do not match');
         return;
     }
-    
+
     if (!role) {
         alert('Please select a role');
         return;
     }
-    
+
     // Prepare user data
     const userData = {
         fullName: fullName.trim(),
@@ -748,29 +850,29 @@ async function submitUserForm() {
         role: role,
         phone: formData.get('phone') || ''
     };
-    
+
     // Get selected permissions
     const permissions = [];
     const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
     permissionCheckboxes.forEach(checkbox => {
         permissions.push(checkbox.value);
     });
-    
+
     if (permissions.length > 0) {
         userData.customPermissions = permissions;
     }
-    
+
     console.log('Submitting user data:', userData);
-    
+
     // Show loading state
     const submitBtn = document.querySelector('button[onclick="submitUserForm()"]');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnSpinner = submitBtn.querySelector('.btn-spinner');
-    
+
     submitBtn.disabled = true;
     btnText.classList.add('d-none');
     btnSpinner.classList.remove('d-none');
-    
+
     try {
         const response = await fetch('/api/users', {
             method: 'POST',
@@ -779,24 +881,35 @@ async function submitUserForm() {
             },
             body: JSON.stringify(userData)
         });
-        
+
         const result = await response.json();
         console.log('API Response:', result);
-        
+
         if (response.ok && result.success) {
             // Success
-            alert('✅ User created successfully!');
+            showToast('🎉 User created successfully!', 'success');
             addUserForm.reset();
-            
-            // Redirect after a short delay
+
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+
+            // Redirect after a longer delay to see the toast
             setTimeout(() => {
                 window.location.href = '/roles/roles-management';
-            }, 1000);
+            }, 2000);
         } else {
             // Error
-            const errorMessage = result.message || 'Failed to create user';
-            alert('❌ Error: ' + errorMessage);
-            
+            if (result.errors && Array.isArray(result.errors)) {
+                result.errors.forEach(error => {
+                    showToast(error.message, 'error');
+                });
+            } else {
+                const errorMessage = result.message || 'Failed to create user';
+                showToast(errorMessage, 'error');
+            }
+
             // Reset button state
             submitBtn.disabled = false;
             btnText.classList.remove('d-none');
@@ -804,8 +917,8 @@ async function submitUserForm() {
         }
     } catch (error) {
         console.error('Network Error:', error);
-        alert('❌ Network error occurred while creating user');
-        
+        showToast('Network error occurred while creating user', 'error');
+
         // Reset button state
         submitBtn.disabled = false;
         btnText.classList.remove('d-none');

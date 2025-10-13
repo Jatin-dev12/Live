@@ -53,6 +53,7 @@ exports.isAuthenticated = async (req, res, next) => {
         let userPermissions = [];
         let userModules = [];
         
+        // Get permissions from role
         if (user.role && user.role.permissions) {
             // Handle both old ObjectId-based permissions and new string-based permissions
             userPermissions = user.role.permissions.map(p => {
@@ -80,7 +81,26 @@ exports.isAuthenticated = async (req, res, next) => {
             }).filter(Boolean);
         }
         
-        res.locals.userPermissions = userPermissions; // All permission slugs
+        // Also get custom permissions assigned directly to the user
+        if (user.customPermissions && Array.isArray(user.customPermissions)) {
+            const customPerms = user.customPermissions.map(p => {
+                // If it's a string, it's the permission slug
+                if (typeof p === 'string') {
+                    return p;
+                }
+                // If it's an object with slug property
+                if (typeof p === 'object' && p.slug) {
+                    return p.slug;
+                }
+                return null;
+            }).filter(Boolean);
+            
+            // Merge with role permissions
+            userPermissions = [...userPermissions, ...customPerms];
+            userModules = [...userModules, ...customPerms];
+        }
+        
+        res.locals.userPermissions = [...new Set(userPermissions)]; // All permission slugs (unique)
         res.locals.userModules = [...new Set(userModules)]; // Unique modules
         res.locals.userRole = user.role ? user.role.slug : null;
         res.locals.userLevel = user.role ? user.role.level : 99;

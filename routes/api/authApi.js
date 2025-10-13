@@ -5,6 +5,62 @@ const Role = require('../../models/Role');
 const { isAuthenticated } = require('../../middleware/auth');
 const { validateLogin, handleValidationErrors } = require('../../middleware/validators');
 
+// Signup/Register
+router.post('/signup', async (req, res) => {
+    try {
+        const { fullName, email, password } = req.body;
+        
+        // Validation
+        if (!fullName || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide all required fields'
+            });
+        }
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'User with this email already exists'
+            });
+        }
+        
+        // Get the default "User" role
+        const defaultRole = await Role.findOne({ slug: 'user' });
+        if (!defaultRole) {
+            return res.status(500).json({
+                success: false,
+                message: 'Default role not found. Please contact administrator.'
+            });
+        }
+        
+        // Create new user
+        const user = new User({
+            fullName,
+            email: email.toLowerCase(),
+            password,
+            role: defaultRole._id,
+            isActive: true
+        });
+        
+        await user.save();
+        
+        res.status(201).json({
+            success: true,
+            message: 'User created successfully!'
+        });
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error during signup',
+            error: error.message
+        });
+    }
+});
+
 // Login
 router.post('/login', validateLogin, handleValidationErrors, async (req, res) => {
     try {

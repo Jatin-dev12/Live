@@ -38,8 +38,7 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Role is required']
     },
     customPermissions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Permission'
+        type: String  // Store permission slugs directly as strings
     }],
     department: {
         type: String,

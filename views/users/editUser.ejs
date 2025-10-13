@@ -131,29 +131,53 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
 <script>
-// Professional toast function using SweetAlert2
-function showToast(message, type) {
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
+// Custom toast notification function
+function showToast(message, type = 'info') {
+    // Remove any existing toasts first
+    const existingToasts = document.querySelectorAll('.custom-toast');
+    existingToasts.forEach(toast => toast.remove());
+
+    // Create toast element
+    const toast = document.createElement('div');
+    const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+    toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+    toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+    // Set border color based on type
+    if (type === 'success') {
+        toast.style.borderColor = '#28a745';
+        toast.style.backgroundColor = '#d4edda';
+        toast.style.color = '#155724';
+    } else if (type === 'error') {
+        toast.style.borderColor = '#dc3545';
+        toast.style.backgroundColor = '#f8d7da';
+        toast.style.color = '#721c24';
+    }
+
+    const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+    toast.innerHTML = '<div class="d-flex align-items-center">' +
+        '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+        '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+        '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+        '</div>';
+
+    document.body.appendChild(toast);
+
+    // Add entrance animation
+    toast.style.transform = 'translateX(100%)';
+    toast.style.transition = 'transform 0.3s ease-out';
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+
+    // Auto remove after duration based on type
+    const duration = type === 'success' ? 4000 : 6000;
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
         }
-    });
-
-    let icon = 'info';
-    if (type === 'success') icon = 'success';
-    else if (type === 'error') icon = 'error';
-    else if (type === 'warning') icon = 'warning';
-
-    Toast.fire({
-        icon: icon,
-        title: message
-    });
+    }, duration);
 }
 
 // Update user function

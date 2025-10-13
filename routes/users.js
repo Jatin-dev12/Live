@@ -69,8 +69,11 @@ router.get('/edit/:id', isAuthenticated, async (req, res) => {
             return res.redirect('/roles/roles-management?error=User not found');
         }
         
-        // Fetch all roles for dropdown
-        const roles = await Role.find({ isActive: true }).select('name _id level').sort({ level: 1 });
+        // Fetch all roles for dropdown (exclude Super Admin)
+        const roles = await Role.find({ 
+            isActive: true,
+            slug: { $ne: 'super-admin' }
+        }).select('name _id level').sort({ level: 1 });
         const permissions = await Permission.find({ isActive: true }).sort({ module: 1, action: 1 });
         
         // Group permissions by module

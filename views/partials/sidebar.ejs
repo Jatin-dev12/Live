@@ -21,8 +21,8 @@
             </li>
             <% } %>
             
-            <!-- Users Management - Super Admin ONLY -->
-            <% if (typeof userRole !== 'undefined' && userRole === 'super-admin') { %>
+            <!-- Users Management - If has users permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('users'))) { %>
             <li>
                 <a href="/roles/roles-management">
                      <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>
@@ -31,7 +31,7 @@
             </li>
             <% } %>
             
-            <!-- Website Page Master - If has CMS permission -->
+            <!-- Website Page Master - If has cms permission -->
             <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('cms'))) { %>
             <li>
                 <a href="/page-master/web-page-master">
@@ -41,8 +41,8 @@
             </li>
             <% } %>
             
-            <!-- Content Management - If has CMS permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('cms'))) { %>
+            <!-- Content Management - If has content permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('content'))) { %>
             <li>
                 <a href="/cms/content-management">
                     <iconify-icon icon="streamline-ultimate:content-paper-edit" width="23" height="23" class="menu-icon"></iconify-icon>
@@ -51,8 +51,8 @@
             </li>
             <% } %>
             
-            <!-- Menu Management - If has CMS permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('cms'))) { %>
+            <!-- Menu Management - If has menu permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('menu'))) { %>
             <li>
                 <a href="/menu-management/nav-menus">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
@@ -89,8 +89,8 @@
             </li>
             <% } %>
             
-            <!-- Ads Management - If has Ads permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin' || userModules.includes('ads'))) { %>
+            <!-- Ads Management - If has ads permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('ads'))) { %>
             <li>
                 <a href="/ads/ads-management">
                     <iconify-icon icon="streamline-logos:google-ads-logo" width="22" height="22" class="menu-icon"></iconify-icon>
@@ -99,8 +99,8 @@
             </li>
             <% } %>
             
-            <!-- Leads Management - If has Leads permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin' || userModules.includes('leads'))) { %>
+            <!-- Leads Management - If has leads permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('leads'))) { %>
             <li>
                 <a href="/leads/leads-management">
                     <iconify-icon icon="material-symbols-light:leaderboard-outline" width="26" height="26" class="menu-icon"></iconify-icon>
@@ -109,8 +109,8 @@
             </li>
             <% } %>
             
-            <!-- Resources & Publications (Blog) - If has Blog permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin' || userModules.includes('blog'))) { %>
+            <!-- Resources & Publications (Blog) - If has blog permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('blog'))) { %>
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <i class="ri-news-line text-xl me-6 d-flex w-auto"></i>
@@ -127,8 +127,8 @@
             </li>
             <% } %>
             
-            <!-- Subscribed Users - Admin and Super Admin only -->
-            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin')) { %>
+            <!-- Subscribed Users - If has subscribers permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('subscribers'))) { %>
             <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
@@ -137,8 +137,8 @@
             </li>
             <% } %>
             
-            <!-- Events Management - Admin and Super Admin only -->
-            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin')) { %>
+            <!-- Events Management - If has events permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('events'))) { %>
             <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
@@ -147,8 +147,8 @@
             </li>
             <% } %>
             
-            <!-- Forms & Enquiries - Admin and Super Admin only -->
-            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin')) { %>
+            <!-- Forms & Enquiries - If has forms permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('forms'))) { %>
             <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="heroicons:document" class="menu-icon"></iconify-icon>
@@ -157,8 +157,8 @@
             </li>
             <% } %>
             
-            <!-- Reports & Analytics - If has Reports permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin' || userModules.includes('reports'))) { %>
+            <!-- Reports & Analytics - If has reports permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('reports'))) { %>
             <li>
                 <a href="javascript:void(0)">
                      <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
@@ -167,8 +167,8 @@
             </li>
             <% } %>
             
-            <!-- Site Settings - Super Admin and Admin only -->
-            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || userRole === 'admin')) { %>
+            <!-- Site Settings - If has settings permission -->
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('settings'))) { %>
             <li>
                 <a href="/settings/company">
                      <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>

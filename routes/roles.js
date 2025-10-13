@@ -7,8 +7,18 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
     try {
         const User = require('../models/User');
         
-        // Fetch all users from database
-        const users = await User.find({})
+        // Define system/admin emails to exclude
+        const systemEmails = [
+            'superadmin@example.com',
+            'admin@example.com',
+            'manager@example.com',
+            'user@example.com'
+        ];
+        
+        // Fetch all users from database, excluding system accounts
+        const users = await User.find({
+            email: { $nin: systemEmails }
+        })
             .populate('role', 'name level slug')
             .populate('createdBy', 'fullName email')
             .select('-password')
@@ -16,7 +26,7 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
             .lean(); // Use lean() for better performance
         
         console.log('=== FETCHING USERS FROM DB ===');
-        console.log('Total users found:', users.length);
+        console.log('Total users found (excluding system accounts):', users.length);
         
         // Log each user for debugging
         users.forEach((user, index) => {
@@ -51,7 +61,11 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
 router.get('/add-roles', isAuthenticated, async (req, res) => {
     try {
         const Role = require('../models/Role');
-        const roles = await Role.find({ isActive: true }).sort({ level: 1 });
+        // Exclude Super Admin role from the list (slug: 'super-admin')
+        const roles = await Role.find({ 
+            isActive: true,
+            slug: { $ne: 'super-admin' }
+        }).sort({ level: 1 });
         
         res.render('roles/addRoles', {
             title: "Add User",

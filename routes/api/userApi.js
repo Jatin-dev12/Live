@@ -113,6 +113,11 @@ router.post('/',
         try {
             const { fullName, email, password, phone, role, department, designation, description, customPermissions } = req.body;
             
+            console.log('=== CREATE USER REQUEST ===');
+            console.log('Password received:', password);
+            console.log('Password length:', password?.length);
+            console.log('Full request body:', req.body);
+            
             // Check if the user creating this has permission to assign this role
             const targetRole = await Role.findById(role);
             const creatorRole = await Role.findById(req.user.role);
@@ -143,7 +148,6 @@ router.post('/',
             
             const createdUser = await User.findById(user._id)
                 .populate('role', 'name slug level')
-                .populate('customPermissions', 'name slug module action')
                 .populate('createdBy', 'fullName email')
                 .select('-password');
             
