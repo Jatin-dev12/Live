@@ -100,10 +100,61 @@ exports.isAuthenticated = async (req, res, next) => {
             userModules = [...userModules, ...customPerms];
         }
         
+        // Default permissions for "Admin" role - almost everything except super admin features
+        if (user.role && user.role.slug === 'admin') {
+            const adminModules = [
+                // 'users' removed - only Super Admin can manage users
+                'cms',           // Website Page Master
+                'content',       // Content Management
+                'menu',          // Menu Management
+                'media',         // Media
+                'seo',           // SEO Management
+                'ads',           // Ads Management
+                'leads',         // Leads Management
+                'blog',          // Resources & Publications
+                'subscribers',   // Subscribed Users
+                'events',        // Events Management
+                'forms',         // Forms & Enquiries
+                'reports',       // Reports & Analytics
+                'settings'       // Site Settings
+            ];
+            userModules = [...new Set([...userModules, ...adminModules])];
+        }
+        
+        // Default permissions for "Manager" role - management-related modules
+        if (user.role && user.role.slug === 'manager') {
+            const managerModules = [
+                'cms',           // Website Page Master
+                'content',       // Content Management
+                'media',         // Media
+                'leads',         // Leads Management
+                'blog',          // Resources & Publications
+                'subscribers',   // Subscribed Users
+                'events',        // Events Management
+                'forms',         // Forms & Enquiries
+                'reports'        // Reports & Analytics
+            ];
+            userModules = [...new Set([...userModules, ...managerModules])];
+        }
+        
+        // Default permissions for "Content Manager" role - content-related modules
+        if (user.role && user.role.slug === 'content-manager') {
+            const contentManagerModules = [
+                'cms',           // Website Page Master
+                'content',       // Content Management
+                'menu',          // Menu Management
+                'media',         // Media
+                'seo',           // SEO Management
+                'blog'           // Resources & Publications
+            ];
+            userModules = [...new Set([...userModules, ...contentManagerModules])];
+        }
+        
         res.locals.userPermissions = [...new Set(userPermissions)]; // All permission slugs (unique)
         res.locals.userModules = [...new Set(userModules)]; // Unique modules
         res.locals.userRole = user.role ? user.role.slug : null;
         res.locals.userLevel = user.role ? user.role.level : 99;
+        res.locals.isReadOnly = user.role && user.role.slug === 'user'; // Flag for read-only users
         
         // Helper function to check if user has permission
         res.locals.hasPermission = function(permission) {
@@ -114,21 +165,25 @@ exports.isAuthenticated = async (req, res, next) => {
         // Helper function to check if user can perform action on module
         res.locals.canCreate = function(module) {
             if (user.role && user.role.slug === 'super-admin') return true;
+            if (user.role && user.role.slug === 'user') return false; // User role is read-only
             return userPermissions.includes(`${module}-create`) || userPermissions.includes(`${module}-manage`);
         };
         
         res.locals.canUpdate = function(module) {
             if (user.role && user.role.slug === 'super-admin') return true;
+            if (user.role && user.role.slug === 'user') return false; // User role is read-only
             return userPermissions.includes(`${module}-update`) || userPermissions.includes(`${module}-manage`);
         };
         
         res.locals.canDelete = function(module) {
             if (user.role && user.role.slug === 'super-admin') return true;
+            if (user.role && user.role.slug === 'user') return false; // User role is read-only
             return userPermissions.includes(`${module}-delete`) || userPermissions.includes(`${module}-manage`);
         };
         
         res.locals.canRead = function(module) {
             if (user.role && user.role.slug === 'super-admin') return true;
+            if (user.role && user.role.slug === 'user') return true; // User role can read everything
             return userPermissions.includes(`${module}-read`) || userPermissions.includes(`${module}-manage`);
         };
         

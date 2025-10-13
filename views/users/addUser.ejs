@@ -45,8 +45,8 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-20">
-                                <label for="phone" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone</label>
-                                <input type="tel" class="form-control radius-8" id="phone" name="phone" placeholder="Enter phone number">
+                                <label for="phone" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone <span class="text-danger-600">*</span></label>
+                                <input type="tel" class="form-control radius-8" id="phone" name="phone" placeholder="Enter phone number" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-20">
@@ -93,7 +93,7 @@
                                     <label class="form-label fw-semibold text-primary-light text-sm mb-0">Additional Permissions (Optional)</label>
                                     <small class="text-muted">These will be added to the role's permissions</small>
                                 </div>
-                                
+
                                 <% if (typeof groupedPermissions !== 'undefined' && Object.keys(groupedPermissions).length > 0) { %>
                                     <div class="accordion" id="permissionsAccordion">
                                         <% Object.keys(groupedPermissions).forEach((module, index) => { %>

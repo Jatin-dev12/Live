@@ -74,8 +74,8 @@
                             <div class="invalid-feedback">Please select a role</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Phone</label>
-                            <input type="tel" name="phone" class="form-control" required placeholder="Enter phone number">
+                            <label class="form-label fw-semibold">Phone<span class="text-danger-600">*</span></label>
+                            <input type="tel" name="phone" class="form-control"  placeholder="Enter phone number" required>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -235,10 +235,10 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
-                        <button type="button" class="btn btn-outline-secondary px-4" onclick="window.history.back()">
+                        <button type="button" class="btn btn-sm  btn-outline-secondary" onclick="window.history.back()">
                             <i class="ri-close-line me-1"></i> Cancel
                         </button>
-                        <button type="button" class="btn btn-primary-600 radius-8 px-4" onclick="submitUserForm()">
+                        <button type="button" class="btn btn-sm btn-primary-600" onclick="submitUserForm()">
                             <span class="btn-text">
                                 <i class="ri-user-add-line me-1"></i> Create User
                             </span>

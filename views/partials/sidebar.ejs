@@ -11,18 +11,16 @@
     </div>
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
-            <!-- Dashboard - Always visible for authenticated users -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('dashboard'))) { %>
+            <!-- Dashboard - Always visible for all authenticated users -->
             <li class="active-pagee">
                 <a href="/index">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <% } %>
             
-            <!-- Users Management - If has users permission -->
-            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('users'))) { %>
+            <!-- Users Management - Only Super Admin -->
+            <% if (userRole === 'super-admin') { %>
             <li>
                 <a href="/roles/roles-management">
                      <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>

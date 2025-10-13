@@ -1,4 +1,4 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
         <h6 class="text-lg fw-semibold mb-0">Edit User</h6>
         <a href="/roles/roles-management" class="btn btn-outline-primary btn-sm">
@@ -6,11 +6,11 @@
         </a>
     </div>
     <div class="card-body p-24">
-        <div class="row justify-content-center">
-            <div class="col-xxl-8 col-xl-10 col-lg-12">
+        <div class="row ">
+            <div class="col-lg-12">
                 <form id="editUserForm">
                     <input type="hidden" name="userId" value="<%= user._id %>">
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-20">
@@ -53,28 +53,33 @@
                     </div>
 
                     <div class="mb-20">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">User Status</label>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="isActive" id="statusActive" value="true" <%= user.isActive ? 'checked' : '' %>>
-                                <label class="form-check-label" for="statusActive">
-                                    <span class="badge bg-success-100 text-success-600 px-3 py-2 rounded-pill">
-                                        <i class="ri-check-line me-1"></i> Active
-                                    </span>
-                                </label>
+
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">User Status</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="form-check custom-form-check">
+                                    <input class="form-check-input" type="radio" name="isActive" id="statusActive" value="true" <%= user.isActive ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="statusActive">
+                                        <span class="">
+                                            <!-- <i class="ri-check-line me-1"></i>  -->
+                                            Active
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="form-check custom-form-check">
+                                    <input class="form-check-input" type="radio" name="isActive" id="statusInactive" value="false" <%= !user.isActive ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="statusInactive">
+                                        <span class="">
+                                            <!-- <i class="ri-close-line me-1"></i>  -->
+                                            Inactive
+                                        </span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="isActive" id="statusInactive" value="false" <%= !user.isActive ? 'checked' : '' %>>
-                                <label class="form-check-label" for="statusInactive">
-                                    <span class="badge bg-danger-100 text-danger-600 px-3 py-2 rounded-pill">
-                                        <i class="ri-close-line me-1"></i> Inactive
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
+
                     </div>
 
                     <div class="mb-20">
+                        <div class="user-info-box">
                         <h6 class="text-md text-primary-light mb-16">User Information</h6>
                         <div class="row">
                             <div class="col-md-6">
@@ -92,28 +97,31 @@
                                     <strong>Last Updated:</strong> <%= new Date(user.updatedAt).toLocaleDateString() %>
                                 </p>
                                 <p class="text-sm text-secondary-light mb-2">
-                                    <strong>Current Role:</strong> 
+                                    <strong>Current Role:</strong>
                                     <% if (user.role) { %>
-                                        <span class="badge bg-primary-100 text-primary-600 px-2 py-1 rounded-pill">
+                                        <span class="">
                                             <%= user.role.name %>
                                         </span>
                                     <% } else { %>
-                                        <span class="badge bg-secondary-100 text-secondary-600 px-2 py-1 rounded-pill">
+                                        <span class="">
                                             No Role
                                         </span>
                                     <% } %>
                                 </p>
                             </div>
                         </div>
+                        </div>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-end gap-3 mt-4 pt-3 border-top">
-                        <a href="/roles/roles-management" class="btn btn-outline-secondary px-4">
-                            <i class="ri-close-line me-1"></i> Cancel
+                        <a href="/roles/roles-management" class="btn btn-sm btn-outline-secondary">
+                            <!-- <i class="ri-close-line me-1"></i>  -->
+                            Cancel
                         </a>
-                        <button type="button" class="btn btn-primary-600 radius-8 px-4" onclick="updateUser()">
+                        <button type="button" class="btn btn-sm btn-primary-600 " onclick="updateUser()">
                             <span class="btn-text">
-                                <i class="ri-save-line me-1"></i> Update User
+                                <!-- <i class="ri-save-line me-1"></i>  -->
+                                Update User
                             </span>
                             <span class="btn-spinner d-none">
                                 <span class="spinner-border spinner-border-sm" role="status"></span>
@@ -184,7 +192,7 @@ function showToast(message, type = 'info') {
 async function updateUser() {
     const form = document.getElementById('editUserForm');
     const formData = new FormData(form);
-    
+
     // Get form values
     const userData = {
         fullName: formData.get('fullName'),
@@ -193,34 +201,34 @@ async function updateUser() {
         role: formData.get('role'),
         isActive: formData.get('isActive') === 'true'
     };
-    
+
     const userId = formData.get('userId');
-    
+
     // Basic validation
     if (!userData.fullName || userData.fullName.trim().length < 2) {
         showToast('Full name must be at least 2 characters long', 'error');
         return;
     }
-    
+
     if (!userData.email || !userData.email.includes('@')) {
         showToast('Please enter a valid email address', 'error');
         return;
     }
-    
+
     if (!userData.role) {
         showToast('Please select a role', 'error');
         return;
     }
-    
+
     // Show loading state
     const submitBtn = document.querySelector('button[onclick="updateUser()"]');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnSpinner = submitBtn.querySelector('.btn-spinner');
-    
+
     submitBtn.disabled = true;
     btnText.classList.add('d-none');
     btnSpinner.classList.remove('d-none');
-    
+
     try {
         const response = await fetch('/api/users/' + userId, {
             method: 'PUT',
@@ -229,17 +237,17 @@ async function updateUser() {
             },
             body: JSON.stringify(userData)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok && result.success) {
             showToast('User updated successfully!', 'success');
-            
+
             // Reset button state
             submitBtn.disabled = false;
             btnText.classList.remove('d-none');
             btnSpinner.classList.add('d-none');
-            
+
             // Redirect after delay
             setTimeout(() => {
                 window.location.href = '/roles/roles-management';
@@ -247,7 +255,7 @@ async function updateUser() {
         } else {
             const errorMessage = result.message || 'Failed to update user';
             showToast(errorMessage, 'error');
-            
+
             // Reset button state
             submitBtn.disabled = false;
             btnText.classList.remove('d-none');
@@ -256,7 +264,7 @@ async function updateUser() {
     } catch (error) {
         console.error('Error:', error);
         showToast('An error occurred while updating the user', 'error');
-        
+
         // Reset button state
         submitBtn.disabled = false;
         btnText.classList.remove('d-none');

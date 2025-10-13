@@ -85,6 +85,31 @@
 main.dashboard-main {
     overflow: hidden;
 }
+
+/* 13 oct  */
+.user-info-box {
+    background: #f5f6fa;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 25px 20px;
+}
+.user-info-title {
+    font-size: 18px !important;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+/* .custom-form-check label.form-check-label {
+    line-height: normal;
+} */
+
+.custom-form-check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;

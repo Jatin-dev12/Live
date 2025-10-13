@@ -45,21 +45,21 @@
                                 </td>
                                 <td class="text-center">
                                     <% if (user.isActive) { %>
-                                        <span class="badge bg-success-100 text-success-600 px-3 py-2 rounded-pill">
+                                        <span class="badge bg-success-100 text-success-600  rounded-pill">
                                             <i class="ri-check-line me-1"></i> Active
                                         </span>
                                     <% } else { %>
-                                        <span class="badge bg-danger-100 text-danger-600 px-3 py-2 rounded-pill">
+                                        <span class="badge bg-danger-100 text-danger-600  rounded-pill">
                                             <i class="ri-close-line me-1"></i> Inactive
                                         </span>
                                     <% } %>
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <button type="button" class="toggle-status-btn bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
-                                                data-user-id="<%= user._id %>" 
-                                                data-user-name="<%= user.fullName %>" 
-                                                data-current-status="<%= user.isActive %>" 
+                                        <button type="button" class="toggle-status-btn bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                                data-user-id="<%= user._id %>"
+                                                data-user-name="<%= user.fullName %>"
+                                                data-current-status="<%= user.isActive %>"
                                                 title="<%= user.isActive ? 'Deactivate User' : 'Activate User' %>">
                                             <% if (user.isActive) { %>
                                                 <iconify-icon icon="mdi:eye-off" class="icon text-xl"></iconify-icon>
@@ -214,7 +214,7 @@
         const actionText = currentStatus ? 'deactivate' : 'activate';
         const button = $(this);
         const row = button.closest('tr');
-        
+
         console.log('Toggle Status:', {
             userId: userId,
             userName: userName,
@@ -223,7 +223,7 @@
             newStatus: newStatus,
             actionText: actionText
         });
-        
+
         // Professional SweetAlert2 confirmation
         Swal.fire({
             title: actionText.charAt(0).toUpperCase() + actionText.slice(1) + ' User?',
@@ -241,7 +241,7 @@
             button.prop('disabled', true);
             const originalHtml = button.html();
             button.html('<div class="spinner-border spinner-border-sm" role="status"></div>');
-            
+
             // Make API call to toggle status
             fetch('/api/users/' + userId + '/toggle-status', {
                 method: 'PATCH',
@@ -254,10 +254,10 @@
                 if (result.success) {
                     // Show success message
                     showToast('User "' + userName + '" ' + actionText + 'd successfully!', 'success');
-                    
+
                     // Update the button and status badge
                     const statusBadge = row.find('td:nth-child(4) span');
-                    
+
                     if (newStatus) {
                         // User is now active - show eye-off icon to deactivate
                         statusBadge.removeClass('bg-danger-100 text-danger-600').addClass('bg-success-100 text-success-600');
@@ -273,7 +273,7 @@
                         button.attr('title', 'Activate User');
                         row.addClass('table-danger');
                     }
-                    
+
                     // Update data attribute and restore button
                     button.data('current-status', newStatus);
                     button.prop('disabled', false);
@@ -307,7 +307,7 @@
         const userId = $(this).data('user-id');
         const userName = $(this).data('user-name');
         const row = $(this).closest('tr');
-        
+
         // Professional SweetAlert2 confirmation for delete
         Swal.fire({
             title: 'Delete User?',
@@ -327,7 +327,7 @@
             deleteButton.prop('disabled', true);
             const originalDeleteHtml = deleteButton.html();
             deleteButton.html('<div class="spinner-border spinner-border-sm" role="status"></div>');
-            
+
             // Make API call to delete user
             fetch('/api/users/' + userId, {
                 method: 'DELETE',
@@ -378,16 +378,16 @@
     $('#searchInput').on('keyup', function() {
         const searchTerm = $(this).val().toLowerCase().trim();
         let visibleCount = 0;
-        
+
         $('tbody tr').each(function() {
             // Skip the "no users found" row
             if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
                 return;
             }
-            
+
             const name = $(this).find('td:nth-child(2)').text().toLowerCase();
             const email = $(this).find('td:nth-child(3) strong').text().toLowerCase();
-            
+
             if (name.includes(searchTerm) || email.includes(searchTerm)) {
                 $(this).show();
                 visibleCount++;
@@ -395,10 +395,10 @@
                 $(this).hide();
             }
         });
-        
+
         // Update visible count
         $('#visibleCount').text(visibleCount);
-        
+
         // Show/hide "no results" message
         if (visibleCount === 0 && searchTerm !== '') {
             if ($('.no-results-row').length === 0) {
@@ -416,7 +416,7 @@
         } else {
             $('.no-results-row').remove();
         }
-        
+
         // Update row numbers for visible rows
         updateRowNumbers();
     });
@@ -425,7 +425,7 @@
     function showToast(message, type = 'info') {
         // Remove any existing toasts first
         $('.custom-toast').remove();
-        
+
         // Create toast element
         const toast = $('<div>').addClass('alert position-fixed shadow-lg custom-toast');
         const alertType = type === 'error' ? 'alert-danger' : type === 'success' ? 'alert-success' : 'alert-info';
@@ -441,7 +441,7 @@
             'padding': '20px',
             'border': '2px solid'
         });
-        
+
         // Set border color based on type
         if (type === 'success') {
             toast.css({
@@ -456,7 +456,7 @@
                 'color': '#721c24'
             });
         }
-        
+
         const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
         const closeBtn = $('<button>').attr({
             'type': 'button',
@@ -464,16 +464,16 @@
         }).html('×').on('click', function() {
             $(this).closest('.custom-toast').remove();
         });
-        
+
         const content = $('<div>').addClass('d-flex align-items-center')
             .append($('<span>').css({'font-size': '24px', 'margin-right': '12px'}).html(iconEmoji))
             .append($('<span>').css({'font-weight': '600', 'flex-grow': '1'}).html(message))
             .append(closeBtn);
-        
+
         toast.append(content);
-        
+
         $('body').append(toast);
-        
+
         // Add entrance animation
         toast.css('transform', 'translateX(100%)');
         setTimeout(() => {
@@ -482,7 +482,7 @@
                 'transition': 'transform 0.3s ease-out'
             });
         }, 10);
-        
+
         // Auto remove after duration based on type
         const duration = type === 'success' ? 4000 : 6000;
         setTimeout(() => {
