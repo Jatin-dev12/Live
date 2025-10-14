@@ -12,7 +12,7 @@ const dummyLeads = [
     {
         fullName: 'John Smith',
         email: 'john.smith@example.com',
-        phone: '+1-555-0101',
+        phone: '+91-9876543210',
         company: 'Tech Solutions Inc',
         designation: 'CTO',
         source: 'Website',
@@ -23,7 +23,7 @@ const dummyLeads = [
     {
         fullName: 'Sarah Johnson',
         email: 'sarah.j@company.com',
-        phone: '+1-555-0102',
+        phone: '+91-9876543211',
         company: 'Digital Marketing Pro',
         designation: 'Marketing Manager',
         source: 'Social Media',
@@ -34,7 +34,7 @@ const dummyLeads = [
     {
         fullName: 'Michael Brown',
         email: 'mbrown@startup.io',
-        phone: '+1-555-0103',
+        phone: '+91-9876543212',
         company: 'StartupHub',
         designation: 'Founder',
         source: 'Referral',
@@ -45,7 +45,7 @@ const dummyLeads = [
     {
         fullName: 'Emily Davis',
         email: 'emily.davis@corp.com',
-        phone: '+1-555-0104',
+        phone: '+91-9876543213',
         company: 'Enterprise Corp',
         designation: 'IT Director',
         source: 'Email Campaign',
@@ -56,7 +56,7 @@ const dummyLeads = [
     {
         fullName: 'David Wilson',
         email: 'dwilson@business.net',
-        phone: '+1-555-0105',
+        phone: '+91-9876543214',
         company: 'Business Solutions Ltd',
         designation: 'CEO',
         source: 'Cold Call',
@@ -67,7 +67,7 @@ const dummyLeads = [
     {
         fullName: 'Lisa Anderson',
         email: 'lisa.a@retail.com',
-        phone: '+1-555-0106',
+        phone: '+91-9876543215',
         company: 'Retail Plus',
         designation: 'Operations Manager',
         source: 'Website',
@@ -78,7 +78,7 @@ const dummyLeads = [
     {
         fullName: 'Robert Taylor',
         email: 'rtaylor@finance.com',
-        phone: '+1-555-0107',
+        phone: '+91-9876543216',
         company: 'Finance Group',
         designation: 'VP Technology',
         source: 'Referral',
@@ -89,7 +89,7 @@ const dummyLeads = [
     {
         fullName: 'Jennifer Martinez',
         email: 'jmartinez@healthcare.org',
-        phone: '+1-555-0108',
+        phone: '+91-9876543217',
         company: 'Healthcare Systems',
         designation: 'Project Manager',
         source: 'Website',
@@ -100,7 +100,7 @@ const dummyLeads = [
     {
         fullName: 'William Garcia',
         email: 'wgarcia@education.edu',
-        phone: '+1-555-0109',
+        phone: '+91-9876543218',
         company: 'Education Institute',
         designation: 'Dean',
         source: 'Social Media',
@@ -111,7 +111,7 @@ const dummyLeads = [
     {
         fullName: 'Amanda Rodriguez',
         email: 'arodriguez@consulting.com',
-        phone: '+1-555-0110',
+        phone: '+91-9876543219',
         company: 'Consulting Partners',
         designation: 'Senior Consultant',
         source: 'Email Campaign',

@@ -26,9 +26,9 @@
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Phone</th>
-                        <th scope="col">Message</th>
+                        <!-- <th scope="col">Message</th> -->
                         <th scope="col">Pages</th>
-                        <th scope="col" class="text-center">View</th>
+                        <th scope="col" class="text-center">View Query</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,16 +45,18 @@
                                 </td>
                                 <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.email || 'N/A' %></span></td>
                                 <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.phone || 'N/A' %></span></td>
-                                <td>
+                                <!-- <td>
                                     <span class="text-md mb-0 fw-normal text-secondary-light">
                                         <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
                                     </span>
-                                </td>
+                                </td> -->
                                 <td><%= lead.interestedIn || 'N/A' %></td>
-                                <td class="text-center">
-                                    <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn" data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
-                                        <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                    </button>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn" data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
+                                            <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <% }) %>

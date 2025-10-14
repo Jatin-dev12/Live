@@ -54,11 +54,14 @@ router.get('/export-csv', isAuthenticated, async (req, res) => {
                 message = lead.notes.replace(/"/g, '""').replace(/\n/g, ' '); // Escape quotes and remove line breaks
             }
             
+            // Format phone number with tab prefix to force Excel to treat as text
+            const phone = lead.phone ? `"\t${lead.phone}"` : `"\tN/A"`;
+            
             const row = [
                 `"${date}"`,
                 `"${lead.fullName || 'N/A'}"`,
                 `"${lead.email || 'N/A'}"`,
-                `"${lead.phone || 'N/A'}"`,
+                phone,
                 `"${message}"`,
                 `"${lead.interestedIn || 'N/A'}"`
             ];
