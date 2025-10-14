@@ -1,0 +1,123 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    TABLE SEARCH - QUICK COPY-PASTE GUIDE                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📋 COPY THIS CODE TO ANY PAGE WITH A TABLE:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Add search input
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<input type="text" id="tableSearch" placeholder="Search">
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: Add ID to your table
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<table id="dataTable" class="table">
+    <!-- your table content -->
+</table>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: Add this script at the bottom of your page
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<% script = `
+<script src="/js/table-search.js"></script>
+<script>
+    initTableSearch('tableSearch', 'dataTable');
+</script>
+` %>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ THAT'S IT! Your search is now working!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📝 MULTIPLE TABLES? Use different IDs:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- Users Table -->
+<input type="text" id="searchUsers" placeholder="Search users">
+<table id="usersTable">...</table>
+
+<!-- Products Table -->
+<input type="text" id="searchProducts" placeholder="Search products">
+<table id="productsTable">...</table>
+
+<% script = `
+<script src="/js/table-search.js"></script>
+<script>
+    initTableSearch('searchUsers', 'usersTable');
+    initTableSearch('searchProducts', 'productsTable');
+</script>
+` %>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🎯 INLINE VERSION (No external file needed):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<% script = `
+<script>
+function initTableSearch(searchInputId, tableId) {
+    const searchInput = document.getElementById(searchInputId);
+    const table = document.getElementById(tableId);
+    
+    if (!searchInput || !table) return;
+    
+    searchInput.addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase().trim();
+        const tbody = table.querySelector('tbody');
+        const rows = tbody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            if (row.cells.length === 1 && row.cells[0].colSpan > 1) return;
+            
+            let found = false;
+            row.querySelectorAll('td').forEach(cell => {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    found = true;
+                }
+            });
+            
+            row.style.display = (found || searchValue === '') ? '' : 'none';
+        });
+    });
+}
+
+initTableSearch('tableSearch', 'dataTable');
+</script>
+` %>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📚 FILES CREATED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. /public/js/table-search.js          - Main search function
+2. /public/js/TABLE-SEARCH-USAGE.md    - Detailed documentation
+3. /SEARCH-QUICK-REFERENCE.txt         - This file
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+💡 TIPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Works with any table structure
+✓ Case-insensitive search
+✓ Searches all columns automatically
+✓ Real-time filtering as you type
+✓ No dependencies required
+✓ Pure JavaScript
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

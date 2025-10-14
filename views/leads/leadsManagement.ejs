@@ -1,361 +1,70 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-            </select>
             <form class="navbar-search">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search">
+                <input type="text" id="tableSearch" class="bg-base h-40-px w-auto" placeholder="Search">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-            </select>
         </div>
-        <a href="/leads/add-leads" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add New Leads
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <button id="exportCsvBtn" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
+                Export CSV
+            </button>
+            <!-- <a href="/leads/add-leads" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                Add New Leads
+            </a> -->
+        </div>
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
-            <table class="table bordered-table sm-table mb-0">
+            <table id="dataTable" class="table bordered-table sm-table mb-0">
                 <thead>
                     <tr>
+                        <th scope="col">Date</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Owner</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Message</th>
                         <th scope="col">Pages</th>
-                        <th scope="col" class="text-center">Status</th>
-                        <th scope="col" class="text-center">Action</th>
+                        <th scope="col" class="text-center">View</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Kathryn Murphy</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">osgoodwy@gmail.com</span></td>
-                        <td>Ashley</td>
-                        <td>Home</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Annette Black</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">redaniel@gmail.com</span></td>
-
-                        <td>Chris</td>
-                         <td>About</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Ronald Richards</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">seannand@mail.ru</span></td>
-
-                        <td>Ashley</td>
-                         <td>Blog</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Eleanor Pena</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">miyokoto@mail.ru</span></td>
-
-                        <td>Chris</td>
-                         <td>Contact</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Leslie Alexander</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">icadahli@gmail.com</span></td>
-
-                        <td>Chris</td>
-                         <td>Service</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Albert Flores</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">warn@mail.ru</span></td>
-
-                        <td>Chris</td>
-                         <td>Home</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Jacob Jones</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">zitka@mail.ru</span></td>
-
-                        <td>Ashley</td>
-                         <td>Contact</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Jerome Bell</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">igerrin@gmail.com</span></td>
-
-                        <td>Ashley</td>
-                         <td>About</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Marvin McKinney</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">maka@yandex.ru</span></td>
-
-                        <td>Chris</td>
-                        <td>About</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-
-                                <div class="flex-grow-1">
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">Cameron Williamson</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="text-md mb-0 fw-normal text-secondary-light">danten@mail.ru</span></td>
-
-                        <td>Ashley</td>
-                        <td>Contact</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    <% if (leads && leads.length > 0) { %>
+                        <% leads.forEach(lead => { %>
+                            <tr>
+                                <td><%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A' %></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.fullName || 'N/A' %></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.email || 'N/A' %></span></td>
+                                <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.phone || 'N/A' %></span></td>
+                                <td>
+                                    <span class="text-md mb-0 fw-normal text-secondary-light">
+                                        <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
+                                    </span>
+                                </td>
+                                <td><%= lead.interestedIn || 'N/A' %></td>
+                                <td class="text-center">
+                                    <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn" data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
+                                        <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <span class="text-secondary-light">No leads found</span>
+                            </td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
@@ -392,10 +101,109 @@
         </div>
     </div>
 </div>
+
+<!-- Lead Details Modal -->
+<div class="modal fade" id="leadDetailsModal" tabindex="-1" aria-labelledby="leadDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger-600 text-white">
+                <h4 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0" id="leadDetailsModalLabel">
+                    <iconify-icon icon="mdi:account-details" class="icon" style="font-size: 32px;"></iconify-icon>
+                    Lead Details
+                </h4>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-24">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:calendar" class="text-danger-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Date</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-date" style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:account" class="text-primary-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Name</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-fullName" style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:email" class="text-success-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Email</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-email" style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:phone" class="text-warning-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Phone</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-phone" style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:web" class="text-info-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Interested In (Page)</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-interestedIn" style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:message-text" class="text-purple-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Full Message</label>
+                        </div>
+                        <div class="ms-5 p-3 bg-neutral-50 rounded" style="max-height: 200px; overflow-y: auto;">
+                            <p class="text-secondary-light mb-0" id="modal-notes" style="white-space: pre-wrap; font-size: 16px; font-weight: 500; line-height: 1.6;">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-size: 16px; font-weight: 600; padding: 10px 24px;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <% script = `
+<script src="/js/table-search.js"></script>
 <script>
-    $('.remove-item-btn').on('click', function () {
-        $(this).closest('tr').addClass('d-none')
+    // Initialize table search
+    initTableSearch('tableSearch', 'dataTable');
+
+    // Export CSV functionality
+    $('#exportCsvBtn').on('click', function() {
+        window.location.href = '/leads/export-csv';
+    });
+
+    // View Lead Details
+    $('.view-lead-btn').on('click', function() {
+        const leadData = JSON.parse($(this).attr('data-lead-data'));
+
+        // Format and populate date
+        if (leadData.createdAt) {
+            const date = new Date(leadData.createdAt);
+            $('#modal-date').text(date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }));
+        } else {
+            $('#modal-date').text('N/A');
+        }
+
+        // Populate modal with lead data (only fields shown in table)
+        $('#modal-fullName').text(leadData.fullName || 'N/A');
+        $('#modal-email').text(leadData.email || 'N/A');
+        $('#modal-phone').text(leadData.phone || 'N/A');
+        $('#modal-interestedIn').text(leadData.interestedIn || 'N/A');
+        $('#modal-notes').text(leadData.notes || 'No message available');
+
+        // Show modal
+        $('#leadDetailsModal').modal('show');
     });
 </script>
 ` %>
