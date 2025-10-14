@@ -6,6 +6,7 @@ const Permission = require('../models/Permission');
 router.get('/roles-management', isAuthenticated, async (req, res) => {
     try {
         const User = require('../models/User');
+        const Role = require('../models/Role');
         
         // Define system/admin emails to exclude
         const systemEmails = [
@@ -24,6 +25,12 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
             .select('-password')
             .sort({ createdAt: -1 })
             .lean(); // Use lean() for better performance
+        
+        // Fetch all roles for the filter dropdown (exclude Super Admin)
+        const roles = await Role.find({ 
+            isActive: true,
+            slug: { $ne: 'super-admin' }
+        }).select('name').sort({ level: 1 }).lean();
         
         console.log('=== FETCHING USERS FROM DB ===');
         console.log('Total users found (excluding system accounts):', users.length);
@@ -45,7 +52,8 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
         res.render('roles/rolesManagement', {
             title: "Users Management", 
             subTitle: "Users Management",
-            users: users
+            users: users,
+            roles: roles
         });
         
     } catch (error) {
@@ -53,7 +61,8 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
         res.render('roles/rolesManagement', {
             title: "Users Management", 
             subTitle: "Users Management",
-            users: []
+            users: [],
+            roles: []
         });
     }
 });

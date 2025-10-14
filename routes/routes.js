@@ -27,12 +27,64 @@ const ads = require("./ads");
 const media = require("./media");
 const roles = require("./roles");
 
-router.get("/", isAuthenticated, (req, res) => {
-  res.render("index", { title: "Dashboard", subTitle: "AI" });
+router.get("/", isAuthenticated, async (req, res) => {
+  try {
+    const Lead = require('../models/Lead');
+    const ContactQuery = require('../models/ContactQuery');
+    const Page = require('../models/Page');
+    
+    // Get counts from database
+    const totalLeads = await Lead.countDocuments();
+    const totalContactQueries = await ContactQuery.countDocuments();
+    const totalPages = await Page.countDocuments();
+    
+    res.render("index", { 
+      title: "Dashboard", 
+      subTitle: "AI",
+      totalLeads,
+      totalContactQueries,
+      totalPages
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.render("index", { 
+      title: "Dashboard", 
+      subTitle: "AI",
+      totalLeads: 0,
+      totalContactQueries: 0,
+      totalPages: 0
+    });
+  }
 });
 
-router.get("/index", isAuthenticated, (req, res) => {
-  res.render("index", { title: "Dashboard", subTitle: "AI" });
+router.get("/index", isAuthenticated, async (req, res) => {
+  try {
+    const Lead = require('../models/Lead');
+    const ContactQuery = require('../models/ContactQuery');
+    const Page = require('../models/Page');
+    
+    // Get counts from database
+    const totalLeads = await Lead.countDocuments();
+    const totalContactQueries = await ContactQuery.countDocuments();
+    const totalPages = await Page.countDocuments();
+    
+    res.render("index", { 
+      title: "Dashboard", 
+      subTitle: "AI",
+      totalLeads,
+      totalContactQueries,
+      totalPages
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.render("index", { 
+      title: "Dashboard", 
+      subTitle: "AI",
+      totalLeads: 0,
+      totalContactQueries: 0,
+      totalPages: 0
+    });
+  }
 });
 
 router.get("/blankpage", isAuthenticated, (req, res) => {

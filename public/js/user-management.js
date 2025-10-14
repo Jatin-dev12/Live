@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const addUserForm = document.getElementById('addUserForm');
     
     if (addUserForm) {
+        // Auto-select all module permissions when any permission in that module is checked
+        setupModulePermissionHandlers(addUserForm);
+        
         addUserForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -306,4 +309,48 @@ function renderUsersTable(users) {
             </td>
         </tr>
     `).join('');
+}
+
+// Setup module permission handlers - when any permission in a module is checked/unchecked, 
+// check/uncheck ALL permissions for that module (simple CRUD logic)
+function setupModulePermissionHandlers(form) {
+    const permissionCheckboxes = form.querySelectorAll('input[name="customPermissions[]"]');
+    
+    // Group checkboxes by module
+    const moduleGroups = {};
+    permissionCheckboxes.forEach(checkbox => {
+        const value = checkbox.value;
+        // Extract module from permission slug (e.g., "cms-create" -> "cms")
+        const module = value.split('-')[0];
+        
+        if (!moduleGroups[module]) {
+            moduleGroups[module] = [];
+        }
+        moduleGroups[module].push(checkbox);
+    });
+    
+    // Add change event listeners
+    permissionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // Get the module from this checkbox
+            const value = this.value;
+            const module = value.split('-')[0];
+            
+            if (this.checked) {
+                // If ANY checkbox is checked, check ALL checkboxes for this module
+                if (moduleGroups[module]) {
+                    moduleGroups[module].forEach(cb => {
+                        cb.checked = true;
+                    });
+                }
+            } else {
+                // If ANY checkbox is unchecked, uncheck ALL checkboxes for this module
+                if (moduleGroups[module]) {
+                    moduleGroups[module].forEach(cb => {
+                        cb.checked = false;
+                    });
+                }
+            }
+        });
+    });
 }

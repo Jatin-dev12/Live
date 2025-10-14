@@ -8,7 +8,11 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "seed": "node scripts/seedDatabase.js",
-    "seed:roles": "node scripts/seedRolesAndPermissions.js"
+    "seed:roles": "node scripts/seedRolesAndPermissions.js",
+    "seed:leads": "node scripts/seedLeadsAndContacts.js",
+    "fix:permissions": "node scripts/fixUserPermissions.js",
+    "fix:all-permissions": "node scripts/fixAllUserPermissions.js",
+    "check:permissions": "node scripts/checkUserPermissions.js"
   },
   "author": "Pixcels Themes",
   "license": "ISC",

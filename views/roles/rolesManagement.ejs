@@ -1,10 +1,20 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
             <form class="navbar-search">
                 <input type="text" id="searchInput" class="bg-base h-40-px w-auto" name="search" placeholder="Search by name or email...">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
+            <select id="roleFilter" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+                <option value="">All Roles</option>
+                <% if (typeof roles !== 'undefined' && roles && roles.length > 0) { %>
+                    <% roles.forEach(role => { %>
+                        <option value="<%= role.name %>"><%= role.name %></option>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Debug: roles = <%= typeof roles !== 'undefined' ? (roles ? roles.length : 'null') : 'undefined' %> -->
+                <% } %>
+            </select>
         </div>
         <a href="/roles/add-roles" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
@@ -19,6 +29,7 @@
                         <th scope="col">Sr No.</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Role</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
@@ -27,7 +38,7 @@
                     <!-- Debug: Users count = <%= typeof users !== 'undefined' && users ? users.length : 'undefined' %> -->
                     <% if (typeof users !== 'undefined' && users && users.length > 0) { %>
                         <% users.forEach((user, index) => { %>
-                            <tr class="<%= user.isActive ? '' : 'table-danger' %>">
+                            <tr class="<%= user.isActive ? '' : 'table-danger' %>" data-role="<%= user.role ? user.role.name : 'No Role' %>">
                                 <td><%= String(index + 1).padStart(2, '0') %></td>
                                 <td class="title-table">
                                     <div>
@@ -42,6 +53,11 @@
                                             Created: <%= new Date(user.createdAt).toLocaleDateString() %>
                                         </small>
                                     </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary-100 text-primary-600 px-3 py-1 rounded-pill">
+                                        <%= user.role ? user.role.name : 'No Role' %>
+                                    </span>
                                 </td>
                                 <td class="text-center">
                                     <% if (user.isActive) { %>
@@ -79,7 +95,7 @@
                         <% }); %>
                     <% } else { %>
                         <tr>
-                            <td colspan="5" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <div class="text-muted">
                                     <iconify-icon icon="mdi:account-off" class="text-4xl mb-2"></iconify-icon>
                                     <p>No users found. <a href="/roles/add-roles">Create your first user</a></p>
@@ -256,7 +272,7 @@
                     showToast('User "' + userName + '" ' + actionText + 'd successfully!', 'success');
 
                     // Update the button and status badge
-                    const statusBadge = row.find('td:nth-child(4) span');
+                    const statusBadge = row.find('td:nth-child(5) span');
 
                     if (newStatus) {
                         // User is now active - show eye-off icon to deactivate
@@ -374,9 +390,10 @@
         });
     }
 
-    // Search functionality
-    $('#searchInput').on('keyup', function() {
-        const searchTerm = $(this).val().toLowerCase().trim();
+    // Filter and search functionality
+    function applyFilters() {
+        const searchTerm = $('#searchInput').val().toLowerCase().trim();
+        const selectedRole = $('#roleFilter').val();
         let visibleCount = 0;
 
         $('tbody tr').each(function() {
@@ -387,8 +404,15 @@
 
             const name = $(this).find('td:nth-child(2)').text().toLowerCase();
             const email = $(this).find('td:nth-child(3) strong').text().toLowerCase();
+            const role = $(this).data('role');
 
-            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+            // Check if row matches search term
+            const matchesSearch = searchTerm === '' || name.includes(searchTerm) || email.includes(searchTerm);
+
+            // Check if row matches role filter
+            const matchesRole = selectedRole === '' || role === selectedRole;
+
+            if (matchesSearch && matchesRole) {
                 $(this).show();
                 visibleCount++;
             } else {
@@ -400,14 +424,23 @@
         $('#visibleCount').text(visibleCount);
 
         // Show/hide "no results" message
-        if (visibleCount === 0 && searchTerm !== '') {
+        if (visibleCount === 0) {
             if ($('.no-results-row').length === 0) {
+                let message = 'No users found';
+                if (searchTerm !== '' && selectedRole !== '') {
+                    message = 'No users found matching "' + searchTerm + '" with role "' + selectedRole + '"';
+                } else if (searchTerm !== '') {
+                    message = 'No users found matching "' + searchTerm + '"';
+                } else if (selectedRole !== '') {
+                    message = 'No users found with role "' + selectedRole + '"';
+                }
+
                 $('tbody').append(
                     '<tr class="no-results-row">' +
-                    '<td colspan="5" class="text-center py-4">' +
+                    '<td colspan="6" class="text-center py-4">' +
                     '<div class="text-muted">' +
                     '<iconify-icon icon="mdi:magnify-close" class="text-4xl mb-2"></iconify-icon>' +
-                    '<p>No users found matching "' + searchTerm + '"</p>' +
+                    '<p>' + message + '</p>' +
                     '</div>' +
                     '</td>' +
                     '</tr>'
@@ -419,6 +452,16 @@
 
         // Update row numbers for visible rows
         updateRowNumbers();
+    }
+
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        applyFilters();
+    });
+
+    // Role filter functionality
+    $('#roleFilter').on('change', function() {
+        applyFilters();
     });
 
     // Toast notification function

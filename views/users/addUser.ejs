@@ -109,7 +109,7 @@
                                                             <% groupedPermissions[module].forEach(permission => { %>
                                                                 <div class="col-md-6 col-lg-4 mb-2">
                                                                     <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" name="customPermissions[]" value="<%= permission._id %>" id="perm_<%= permission._id %>">
+                                                                        <input class="form-check-input" type="checkbox" name="customPermissions[]" value="<%= permission.slug %>" id="perm_<%= permission._id %>">
                                                                         <label class="form-check-label" for="perm_<%= permission._id %>">
                                                                             <%= permission.name %>
                                                                         </label>

@@ -57,7 +57,7 @@
             <% } %>
             
             <!-- Content Management -->
-            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('cms')))) { %>
+            <% if (typeof userModules !== 'undefined' && (userRole === 'super-admin' || userModules.includes('cms'))) { %>
             <li>
                 <a href="/cms/content-management">
                     <iconify-icon icon="streamline-ultimate:content-paper-edit" width="23" height="23" class="menu-icon"></iconify-icon>

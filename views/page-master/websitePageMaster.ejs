@@ -8,7 +8,7 @@
         </div>
         <a href="/page-master/add-page" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add Page Master
+            Add New Page
         </a>
     </div>
     <div class="card-body p-24">
@@ -62,7 +62,7 @@
         </div>
 
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-            <span>Showing 1 to 10 of 12 entries</span>
+             <!-- <span>Showing 1 to 10 of 12 entries</span> -->
             <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
                 <li class="page-item">
                     <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">
@@ -98,12 +98,12 @@
     // Search functionality
     $('#pageSearch').on('keyup', function() {
         const searchValue = $(this).val().toLowerCase();
-        
+
         $('#pagesTableBody tr').each(function() {
             const row = $(this);
             const pageName = row.find('td:eq(0)').text().toLowerCase();
             const path = row.find('td:eq(1)').text().toLowerCase();
-            
+
             if (pageName.includes(searchValue) || path.includes(searchValue)) {
                 row.show();
             } else {
@@ -116,7 +116,7 @@
     $(document).on('click', '.delete-page-btn', function () {
         const pageId = $(this).data('page-id');
         const row = $(this).closest('tr');
-        
+
         if (confirm('Are you sure you want to delete this page? All associated content will also be deleted.')) {
             $.ajax({
                 url: '/api/pages/' + pageId,

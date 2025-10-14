@@ -119,7 +119,9 @@ main.dashboard-main {
 .swal2-icon-content {
     font-size: 40px !important;
 }
-
+.pagination {
+    display: none !important;
+}
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;
