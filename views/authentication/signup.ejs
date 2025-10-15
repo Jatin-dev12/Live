@@ -14,18 +14,18 @@
                 <h4 class="mb-12">Sign Up to your Account</h4>
                 <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p>
             </div>
-            <form action="#" id="signupForm">
+            <form action="#" id="signupForm" autocomplete="off">
                 <div class="icon-field mb-16">
                     <span class="icon top-50 translate-middle-y">
                         <iconify-icon icon="f7:person"></iconify-icon>
                     </span>
-                    <input type="text" id="fullName" name="fullName" class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Full Name" required>
+                    <input type="text" id="fullName" name="fullName" class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Full Name" required autocomplete="off" data-form-type="other">
                 </div>
                 <div class="icon-field mb-16">
                     <span class="icon top-50 translate-middle-y">
                         <iconify-icon icon="mage:email"></iconify-icon>
                     </span>
-                    <input type="email" id="email" name="email" class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Email" required>
+                    <input type="email" id="email" name="email" class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Email" required autocomplete="off" data-form-type="other">
                 </div>
                 <div class="mb-20">
                     <div class="position-relative ">
@@ -34,7 +34,7 @@
                                 <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
                             </span>
                             <input type="password" id="password" name="password" class="form-control h-56-px bg-neutral-50 radius-12"
-                                id="your-password" placeholder="Password" required minlength="8">
+                                id="your-password" placeholder="Password" required minlength="8" autocomplete="new-password" data-form-type="other">
                         </div>
                         <span
                             class="toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light"
@@ -107,6 +107,45 @@
     // Call the function
     initializePasswordToggle('.toggle-password');
     // ========================= Password Show Hide Js End ===========================
+
+    // ================== Emoji and Special Character Validation Start ==========
+    function containsEmojisOrSpecialUnicode(str) {
+        // Regex to detect emojis and special Unicode characters
+        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F018}-\u{1F270}\u{238C}-\u{2454}\u{20D0}-\u{20FF}]/u;
+        return emojiRegex.test(str);
+    }
+
+    function validateInput(input) {
+        const value = input.value;
+        if (containsEmojisOrSpecialUnicode(value)) {
+            // Remove emojis and special characters
+            input.value = value.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F018}-\u{1F270}\u{238C}-\u{2454}\u{20D0}-\u{20FF}]/gu, '');
+            showToast('Please enter characters, numbers, or standard special characters only. Emojis are not allowed.', 'error');
+        }
+    }
+
+    // Prevent autofill by removing readonly on focus
+    $(document).ready(function() {
+        const fullNameInput = document.getElementById('fullName');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // Set readonly initially to prevent autofill
+        fullNameInput.setAttribute('readonly', 'readonly');
+        emailInput.setAttribute('readonly', 'readonly');
+        passwordInput.setAttribute('readonly', 'readonly');
+        
+        // Remove readonly on focus
+        $('#fullName, #email, #password').on('focus', function() {
+            $(this).removeAttr('readonly');
+        });
+        
+        // Add input validation for all form fields
+        $('#fullName, #email, #password').on('input', function() {
+            validateInput(this);
+        });
+    });
+    // ========================= Emoji and Special Character Validation End ===========================
 
     // ================== Signup Form Handler Start ==========
     $(document).ready(function() {

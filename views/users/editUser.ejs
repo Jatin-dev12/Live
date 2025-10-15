@@ -78,6 +78,161 @@
 
                     </div>
 
+                    <!-- Sidebar Access Permissions Section -->
+                    <div class="mb-20">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-0">Sidebar Access Permissions</label>
+                            <div class="permission-actions">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="selectAllPermissions()">
+                                    <i class="ri-checkbox-multiple-line me-1"></i> Select All
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions()">
+                                    <i class="ri-checkbox-blank-line me-1"></i> Deselect All
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="permissions-container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="dashboard" id="perm_dashboard" <%= user.customPermissions && user.customPermissions.includes('dashboard') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Dashboard</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="users" id="perm_users" <%= user.customPermissions && user.customPermissions.includes('users') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Users Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="cms" id="perm_cms" <%= user.customPermissions && user.customPermissions.includes('cms') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Website Page Master</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="content" id="perm_content" <%= user.customPermissions && user.customPermissions.includes('content') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Content Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="menu" id="perm_menu" <%= user.customPermissions && user.customPermissions.includes('menu') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Menu Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="media" id="perm_media" <%= user.customPermissions && user.customPermissions.includes('media') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Media</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="seo" id="perm_seo" <%= user.customPermissions && user.customPermissions.includes('seo') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">SEO Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="ads" id="perm_ads" <%= user.customPermissions && user.customPermissions.includes('ads') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Ads Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="leads" id="perm_leads" <%= user.customPermissions && user.customPermissions.includes('leads') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Leads Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="blog" id="perm_blog" <%= user.customPermissions && user.customPermissions.includes('blog') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Resources & Publications</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="subscribers" id="perm_subscribers" <%= user.customPermissions && user.customPermissions.includes('subscribers') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Subscribed Users</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="events" id="perm_events" <%= user.customPermissions && user.customPermissions.includes('events') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Events Management</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="forms" id="perm_forms" <%= user.customPermissions && user.customPermissions.includes('forms') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Forms & Enquiries</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="reports" id="perm_reports" <%= user.customPermissions && user.customPermissions.includes('reports') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Reports & Analytics</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="permission-card">
+                                        <label class="permission-checkbox">
+                                            <input type="checkbox" name="customPermissions[]" value="settings" id="perm_settings" <%= user.customPermissions && user.customPermissions.includes('settings') ? 'checked' : '' %>>
+                                            <span class="checkmark"></span>
+                                            <span class="permission-label">Site Settings</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-20">
                         <div class="user-info-box">
                         <h6 class="text-md text-primary-light mb-16">User Information</h6>
@@ -138,7 +293,70 @@
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
+<style>
+    .permission-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #f9fafb;
+        transition: all 0.2s ease;
+    }
+
+    .permission-card:hover {
+        border-color: #d1d5db;
+        background: #f3f4f6;
+    }
+
+    .permission-checkbox {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .permission-checkbox input[type="checkbox"] {
+        margin-right: 8px;
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+
+    .permission-label {
+        font-weight: 500;
+        color: #374151;
+        user-select: none;
+    }
+
+    .permission-checkbox input[type="checkbox"]:checked + .checkmark + .permission-label {
+        color: #dc3545;
+    }
+
+    .permissions-container .row {
+        margin: 0;
+    }
+
+    .permissions-container .col-md-6,
+    .permissions-container .col-lg-4 {
+        padding: 5px;
+    }
+</style>
+
 <script>
+// Select/Deselect all permissions
+function selectAllPermissions() {
+    const checkboxes = document.querySelectorAll('input[name="customPermissions[]"]');
+    checkboxes.forEach(cb => {
+        cb.checked = true;
+    });
+}
+
+function deselectAllPermissions() {
+    const checkboxes = document.querySelectorAll('input[name="customPermissions[]"]');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+}
+
 // Custom toast notification function
 function showToast(message, type = 'info') {
     // Remove any existing toasts first
@@ -193,13 +411,21 @@ async function updateUser() {
     const form = document.getElementById('editUserForm');
     const formData = new FormData(form);
 
+    // Collect custom permissions
+    const customPermissions = [];
+    const permissionCheckboxes = document.querySelectorAll('input[name="customPermissions[]"]:checked');
+    permissionCheckboxes.forEach(checkbox => {
+        customPermissions.push(checkbox.value);
+    });
+
     // Get form values
     const userData = {
         fullName: formData.get('fullName'),
         email: formData.get('email'),
         phone: formData.get('phone'),
         role: formData.get('role'),
-        isActive: formData.get('isActive') === 'true'
+        isActive: formData.get('isActive') === 'true',
+        customPermissions: customPermissions
     };
 
     const userId = formData.get('userId');

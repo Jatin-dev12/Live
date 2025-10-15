@@ -184,7 +184,7 @@ router.put('/:id',
                 });
             }
             
-            const { fullName, email, phone, role, department, designation, description, isActive } = req.body;
+            const { fullName, email, phone, role, department, designation, description, isActive, customPermissions } = req.body;
             
             // Check role assignment permissions
             if (role && role !== user.role.toString()) {
@@ -208,6 +208,7 @@ router.put('/:id',
             if (designation !== undefined) user.designation = designation;
             if (description !== undefined) user.description = description;
             if (isActive !== undefined) user.isActive = isActive;
+            if (customPermissions !== undefined) user.customPermissions = customPermissions;
             
             await user.save();
             

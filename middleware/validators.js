@@ -26,20 +26,20 @@ exports.validateCreateRole = [
         .notEmpty().withMessage('Role name is required')
         .isLength({ min: 3, max: 50 }).withMessage('Role name must be between 3 and 50 characters')
         .custom(async (value) => {
-            const existingRole = await Role.findOne({ 
-                name: { $regex: new RegExp(`^${value}$`, 'i') } 
+            const existingRole = await Role.findOne({
+                name: { $regex: new RegExp(`^${value}$`, 'i') }
             });
             if (existingRole) {
                 throw new Error('Role name already exists');
             }
             return true;
         }),
-    
+
     body('description')
         .optional()
         .trim()
         .isLength({ max: 500 }).withMessage('Description cannot exceed 500 characters'),
-    
+
     body('permissions')
         .optional()
         .isArray().withMessage('Permissions must be an array')
@@ -52,7 +52,7 @@ exports.validateCreateRole = [
             }
             return true;
         }),
-    
+
     body('level')
         .optional()
         .isInt({ min: 1, max: 5 }).withMessage('Level must be between 1 and 5')
@@ -61,13 +61,13 @@ exports.validateCreateRole = [
 exports.validateUpdateRole = [
     param('id')
         .isMongoId().withMessage('Invalid role ID'),
-    
+
     body('name')
         .optional()
         .trim()
         .isLength({ min: 3, max: 50 }).withMessage('Role name must be between 3 and 50 characters')
         .custom(async (value, { req }) => {
-            const existingRole = await Role.findOne({ 
+            const existingRole = await Role.findOne({
                 name: { $regex: new RegExp(`^${value}$`, 'i') },
                 _id: { $ne: req.params.id }
             });
@@ -76,12 +76,12 @@ exports.validateUpdateRole = [
             }
             return true;
         }),
-    
+
     body('description')
         .optional()
         .trim()
         .isLength({ max: 500 }).withMessage('Description cannot exceed 500 characters'),
-    
+
     body('permissions')
         .optional()
         .isArray().withMessage('Permissions must be an array')
@@ -94,11 +94,11 @@ exports.validateUpdateRole = [
             }
             return true;
         }),
-    
+
     body('level')
         .optional()
         .isInt({ min: 1, max: 5 }).withMessage('Level must be between 1 and 5'),
-    
+
     body('isActive')
         .optional()
         .isBoolean().withMessage('isActive must be a boolean')
@@ -110,12 +110,11 @@ exports.validateCreateUser = [
         .trim()
         .notEmpty().withMessage('Full name is required')
         .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
-    
+
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Please enter a valid email address')
-        .normalizeEmail()
         .custom(async (value) => {
             const existingUser = await User.findOne({ email: value.toLowerCase() });
             if (existingUser) {
@@ -123,7 +122,7 @@ exports.validateCreateUser = [
             }
             return true;
         }),
-    
+
     body('password')
         .notEmpty().withMessage('Password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
@@ -131,19 +130,19 @@ exports.validateCreateUser = [
             console.log('=== PASSWORD VALIDATION ===');
             console.log('Password value:', value);
             console.log('Password type:', typeof value);
-            
+
             const hasLowercase = /[a-z]/.test(value);
             const hasUppercase = /[A-Z]/.test(value);
             const hasNumber = /\d/.test(value);
             const hasSpecialChar = /[@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]/.test(value);
-            
+
             console.log('Validation results:', {
                 hasLowercase,
                 hasUppercase,
                 hasNumber,
                 hasSpecialChar
             });
-            
+
             if (!hasLowercase) {
                 console.log('FAILED: No lowercase');
                 throw new Error('Password must contain at least one lowercase letter');
@@ -160,17 +159,17 @@ exports.validateCreateUser = [
                 console.log('FAILED: No special char');
                 throw new Error('Password must contain at least one special character');
             }
-            
+
             // Allow alphanumeric and common special characters
             if (!/^[A-Za-z\d@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]+$/.test(value)) {
                 console.log('FAILED: Invalid characters');
                 throw new Error('Password contains invalid characters');
             }
-            
+
             console.log('Password validation PASSED');
             return true;
         }),
-    
+
     body('confirmPassword')
         .notEmpty().withMessage('Please confirm your password')
         .custom((value, { req }) => {
@@ -179,12 +178,12 @@ exports.validateCreateUser = [
             }
             return true;
         }),
-    
+
     body('phone')
         .optional()
         .trim()
         .matches(/^[\d\s\+\-\(\)]+$/).withMessage('Please enter a valid phone number'),
-    
+
     body('role')
         .notEmpty().withMessage('Role is required')
         .isMongoId().withMessage('Invalid role ID')
@@ -198,18 +197,18 @@ exports.validateCreateUser = [
             }
             return true;
         }),
-    
+
     body('department')
         .optional()
         .trim()
         .isIn(['Sales', 'Marketing', 'IT', 'HR', 'Finance', 'Operations', 'Support', 'Management'])
         .withMessage('Invalid department'),
-    
+
     body('designation')
         .optional()
         .trim()
         .isLength({ max: 100 }).withMessage('Designation cannot exceed 100 characters'),
-    
+
     body('description')
         .optional()
         .trim()
@@ -219,19 +218,18 @@ exports.validateCreateUser = [
 exports.validateUpdateUser = [
     param('id')
         .isMongoId().withMessage('Invalid user ID'),
-    
+
     body('fullName')
         .optional()
         .trim()
         .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
-    
+
     body('email')
         .optional()
         .trim()
         .isEmail().withMessage('Please enter a valid email address')
-        .normalizeEmail()
         .custom(async (value, { req }) => {
-            const existingUser = await User.findOne({ 
+            const existingUser = await User.findOne({
                 email: value.toLowerCase(),
                 _id: { $ne: req.params.id }
             });
@@ -240,12 +238,12 @@ exports.validateUpdateUser = [
             }
             return true;
         }),
-    
+
     body('phone')
         .optional()
         .trim()
         .matches(/^[\d\s\+\-\(\)]+$/).withMessage('Please enter a valid phone number'),
-    
+
     body('role')
         .optional()
         .isMongoId().withMessage('Invalid role ID')
@@ -259,23 +257,23 @@ exports.validateUpdateUser = [
             }
             return true;
         }),
-    
+
     body('department')
         .optional()
         .trim()
         .isIn(['Sales', 'Marketing', 'IT', 'HR', 'Finance', 'Operations', 'Support', 'Management'])
         .withMessage('Invalid department'),
-    
+
     body('designation')
         .optional()
         .trim()
         .isLength({ max: 100 }).withMessage('Designation cannot exceed 100 characters'),
-    
+
     body('description')
         .optional()
         .trim()
         .isLength({ max: 1000 }).withMessage('Description cannot exceed 1000 characters'),
-    
+
     body('isActive')
         .optional()
         .isBoolean().withMessage('isActive must be a boolean')
@@ -284,7 +282,7 @@ exports.validateUpdateUser = [
 exports.validateChangePassword = [
     body('currentPassword')
         .notEmpty().withMessage('Current password is required'),
-    
+
     body('newPassword')
         .notEmpty().withMessage('New password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
@@ -293,7 +291,7 @@ exports.validateChangePassword = [
             const hasUppercase = /[A-Z]/.test(value);
             const hasNumber = /\d/.test(value);
             const hasSpecialChar = /[@$!%*?&#^()_+=\-[\]{}|;:'",.<>\/\\`~]/.test(value);
-            
+
             if (!hasLowercase) {
                 throw new Error('Password must contain at least one lowercase letter');
             }
@@ -306,15 +304,15 @@ exports.validateChangePassword = [
             if (!hasSpecialChar) {
                 throw new Error('Password must contain at least one special character (@$!%*?&)');
             }
-            
+
             // Only allow alphanumeric and the specified special characters
             if (!/^[A-Za-z\d@$!%*?&]+$/.test(value)) {
                 throw new Error('Password can only contain letters, numbers, and special characters (@$!%*?&)');
             }
-            
+
             return true;
         }),
-    
+
     body('confirmPassword')
         .notEmpty().withMessage('Please confirm your new password')
         .custom((value, { req }) => {
@@ -332,25 +330,25 @@ exports.validateCreatePermission = [
         .notEmpty().withMessage('Permission name is required')
         .isLength({ min: 3, max: 50 }).withMessage('Permission name must be between 3 and 50 characters')
         .custom(async (value) => {
-            const existingPermission = await Permission.findOne({ 
-                name: { $regex: new RegExp(`^${value}$`, 'i') } 
+            const existingPermission = await Permission.findOne({
+                name: { $regex: new RegExp(`^${value}$`, 'i') }
             });
             if (existingPermission) {
                 throw new Error('Permission name already exists');
             }
             return true;
         }),
-    
+
     body('description')
         .optional()
         .trim()
         .isLength({ max: 200 }).withMessage('Description cannot exceed 200 characters'),
-    
+
     body('module')
         .notEmpty().withMessage('Module is required')
         .isIn(['users', 'roles', 'dashboard', 'blog', 'leads', 'invoice', 'settings', 'cms', 'media', 'seo', 'ads', 'reports'])
         .withMessage('Invalid module'),
-    
+
     body('action')
         .notEmpty().withMessage('Action is required')
         .isIn(['create', 'read', 'update', 'delete', 'manage'])
@@ -362,9 +360,8 @@ exports.validateLogin = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email address')
-        .normalizeEmail(),
-    
+        .isEmail().withMessage('Please enter a valid email address'),
+
     body('password')
         .notEmpty().withMessage('Password is required')
 ];

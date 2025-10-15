@@ -32,24 +32,24 @@ router.get("/", isAuthenticated, async (req, res) => {
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
     const Page = require('../models/Page');
-    
+
     // Get counts from database
     const totalLeads = await Lead.countDocuments();
     const totalContactQueries = await ContactQuery.countDocuments();
     const totalPages = await Page.countDocuments();
-    
-    res.render("index", { 
-      title: "Dashboard", 
-      subTitle: "AI",
+
+    res.render("index", {
+      title: "Dashboard",
+      subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
       totalPages
     });
   } catch (error) {
     console.error('Dashboard error:', error);
-    res.render("index", { 
-      title: "Dashboard", 
-      subTitle: "AI",
+    res.render("index", {
+      title: "Dashboard",
+      subTitle: "ACRM",
       totalLeads: 0,
       totalContactQueries: 0,
       totalPages: 0
@@ -62,24 +62,24 @@ router.get("/index", isAuthenticated, async (req, res) => {
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
     const Page = require('../models/Page');
-    
+
     // Get counts from database
     const totalLeads = await Lead.countDocuments();
     const totalContactQueries = await ContactQuery.countDocuments();
     const totalPages = await Page.countDocuments();
-    
-    res.render("index", { 
-      title: "Dashboard", 
-      subTitle: "AI",
+
+    res.render("index", {
+      title: "Dashboard",
+      subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
       totalPages
     });
   } catch (error) {
     console.error('Dashboard error:', error);
-    res.render("index", { 
-      title: "Dashboard", 
-      subTitle: "AI",
+    res.render("index", {
+      title: "Dashboard",
+      subTitle: "ACRM",
       totalLeads: 0,
       totalContactQueries: 0,
       totalPages: 0
@@ -186,7 +186,7 @@ router.get('/:slug', isAuthenticated, async (req, res, next) => {
   try {
     const Page = require('../models/Page');
     const Content = require('../models/Content');
-    
+
     // Try to find a page with this slug or path
     const page = await Page.findOne({
       $or: [
@@ -195,17 +195,17 @@ router.get('/:slug', isAuthenticated, async (req, res, next) => {
       ],
       status: 'active'
     });
-    
+
     if (!page) {
       return next(); // Let it fall through to 404
     }
-    
+
     // Get all active content for this page
     const contents = await Content.find({
       page: page._id,
       status: 'active'
     }).sort({ order: 1, createdAt: -1 });
-    
+
     // Render the page with its content
     res.render('dynamic-page/dynamicPage', {
       title: page.metaTitle || page.name,
