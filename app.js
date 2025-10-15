@@ -68,6 +68,8 @@ const roleApi = require('./routes/api/roleApi');
 const permissionApi = require('./routes/api/permissionApi');
 const pageApi = require('./routes/api/pageApi');
 const contentApi = require('./routes/api/contentApi');
+const seoApi = require('./routes/api/seoApi');
+const uploadApi = require('./routes/api/uploadApi');
 
 // Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
 const pageRouter = require('./routes/routes');
@@ -79,6 +81,8 @@ app.use('/api/roles', roleApi);
 app.use('/api/permissions', permissionApi);
 app.use('/api/pages', pageApi);
 app.use('/api/content', contentApi);
+app.use('/api', seoApi);
+app.use('/api', uploadApi);
 
 // Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function

@@ -2,7 +2,7 @@
   "name": "wowdash",
   "version": "1.0.0",
   "description": "WowDash - Symfony - Multipurpose Admin Dashboard Template",
-  "created":"December 2024",
+  "created": "December 2024",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -28,6 +28,7 @@
     "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
     "mongoose": "^8.1.0",
+    "multer": "^2.0.2",
     "path": "^0.12.7"
   }
 }

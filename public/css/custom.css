@@ -129,7 +129,10 @@ main.dashboard-main {
 }
 
 
-
+.sign-form-logo h4 {
+    margin-bottom: 25px !important;
+    margin-top: 15px;
+}
 
 /* main site  */
 .sign-form {

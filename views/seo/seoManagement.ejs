@@ -1,35 +1,15 @@
 <div class="card h-100 p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-            </select>
             <form class="navbar-search">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search">
+                <input type="text" id="seoSearch" class="bg-base h-40-px w-auto" name="search" placeholder="Search by page name or meta title">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-            </select>
         </div>
-        <% if (typeof canCreate === 'function' && canCreate('seo')) { %>
         <a href="/seo/add-seo-content" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add SEO
+            Add Seo Content
         </a>
-        <% } %>
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
@@ -45,123 +25,40 @@
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Home</td>
-                        <td  class="title-table">Home - Meta Title on Home Page</td>
-                        <td>https://acrm.org/home</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button data-bs-toggle="modal" data-bs-target="#editseo" type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>About</td>
-                        <td  class="title-table">About - Meta Title on About Page</td>
-                        <td>https://acrm.org/about</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button data-bs-toggle="modal" data-bs-target="#editseo" type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>Contact</td>
-                        <td  class="title-table">Contact - Meta Title on Contact Page</td>
-                        <td>https://acrm.org/contact</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button data-bs-toggle="modal" data-bs-target="#editseo" type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Services</td>
-                        <td  class="title-table">Services - Meta Title on Services Page</td>
-                        <td>https://acrm.org/services</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="text-center">
-                            <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button data-bs-toggle="modal" data-bs-target="#editseo" type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                       <td>Blog</td>
-                        <td  class="title-table">Blog - Meta Title on Blog Page</td>
-                        <td>https://acrm.org/blog</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="text-center">
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <!-- <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button> -->
-                                <button data-bs-toggle="modal" data-bs-target="#editseo" type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-
+                <tbody id="seoTableBody">
+                    <% if (seoRecords && seoRecords.length > 0) { %>
+                        <% seoRecords.forEach(function(seo) { %>
+                        <tr data-seo-id="<%= seo._id %>">
+                            <td><%= seo.page ? seo.page.name : 'N/A' %></td>
+                            <td class="title-table"><%= seo.metaTitle %></td>
+                            <td><%= seo.canonicalUrl || (seo.page ? seo.page.path : 'N/A') %></td>
+                            <td class="desc-table"><%= seo.metaDescription %></td>
+                            <td class="text-center">
+                                <% if (seo.status === 'active') { %>
+                                    <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
+                                <% } else { %>
+                                    <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
+                                <% } %>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex align-items-center gap-10 justify-content-center">
+                                    <a href="/seo/edit-seo-content/<%= seo._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                        <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                                    </a>
+                                    <button type="button" class="delete-seo-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-seo-id="<%= seo._id %>">
+                                        <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <p class="text-secondary-light mb-0">No SEO records found. Click "Add Seo Content" to create one.</p>
+                            </td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
@@ -199,60 +96,144 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="editseo" tabindex="-1" aria-labelledby="editseoLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editseoLabel">Edit SEO Content</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-       <div class="card-body">
-                <div class="row gy-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Page Name</label>
-                        <select class="form-select">
-                                <option value="0">Home</option>
-                                <option value="1">About</option>
-                                <option value="2">Contact</option>
-                                <option value="3">Blog</option>
-                            </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Meta Title</label>
-                        <input type="text" name="meta_title" class="form-control" placeholder="Enter Meta Title">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Alt Tags</label>
-                        <input type="email" name="alt_tags" class="form-control" placeholder="Enter Alt Tags">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Canonical Tags</label>
-                        <input type="email" name="canonical_tags" class="form-control" placeholder="Enter Canonical Tags">
-                    </div>
-                   <div class="col-md-12">
-                        <label class="form-label">Meta Description</label>
-                        <textarea name="meta_description" class="form-control" placeholder="Enter a description..."></textarea>
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary-600">Submit</button>
-                    </div>
-                </div>
-            </div>
-      </div>
-      <!-- <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div> -->
-    </div>
-  </div>
-</div>
 <% script = `
+<!-- SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
 <script>
-    $('.remove-item-btn').on('click', function () {
-        $(this).closest('tr').addClass('d-none')
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(toast => toast.remove());
+
+        const toast = document.createElement('div');
+        const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+        toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+        toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+        if (type === 'success') {
+            toast.style.borderColor = '#28a745';
+            toast.style.backgroundColor = '#d4edda';
+            toast.style.color = '#155724';
+        } else if (type === 'error') {
+            toast.style.borderColor = '#dc3545';
+            toast.style.backgroundColor = '#f8d7da';
+            toast.style.color = '#721c24';
+        }
+
+        const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        toast.innerHTML = '<div class="d-flex align-items-center">' +
+            '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+            '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+            '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+            '</div>';
+
+        document.body.appendChild(toast);
+
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'transform 0.3s ease-out';
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 10);
+
+        const duration = type === 'success' ? 4000 : 6000;
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, duration);
+    }
+
+    // Search functionality
+    $('#seoSearch').on('keyup', function() {
+        const searchValue = $(this).val().toLowerCase();
+        
+        $('#seoTableBody tr').each(function() {
+            const pageName = $(this).find('td:eq(0)').text().toLowerCase();
+            const metaTitle = $(this).find('td:eq(1)').text().toLowerCase();
+            
+            if (pageName.includes(searchValue) || metaTitle.includes(searchValue)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        
+        // Show "no results" message if all rows are hidden
+        const visibleRows = $('#seoTableBody tr:visible').length;
+        if (visibleRows === 0) {
+            if ($('#seoTableBody .no-results-row').length === 0) {
+                $('#seoTableBody').append(\`
+                    <tr class="no-results-row">
+                        <td colspan="6" class="text-center py-5">
+                            <p class="text-secondary-light mb-0">No SEO records found matching your search.</p>
+                        </td>
+                    </tr>
+                \`);
+            }
+        } else {
+            $('#seoTableBody .no-results-row').remove();
+        }
+    });
+
+    // Delete SEO record with SweetAlert
+    $('.delete-seo-btn').on('click', async function () {
+        const seoId = $(this).data('seo-id');
+        const row = $(this).closest('tr');
+        const pageName = row.find('td:first').text();
+
+        // Show SweetAlert confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to delete the SEO record for "' + pageName + '"?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(\`/api/seo/\${seoId}\`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const apiResult = await response.json();
+
+                    if (apiResult.success) {
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+
+                            // Check if table is empty
+                            if ($('#seoTableBody tr').length === 0) {
+                                $('#seoTableBody').html(\`
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">
+                                            <p class="text-secondary-light mb-0">No SEO records found. Click "Add SEO" to create one.</p>
+                                        </td>
+                                    </tr>
+                                \`);
+                            }
+                        });
+
+                        // Show success toast
+                        showToast('SEO record deleted successfully!', 'success');
+                    } else {
+                        showToast(apiResult.message || 'Failed to delete SEO record', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting SEO record:', error);
+                    showToast('An error occurred while deleting the SEO record', 'error');
+                }
+            }
+        });
     });
 </script>
 ` %>

@@ -1,44 +1,340 @@
 <div class="row gy-4">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
-            <!-- <div class="card-header">
-                <h5 class="card-title mb-0">SEO Management Form</h5>
-            </div> -->
-            <div class="card-body">
-                <div class="row gy-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Page Name</label>
-                        <select class="form-select">
-                                <option value="0">Home</option>
-                                <option value="1">About</option>
-                                <option value="2">Contact</option>
-                                <option value="3">Blog</option>
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="card-title mb-0">Edit SEO Content</h5>
+            </div>
+            <div class="card-body p-24">
+                <form id="editSeoForm">
+                    <input type="hidden" id="seoId" value="<%= seo._id %>">
+                    <div class="row gy-3">
+                        <!-- Page Selection -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Select Page <span class="text-danger">*</span></label>
+                            <select class="form-select" id="pageId" name="page" required>
+                                <% if (pages && pages.length > 0) { %>
+                                    <% pages.forEach(function(page) { %>
+                                        <option value="<%= page._id %>" <%= seo.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %></option>
+                                    <% }); %>
+                                <% } %>
                             </select>
+                            <small class="text-muted">Select the page for which you want to add SEO</small>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="active" <%= seo.status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="inactive" <%= seo.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                        </div>
+
+                        <!-- Meta Title -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Meta Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="metaTitle" name="metaTitle" value="<%= seo.metaTitle %>" placeholder="Enter Meta Title (Max 60 characters)" maxlength="60" required>
+                            <small class="text-muted">Recommended: 50-60 characters. <span id="metaTitleCount"><%= seo.metaTitle.length %></span>/60</small>
+                        </div>
+
+                        <!-- Meta Description -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Meta Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="metaDescription" name="metaDescription" rows="3" placeholder="Enter Meta Description (Max 160 characters)" maxlength="160" required><%= seo.metaDescription %></textarea>
+                            <small class="text-muted">Recommended: 150-160 characters. <span id="metaDescCount"><%= seo.metaDescription.length %></span>/160</small>
+                        </div>
+
+                        <!-- Meta Keywords -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Meta Keywords</label>
+                            <input type="text" class="form-control" id="metaKeywords" name="metaKeywords" value="<%= seo.metaKeywords || '' %>" placeholder="Enter keywords separated by commas">
+                            <small class="text-muted">Separate keywords with commas (e.g., healthcare, rehabilitation, therapy)</small>
+                        </div>
+
+                        <!-- Canonical URL -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Canonical URL</label>
+                            <input type="url" class="form-control" id="canonicalUrl" name="canonicalUrl" value="<%= seo.canonicalUrl || '' %>" placeholder="https://example.com/page">
+                            <small class="text-muted">Optional - Full URL of the canonical version of this page</small>
+                        </div>
+
+                        <!-- Robots -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Robots Meta Tag</label>
+                            <select class="form-select" id="robots" name="robots">
+                                <option value="index, follow" <%= seo.robots === 'index, follow' ? 'selected' : '' %>>Index, Follow (Default)</option>
+                                <option value="noindex, follow" <%= seo.robots === 'noindex, follow' ? 'selected' : '' %>>No Index, Follow</option>
+                                <option value="index, nofollow" <%= seo.robots === 'index, nofollow' ? 'selected' : '' %>>Index, No Follow</option>
+                                <option value="noindex, nofollow" <%= seo.robots === 'noindex, nofollow' ? 'selected' : '' %>>No Index, No Follow</option>
+                            </select>
+                            <small class="text-muted">Optional - Controls search engine indexing</small>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="col-md-12">
+                            <hr class="my-3">
+                            <h6 class="mb-3">Open Graph (Social Media)</h6>
+                        </div>
+
+                        <!-- OG Title -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">OG Title</label>
+                            <input type="text" class="form-control" id="ogTitle" name="ogTitle" value="<%= seo.ogTitle || '' %>" placeholder="Open Graph Title (Max 60 characters)" maxlength="60">
+                            <small class="text-muted">Leave empty to use Meta Title</small>
+                        </div>
+
+                        <!-- OG Description -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">OG Description</label>
+                            <input type="text" class="form-control" id="ogDescription" name="ogDescription" value="<%= seo.ogDescription || '' %>" placeholder="Open Graph Description (Max 160 characters)" maxlength="160">
+                            <small class="text-muted">Leave empty to use Meta Description</small>
+                        </div>
+
+                        <!-- OG Image Upload -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">OG Image</label>
+                            <div class="upload-image-wrapper d-flex align-items-center gap-3">
+                                <div class="uploaded-img position-relative h-120-px w-120-px border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                    <% 
+                                        const hasImage = seo.ogImagePath || seo.ogImage;
+                                        const imageSource = seo.ogImagePath || seo.ogImage || '';
+                                    %>
+                                    <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 <%= hasImage ? '' : 'd-none' %>">
+                                        <iconify-icon icon="radix-icons:cross-2" class="text-xl text-danger-600"></iconify-icon>
+                                    </button>
+                                    <img id="ogImagePreview" class="w-100 h-100 object-fit-cover" src="<%= imageSource %>" alt="OG Image" style="<%= hasImage ? '' : 'display: none;' %>">
+                                    <label for="ogImageUpload" class="upload-file h-120-px w-100 d-flex align-items-center justify-content-center" style="cursor: pointer; <%= hasImage ? 'display: none;' : '' %>">
+                                        <span class="d-flex align-items-center justify-content-center text-secondary-light border border-dashed border-neutral-300 w-100 h-100 radius-8">
+                                            <iconify-icon icon="solar:camera-outline" class="text-xl"></iconify-icon>
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input type="file" id="ogImageUpload" name="ogImageUpload" accept="image/*" class="d-none">
+                                    <input type="hidden" id="ogImagePath" name="ogImagePath" value="<%= seo.ogImagePath || '' %>">
+                                    <p class="text-sm mb-0">Upload OG Image</p>
+                                    <small class="text-muted">Recommended size: 1200x630px (JPG, PNG, max 2MB)</small>
+                                    <% if (hasImage) { %>
+                                        <p class="text-xs text-success mt-1 mb-0">✓ Current image loaded</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OG Image URL (Alternative) -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Or Enter Image URL</label>
+                            <input type="url" class="form-control" id="ogImage" name="ogImage" value="<%= seo.ogImage || '' %>" placeholder="https://example.com/image.jpg">
+                            <small class="text-muted">If you prefer to use an external image URL instead of uploading</small>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="col-12 mt-4">
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary px-4" id="submitBtn">
+                                    <span id="btnText">Update SEO</span>
+                                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                </button>
+                                <a href="/seo/seo-management" class="btn btn-secondary px-4">Cancel</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Meta Title</label>
-                        <input type="text" name="meta_title" class="form-control" placeholder="Enter Meta Title">
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label">Alt Tags</label>
-                        <input type="email" name="alt_tags" class="form-control" placeholder="Enter Alt Tags">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Canonical Tags</label>
-                        <input type="email" name="canonical_tags" class="form-control" placeholder="Enter Canonical Tags">
-                    </div>
-                   <div class="col-md-12">
-                        <label class="form-label">Meta Description</label>
-                        <textarea name="meta_description" class="form-control" placeholder="Enter a description..."></textarea>
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary-600">Submit</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
-    
-    
 </div>
+
+<% script = `
+<script>
+    // Character counters
+    $('#metaTitle').on('input', function() {
+        $('#metaTitleCount').text($(this).val().length);
+    });
+
+    $('#metaDescription').on('input', function() {
+        $('#metaDescCount').text($(this).val().length);
+    });
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(toast => toast.remove());
+        
+        const toast = document.createElement('div');
+        const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+        toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+        toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+        
+        if (type === 'success') {
+            toast.style.borderColor = '#28a745';
+            toast.style.backgroundColor = '#d4edda';
+            toast.style.color = '#155724';
+        } else if (type === 'error') {
+            toast.style.borderColor = '#dc3545';
+            toast.style.backgroundColor = '#f8d7da';
+            toast.style.color = '#721c24';
+        }
+        
+        const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        toast.innerHTML = '<div class="d-flex align-items-center">' +
+            '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+            '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+            '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+            '</div>';
+        
+        document.body.appendChild(toast);
+        
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'transform 0.3s ease-out';
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 10);
+        
+        const duration = type === 'success' ? 4000 : 6000;
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, duration);
+    }
+
+    // Image upload preview
+    $('#ogImageUpload').on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size must be less than 2MB', 'error');
+                $(this).val('');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'error');
+                $(this).val('');
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#ogImagePreview').attr('src', e.target.result).show();
+                $('.upload-file').hide();
+                $('.uploaded-img__remove').removeClass('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Remove uploaded image
+    $('.uploaded-img__remove').on('click', function() {
+        $('#ogImageUpload').val('');
+        $('#ogImagePath').val('');
+        $('#ogImagePreview').hide();
+        $('.upload-file').show();
+        $(this).addClass('d-none');
+    });
+
+    // Form submission
+    $('#editSeoForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const seoId = $('#seoId').val();
+        const submitBtn = $('#submitBtn');
+        const btnText = $('#btnText');
+        const btnSpinner = $('#btnSpinner');
+
+        // Handle image upload first if file is selected
+        let uploadedImagePath = $('#ogImagePath').val(); // Keep existing path
+        const imageFile = $('#ogImageUpload')[0].files[0];
+        
+        if (imageFile) {
+            const imageFormData = new FormData();
+            imageFormData.append('image', imageFile);
+            
+            try {
+                const uploadResponse = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: imageFormData
+                });
+                
+                const uploadResult = await uploadResponse.json();
+                if (uploadResult.success) {
+                    uploadedImagePath = uploadResult.data.path;
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+
+        // Get form data
+        const formData = {
+            page: $('#pageId').val(),
+            metaTitle: $('#metaTitle').val().trim(),
+            metaDescription: $('#metaDescription').val().trim(),
+            metaKeywords: $('#metaKeywords').val().trim(),
+            canonicalUrl: $('#canonicalUrl').val().trim(),
+            ogTitle: $('#ogTitle').val().trim(),
+            ogDescription: $('#ogDescription').val().trim(),
+            ogImage: $('#ogImage').val().trim(),
+            ogImagePath: uploadedImagePath,
+            robots: $('#robots').val(),
+            status: $('#status').val()
+        };
+
+        // Validation
+        if (!formData.page) {
+            showToast('Please select a page', 'error');
+            return;
+        }
+
+        if (!formData.metaTitle) {
+            showToast('Please enter a meta title', 'error');
+            return;
+        }
+
+        if (!formData.metaDescription) {
+            showToast('Please enter a meta description', 'error');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.prop('disabled', true);
+        btnText.addClass('d-none');
+        btnSpinner.removeClass('d-none');
+
+        try {
+            const response = await fetch(\`/api/seo/\${seoId}\`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('SEO record updated successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/seo/seo-management';
+                }, 1500);
+            } else {
+                showToast(result.message || 'Failed to update SEO record', 'error');
+                submitBtn.prop('disabled', false);
+                btnText.removeClass('d-none');
+                btnSpinner.addClass('d-none');
+            }
+        } catch (error) {
+            console.error('Error updating SEO record:', error);
+            showToast('An error occurred while updating the SEO record', 'error');
+            submitBtn.prop('disabled', false);
+            btnText.removeClass('d-none');
+            btnSpinner.addClass('d-none');
+        }
+    });
+</script>
+` %>

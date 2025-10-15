@@ -7,7 +7,7 @@
                                 <img src="/images/logo.png" alt="">
                             </a>
                             <h4 class="mb-12">Sign In to your Account</h4>
-                            <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p>
+                            <!-- <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p> -->
                         </div>
                         <form id="loginForm" autocomplete="off">
                             <div id="errorMessage" class="alert alert-danger d-none mb-16" role="alert"></div>
@@ -22,7 +22,7 @@
                                     <span class="icon top-50 translate-middle-y">
                                         <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
                                     </span>
-                                    <input type="password" class="form-control h-56-px bg-neutral-50 radius-12" id="your-password" name="password" placeholder="Password" required autocomplete="new-password" data-form-type="other">
+                                    <input type="password" class="form-control h-56-px bg-neutral-50 radius-12" id="your-password" name="password" placeholder="Password" required autocomplete="new-password" data-form-type="other" data-lpignore="true" data-form-type="other" autocorrect="off" autocapitalize="off" spellcheck="false">
                                 </div>
                                 <span class="toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light" data-toggle="#your-password"></span>
                             </div>
@@ -88,30 +88,30 @@
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('your-password');
     const rememberCheckbox = document.getElementById('remeber');
-    
+
     // Load saved credentials ONLY if "Remember Me" was checked
     window.addEventListener('DOMContentLoaded', function() {
         const rememberMe = localStorage.getItem('rememberMe') === 'true';
-        
+
         // Set readonly initially to prevent browser autofill
         emailInput.setAttribute('readonly', 'readonly');
         passwordInput.setAttribute('readonly', 'readonly');
-        
+
         // Only auto-fill if user explicitly checked "Remember Me" before
         if (rememberMe) {
             const savedEmail = localStorage.getItem('rememberedEmail');
             const savedPassword = localStorage.getItem('rememberedPassword');
-            
+
             if (savedEmail && savedPassword) {
                 // Remove readonly temporarily to set values
                 setTimeout(() => {
                     emailInput.removeAttribute('readonly');
                     passwordInput.removeAttribute('readonly');
-                    
+
                     emailInput.value = savedEmail;
                     passwordInput.value = savedPassword;
                     rememberCheckbox.checked = true;
-                    
+
                     // Set readonly back
                     setTimeout(() => {
                         emailInput.setAttribute('readonly', 'readonly');
@@ -122,12 +122,12 @@
         }
         // If rememberMe is false or not set, fields remain empty (no autofill)
     });
-    
+
     // Remove readonly on focus
     emailInput.addEventListener('focus', function() {
         this.removeAttribute('readonly');
     });
-    
+
     passwordInput.addEventListener('focus', function() {
         this.removeAttribute('readonly');
     });
@@ -156,13 +156,13 @@
         // Remove any existing toasts first
         const existingToasts = document.querySelectorAll('.custom-toast');
         existingToasts.forEach(toast => toast.remove());
-        
+
         // Create toast element
         const toast = document.createElement('div');
         const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
         toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
         toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
-        
+
         // Set border color based on type
         if (type === 'success') {
             toast.style.borderColor = '#28a745';
@@ -173,23 +173,23 @@
             toast.style.backgroundColor = '#f8d7da';
             toast.style.color = '#721c24';
         }
-        
+
         const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
         toast.innerHTML = '<div class="d-flex align-items-center">' +
             '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
             '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
             '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
             '</div>';
-        
+
         document.body.appendChild(toast);
-        
+
         // Add entrance animation
         toast.style.transform = 'translateX(100%)';
         toast.style.transition = 'transform 0.3s ease-out';
         setTimeout(() => {
             toast.style.transform = 'translateX(0)';
         }, 10);
-        
+
         // Auto remove after duration based on type
         const duration = type === 'success' ? 4000 : 6000;
         setTimeout(() => {
@@ -245,7 +245,7 @@
                     localStorage.removeItem('rememberedPassword');
                     localStorage.removeItem('rememberMe');
                 }
-                
+
                 // Redirect to dashboard or specified URL
                 window.location.href = result.data.redirectUrl || '/index';
             } else {

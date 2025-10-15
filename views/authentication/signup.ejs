@@ -12,7 +12,7 @@
                     <img src="/images/logo.png" alt="">
                 </a>
                 <h4 class="mb-12">Sign Up to your Account</h4>
-                <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p>
+                <!-- <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p> -->
             </div>
             <form action="#" id="signupForm" autocomplete="off">
                 <div class="icon-field mb-16">
@@ -129,17 +129,17 @@
         const fullNameInput = document.getElementById('fullName');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        
+
         // Set readonly initially to prevent autofill
         fullNameInput.setAttribute('readonly', 'readonly');
         emailInput.setAttribute('readonly', 'readonly');
         passwordInput.setAttribute('readonly', 'readonly');
-        
+
         // Remove readonly on focus
         $('#fullName, #email, #password').on('focus', function() {
             $(this).removeAttr('readonly');
         });
-        
+
         // Add input validation for all form fields
         $('#fullName, #email, #password').on('input', function() {
             validateInput(this);
@@ -151,39 +151,39 @@
     $(document).ready(function() {
         $('#signupForm').on('submit', async function(e) {
             e.preventDefault();
-            
+
             const submitBtn = $('#signupBtn');
             const btnText = $('#btnText');
             const btnSpinner = $('#btnSpinner');
-            
+
             // Get form data
             const formData = {
                 fullName: $('#fullName').val().trim(),
                 email: $('#email').val().trim(),
                 password: $('#password').val()
             };
-            
+
             // Basic validation
             if (!formData.fullName || !formData.email || !formData.password) {
                 showToast('Please fill in all fields', 'error');
                 return;
             }
-            
+
             if (formData.password.length < 8) {
                 showToast('Password must be at least 8 characters', 'error');
                 return;
             }
-            
+
             if (!$('#condition').is(':checked')) {
                 showToast('Please accept the Terms & Conditions', 'error');
                 return;
             }
-            
+
             // Disable button and show spinner
             submitBtn.prop('disabled', true);
             btnText.addClass('d-none');
             btnSpinner.removeClass('d-none');
-            
+
             try {
                 const response = await fetch('/api/auth/signup', {
                     method: 'POST',
@@ -192,16 +192,16 @@
                     },
                     body: JSON.stringify(formData)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok && result.success) {
                     // Show success toast
                     showToast('✅ ' + result.message, 'success');
-                    
+
                     // Clear form
                     $('#signupForm')[0].reset();
-                    
+
                     // Reset button state
                     submitBtn.prop('disabled', false);
                     btnText.removeClass('d-none');
@@ -227,13 +227,13 @@
         // Remove any existing toasts first
         const existingToasts = document.querySelectorAll('.custom-toast');
         existingToasts.forEach(toast => toast.remove());
-        
+
         // Create toast element
         const toast = document.createElement('div');
         const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
         toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
         toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
-        
+
         // Set border color based on type
         if (type === 'success') {
             toast.style.borderColor = '#28a745';
@@ -244,23 +244,23 @@
             toast.style.backgroundColor = '#f8d7da';
             toast.style.color = '#721c24';
         }
-        
+
         const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
         toast.innerHTML = '<div class="d-flex align-items-center">' +
             '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
             '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
             '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
             '</div>';
-        
+
         document.body.appendChild(toast);
-        
+
         // Add entrance animation
         toast.style.transform = 'translateX(100%)';
         toast.style.transition = 'transform 0.3s ease-out';
         setTimeout(() => {
             toast.style.transform = 'translateX(0)';
         }, 10);
-        
+
         // Auto remove after duration based on type
         const duration = type === 'success' ? 4000 : 6000;
         setTimeout(() => {
