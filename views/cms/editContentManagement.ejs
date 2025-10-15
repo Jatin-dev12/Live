@@ -14,7 +14,7 @@
                             <option value="">-- Select a Page --</option>
                             <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
                                 <% pages.forEach(page => { %>
-                                    <option value="<%= page._id %>" <%= content.page && content.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %> (<%= page.path %>)</option>
+                                    <option value="<%= page._id %>" <%= content.page && content.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %> </option>
                                 <% }) %>
                             <% } %>
                         </select>

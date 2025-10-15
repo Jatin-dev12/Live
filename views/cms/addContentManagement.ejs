@@ -12,7 +12,7 @@
                             <option value="">-- Select a Page --</option>
                             <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
                                 <% pages.forEach(page => { %>
-                                    <option value="<%= page._id %>"><%= page.name %> (<%= page.path %>)</option>
+                                    <option value="<%= page._id %>"><%= page.name %></option>
                                 <% }) %>
                             <% } %>
                         </select>
