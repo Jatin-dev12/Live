@@ -21,15 +21,6 @@
                             <small class="text-muted">Select the page for which you want to add SEO</small>
                         </div>
 
-                        <!-- Status -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="active" <%= seo.status === 'active' ? 'selected' : '' %>>Active</option>
-                                <option value="inactive" <%= seo.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
-                            </select>
-                        </div>
-
                         <!-- Meta Title -->
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Meta Title <span class="text-danger">*</span></label>
@@ -95,7 +86,7 @@
                             <label class="form-label fw-semibold">OG Image</label>
                             <div class="upload-image-wrapper d-flex align-items-center gap-3">
                                 <div class="uploaded-img position-relative h-120-px w-120-px border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
-                                    <% 
+                                    <%
                                         const hasImage = seo.ogImagePath || seo.ogImage;
                                         const imageSource = seo.ogImagePath || seo.ogImage || '';
                                     %>
@@ -132,7 +123,7 @@
                         <div class="col-12 mt-4">
                             <div class="d-flex gap-3">
                                 <button type="submit" class="btn btn-primary px-4" id="submitBtn">
-                                    <span id="btnText">Update SEO</span>
+                                    <span id="btnText">Update </span>
                                     <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
                                 </button>
                                 <a href="/seo/seo-management" class="btn btn-secondary px-4">Cancel</a>
@@ -160,12 +151,12 @@
     function showToast(message, type = 'info') {
         const existingToasts = document.querySelectorAll('.custom-toast');
         existingToasts.forEach(toast => toast.remove());
-        
+
         const toast = document.createElement('div');
         const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
         toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
         toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
-        
+
         if (type === 'success') {
             toast.style.borderColor = '#28a745';
             toast.style.backgroundColor = '#d4edda';
@@ -175,22 +166,22 @@
             toast.style.backgroundColor = '#f8d7da';
             toast.style.color = '#721c24';
         }
-        
+
         const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
         toast.innerHTML = '<div class="d-flex align-items-center">' +
             '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
             '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
             '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
             '</div>';
-        
+
         document.body.appendChild(toast);
-        
+
         toast.style.transform = 'translateX(100%)';
         toast.style.transition = 'transform 0.3s ease-out';
         setTimeout(() => {
             toast.style.transform = 'translateX(0)';
         }, 10);
-        
+
         const duration = type === 'success' ? 4000 : 6000;
         setTimeout(() => {
             if (toast.parentElement) {
@@ -250,17 +241,17 @@
         // Handle image upload first if file is selected
         let uploadedImagePath = $('#ogImagePath').val(); // Keep existing path
         const imageFile = $('#ogImageUpload')[0].files[0];
-        
+
         if (imageFile) {
             const imageFormData = new FormData();
             imageFormData.append('image', imageFile);
-            
+
             try {
                 const uploadResponse = await fetch('/api/upload/image', {
                     method: 'POST',
                     body: imageFormData
                 });
-                
+
                 const uploadResult = await uploadResponse.json();
                 if (uploadResult.success) {
                     uploadedImagePath = uploadResult.data.path;
@@ -281,8 +272,7 @@
             ogDescription: $('#ogDescription').val().trim(),
             ogImage: $('#ogImage').val().trim(),
             ogImagePath: uploadedImagePath,
-            robots: $('#robots').val(),
-            status: $('#status').val()
+            robots: $('#robots').val()
         };
 
         // Validation

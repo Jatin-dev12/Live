@@ -72,15 +72,15 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <button type="button" class="toggle-status-btn bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                        <button type="button" class="toggle-status-btn <%= user.isActive ? 'bg-warning-focus bg-hover-warning-200 text-warning-600' : 'bg-success-focus bg-hover-success-200 text-success-600' %> fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                                 data-user-id="<%= user._id %>"
                                                 data-user-name="<%= user.fullName %>"
                                                 data-current-status="<%= user.isActive %>"
                                                 title="<%= user.isActive ? 'Deactivate User' : 'Activate User' %>">
                                             <% if (user.isActive) { %>
-                                                <iconify-icon icon="mdi:eye-off" class="icon text-xl"></iconify-icon>
+                                                <iconify-icon icon="mdi:toggle-switch" class="icon text-xl"></iconify-icon>
                                             <% } else { %>
-                                                <iconify-icon icon="mdi:eye" class="icon text-xl"></iconify-icon>
+                                                <iconify-icon icon="mdi:toggle-switch-off" class="icon text-xl"></iconify-icon>
                                             <% } %>
                                         </button>
                                         <button type="button" class="edit-user-btn bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-user-id="<%= user._id %>" title="Edit User">
@@ -275,17 +275,19 @@
                     const statusBadge = row.find('td:nth-child(5) span');
 
                     if (newStatus) {
-                        // User is now active - show eye-off icon to deactivate
+                        // User is now active - show toggle-on icon (warning color to deactivate)
                         statusBadge.removeClass('bg-danger-100 text-danger-600').addClass('bg-success-100 text-success-600');
                         statusBadge.html('<i class="ri-check-line me-1"></i> Active');
-                        button.html('<iconify-icon icon="mdi:eye-off" class="icon text-xl"></iconify-icon>');
+                        button.html('<iconify-icon icon="mdi:toggle-switch" class="icon text-xl"></iconify-icon>');
+                        button.removeClass('bg-success-focus bg-hover-success-200 text-success-600').addClass('bg-warning-focus bg-hover-warning-200 text-warning-600');
                         button.attr('title', 'Deactivate User');
                         row.removeClass('table-danger');
                     } else {
-                        // User is now inactive - show eye icon to activate
+                        // User is now inactive - show toggle-off icon (success color to activate)
                         statusBadge.removeClass('bg-success-100 text-success-600').addClass('bg-danger-100 text-danger-600');
                         statusBadge.html('<i class="ri-close-line me-1"></i> Inactive');
-                        button.html('<iconify-icon icon="mdi:eye" class="icon text-xl"></iconify-icon>');
+                        button.html('<iconify-icon icon="mdi:toggle-switch-off" class="icon text-xl"></iconify-icon>');
+                        button.removeClass('bg-warning-focus bg-hover-warning-200 text-warning-600').addClass('bg-success-focus bg-hover-success-200 text-success-600');
                         button.attr('title', 'Activate User');
                         row.addClass('table-danger');
                     }

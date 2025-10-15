@@ -21,7 +21,6 @@
                         <!-- <th scope="col">Alt Tags</th> -->
                         <th scope="col">Canonical Tags</th>
                         <th scope="col">Meta Description</th>
-                        <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -33,13 +32,6 @@
                             <td class="title-table"><%= seo.metaTitle %></td>
                             <td><%= seo.canonicalUrl || (seo.page ? seo.page.path : 'N/A') %></td>
                             <td class="desc-table"><%= seo.metaDescription %></td>
-                            <td class="text-center">
-                                <% if (seo.status === 'active') { %>
-                                    <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                                <% } else { %>
-                                    <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-                                <% } %>
-                            </td>
                             <td class="text-center">
                                 <div class="d-flex align-items-center gap-10 justify-content-center">
                                     <a href="/seo/edit-seo-content/<%= seo._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
@@ -54,7 +46,7 @@
                         <% }); %>
                     <% } else { %>
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="5" class="text-center py-5">
                                 <p class="text-secondary-light mb-0">No SEO records found. Click "Add Seo Content" to create one.</p>
                             </td>
                         </tr>
@@ -167,7 +159,7 @@
             if ($('#seoTableBody .no-results-row').length === 0) {
                 $('#seoTableBody').append(\`
                     <tr class="no-results-row">
-                        <td colspan="6" class="text-center py-5">
+                        <td colspan="5" class="text-center py-5">
                             <p class="text-secondary-light mb-0">No SEO records found matching your search.</p>
                         </td>
                     </tr>
@@ -215,7 +207,7 @@
                             if ($('#seoTableBody tr').length === 0) {
                                 $('#seoTableBody').html(\`
                                     <tr>
-                                        <td colspan="6" class="text-center py-5">
+                                        <td colspan="5" class="text-center py-5">
                                             <p class="text-secondary-light mb-0">No SEO records found. Click "Add SEO" to create one.</p>
                                         </td>
                                     </tr>
