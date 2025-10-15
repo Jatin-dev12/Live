@@ -16,12 +16,12 @@ const connectDB = async () => {
 
 const seedPermissions = async () => {
     console.log('🌱 Seeding permissions...');
-    
+
     const modules = ['users', 'roles', 'dashboard', 'blog', 'leads', 'invoice', 'settings', 'cms', 'media', 'seo', 'ads', 'reports'];
     const actions = ['create', 'read', 'update', 'delete', 'manage'];
-    
+
     const permissions = [];
-    
+
     for (const module of modules) {
         for (const action of actions) {
             // Skip redundant permissions (manage includes all)
@@ -37,7 +37,7 @@ const seedPermissions = async () => {
             }
         }
     }
-    
+
     // Add special dashboard permission
     permissions.push({
         name: 'Dashboard Access',
@@ -47,7 +47,7 @@ const seedPermissions = async () => {
         action: 'read',
         isActive: true
     });
-    
+
     try {
         await Permission.deleteMany({});
         const createdPermissions = await Permission.insertMany(permissions);
@@ -61,10 +61,10 @@ const seedPermissions = async () => {
 
 const seedRoles = async (permissions) => {
     console.log('🌱 Seeding roles...');
-    
+
     try {
         await Role.deleteMany({});
-        
+
         // Super Admin - has all permissions
         const superAdminRole = await Role.create({
             name: 'Super Admin',
@@ -75,10 +75,10 @@ const seedRoles = async (permissions) => {
             isSystemRole: true,
             isActive: true
         });
-        
+
         // Admin - has most permissions except super admin specific ones
-        const adminPermissions = permissions.filter(p => 
-            !p.slug.includes('roles-delete') && 
+        const adminPermissions = permissions.filter(p =>
+            !p.slug.includes('roles-delete') &&
             p.module !== 'settings'
         );
         const adminRole = await Role.create({
@@ -90,10 +90,10 @@ const seedRoles = async (permissions) => {
             isSystemRole: true,
             isActive: true
         });
-        
+
         // Manager - has read and update permissions
-        const managerPermissions = permissions.filter(p => 
-            p.action === 'read' || 
+        const managerPermissions = permissions.filter(p =>
+            p.action === 'read' ||
             p.action === 'update' ||
             p.slug === 'dashboard-access'
         );
@@ -106,10 +106,10 @@ const seedRoles = async (permissions) => {
             isSystemRole: true,
             isActive: true
         });
-        
+
         // User - has basic read permissions
-        const userPermissions = permissions.filter(p => 
-            p.action === 'read' && 
+        const userPermissions = permissions.filter(p =>
+            p.action === 'read' &&
             ['dashboard', 'blog', 'leads', 'reports'].includes(p.module)
         );
         const userRole = await Role.create({
@@ -121,9 +121,9 @@ const seedRoles = async (permissions) => {
             isSystemRole: true,
             isActive: true
         });
-        
+
         // Sales - has permissions for leads, customers, and invoices
-        const salesPermissions = permissions.filter(p => 
+        const salesPermissions = permissions.filter(p =>
             ['leads', 'invoice', 'dashboard'].includes(p.module) &&
             ['read', 'create', 'update'].includes(p.action)
         );
@@ -136,9 +136,9 @@ const seedRoles = async (permissions) => {
             isSystemRole: false,
             isActive: true
         });
-        
+
         // Content Manager - has permissions for blog, cms, media, seo
-        const contentPermissions = permissions.filter(p => 
+        const contentPermissions = permissions.filter(p =>
             ['blog', 'cms', 'media', 'seo', 'dashboard'].includes(p.module) &&
             ['read', 'create', 'update', 'delete'].includes(p.action)
         );
@@ -151,7 +151,7 @@ const seedRoles = async (permissions) => {
             isSystemRole: false,
             isActive: true
         });
-        
+
         console.log('✅ Created 6 roles: Super Admin, Admin, Manager, User, Sales, Content Manager');
         return { superAdminRole, adminRole, managerRole, userRole, salesRole, contentRole };
     } catch (error) {
@@ -162,10 +162,10 @@ const seedRoles = async (permissions) => {
 
 const seedUsers = async (roles) => {
     console.log('🌱 Seeding default users...');
-    
+
     try {
         await User.deleteMany({});
-        
+
         // Create Super Admin user
         const superAdmin = await User.create({
             fullName: 'Super Admin',
@@ -179,7 +179,7 @@ const seedUsers = async (roles) => {
             isActive: true,
             isEmailVerified: true
         });
-        
+
         // Create Admin user
         const admin = await User.create({
             fullName: 'Admin User',
@@ -194,7 +194,7 @@ const seedUsers = async (roles) => {
             isEmailVerified: true,
             createdBy: superAdmin._id
         });
-        
+
         // Create Manager user
         const manager = await User.create({
             fullName: 'Manager User',
@@ -209,7 +209,7 @@ const seedUsers = async (roles) => {
             isEmailVerified: true,
             createdBy: superAdmin._id
         });
-        
+
         // Create regular User
         const user = await User.create({
             fullName: 'Regular User',
@@ -224,16 +224,16 @@ const seedUsers = async (roles) => {
             isEmailVerified: true,
             createdBy: superAdmin._id
         });
-        
-        console.log('✅ Created 4 default users');
-        console.log('\n📧 Login Credentials:');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('Super Admin: superadmin@example.com / Admin@123');
-        console.log('Admin:       admin@example.com / Admin@123');
-        console.log('Manager:     manager@example.com / Manager@123');
-        console.log('User:        user@example.com / User@123');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-        
+
+        // console.log('✅ Created 4 default users');
+        // console.log('\n📧 Login Credentials:');
+        // console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        // console.log('Super Admin: superadmin@example.com / Admin@123');
+        // console.log('Admin:       admin@example.com / Admin@123');
+        // console.log('Manager:     manager@example.com / Manager@123');
+        // console.log('User:        user@example.com / User@123');
+        // console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
     } catch (error) {
         console.error('❌ Error seeding users:', error.message);
         throw error;
@@ -243,13 +243,13 @@ const seedUsers = async (roles) => {
 const seedDatabase = async () => {
     try {
         console.log('🚀 Starting database seeding...\n');
-        
+
         await connectDB();
-        
+
         const permissions = await seedPermissions();
         const roles = await seedRoles(permissions);
         await seedUsers(roles);
-        
+
         console.log('\n✅ Database seeding completed successfully!');
         process.exit(0);
     } catch (error) {

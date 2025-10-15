@@ -21,10 +21,10 @@
                         <label class="form-label" for="title">Content Title: <span class="text-danger-600">*</span></label>
                         <input type="text" class="form-control border border-neutral-200 radius-8" id="title" name="title" placeholder="Enter Content Title" required>
                     </div>
-                    <div>
+                    <!-- <div>
                         <label class="form-label" for="category">Category: </label>
                         <input type="text" class="form-control border border-neutral-200 radius-8" id="category" name="category" placeholder="Enter Category (optional)">
-                    </div>
+                    </div> -->
                     <div>
                         <label class="form-label">Content Description: </label>
                         <div class="border border-neutral-200 radius-8 overflow-hidden">
@@ -118,7 +118,7 @@
     </div>
 
     <!-- Sidebar Start -->
-    
+
 </div>
 
 <% script = `
@@ -136,7 +136,7 @@
       theme: 'snow',
     });
     // Editor Js End
-  
+
 
     // =============================== Upload Single Image js start here ================================================
     const fileInput = document.getElementById('upload-file');
@@ -154,14 +154,14 @@
     removeButton.addEventListener('click', () => {
         imagePreview.src = '';
         uploadedImgContainer.classList.add('d-none');
-        fileInput.value = ''; 
+        fileInput.value = '';
     });
     // =============================== Upload Single Image js End here ================================================
 
     // Handle form submission
     $('#addContentForm').on('submit', function(e) {
         e.preventDefault();
-        
+
         const formData = {
             pageId: $('#pageId').val(),
             title: $('#title').val(),

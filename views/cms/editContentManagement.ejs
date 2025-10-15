@@ -7,7 +7,7 @@
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
                     <input type="hidden" id="contentId" value="<%= content._id %>">
-                    
+
                     <div>
                         <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
                         <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
@@ -23,10 +23,10 @@
                         <label class="form-label" for="title">Content Title: <span class="text-danger-600">*</span></label>
                         <input type="text" class="form-control border border-neutral-200 radius-8" id="title" name="title" value="<%= content.title %>" placeholder="Enter Content Title" required>
                     </div>
-                    <div>
+                    <!-- <div>
                         <label class="form-label" for="category">Category: </label>
                         <input type="text" class="form-control border border-neutral-200 radius-8" id="category" name="category" value="<%= content.category || '' %>" placeholder="Enter Category (optional)">
-                    </div>
+                    </div> -->
                     <div>
                         <label class="form-label">Content Description: </label>
                         <div class="border border-neutral-200 radius-8 overflow-hidden">
@@ -126,7 +126,7 @@
     </div>
 
     <!-- Sidebar Start -->
-    
+
 </div>
 
 <% script = `
@@ -144,7 +144,7 @@
       theme: 'snow',
     });
     // Editor Js End
-  
+
 
     // =============================== Upload Single Image js start here ================================================
     const fileInput = document.getElementById('upload-file');
@@ -162,14 +162,14 @@
     removeButton.addEventListener('click', () => {
         imagePreview.src = '';
         uploadedImgContainer.classList.add('d-none');
-        fileInput.value = ''; 
+        fileInput.value = '';
     });
     // =============================== Upload Single Image js End here ================================================
 
     // Handle form submission
     $('#editContentForm').on('submit', function(e) {
         e.preventDefault();
-        
+
         const contentId = $('#contentId').val();
         const formData = {
             pageId: $('#pageId').val(),

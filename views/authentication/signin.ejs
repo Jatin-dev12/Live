@@ -87,10 +87,41 @@
     // Prevent autofill by removing readonly on focus
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('your-password');
+    const rememberCheckbox = document.getElementById('remeber');
     
-    // Set readonly initially to prevent autofill
-    emailInput.setAttribute('readonly', 'readonly');
-    passwordInput.setAttribute('readonly', 'readonly');
+    // Load saved credentials ONLY if "Remember Me" was checked
+    window.addEventListener('DOMContentLoaded', function() {
+        const rememberMe = localStorage.getItem('rememberMe') === 'true';
+        
+        // Set readonly initially to prevent browser autofill
+        emailInput.setAttribute('readonly', 'readonly');
+        passwordInput.setAttribute('readonly', 'readonly');
+        
+        // Only auto-fill if user explicitly checked "Remember Me" before
+        if (rememberMe) {
+            const savedEmail = localStorage.getItem('rememberedEmail');
+            const savedPassword = localStorage.getItem('rememberedPassword');
+            
+            if (savedEmail && savedPassword) {
+                // Remove readonly temporarily to set values
+                setTimeout(() => {
+                    emailInput.removeAttribute('readonly');
+                    passwordInput.removeAttribute('readonly');
+                    
+                    emailInput.value = savedEmail;
+                    passwordInput.value = savedPassword;
+                    rememberCheckbox.checked = true;
+                    
+                    // Set readonly back
+                    setTimeout(() => {
+                        emailInput.setAttribute('readonly', 'readonly');
+                        passwordInput.setAttribute('readonly', 'readonly');
+                    }, 50);
+                }, 100);
+            }
+        }
+        // If rememberMe is false or not set, fields remain empty (no autofill)
+    });
     
     // Remove readonly on focus
     emailInput.addEventListener('focus', function() {
@@ -108,6 +139,16 @@
 
     passwordInput.addEventListener('input', function() {
         validateInput(this);
+    });
+
+    // Handle Remember Me checkbox change
+    rememberCheckbox.addEventListener('change', function() {
+        if (!this.checked) {
+            // Clear saved credentials when unchecked
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('rememberedPassword');
+            localStorage.removeItem('rememberMe');
+        }
     });
 
     // Toast notification function
@@ -191,6 +232,20 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
+                // Handle Remember Me functionality
+                const rememberMe = document.getElementById('remeber').checked;
+                if (rememberMe) {
+                    // Save credentials to localStorage
+                    localStorage.setItem('rememberedEmail', email);
+                    localStorage.setItem('rememberedPassword', password);
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    // Clear saved credentials
+                    localStorage.removeItem('rememberedEmail');
+                    localStorage.removeItem('rememberedPassword');
+                    localStorage.removeItem('rememberMe');
+                }
+                
                 // Redirect to dashboard or specified URL
                 window.location.href = result.data.redirectUrl || '/index';
             } else {
