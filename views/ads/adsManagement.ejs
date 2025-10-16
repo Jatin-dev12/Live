@@ -15,21 +15,28 @@
                 <option>10</option>
             </select>
             <form class="navbar-search">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search">
+                <input type="text" id="searchInput" class="bg-base h-40-px w-auto" name="search" placeholder="Search by title...">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Paused</option>
-                <option>Expired</option>
-                <option>Pending</option>
-                <option>Rejected</option>
+            <select id="statusFilter" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+                <option value="expired">Expired</option>
+                <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <select id="adTypeFilter" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+                <option value="">All Types</option>
+                <option value="banner">Banner</option>
+                <option value="video">Video</option>
+                <option value="native">Native</option>
+                <option value="popup">Popup</option>
             </select>
         </div>
-        <a href="/ads/add-ads-management" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+        <a href="/ads/add-ad" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add Ads
+            Add Ad
         </a>
     </div>
     <div class="card-body p-24">
@@ -53,162 +60,61 @@
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>10101</td>
-                        <td  class="title-table">Home - Title on Home Page</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="">/images/user.png</td>
-                        <td class="">Banner</td>
-                        <td class="">fk-10101</td>
-                        <td><span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                        </td>
-                        <td class="">01-oct-2025</td>
-                        <td class="">10-oct-2025</td>
-                        <!-- <td class="">$100.00</td>
-                        <td class="">---</td>
-                        <td class="">08</td> -->
-                        <!-- <td class="">Advertiser</td> -->
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ads-video-popup" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>10102</td>
-                        <td  class="title-table">About - Title on About Page</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="">/images/about.png</td>
-                        <td class="">Video </td>
-                        <td class="">fk-10102</td>
-                        <td>
-                            <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Paused</span>
-                        </td>
-                         <td class="">30-sep-2025</td>
-                        <td class="">08-oct-2025</td>
-                        <!-- <td class="">$200.00</td>
-                        <td class="">---</td>
-                        <td class="">11</td> -->
-                        <!-- <td class="">Admin</td> -->
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ads-video-popup" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-
-                        <td>10103</td>
-                        <td  class="title-table">Contact - Title on Contact Page</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="">/images/contact.png</td>
-                        <td class="">Native</td>
-                        <td class="">fk-10103</td>
-                        <td>
-                            <span class="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">Expired</span>
-                        </td>
-                        <td class="">28-sep-2025</td>
-                        <td class="">10-oct-2025</td>
-                        <!-- <td class="">$90.00</td>
-                        <td class="">---</td>
-                        <td class="">06</td> -->
-                        <!-- <td class="">Advertiser</td> -->
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ads-video-popup" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>10104</td>
-                        <td  class="title-table">Blog - Title on Blog Page</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="">/images/blog.png</td>
-                        <td class="">Popup</td>
-                        <td class="">fk-10104</td>
-                        <td>
-                            <span class="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">Pending</span>
-                        </td>
-                        <td class="">02-oct-2025</td>
-                        <td class="">14-oct-2025</td>
-                        <!-- <td class="">$110.00</td>
-                        <td class="">---</td>
-                        <td class="">12</td> -->
-                        <!-- <td class="">Admin</td> -->
-                        <td>
-                            <div class="d-flex align-items-center gap-10">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ads-video-popup" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                       <td>10105</td>
-                        <td  class="title-table">Service - Title on Service Page</td>
-                        <td class="desc-table">Lorem ipsum dolor sit, amet consectetur adipisicing elit. A explicabo doloremque soluta harum</td>
-                        <td class="">/images/service.png</td>
-                        <td class="">Popup</td>
-                        <td class="">fk-10105</td>
-                        <td>
-                            <span class="bg-danger-200 text-danger-600 border border-danger-400 px-24 py-4 radius-4 fw-medium text-sm">Rejected</span>
-                        </td>
-                        <td class="">20-sep-2025</td>
-                        <td class="">08-oct-2025</td>
-                        <!-- <td class="">$115.00</td>
-                        <td class="">---</td>
-                        <td class="">07</td> -->
-                        <!-- <td class="">Admin</td> -->
-                        <td class="text-center">
-                            <div class="d-flex align-items-center gap-10">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ads-video-popup" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
-                                <button  type="button" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                </button>
-                                <button type="button" class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-
+                <tbody id="adsTableBody">
+                    <% if (typeof ads !== 'undefined' && ads && ads.length > 0) { %>
+                        <% ads.forEach((ad, index) => { %>
+                            <tr data-status="<%= ad.status %>" data-type="<%= ad.ad_type %>">
+                                <td><%= String(index + 1).padStart(2, '0') %></td>
+                                <td class="title-table"><%= ad.title %></td>
+                                <td class="desc-table"><%= ad.description.substring(0, 80) %><%= ad.description.length > 80 ? '...' : '' %></td>
+                                <td class=""><%= ad.media_url %></td>
+                                <td class="text-capitalize"><%= ad.ad_type %></td>
+                                <td class="text-capitalize">
+                                    <% if (ad.page_name && ad.page_section) { %>
+                                        <%= ad.page_name.replace('-', ' ') %> - <%= ad.page_section.replace('-', ' ') %>
+                                    <% } else if (ad.placement_id) { %>
+                                        <%= ad.placement_id.placementId %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (ad.status === 'active') { %>
+                                        <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
+                                    <% } else if (ad.status === 'paused') { %>
+                                        <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Paused</span>
+                                    <% } else if (ad.status === 'expired') { %>
+                                        <span class="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">Expired</span>
+                                    <% } else if (ad.status === 'pending') { %>
+                                        <span class="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">Pending</span>
+                                    <% } else if (ad.status === 'rejected') { %>
+                                        <span class="bg-danger-200 text-danger-600 border border-danger-400 px-24 py-4 radius-4 fw-medium text-sm">Rejected</span>
+                                    <% } %>
+                                </td>
+                                <td class=""><%= new Date(ad.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                                <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <button type="button" class="delete-ad-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
+                                                data-ad-id="<%= ad._id %>" 
+                                                data-ad-title="<%= ad.title %>" 
+                                                title="Delete Ad">
+                                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="10" class="text-center py-4">
+                                <div class="text-muted">
+                                    <iconify-icon icon="mdi:advertisement-off" class="text-4xl mb-2"></iconify-icon>
+                                    <p>No ads found. <a href="/ads/add-ad">Create your first ad</a></p>
+                                </div>
+                            </td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
@@ -247,42 +153,162 @@
 </div>
 
 
-<!-- view button modal -->
-<div class="modal fade" id="ads-video-popup" tabindex="-1" aria-labelledby="adsModalLabel" aria-hidden="true">
-  <div class="modal-dialog preview-ad-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="adsModalLabel">Page Preview</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="ads-wrap-image">
-            <img src="\images\frame.jpg" alt="">
-        </div>
-        <!-- <video autoplay muted loop playsinline width="100">
-            <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-        </video> -->
-        <!-- <div class="video-wrap">
-            <iframe id="videoFrame" src="\images\videos\website-content.mp4"
-                title="YouTube video"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
-        </div> -->
-
-      </div>
-      <!-- <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div> -->
-    </div>
-  </div>
-</div>
 <% script = `
+<!-- SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
+<style>
+    .swal-toast-small {
+        font-size: 13px !important;
+    }
+</style>
+
 <script>
-    $('.remove-item-btn').on('click', function () {
-        $(this).closest('tr').addClass('d-none')
+    // Toast notification function
+    function showToast(message, type) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                title: 'swal-toast-small'
+            },
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        let icon = 'info';
+        if (type === 'success') icon = 'success';
+        else if (type === 'error') icon = 'error';
+        else if (type === 'warning') icon = 'warning';
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
+    // Delete Ad
+    $(document).on('click', '.delete-ad-btn', function () {
+        const adId = $(this).data('ad-id');
+        const adTitle = $(this).data('ad-title');
+        const row = $(this).closest('tr');
+
+        Swal.fire({
+            title: 'Delete Ad?',
+            text: 'Are you sure you want to delete "' + adTitle + '"? This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/api/ads/' + adId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showToast('Ad deleted successfully!', 'success');
+                        row.fadeOut(500, function() {
+                            $(this).remove();
+                            updateRowNumbers();
+                        });
+                    } else {
+                        showToast('Failed to delete ad: ' + (result.message || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred while deleting the ad', 'error');
+                });
+            }
+        });
+    });
+
+    // Update row numbers
+    function updateRowNumbers() {
+        let visibleIndex = 1;
+        $('#adsTableBody tr:visible').each(function() {
+            if (!$(this).hasClass('no-results-row') && $(this).find('td').length > 1) {
+                $(this).find('td:first').text(String(visibleIndex).padStart(2, '0'));
+                visibleIndex++;
+            }
+        });
+    }
+
+    // Filter functionality
+    function applyFilters() {
+        const searchTerm = $('#searchInput').val().toLowerCase().trim();
+        const selectedStatus = $('#statusFilter').val();
+        const selectedType = $('#adTypeFilter').val();
+        let visibleCount = 0;
+
+        $('#adsTableBody tr').each(function() {
+            if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+                return;
+            }
+
+            const title = $(this).find('td:nth-child(2)').text().toLowerCase();
+            const status = $(this).data('status');
+            const type = $(this).data('type');
+
+            const matchesSearch = searchTerm === '' || title.includes(searchTerm);
+            const matchesStatus = selectedStatus === '' || status === selectedStatus;
+            const matchesType = selectedType === '' || type === selectedType;
+
+            if (matchesSearch && matchesStatus && matchesType) {
+                $(this).show();
+                visibleCount++;
+            } else {
+                $(this).hide();
+            }
+        });
+
+        if (visibleCount === 0) {
+            if ($('.no-results-row').length === 0) {
+                $('#adsTableBody').append(
+                    '<tr class="no-results-row">' +
+                    '<td colspan="10" class="text-center py-4">' +
+                    '<div class="text-muted">' +
+                    '<iconify-icon icon="mdi:magnify-close" class="text-4xl mb-2"></iconify-icon>' +
+                    '<p>No ads found matching your filters</p>' +
+                    '</div>' +
+                    '</td>' +
+                    '</tr>'
+                );
+            }
+        } else {
+            $('.no-results-row').remove();
+        }
+
+        updateRowNumbers();
+    }
+
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        applyFilters();
+    });
+
+    // Status filter
+    $('#statusFilter').on('change', function() {
+        applyFilters();
+    });
+
+    // Ad type filter
+    $('#adTypeFilter').on('change', function() {
+        applyFilters();
     });
 </script>
 <!-- <script>

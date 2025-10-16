@@ -8,7 +8,7 @@
         </div>
         <a href="/seo/add-seo-content" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add Seo Content
+            Add SEO Content
         </a>
     </div>
     <div class="card-body p-24">
@@ -141,18 +141,18 @@
     // Search functionality
     $('#seoSearch').on('keyup', function() {
         const searchValue = $(this).val().toLowerCase();
-        
+
         $('#seoTableBody tr').each(function() {
             const pageName = $(this).find('td:eq(0)').text().toLowerCase();
             const metaTitle = $(this).find('td:eq(1)').text().toLowerCase();
-            
+
             if (pageName.includes(searchValue) || metaTitle.includes(searchValue)) {
                 $(this).show();
             } else {
                 $(this).hide();
             }
         });
-        
+
         // Show "no results" message if all rows are hidden
         const visibleRows = $('#seoTableBody tr:visible').length;
         if (visibleRows === 0) {

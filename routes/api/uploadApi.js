@@ -11,7 +11,7 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer for file upload
+// Configure multer for file upload (SEO images)
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadsDir);
@@ -38,7 +38,78 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-// Upload image endpoint
+// Configure multer for dynamic folder uploads (ads, media, etc.)
+const dynamicStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const folder = req.body.folder || 'general';
+        const uploadPath = path.join(__dirname, '../../public/uploads', folder);
+        
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const dynamicFileFilter = (req, file, cb) => {
+    // Accept images and videos
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'];
+    
+    if (!allowedMimes.includes(file.mimetype)) {
+        return cb(new Error('Only image and video files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+const dynamicUpload = multer({
+    storage: dynamicStorage,
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB max file size
+    },
+    fileFilter: dynamicFileFilter
+});
+
+// Generic upload endpoint for ads, media, etc.
+router.post('/upload', isAuthenticated, dynamicUpload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        const folder = req.body.folder || 'general';
+        const filePath = '/uploads/' + folder + '/' + req.file.filename;
+
+        res.json({
+            success: true,
+            message: 'File uploaded successfully',
+            url: filePath,
+            data: {
+                path: filePath,
+                filename: req.file.filename,
+                size: req.file.size,
+                mimetype: req.file.mimetype
+            }
+        });
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error uploading file',
+            error: error.message
+        });
+    }
+});
+
+// Upload image endpoint (for SEO)
 router.post('/upload/image', isAuthenticated, upload.single('image'), (req, res) => {
     try {
         if (!req.file) {

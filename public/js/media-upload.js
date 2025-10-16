@@ -1,43 +1,12 @@
-<div class="custom-upload-media">
-    <nav class="custom-upload-widget">
-        <span class="upload-heading">Upload New Media</span>
-        <div class="ml-auto">
-            <a href="/media/library" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="bi bi-grid-3x3-gap me-1"></i> Media Library
-            </a>
-            <input id="fileInput" class="d-none" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
-                multiple>
-        </div>
-    </nav>
+'use strict';
 
-    <main class="dragdrop-widget">
-        <div class="row">
-            <div class="col-lg-9">
-                <div id="dropzone" class="dropzone text-center">
-                    <div>
-                        <p class="lead mb-2">Drop files to upload</p>
-                        <p class="text-muted mb-3">or</p>
-                        <button id="selectFilesBtn" class="btn btn-primary btn-sm">Select Files</button>
-                        <p class="text-muted mt-3 mb-0"><small>Maximum upload file size: 10 MB.</small></p>
-                    </div>
-                </div>
-
-                <div id="uploads" class="uploads mt-4"></div>
-
-            </div>
-
-        </div>
-    </main>
-</div>
-
-<script>
-// Inline script to ensure no caching issues
 (function () {
 	var dropzone = document.getElementById('dropzone');
 	var fileInput = document.getElementById('fileInput');
 	var selectBtn = document.getElementById('selectFilesBtn');
 	var uploads = document.getElementById('uploads');
 
+	// Check if required elements exist
 	if (!dropzone || !fileInput || !uploads || !selectBtn) {
 		console.error('Required upload elements not found');
 		return;
@@ -55,7 +24,8 @@
 		return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
 	}
 
-	function showToast(message, type) {
+	function showToast(message, type = 'success') {
+		// Using a simple alert for now, you can replace with your toast notification system
 		if (window.showToast) {
 			window.showToast(message, type);
 		} else {
@@ -107,11 +77,13 @@
 			thumb.style.backgroundImage = 'url(' + url + ')';
 		}
 
+		// Create FormData and upload
 		var formData = new FormData();
 		formData.append('files', file);
 
 		var xhr = new XMLHttpRequest();
 
+		// Progress tracking
 		xhr.upload.addEventListener('progress', function(e) {
 			if (e.lengthComputable) {
 				var percentComplete = (e.loaded / e.total) * 100;
@@ -119,6 +91,7 @@
 			}
 		});
 
+		// Upload complete
 		xhr.addEventListener('load', function() {
 			if (xhr.status === 200) {
 				var response = JSON.parse(xhr.responseText);
@@ -127,6 +100,7 @@
 					bar.classList.remove('progress-bar-striped');
 					bar.classList.add('bg-success');
 					
+					// Show success message
 					var successMsg = document.createElement('p');
 					successMsg.className = 'text-success small mt-1';
 					successMsg.textContent = 'Upload complete!';
@@ -141,10 +115,12 @@
 			}
 		});
 
+		// Upload error
 		xhr.addEventListener('error', function() {
 			handleUploadError(item, bar, 'Network error occurred');
 		});
 
+		// Send request
 		xhr.open('POST', '/api/media/upload');
 		xhr.send(formData);
 	}
@@ -162,6 +138,7 @@
 		showToast(message, 'error');
 	}
 
+	// Drag and drop events
 	['dragenter','dragover','dragleave','drop'].forEach(function(eventName){
 		dropzone.addEventListener(eventName, preventDefaults, false);
 	});
@@ -179,16 +156,14 @@
 		handleFiles(files);
 	});
 
-	// SINGLE EVENT LISTENER - Only one click handler
 	selectBtn.addEventListener('click', function(e){ 
 		e.preventDefault();
 		e.stopPropagation();
 		fileInput.click(); 
 	});
-	
 	fileInput.addEventListener('change', function(e){ 
 		handleFiles(e.target.files);
+		// Reset input so same file can be uploaded again
 		e.target.value = '';
 	});
 })();
-</script>

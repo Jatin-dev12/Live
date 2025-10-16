@@ -32,18 +32,29 @@ router.get("/", isAuthenticated, async (req, res) => {
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
     const Page = require('../models/Page');
+    const User = require('../models/User');
+
+    // Define system/admin emails to exclude from user count
+    const systemEmails = [
+      'superadmin@example.com',
+      'admin@example.com',
+      'manager@example.com',
+      'user@example.com'
+    ];
 
     // Get counts from database
     const totalLeads = await Lead.countDocuments();
     const totalContactQueries = await ContactQuery.countDocuments();
     const totalPages = await Page.countDocuments();
+    const totalUsers = await User.countDocuments({ email: { $nin: systemEmails } });
 
     res.render("index", {
       title: "Dashboard",
       subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
-      totalPages
+      totalPages,
+      totalUsers
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -52,7 +63,8 @@ router.get("/", isAuthenticated, async (req, res) => {
       subTitle: "ACRM",
       totalLeads: 0,
       totalContactQueries: 0,
-      totalPages: 0
+      totalPages: 0,
+      totalUsers: 0
     });
   }
 });
@@ -62,18 +74,29 @@ router.get("/index", isAuthenticated, async (req, res) => {
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
     const Page = require('../models/Page');
+    const User = require('../models/User');
+
+    // Define system/admin emails to exclude from user count
+    const systemEmails = [
+      'superadmin@example.com',
+      'admin@example.com',
+      'manager@example.com',
+      'user@example.com'
+    ];
 
     // Get counts from database
     const totalLeads = await Lead.countDocuments();
     const totalContactQueries = await ContactQuery.countDocuments();
     const totalPages = await Page.countDocuments();
+    const totalUsers = await User.countDocuments({ email: { $nin: systemEmails } });
 
     res.render("index", {
       title: "Dashboard",
       subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
-      totalPages
+      totalPages,
+      totalUsers
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -82,7 +105,8 @@ router.get("/index", isAuthenticated, async (req, res) => {
       subTitle: "ACRM",
       totalLeads: 0,
       totalContactQueries: 0,
-      totalPages: 0
+      totalPages: 0,
+      totalUsers: 0
     });
   }
 });

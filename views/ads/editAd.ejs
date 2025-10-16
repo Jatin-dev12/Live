@@ -1,0 +1,236 @@
+<div class="row gy-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="editAdForm">
+                    <input type="hidden" id="adId" value="<%= ad._id %>">
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" id="title" class="form-control" value="<%= ad.title %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ad Type <span class="text-danger">*</span></label>
+                            <select name="ad_type" id="ad_type" class="form-select" required>
+                                <option value="banner" <%= ad.ad_type === 'banner' ? 'selected' : '' %>>Banner</option>
+                                <option value="video" <%= ad.ad_type === 'video' ? 'selected' : '' %>>Video</option>
+                                <option value="native" <%= ad.ad_type === 'native' ? 'selected' : '' %>>Native</option>
+                                <option value="popup" <%= ad.ad_type === 'popup' ? 'selected' : '' %>>Popup</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" id="description" class="form-control" rows="4" required><%= ad.description %></textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Media URL <span class="text-danger">*</span></label>
+                            <input type="text" name="media_url" id="media_url" class="form-control" value="<%= ad.media_url %>" required>
+                            <small class="text-muted">Current media: <%= ad.media_url %></small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Placement <span class="text-danger">*</span></label>
+                            <select name="placement_id" id="placement_id" class="form-select" required>
+                                <% if (typeof placements !== 'undefined' && placements && placements.length > 0) { %>
+                                    <% placements.forEach(placement => { %>
+                                        <option value="<%= placement._id %>" <%= ad.placement_id && ad.placement_id._id.toString() === placement._id.toString() ? 'selected' : '' %>>
+                                            <%= placement.placementId %> - <%= placement.name %> (<%= placement.pageLocation %>)
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="pending" <%= ad.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="active" <%= ad.status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="paused" <%= ad.status === 'paused' ? 'selected' : '' %>>Paused</option>
+                                <option value="expired" <%= ad.status === 'expired' ? 'selected' : '' %>>Expired</option>
+                                <option value="rejected" <%= ad.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" value="<%= new Date(ad.start_date).toISOString().split('T')[0] %>" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">End Date <span class="text-danger">*</span></label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" value="<%= new Date(ad.end_date).toISOString().split('T')[0] %>" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Budget ($)</label>
+                            <input type="number" name="budget" id="budget" class="form-control" min="0" step="0.01" value="<%= ad.budget %>">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Max Impressions</label>
+                            <input type="number" name="max_impressions" id="max_impressions" class="form-control" min="0" value="<%= ad.max_impressions %>">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Max Clicks</label>
+                            <input type="number" name="max_clicks" id="max_clicks" class="form-control" min="0" value="<%= ad.max_clicks %>">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <!-- Analytics Section -->
+                        <div class="col-12">
+                            <hr class="my-3">
+                            <h6 class="mb-3">Current Analytics</h6>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Current Impressions</label>
+                            <input type="text" class="form-control" value="<%= ad.current_impressions %>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Current Clicks</label>
+                            <input type="text" class="form-control" value="<%= ad.current_clicks %>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Spent Budget ($)</label>
+                            <input type="text" class="form-control" value="<%= ad.spent_budget.toFixed(2) %>" readonly>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary-600" id="submitBtn">
+                                <span class="btn-text">Update Ad</span>
+                                <span class="btn-spinner d-none">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Updating...
+                                </span>
+                            </button>
+                            <a href="/ads/ads-management" class="btn btn-secondary-600 ms-2">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% script = `
+<!-- SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    // Toast notification function
+    function showToast(message, type) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        let icon = 'info';
+        if (type === 'success') icon = 'success';
+        else if (type === 'error') icon = 'error';
+        else if (type === 'warning') icon = 'warning';
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
+    // Update end date minimum when start date changes
+    document.getElementById('start_date').addEventListener('change', function() {
+        const startDate = this.value;
+        document.getElementById('end_date').setAttribute('min', startDate);
+        
+        const endDate = document.getElementById('end_date').value;
+        if (endDate && endDate < startDate) {
+            document.getElementById('end_date').value = '';
+        }
+    });
+
+    // Form submission
+    document.getElementById('editAdForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const adId = document.getElementById('adId').value;
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnSpinner = submitBtn.querySelector('.btn-spinner');
+
+        // Validate dates
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        if (new Date(endDate) <= new Date(startDate)) {
+            showToast('End date must be after start date', 'error');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.classList.add('d-none');
+        btnSpinner.classList.remove('d-none');
+
+        // Collect form data
+        const formData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            media_url: document.getElementById('media_url').value,
+            ad_type: document.getElementById('ad_type').value,
+            placement_id: document.getElementById('placement_id').value,
+            status: document.getElementById('status').value,
+            start_date: startDate,
+            end_date: endDate,
+            budget: parseFloat(document.getElementById('budget').value) || 0,
+            max_impressions: parseInt(document.getElementById('max_impressions').value) || 0,
+            max_clicks: parseInt(document.getElementById('max_clicks').value) || 0
+        };
+
+        try {
+            const response = await fetch('/api/ads/' + adId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Ad updated successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/ads/ads-management';
+                }, 1500);
+            } else {
+                showToast('Failed to update ad: ' + (result.message || 'Unknown error'), 'error');
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred while updating the ad', 'error');
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+        }
+    });
+</script>
+` %>

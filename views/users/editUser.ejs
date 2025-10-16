@@ -52,6 +52,48 @@
                         </div>
                     </div>
 
+                    <!-- Password Change Section -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-20">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="changePasswordToggle" onchange="togglePasswordFields()">
+                                    <label class="form-check-label fw-semibold text-primary-light" for="changePasswordToggle">
+                                        Change Password
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="passwordFields" class="row" style="display: none;">
+                        <div class="col-md-6">
+                            <div class="mb-20">
+                                <label for="newPassword" class="form-label fw-semibold text-primary-light text-sm mb-8">New Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control radius-8" id="newPassword" name="newPassword" placeholder="Enter new password" minlength="6">
+                                    <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" onclick="togglePasswordVisibility('newPassword')">
+                                        <i class="ri-eye-line" id="newPassword-icon"></i>
+                                    </span>
+                                </div>
+                                <small class="text-muted">Minimum 6 characters</small>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-20">
+                                <label for="confirmPassword" class="form-label fw-semibold text-primary-light text-sm mb-8">Confirm Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control radius-8" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                    <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" onclick="togglePasswordVisibility('confirmPassword')">
+                                        <i class="ri-eye-line" id="confirmPassword-icon"></i>
+                                    </span>
+                                </div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-20">
 
                             <label class="form-label fw-semibold text-primary-light text-sm mb-8">User Status</label>
@@ -339,9 +381,54 @@
     .permissions-container .col-lg-4 {
         padding: 5px;
     }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
 </style>
 
 <script>
+// Toggle password fields visibility
+function togglePasswordFields() {
+    const passwordFields = document.getElementById('passwordFields');
+    const toggle = document.getElementById('changePasswordToggle');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    if (toggle.checked) {
+        passwordFields.style.display = 'flex';
+        newPassword.setAttribute('required', 'required');
+        confirmPassword.setAttribute('required', 'required');
+    } else {
+        passwordFields.style.display = 'none';
+        newPassword.removeAttribute('required');
+        confirmPassword.removeAttribute('required');
+        newPassword.value = '';
+        confirmPassword.value = '';
+    }
+}
+
+// Toggle password visibility
+function togglePasswordVisibility(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '-icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('ri-eye-line');
+        icon.classList.add('ri-eye-off-line');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('ri-eye-off-line');
+        icon.classList.add('ri-eye-line');
+    }
+}
+
 // Select/Deselect all permissions
 function selectAllPermissions() {
     const checkboxes = document.querySelectorAll('input[name="customPermissions[]"]');
@@ -429,6 +516,27 @@ async function updateUser() {
     };
 
     const userId = formData.get('userId');
+
+    // Check if password change is enabled
+    const changePasswordToggle = document.getElementById('changePasswordToggle');
+    if (changePasswordToggle.checked) {
+        const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
+
+        // Password validation
+        if (!newPassword || newPassword.trim().length < 6) {
+            showToast('Password must be at least 6 characters long', 'error');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showToast('Passwords do not match', 'error');
+            return;
+        }
+
+        // Add password to userData
+        userData.password = newPassword;
+    }
 
     // Basic validation
     if (!userData.fullName || userData.fullName.trim().length < 2) {

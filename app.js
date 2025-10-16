@@ -41,6 +41,7 @@ app.use('/fonts', express.static(__dirname + 'public/fonts'));
 app.use('/images', express.static(__dirname + 'public/images'));
 app.use('/js', express.static(__dirname + 'public/js'));
 app.use('/webfonts', express.static(__dirname + 'public/webfonts'));
+app.use('/uploads', express.static(__dirname + '/public/uploads'));
 
 // EJS layouts
 app.use(expressLayouts);
@@ -70,6 +71,8 @@ const pageApi = require('./routes/api/pageApi');
 const contentApi = require('./routes/api/contentApi');
 const seoApi = require('./routes/api/seoApi');
 const uploadApi = require('./routes/api/uploadApi');
+const adsApi = require('./routes/api/adsApi');
+const mediaApi = require('./routes/api/mediaApi');
 
 // Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
 const pageRouter = require('./routes/routes');
@@ -83,6 +86,8 @@ app.use('/api/pages', pageApi);
 app.use('/api/content', contentApi);
 app.use('/api', seoApi);
 app.use('/api', uploadApi);
+app.use('/api', adsApi);
+app.use('/api/media', mediaApi);
 
 // Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function

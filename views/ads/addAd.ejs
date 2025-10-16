@@ -1,0 +1,444 @@
+<div class="row gy-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="addAdForm" enctype="multipart/form-data">
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="Enter ad title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ad Type <span class="text-danger">*</span></label>
+                            <select name="ad_type" id="ad_type" class="form-select" required>
+                                <option value="">Select Ad Type</option>
+                                <option value="banner">Banner</option>
+                                <option value="video">Video</option>
+                                <option value="native">Native</option>
+                                <option value="popup">Popup</option>
+                                <option value="custom">+ Add Custom Ad Type</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Ad Type Input (Hidden by default) -->
+                        <div class="col-md-6 d-none" id="customAdTypeContainer">
+                            <label class="form-label">Custom Ad Type Name <span class="text-danger">*</span></label>
+                            <input type="text" id="custom_ad_type" class="form-control" placeholder="Enter custom ad type name">
+                            <small class="text-muted">Enter a custom ad type (e.g., "interstitial", "rewarded")</small>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" id="description" class="form-control" rows="4" placeholder="Enter ad description..." required></textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Upload Media <span class="text-danger">*</span></label>
+                            <div class="upload-image-wrapper">
+                                <div class="uploaded-img d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50" id="uploadedImagePreview">
+                                    <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                        <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                    </button>
+                                    <img id="uploaded-img__preview" class="w-100 h-100 object-fit-cover" src="" alt="Ad Media Preview">
+                                </div>
+                                <label class="upload-file h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file" id="uploadLabel">
+                                    <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                                    <span class="fw-semibold text-secondary-light">Click to Upload Media</span>
+                                    <span class="text-sm text-secondary-light">Supports: JPG, PNG, GIF, MP4</span>
+                                    <input id="upload-file" name="media_file" type="file" accept="image/*,video/mp4" hidden required>
+                                </label>
+                            </div>
+                            <input type="hidden" id="media_url" name="media_url">
+                            <small class="text-muted">Upload an image or video for your ad</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Page <span class="text-danger">*</span></label>
+                            <select name="page_name" id="page_name" class="form-select" required>
+                                <option value="">Select Page</option>
+                                <option value="home">Home Page</option>
+                                <option value="about">About Page</option>
+                                <option value="services">Services Page</option>
+                                <option value="products">Products Page</option>
+                                <option value="blog">Blog Page</option>
+                                <option value="contact">Contact Page</option>
+                                <option value="all">All Pages</option>
+                            </select>
+                            <small class="text-muted">Select which page to display the ad</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Section <span class="text-danger">*</span></label>
+                            <select name="page_section" id="page_section" class="form-select" required disabled>
+                                <option value="">Select page first</option>
+                            </select>
+                            <small class="text-muted">Select which section of the page</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="pending">Pending</option>
+                                <option value="active">Active</option>
+                                <option value="paused">Paused</option>
+                                <option value="expired">Expired</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">End Date <span class="text-danger">*</span></label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Budget ($)</label>
+                            <input type="number" name="budget" id="budget" class="form-control" placeholder="0.00" min="0" step="0.01" value="0">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Max Impressions</label>
+                            <input type="number" name="max_impressions" id="max_impressions" class="form-control" placeholder="0" min="0" value="0">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Max Clicks</label>
+                            <input type="number" name="max_clicks" id="max_clicks" class="form-control" placeholder="0" min="0" value="0">
+                            <small class="text-muted">Leave 0 for unlimited</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Created By Type</label>
+                            <select name="created_by_type" id="created_by_type" class="form-select">
+                                <option value="admin">Admin</option>
+                                <option value="advertiser">Advertiser</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary-600" id="submitBtn">
+                                <span class="btn-text">Create Ad</span>
+                                <span class="btn-spinner d-none">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Creating...
+                                </span>
+                            </button>
+                            <a href="/ads/ads-management" class="btn btn-secondary-600 ms-2">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% script = `
+<!-- SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
+<style>
+    .swal-toast-small {
+        font-size: 13px !important;
+    }
+</style>
+
+<script>
+    // Toast notification function
+    function showToast(message, type) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                title: 'swal-toast-small'
+            },
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        let icon = 'info';
+        if (type === 'success') icon = 'success';
+        else if (type === 'error') icon = 'error';
+        else if (type === 'warning') icon = 'warning';
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
+    // Handle Ad Type dropdown change
+    document.getElementById('ad_type').addEventListener('change', function() {
+        const customContainer = document.getElementById('customAdTypeContainer');
+        if (this.value === 'custom') {
+            customContainer.classList.remove('d-none');
+            document.getElementById('custom_ad_type').setAttribute('required', 'required');
+        } else {
+            customContainer.classList.add('d-none');
+            document.getElementById('custom_ad_type').removeAttribute('required');
+            document.getElementById('custom_ad_type').value = '';
+        }
+    });
+
+    // Page sections mapping
+    const pageSections = {
+        'home': [
+            { value: 'hero', text: 'Hero Section (Top Banner)' },
+            { value: 'features', text: 'Features Section' },
+            { value: 'testimonials', text: 'Testimonials Section' },
+            { value: 'cta', text: 'Call-to-Action Section' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'about': [
+            { value: 'banner', text: 'Page Banner' },
+            { value: 'team', text: 'Team Section' },
+            { value: 'mission', text: 'Mission/Vision Section' },
+            { value: 'sidebar', text: 'Sidebar' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'services': [
+            { value: 'banner', text: 'Page Banner' },
+            { value: 'services-list', text: 'Services List' },
+            { value: 'sidebar', text: 'Sidebar' },
+            { value: 'cta', text: 'Call-to-Action' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'products': [
+            { value: 'banner', text: 'Page Banner' },
+            { value: 'product-grid', text: 'Product Grid' },
+            { value: 'sidebar', text: 'Sidebar' },
+            { value: 'featured', text: 'Featured Products' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'blog': [
+            { value: 'banner', text: 'Page Banner' },
+            { value: 'post-list', text: 'Between Posts' },
+            { value: 'sidebar', text: 'Sidebar' },
+            { value: 'post-content', text: 'Within Post Content' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'contact': [
+            { value: 'banner', text: 'Page Banner' },
+            { value: 'form-side', text: 'Beside Contact Form' },
+            { value: 'map-side', text: 'Beside Map' },
+            { value: 'footer', text: 'Footer Section' }
+        ],
+        'all': [
+            { value: 'header', text: 'Header (All Pages)' },
+            { value: 'sidebar', text: 'Sidebar (All Pages)' },
+            { value: 'footer', text: 'Footer (All Pages)' },
+            { value: 'popup', text: 'Popup (All Pages)' }
+        ]
+    };
+
+    // Handle Page dropdown change
+    document.getElementById('page_name').addEventListener('change', function() {
+        const sectionSelect = document.getElementById('page_section');
+        const selectedPage = this.value;
+        
+        // Clear existing options
+        sectionSelect.innerHTML = '<option value="">Select Section</option>';
+        
+        if (selectedPage && pageSections[selectedPage]) {
+            // Enable section dropdown
+            sectionSelect.disabled = false;
+            
+            // Add sections for selected page
+            pageSections[selectedPage].forEach(section => {
+                const option = document.createElement('option');
+                option.value = section.value;
+                option.textContent = section.text;
+                sectionSelect.appendChild(option);
+            });
+        } else {
+            sectionSelect.disabled = true;
+        }
+    });
+
+    // File upload handling
+    document.getElementById('upload-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('uploaded-img__preview').src = event.target.result;
+                document.getElementById('uploadedImagePreview').classList.remove('d-none');
+                document.getElementById('uploadLabel').classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Remove uploaded image
+    document.querySelector('.uploaded-img__remove').addEventListener('click', function() {
+        document.getElementById('upload-file').value = '';
+        document.getElementById('uploaded-img__preview').src = '';
+        document.getElementById('uploadedImagePreview').classList.add('d-none');
+        document.getElementById('uploadLabel').classList.remove('d-none');
+        document.getElementById('media_url').value = '';
+    });
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').setAttribute('min', today);
+    document.getElementById('end_date').setAttribute('min', today);
+
+    // Update end date minimum when start date changes
+    document.getElementById('start_date').addEventListener('change', function() {
+        const startDate = this.value;
+        document.getElementById('end_date').setAttribute('min', startDate);
+        
+        // Clear end date if it's before the new start date
+        const endDate = document.getElementById('end_date').value;
+        if (endDate && endDate < startDate) {
+            document.getElementById('end_date').value = '';
+        }
+    });
+
+    // Form submission
+    document.getElementById('addAdForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnSpinner = submitBtn.querySelector('.btn-spinner');
+
+        // Validate dates
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        if (new Date(endDate) <= new Date(startDate)) {
+            showToast('End date must be after start date', 'error');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.classList.add('d-none');
+        btnSpinner.classList.remove('d-none');
+
+        // Handle custom ad type
+        let adType = document.getElementById('ad_type').value;
+        if (adType === 'custom') {
+            const customAdType = document.getElementById('custom_ad_type').value.trim();
+            if (!customAdType) {
+                showToast('Please enter a custom ad type name', 'error');
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+                return;
+            }
+            adType = customAdType.toLowerCase().replace(/\s+/g, '-');
+        }
+
+        // Upload media file first
+        const fileInput = document.getElementById('upload-file');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            showToast('Please upload a media file', 'error');
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+            return;
+        }
+
+        let mediaUrl = '';
+        try {
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', file);
+            uploadFormData.append('folder', 'ads');
+
+            const uploadResponse = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadFormData
+            });
+
+            const uploadResult = await uploadResponse.json();
+            if (!uploadResult.success) {
+                showToast('Failed to upload media: ' + (uploadResult.message || 'Unknown error'), 'error');
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+                return;
+            }
+
+            mediaUrl = uploadResult.url;
+        } catch (error) {
+            console.error('Error uploading media:', error);
+            showToast('An error occurred while uploading media', 'error');
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+            return;
+        }
+
+        // Get page and section
+        const pageName = document.getElementById('page_name').value;
+        const pageSection = document.getElementById('page_section').value;
+        const placement = pageName + '-' + pageSection;
+
+        // Collect form data
+        const formData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            media_url: mediaUrl,
+            ad_type: adType,
+            page_name: pageName,
+            page_section: pageSection,
+            placement: placement,
+            status: document.getElementById('status').value,
+            start_date: startDate,
+            end_date: endDate,
+            budget: parseFloat(document.getElementById('budget').value) || 0,
+            max_impressions: parseInt(document.getElementById('max_impressions').value) || 0,
+            max_clicks: parseInt(document.getElementById('max_clicks').value) || 0,
+            created_by_type: document.getElementById('created_by_type').value
+        };
+
+        try {
+            const response = await fetch('/api/ads', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Ad created successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/ads/ads-management';
+                }, 1500);
+            } else {
+                showToast('Failed to create ad: ' + (result.message || 'Unknown error'), 'error');
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred while creating the ad', 'error');
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+        }
+    });
+</script>
+` %>

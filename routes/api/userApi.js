@@ -175,7 +175,8 @@ router.put('/:id',
     handleValidationErrors,
     async (req, res) => {
         try {
-            const user = await User.findById(req.params.id);
+            // Select password field if we need to update it
+            const user = await User.findById(req.params.id).select('+password');
             
             if (!user) {
                 return res.status(404).json({
@@ -184,7 +185,7 @@ router.put('/:id',
                 });
             }
             
-            const { fullName, email, phone, role, department, designation, description, isActive, customPermissions } = req.body;
+            const { fullName, email, phone, role, department, designation, description, isActive, customPermissions, password } = req.body;
             
             // Check role assignment permissions
             if (role && role !== user.role.toString()) {
@@ -209,6 +210,17 @@ router.put('/:id',
             if (description !== undefined) user.description = description;
             if (isActive !== undefined) user.isActive = isActive;
             if (customPermissions !== undefined) user.customPermissions = customPermissions;
+            
+            // Update password if provided
+            if (password && password.trim().length > 0) {
+                if (password.length < 6) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Password must be at least 6 characters long'
+                    });
+                }
+                user.password = password; // Will be hashed by pre-save hook
+            }
             
             await user.save();
             
