@@ -714,64 +714,17 @@ async function updateUser() {
     }
 }
 
-// Phone number validation
-function validatePhone(input) {
-    let value = input.value;
-    // Remove any non-digit, non-plus, non-minus, non-space, non-parentheses characters
-    value = value.replace(/[^0-9+\-\s()]/g, '');
-    
-    // Limit to 15 characters
-    if (value.length > 15) {
-        value = value.substring(0, 15);
-        showToast('Phone number cannot exceed 15 characters', 'warning');
-    }
-    
-    input.value = value;
-    
-    // Show warning if at limit
-    if (value.length >= 15) {
-        input.classList.add('border-warning');
-    } else {
-        input.classList.remove('border-warning');
-    }
-}
-
+// Phone number validation - Clean and simple
 const phoneInput = document.getElementById('phone');
 
-// Validate on page load (for edit form with existing data)
-validatePhone(phoneInput);
-
 phoneInput.addEventListener('input', function(e) {
-    validatePhone(e.target);
-});
-
-phoneInput.addEventListener('paste', function(e) {
-    setTimeout(() => validatePhone(e.target), 10);
-});
-
-// Prevent typing beyond 15 characters
-let lastToastTime = 0;
-document.getElementById('phone').addEventListener('keydown', function(e) {
-    const value = e.target.value;
-    // Allow: backspace, delete, tab, escape, enter, arrows
-    if ([8, 9, 27, 13, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
-        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-        (e.keyCode === 65 && e.ctrlKey === true) ||
-        (e.keyCode === 67 && e.ctrlKey === true) ||
-        (e.keyCode === 86 && e.ctrlKey === true) ||
-        (e.keyCode === 88 && e.ctrlKey === true)) {
-        return;
+    let value = e.target.value;
+    // Remove invalid characters (only allow digits, +, -, spaces, parentheses)
+    value = value.replace(/[^0-9+\-\s()]/g, '');
+    // Strictly limit to 15 characters
+    if (value.length > 15) {
+        value = value.substring(0, 15);
     }
-    // Prevent if already at 15 characters
-    if (value.length >= 15 && e.target.selectionStart === e.target.selectionEnd) {
-        e.preventDefault();
-        
-        // Show toast notification (throttled to once per 2 seconds)
-        const now = Date.now();
-        if (now - lastToastTime > 2000) {
-            showToast('Phone number cannot exceed 15 characters', 'warning');
-            lastToastTime = now;
-        }
-    }
+    e.target.value = value;
 });
 </script>
