@@ -71,6 +71,19 @@ router.get("/", isAuthenticated, async (req, res) => {
 
 router.get("/index", isAuthenticated, async (req, res) => {
   try {
+    // Check if user has dashboard permission
+    const userRole = res.locals.userRole;
+    const userPermissions = res.locals.userPermissions || [];
+    
+    // If not super-admin and doesn't have dashboard permission, show access denied
+    if (userRole !== 'super-admin' && !userPermissions.includes('dashboard')) {
+      return res.render("errors/access-denied", {
+        title: "Access Denied",
+        subTitle: "Dashboard",
+        message: "You don't have permission to access the Dashboard."
+      });
+    }
+
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
     const Page = require('../models/Page');

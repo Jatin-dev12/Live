@@ -11,13 +11,15 @@
     </div>
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
-            <!-- Dashboard - Always visible for all authenticated users -->
+            <!-- Dashboard - Only visible if permission is granted -->
+            <% if (typeof userRole !== 'undefined' && (userRole === 'super-admin' || (typeof userPermissions !== 'undefined' && userPermissions.includes('dashboard')))) { %>
             <li class="active-pagee">
                 <a href="/index">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
                     <span>Dashboard</span>
                 </a>
             </li>
+            <% } %>
             
             <!-- Users Management - Only Super Admin -->
             <% if (userRole === 'super-admin') { %>

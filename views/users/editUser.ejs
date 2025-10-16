@@ -32,7 +32,8 @@
                         <div class="col-md-6">
                             <div class="mb-20">
                                 <label for="phone" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone</label>
-                                <input type="tel" class="form-control radius-8" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="Enter phone number">
+                                <input type="tel" class="form-control radius-8" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="Enter phone number" maxlength="15" pattern="[0-9+\-\s()]{1,15}">
+                                <small class="text-muted">Maximum 15 digits</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -56,11 +57,22 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-20">
-                                <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" id="changePasswordToggle" onchange="togglePasswordFields()">
-                                    <label class="form-check-label fw-semibold text-primary-light" for="changePasswordToggle">
-                                        Change Password
-                                    </label>
+                                <div class="password-reset-card">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="password-icon-wrapper">
+                                                <iconify-icon icon="solar:lock-password-bold" class="text-white"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <h6 style="font-size: 16px !important; " class="mb-1 fw-semibold text-neutral-900">Reset User Password</h6>
+                                                <p style="font-size: 14px;" class="mb-0 text-sm text-neutral-600">Enable this option to set a new password for this user account</p>
+                                            </div>
+                                        </div>
+                                        <label class="custom-toggle-switch">
+                                            <input type="checkbox" id="changePasswordToggle" onchange="togglePasswordFields()">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -390,6 +402,102 @@
         background-color: #dc3545;
         border-color: #dc3545;
     }
+
+    /* Password Reset Card Styling */
+    .password-reset-card {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+        border: 2px solid #fecaca;
+        border-radius: 12px;
+        padding: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.08);
+    }
+
+    .password-reset-card:hover {
+        border-color: #fca5a5;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .password-icon-wrapper {
+        width: 38px;
+        height: 38px;
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        flex-shrink: 0;
+    }
+
+    .password-icon-wrapper iconify-icon {
+        font-size: 24px;
+    }
+
+    /* Custom iOS-style Toggle Switch */
+    .custom-toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 25px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .custom-toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 100%);
+        border-radius: 34px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+        border-radius: 50%;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-toggle-switch input:checked + .toggle-slider {
+        background: linear-gradient(180deg, #dc3545 0%, #c82333 100%);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(220, 53, 69, 0.1);
+    }
+
+    .custom-toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .custom-toggle-switch:hover .toggle-slider {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-toggle-switch input:focus + .toggle-slider {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(220, 53, 69, 0.2);
+    }
+
+    .custom-toggle-switch input:checked:focus + .toggle-slider {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(220, 53, 69, 0.3);
+    }
 </style>
 
 <script>
@@ -399,7 +507,7 @@ function togglePasswordFields() {
     const toggle = document.getElementById('changePasswordToggle');
     const newPassword = document.getElementById('newPassword');
     const confirmPassword = document.getElementById('confirmPassword');
-    
+
     if (toggle.checked) {
         passwordFields.style.display = 'flex';
         newPassword.setAttribute('required', 'required');
@@ -417,7 +525,7 @@ function togglePasswordFields() {
 function togglePasswordVisibility(fieldId) {
     const field = document.getElementById(fieldId);
     const icon = document.getElementById(fieldId + '-icon');
-    
+
     if (field.type === 'password') {
         field.type = 'text';
         icon.classList.remove('ri-eye-line');
@@ -605,4 +713,65 @@ async function updateUser() {
         btnSpinner.classList.add('d-none');
     }
 }
+
+// Phone number validation
+function validatePhone(input) {
+    let value = input.value;
+    // Remove any non-digit, non-plus, non-minus, non-space, non-parentheses characters
+    value = value.replace(/[^0-9+\-\s()]/g, '');
+    
+    // Limit to 15 characters
+    if (value.length > 15) {
+        value = value.substring(0, 15);
+        showToast('Phone number cannot exceed 15 characters', 'warning');
+    }
+    
+    input.value = value;
+    
+    // Show warning if at limit
+    if (value.length >= 15) {
+        input.classList.add('border-warning');
+    } else {
+        input.classList.remove('border-warning');
+    }
+}
+
+const phoneInput = document.getElementById('phone');
+
+// Validate on page load (for edit form with existing data)
+validatePhone(phoneInput);
+
+phoneInput.addEventListener('input', function(e) {
+    validatePhone(e.target);
+});
+
+phoneInput.addEventListener('paste', function(e) {
+    setTimeout(() => validatePhone(e.target), 10);
+});
+
+// Prevent typing beyond 15 characters
+let lastToastTime = 0;
+document.getElementById('phone').addEventListener('keydown', function(e) {
+    const value = e.target.value;
+    // Allow: backspace, delete, tab, escape, enter, arrows
+    if ([8, 9, 27, 13, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        (e.keyCode === 65 && e.ctrlKey === true) ||
+        (e.keyCode === 67 && e.ctrlKey === true) ||
+        (e.keyCode === 86 && e.ctrlKey === true) ||
+        (e.keyCode === 88 && e.ctrlKey === true)) {
+        return;
+    }
+    // Prevent if already at 15 characters
+    if (value.length >= 15 && e.target.selectionStart === e.target.selectionEnd) {
+        e.preventDefault();
+        
+        // Show toast notification (throttled to once per 2 seconds)
+        const now = Date.now();
+        if (now - lastToastTime > 2000) {
+            showToast('Phone number cannot exceed 15 characters', 'warning');
+            lastToastTime = now;
+        }
+    }
+});
 </script>
