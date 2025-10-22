@@ -1,9 +1,9 @@
 
-  // =========================== Sales Statistic Line Chart Start ===============================
+  // =========================== Leads Statistics Line Chart Start ===============================
   var options = {
     series: [{
-      name: "This month",
-      data: [10, 20, 12, 30, 14, 35, 16, 32, 14, 25, 13, 28]
+      name: "Leads",
+      data: [15, 25, 18, 35, 20, 42, 22, 38, 18, 30, 16, 32]
     }],
     chart: {
       height: 264,
@@ -19,16 +19,16 @@
         top: 6,
         left: 0,
         blur: 4,
-        color: "#000",
+        color: "#487FFF",
         opacity: 0.1,
       },
     },
+    colors: ['#487FFF'],
     dataLabels: {
       enabled: false
     },
     stroke: {
       curve: 'smooth',
-      colors: ['#487FFF'], // Specify the line color here
       width: 3
     },
     markers: {
@@ -40,19 +40,18 @@
     },
     tooltip: {
       enabled: true,
-      x: {
-        show: true,
-      },
       y: {
-        show: false,
-      },
-      z: {
-        show: false,
+        formatter: function (value) {
+          return value + " leads";
+        }
       }
+    },
+    legend: {
+      show: false
     },
     grid: {
       row: {
-        colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['transparent', 'transparent'],
         opacity: 0.5
       },
       borderColor: '#D1D5DB',
@@ -61,10 +60,10 @@
     yaxis: {
       labels: {
         formatter: function (value) {
-          return "$" + value + "k";
+          return value;
         },
         style: {
-          fontSize: "14px"
+          fontSize: "12px"
         }
       },
     },
@@ -78,7 +77,7 @@
           return value;
         },
         style: {
-          fontSize: "14px"
+          fontSize: "12px"
         }
       },
       axisBorder: {
@@ -93,13 +92,6 @@
         fill: {
           type: 'solid',
           color: '#487FFF40',
-          // gradient: {
-          //   colorFrom: '#D8E3F0',
-          //   // colorTo: '#BED1E6',
-          //   stops: [0, 100],
-          //   opacityFrom: 0.4,
-          //   opacityTo: 0.5,
-          // },
         }
       }
     }
@@ -107,6 +99,42 @@
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+    
+    // Chart period selector functionality
+    document.getElementById('chartPeriod')?.addEventListener('change', function(e) {
+      const period = e.target.value;
+      let leadsData, categories;
+      
+      switch(period) {
+        case 'yearly':
+          leadsData = [15, 25, 18, 35, 20, 42, 22, 38, 18, 30, 16, 32];
+          categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          break;
+        case 'monthly':
+          leadsData = [12, 18, 22, 25, 30, 35, 28, 22, 20, 25, 28, 32, 26, 20, 23, 28, 31, 36, 30, 25, 22, 26, 29, 34, 38, 32, 28, 24, 21, 25];
+          categories = Array.from({length: 30}, (_, i) => i + 1);
+          break;
+        case 'weekly':
+          leadsData = [20, 25, 30, 26, 35, 28, 23];
+          categories = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          break;
+        case 'today':
+          leadsData = [3, 5, 4, 8, 10, 7, 9, 12, 8, 6, 7, 10, 13, 9, 7, 8, 10, 12, 9, 7, 6, 8, 10, 9];
+          categories = Array.from({length: 24}, (_, i) => i + ':00');
+          break;
+      }
+      
+      chart.updateSeries([{
+        name: "Leads",
+        data: leadsData
+      }]);
+      
+      chart.updateOptions({
+        xaxis: {
+          categories: categories
+        }
+      });
+    });
   // =========================== Sales Statistic Line Chart End ===============================
 
   // ================================ Total Subscriber bar chart Start ================================ 

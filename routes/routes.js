@@ -48,13 +48,20 @@ router.get("/", isAuthenticated, async (req, res) => {
     const totalPages = await Page.countDocuments();
     const totalUsers = await User.countDocuments({ email: { $nin: systemEmails } });
 
+    // Get recent leads for the dashboard table
+    const recentLeads = await Lead.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('fullName email phone company source status interestedIn notes createdAt');
+
     res.render("index", {
       title: "Dashboard",
       subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
       totalPages,
-      totalUsers
+      totalUsers,
+      recentLeads
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -64,7 +71,8 @@ router.get("/", isAuthenticated, async (req, res) => {
       totalLeads: 0,
       totalContactQueries: 0,
       totalPages: 0,
-      totalUsers: 0
+      totalUsers: 0,
+      recentLeads: []
     });
   }
 });
@@ -103,13 +111,20 @@ router.get("/index", isAuthenticated, async (req, res) => {
     const totalPages = await Page.countDocuments();
     const totalUsers = await User.countDocuments({ email: { $nin: systemEmails } });
 
+    // Get recent leads for the dashboard table
+    const recentLeads = await Lead.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('fullName email phone company source status interestedIn notes createdAt');
+
     res.render("index", {
       title: "Dashboard",
       subTitle: "ACRM",
       totalLeads,
       totalContactQueries,
       totalPages,
-      totalUsers
+      totalUsers,
+      recentLeads
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -119,7 +134,8 @@ router.get("/index", isAuthenticated, async (req, res) => {
       totalLeads: 0,
       totalContactQueries: 0,
       totalPages: 0,
-      totalUsers: 0
+      totalUsers: 0,
+      recentLeads: []
     });
   }
 });
