@@ -9,7 +9,7 @@ const { validateLogin, handleValidationErrors } = require('../../middleware/vali
 router.post('/signup', async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
-        
+
         // Validation
         if (!fullName || !email || !password) {
             return res.status(400).json({
@@ -17,7 +17,7 @@ router.post('/signup', async (req, res) => {
                 message: 'Please provide all required fields'
             });
         }
-        
+
         // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
@@ -26,7 +26,7 @@ router.post('/signup', async (req, res) => {
                 message: 'User with this email already exists'
             });
         }
-        
+
         // Get the default "User" role
         const defaultRole = await Role.findOne({ slug: 'user' });
         if (!defaultRole) {
@@ -35,7 +35,7 @@ router.post('/signup', async (req, res) => {
                 message: 'Default role not found. Please contact administrator.'
             });
         }
-        
+
         // Create new user
         const user = new User({
             fullName,
@@ -44,9 +44,9 @@ router.post('/signup', async (req, res) => {
             role: defaultRole._id,
             isActive: true
         });
-        
+
         await user.save();
-        
+
         res.status(201).json({
             success: true,
             message: 'User created successfully!'
@@ -65,7 +65,7 @@ router.post('/signup', async (req, res) => {
 router.post('/login', validateLogin, handleValidationErrors, async (req, res) => {
     try {
         const { email, password } = req.body;
-        
+
         // Check MongoDB connection
         const mongoose = require('mongoose');
         if (mongoose.connection.readyState !== 1) {
@@ -75,7 +75,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
                 message: 'Database connection unavailable. Please try again later.'
             });
         }
-        
+
         // Find user with password field
         const user = await User.findOne({ email: email.toLowerCase() })
             .select('+password')
@@ -85,14 +85,14 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
                     path: 'permissions'
                 }
             });
-        
+
         if (!user) {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
             });
         }
-        
+
         // Check if user is active
         if (!user.isActive) {
             return res.status(403).json({
@@ -100,32 +100,32 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
                 message: 'Your account has been deactivated. Please contact administrator.'
             });
         }
-        
+
         // Verify password
         const isPasswordValid = await user.comparePassword(password);
-        
+
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
             });
         }
-        
+
         // Update last login
         user.lastLogin = new Date();
         await user.save();
-        
+
         // Create session
         req.session.userId = user._id;
         req.session.userRole = user.role.slug;
-        
+
         // Remove password from response
         const userResponse = user.toObject();
         delete userResponse.password;
-        
+
         // Determine redirect URL based on role
         let redirectUrl = '/index'; // Default dashboard
-        
+
         // You can customize dashboard routes based on role
         // For example:
         // if (user.role.slug === 'super-admin') {
@@ -135,7 +135,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         // } else {
         //     redirectUrl = '/index'; // Default dashboard
         // }
-        
+
         res.json({
             success: true,
             message: 'Login successful',
@@ -164,7 +164,7 @@ router.post('/logout', isAuthenticated, (req, res) => {
                     message: 'Error during logout'
                 });
             }
-            
+
             res.json({
                 success: true,
                 message: 'Logout successful',
@@ -192,7 +192,7 @@ router.get('/me', isAuthenticated, async (req, res) => {
                 }
             })
             .select('-password');
-        
+
         res.json({
             success: true,
             data: user
@@ -214,6 +214,72 @@ router.get('/status', (req, res) => {
         isAuthenticated: !!(req.session && req.session.userId),
         userId: req.session?.userId || null
     });
+});
+
+// Change password
+router.post('/change-password', isAuthenticated, async (req, res) => {
+    try {
+        console.log('Change password request received');
+        console.log('User ID:', req.user?._id);
+        console.log('Request body:', { ...req.body, newPassword: '***', confirmPassword: '***' });
+
+        const { newPassword, confirmPassword } = req.body;
+
+        // Validation
+        if (!newPassword || !confirmPassword) {
+            console.log('Validation failed: Missing required fields');
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide both new password and confirm password'
+            });
+        }
+
+        if (newPassword !== confirmPassword) {
+            console.log('Validation failed: Passwords do not match');
+            return res.status(400).json({
+                success: false,
+                message: 'New password and confirm password do not match'
+            });
+        }
+
+        if (newPassword.length < 8) {
+            console.log('Validation failed: Password too short');
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 8 characters long'
+            });
+        }
+
+        // Get user
+        console.log('Fetching user...');
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        console.log('Updating password...');
+        // Update password
+        user.password = newPassword;
+        await user.save();
+
+        console.log('Password updated successfully');
+        res.json({
+            success: true,
+            message: 'Password changed successfully'
+        });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error changing password',
+            error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        });
+    }
 });
 
 module.exports = router;
