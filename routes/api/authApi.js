@@ -115,9 +115,10 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         user.lastLogin = new Date();
         await user.save();
 
-        // Create session
+        // Create session with session version
         req.session.userId = user._id;
         req.session.userRole = user.role.slug;
+        req.session.sessionVersion = user.sessionVersion || 1;
 
         // Remove password from response
         const userResponse = user.toObject();
@@ -278,6 +279,64 @@ router.post('/change-password', isAuthenticated, async (req, res) => {
             success: false,
             message: 'Error changing password',
             error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        });
+    }
+});
+
+// Session validity check endpoint
+router.get('/session-check', async (req, res) => {
+    try {
+        // If no session, return invalid
+        if (!req.session || !req.session.userId) {
+            return res.json({
+                success: false,
+                sessionInvalid: true,
+                message: 'No active session'
+            });
+        }
+
+        // Get user with session version
+        const user = await User.findById(req.session.userId).select('sessionVersion isActive');
+        
+        if (!user) {
+            req.session.destroy();
+            return res.json({
+                success: false,
+                sessionInvalid: true,
+                message: 'User not found. Please login again.'
+            });
+        }
+
+        if (!user.isActive) {
+            req.session.destroy();
+            return res.json({
+                success: false,
+                sessionInvalid: true,
+                message: 'Account deactivated. Please contact administrator.'
+            });
+        }
+
+        // Check if session version matches
+        const sessionVersion = req.session.sessionVersion || 1;
+        if (user.sessionVersion !== sessionVersion) {
+            req.session.destroy();
+            return res.json({
+                success: false,
+                sessionInvalid: true,
+                message: 'Password changed. Please login again.'
+            });
+        }
+
+        // Session is valid
+        res.json({
+            success: true,
+            message: 'Session valid'
+        });
+    } catch (error) {
+        console.error('Session check error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error checking session'
         });
     }
 });

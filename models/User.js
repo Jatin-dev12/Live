@@ -71,6 +71,10 @@ const userSchema = new mongoose.Schema({
     passwordChangedAt: {
         type: Date
     },
+    sessionVersion: {
+        type: Number,
+        default: 1
+    },
     passwordResetToken: {
         type: String,
         select: false
@@ -95,9 +99,10 @@ userSchema.pre('save', async function(next) {
         const salt = await bcrypt.genSalt(12);
         this.password = await bcrypt.hash(this.password, salt);
         
-        // Set password changed timestamp
+        // Set password changed timestamp and increment session version
         if (!this.isNew) {
             this.passwordChangedAt = Date.now() - 1000;
+            this.sessionVersion = (this.sessionVersion || 1) + 1;
         }
         
         next();

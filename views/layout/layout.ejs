@@ -256,6 +256,11 @@
         });
     </script>
 
+   <!-- Session Monitor - Auto logout on password change -->
+   <% if (typeof user !== 'undefined' && user) { %>
+   <script src="/js/sessionMonitor.js"></script>
+   <% } %>
+
    <!-- Add the script block here -->
    <% if (typeof script !== 'undefined') { %>
     <%- script %>
