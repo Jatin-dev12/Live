@@ -47,6 +47,10 @@ app.use('/uploads', express.static(__dirname + '/public/uploads'));
 app.use(expressLayouts);
 app.set('layout', './layout/layout');
 
+// Load menus middleware (make menus available in all views)
+const { loadMenus } = require('./middleware/menuMiddleware');
+app.use(loadMenus);
+
 // Set up views directory and view engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -73,6 +77,7 @@ const seoApi = require('./routes/api/seoApi');
 const uploadApi = require('./routes/api/uploadApi');
 const adsApi = require('./routes/api/adsApi');
 const mediaApi = require('./routes/api/mediaApi');
+const menuApi = require('./routes/api/menuApi');
 
 // Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
 const pageRouter = require('./routes/routes');
@@ -88,6 +93,7 @@ app.use('/api', seoApi);
 app.use('/api', uploadApi);
 app.use('/api', adsApi);
 app.use('/api/media', mediaApi);
+app.use('/api/menus', menuApi);
 
 // Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function
