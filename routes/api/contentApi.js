@@ -83,7 +83,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 // Create new content
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo } = req.body;
         
         // Validate required fields
         if (!pageId || !title) {
@@ -111,6 +111,9 @@ router.post('/', isAuthenticated, async (req, res) => {
             category,
             status: status || 'active',
             order: order || 0,
+            sectionType: sectionType || 'default',
+            heroSection: heroSection || undefined,
+            threeColumnInfo: threeColumnInfo || undefined,
             customFields,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
@@ -140,7 +143,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update content
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo } = req.body;
         
         // Verify page exists if pageId is being updated
         if (pageId) {
@@ -164,6 +167,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 category,
                 status,
                 order,
+                sectionType,
+                heroSection,
+                threeColumnInfo,
                 customFields,
                 updatedBy: req.user._id
             },
@@ -187,6 +193,32 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error updating content',
+            error: error.message
+        });
+    }
+});
+
+// Delete all content for a specific page
+router.delete('/page/:pageId', isAuthenticated, async (req, res) => {
+    try {
+        const result = await Content.deleteMany({ page: req.params.pageId });
+        
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No content found for this page'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: `${result.deletedCount} content section(s) deleted successfully`
+        });
+    } catch (error) {
+        console.error('Error deleting page content:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting page content',
             error: error.message
         });
     }

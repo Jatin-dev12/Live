@@ -1,89 +1,25 @@
 <div class="row gy-4">
     <div class="col-lg-12">
         <div class="card">
-            <div class="card-header border-bottom">
+            <div class="card-header border-bottom d-flex justify-content-between align-items-center">
                 <h6 class="text-xl mb-0">Add Content</h6>
             </div>
             <div class="card-body p-24">
                 <form id="addContentForm" class="d-flex flex-column gap-20">
                     <div>
-                        <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
-                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
+                        <label class="form-label" for="pageId">Select Page: <span
+                                class="text-danger-600">*</span></label>
+                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId"
+                            required>
                             <option value="">-- Select a Page --</option>
-                            <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
-                                <% pages.forEach(page => { %>
-                                    <option value="<%= page._id %>"><%= page.name %></option>
-                                <% }) %>
-                            <% } %>
+                            <% if (typeof pages !=='undefined' && pages.length> 0) { %>
+                                <% pages.forEach(page=> { %>
+                                    <option value="<%= page._id %>">
+                                        <%= page.name %>
+                                    </option>
+                                    <% }) %>
+                                        <% } %>
                         </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="title">Content Title: <span class="text-danger-600">*</span></label>
-                        <input type="text" class="form-control border border-neutral-200 radius-8" id="title" name="title" placeholder="Enter Content Title" required>
-                    </div>
-                    <!-- <div>
-                        <label class="form-label" for="category">Category: </label>
-                        <input type="text" class="form-control border border-neutral-200 radius-8" id="category" name="category" placeholder="Enter Category (optional)">
-                    </div> -->
-                    <div>
-                        <label class="form-label">Content Description: </label>
-                        <div class="border border-neutral-200 radius-8 overflow-hidden">
-                            <div class="height-200">
-                                <!-- Editor Toolbar Start -->
-                                <div id="toolbar-container">
-                                    <span class="ql-formats">
-                                        <select class="ql-font"></select>
-                                        <select class="ql-size"></select>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-bold"></button>
-                                        <button class="ql-italic"></button>
-                                        <button class="ql-underline"></button>
-                                        <button class="ql-strike"></button>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <select class="ql-color"></select>
-                                        <select class="ql-background"></select>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-script" value="sub"></button>
-                                        <button class="ql-script" value="super"></button>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-header" value="1"></button>
-                                        <button class="ql-header" value="2"></button>
-                                        <button class="ql-blockquote"></button>
-                                        <button class="ql-code-block"></button>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-list" value="ordered"></button>
-                                        <button class="ql-list" value="bullet"></button>
-                                        <button class="ql-indent" value="-1"></button>
-                                        <button class="ql-indent" value="+1"></button>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-direction" value="rtl"></button>
-                                        <select class="ql-align"></select>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-link"></button>
-                                        <button class="ql-image"></button>
-                                        <button class="ql-video"></button>
-                                        <button class="ql-formula"></button>
-                                    </span>
-                                    <span class="ql-formats">
-                                        <button class="ql-clean"></button>
-                                    </span>
-                                </div>
-                                <!-- Editor Toolbar End -->
-                                <!-- Editor start -->
-                                <div id="editor">
-                                   
-                                    <p><br></p>
-                                </div>
-                                <!-- Edit End -->
-                            </div>
-                        </div>
                     </div>
 
                     <div>
@@ -94,108 +30,414 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label class="form-label fw-bold text-neutral-900">Upload Thumbnail </label>
-                        <div class="upload-image-wrapper">
-                            <div class="uploaded-img d-none position-relative h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
-                                <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
-                                </button>
-                                <img id="uploaded-img__preview" class="w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
-                            </div>
-                            <label class="upload-file h-160-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file">
-                                <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
-                                <span class="fw-semibold text-secondary-light">Upload</span>
-                                <input id="upload-file" type="file" hidden>
-                            </label>
-                        </div>
+                    <hr class="my-3">
+
+                    <!-- Sections Container -->
+                    <div id="sectionsContainer">
+                        <!-- Sections will be added here dynamically -->
                     </div>
 
-                    <button type="submit" class="btn btn-primary-600 radius-8">Submit</button>
+                    <!-- Add Section Button -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-outline-primary-600 radius-8" id="addSectionBtn">
+
+                            Add Section
+                        </button>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <button type="submit" class="btn btn-primary-600 radius-8">Submit All Sections</button>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- Sidebar Start -->
-
 </div>
 
-<% script = `
-    <script src='/js/editor.highlighted.min.js'></script>
-    <script src='/js/editor.quill.js'></script>
-    <script src='/js/editor.katex.min.js'></script>
-        <script>
-    // Editor Js Start
-    const quill = new Quill('#editor', {
-      modules: {
-        syntax: true,
-        toolbar: '#toolbar-container',
-      },
-      placeholder: 'Compose an epic...',
-      theme: 'snow',
+<% script=` <script>
+    // Add Section Button Click
+    $('#addSectionBtn').on('click', function() {
+    const currentSectionCount = $('.section-block').length + 1;
+    addSection(currentSectionCount);
     });
-    // Editor Js End
 
+    function addSection(id) {
+    const sectionHtml = \`
+    <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="\${id}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-lg mb-0">Section #\${id}</h6>
+            <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
+                Remove Section
+            </button>
+        </div>
 
-    // =============================== Upload Single Image js start here ================================================
-    const fileInput = document.getElementById('upload-file');
-    const imagePreview = document.getElementById('uploaded-img__preview');
-    const uploadedImgContainer = document.querySelector('.uploaded-img');
-    const removeButton = document.querySelector('.uploaded-img__remove');
+        <div class="mb-3">
+            <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
+            <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
+                <option value="">-- Please Select Section --</option>
+                <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+                <option value="three-column-info">Three Column Info Cards</option>
+            </select>
+        </div>
 
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) {
-        const src = URL.createObjectURL(e.target.files[0]);
-        imagePreview.src = src;
-        uploadedImgContainer.classList.remove('d-none');
-        }
+        <!-- Hero Section Fields -->
+        <div class="hero-section-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Heading: <span class="text-danger-600">*</span></label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 hero-heading"
+                    placeholder="Enter main heading">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Paragraph:</label>
+                <textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4"
+                    placeholder="Enter description text"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Call-to-Action Buttons:</label>
+                <div class="cta-container">
+                    <!-- CTAs will be added here -->
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">
+                    Add CTA Button
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Hero Image</label>
+                <div class="upload-image-wrapper">
+                    <div
+                        class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button"
+                            class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png"
+                            alt="image">
+                    </div>
+                    <label
+                        class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Hero Image</span>
+                        <input type="file" class="upload-file-hero-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Three Column Info Fields -->
+        <div class="three-column-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Info Cards:</label>
+                <div class="column-container">
+                    <!-- Columns will be added here -->
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">
+                    <iconify-icon icon="ic:baseline-plus"></iconify-icon> Add Info Card
+                </button>
+            </div>
+        </div>
+    </div>
+    \`;
+
+    $('#sectionsContainer').append(sectionHtml);
+    }
+
+    // Section Type Change
+    $(document).on('change', '.section-type-select', function() {
+    const $section = $(this).closest('.section-block');
+    const sectionType = $(this).val();
+
+    $section.find('.hero-section-fields').hide();
+    $section.find('.three-column-fields').hide();
+
+    if (sectionType === 'hero-section') {
+    $section.find('.hero-section-fields').show();
+    } else if (sectionType === 'three-column-info') {
+    $section.find('.three-column-fields').show();
+    }
     });
-    removeButton.addEventListener('click', () => {
-        imagePreview.src = '';
-        uploadedImgContainer.classList.add('d-none');
-        fileInput.value = '';
-    });
-    // =============================== Upload Single Image js End here ================================================
 
-    // Handle form submission
+    // Remove Section
+    $(document).on('click', '.remove-section-btn', function() {
+    $(this).closest('.section-block').remove();
+    renumberSections();
+    });
+
+    // Renumber sections after removal
+    function renumberSections() {
+    $('.section-block').each(function(index) {
+    const newNumber = index + 1;
+    $(this).attr('data-section-id', newNumber);
+    $(this).find('h6').first().text('Section #' + newNumber);
+    });
+    }
+
+    // Add CTA Button
+    $(document).on('click', '.add-cta-btn', function() {
+    const $container = $(this).siblings('.cta-container');
+    const ctaCount = $container.find('.cta-item').length + 1;
+
+    const ctaHtml = \`
+    <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold text-sm">Button #\${ctaCount}</span>
+            <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">
+                <iconify-icon icon="mdi:delete"></iconify-icon>
+            </button>
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Button Text:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 cta-text"
+                placeholder="e.g., Why join ACRM">
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Button Link:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
+                placeholder="e.g., /about-us">
+        </div>
+        <div>
+            <label class="form-label text-sm">Button Style:</label>
+            <select class="form-control border border-neutral-200 radius-8 cta-style">
+                <option value="primary">Primary (Red)</option>
+                <option value="secondary">Secondary (Dark)</option>
+                <option value="outline">Outline</option>
+            </select>
+        </div>
+    </div>
+    \`;
+    $container.append(ctaHtml);
+    });
+
+    // Remove CTA
+    $(document).on('click', '.remove-cta-btn', function() {
+    $(this).closest('.cta-item').remove();
+    });
+
+    // Hero Image Upload
+    $(document).on('change', '.upload-file-hero-input', function(e) {
+    if (e.target.files.length) {
+    const $section = $(this).closest('.section-block');
+    const file = e.target.files[0];
+    const $input = $(this);
+    
+    // Show preview immediately
+    const src = URL.createObjectURL(file);
+    $section.find('.uploaded-img-hero__preview').attr('src', src);
+    $section.find('.uploaded-img-hero').removeClass('d-none');
+    $section.find('.upload-file-hero').addClass('d-none');
+    
+    // Upload to server
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'hero');
+    
+    $.ajax({
+    url: '/api/upload',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+    if (response.success) {
+    // Store the server path
+    $input.data('uploaded', true);
+    $input.data('serverPath', response.url);
+    showToast('Image uploaded successfully', 'success');
+    } else {
+    showToast('Failed to upload image', 'error');
+    $section.find('.uploaded-img-hero').addClass('d-none');
+    $section.find('.upload-file-hero').removeClass('d-none');
+    $input.val('');
+    }
+    },
+    error: function(xhr) {
+    showToast('Error uploading image: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+    $section.find('.uploaded-img-hero').addClass('d-none');
+    $section.find('.upload-file-hero').removeClass('d-none');
+    $input.val('');
+    }
+    });
+    }
+    });
+
+    // Remove Hero Image
+    $(document).on('click', '.uploaded-img-hero__remove', function() {
+    const $section = $(this).closest('.section-block');
+    $section.find('.uploaded-img-hero__preview').attr('src', '');
+    $section.find('.uploaded-img-hero').addClass('d-none');
+    $section.find('.upload-file-hero').removeClass('d-none');
+    $section.find('.upload-file-hero-input').val('').data('uploaded', false).data('serverPath', '');
+    });
+
+    // Add Column
+    $(document).on('click', '.add-column-btn', function() {
+    const $container = $(this).siblings('.column-container');
+    const columnCount = $container.find('.column-item').length + 1;
+
+    const columnHtml = \`
+    <div class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold text-sm">Card #\${columnCount}</span>
+            <button type="button" class="btn btn-sm btn-danger-600 remove-column-btn">
+                <iconify-icon icon="mdi:delete"></iconify-icon>
+            </button>
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Title:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 column-title"
+                placeholder="e.g., Call Out 1">
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Description:</label>
+            <textarea class="form-control border border-neutral-200 radius-8 column-description" rows="3"
+                placeholder="Enter description"></textarea>
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Button Text:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-text"
+                placeholder="e.g., More">
+        </div>
+        <div>
+            <label class="form-label text-sm">Button Link:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-link"
+                placeholder="e.g., /learn-more">
+        </div>
+    </div>
+    \`;
+    $container.append(columnHtml);
+    });
+
+    // Remove Column
+    $(document).on('click', '.remove-column-btn', function() {
+    $(this).closest('.column-item').remove();
+    });
+
+    // Form Submission
     $('#addContentForm').on('submit', function(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        const formData = {
-            pageId: $('#pageId').val(),
-            title: $('#title').val(),
-            category: $('#category').val(),
-            description: quill.root.innerHTML,
-            content: quill.root.innerHTML,
-            status: $('#status').val()
-        };
+    const pageId = $('#pageId').val();
+    const status = $('#status').val();
 
-        if (!formData.pageId) {
-            showToast('Please select a page', 'warning');
-            return;
-        }
+    if (!pageId) {
+    showToast('Please select a page', 'warning');
+    return;
+    }
 
-        $.ajax({
-            url: '/api/content',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response.success) {
-                    showToast('Content created successfully!', 'success');
-                    setTimeout(function() {
-                        window.location.href = '/cms/content-management';
-                    }, 1000);
-                } else {
-                    showToast('Error: ' + response.message, 'error');
-                }
-            },
-            error: function(xhr) {
-                showToast('Error creating content: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
-            }
-        });
+    const $sections = $('.section-block');
+    if ($sections.length === 0) {
+    showToast('Please add at least one section', 'warning');
+    return;
+    }
+
+    const sectionsData = [];
+
+    $sections.each(function() {
+    const $section = $(this);
+    const sectionType = $section.find('.section-type-select').val();
+
+    if (!sectionType) {
+    showToast('Please select a section type for all sections', 'warning');
+    return false;
+    }
+
+    const sectionData = {
+    pageId: pageId,
+    status: status,
+    sectionType: sectionType
+    };
+
+    if (sectionType === 'hero-section') {
+    const heading = $section.find('.hero-heading').val();
+    if (!heading) {
+    showToast('Please enter a heading for the hero section', 'warning');
+    return false;
+    }
+
+    const ctas = [];
+    $section.find('.cta-item').each(function() {
+    const text = $(this).find('.cta-text').val();
+    const link = $(this).find('.cta-link').val();
+    const style = $(this).find('.cta-style').val();
+    if (text && link) {
+    ctas.push({ text, link, style });
+    }
     });
 
-  </script>
-` %>
+    const $imageInput = $section.find('.upload-file-hero-input');
+    const imageUploaded = $imageInput.data('uploaded');
+    const imageSrc = imageUploaded ? $imageInput.data('serverPath') : '';
+
+    sectionData.title = heading;
+    sectionData.heroSection = {
+    heading: heading,
+    paragraph: $section.find('.hero-paragraph').val(),
+    ctas: ctas,
+    rightImage: imageSrc
+    };
+    } else if (sectionType === 'three-column-info') {
+    const columns = [];
+    $section.find('.column-item').each(function() {
+    const title = $(this).find('.column-title').val();
+    const description = $(this).find('.column-description').val();
+    const buttonText = $(this).find('.column-btn-text').val();
+    const buttonLink = $(this).find('.column-btn-link').val();
+    if (title && description) {
+    columns.push({ title, description, buttonText, buttonLink });
+    }
+    });
+
+    if (columns.length === 0) {
+    showToast('Please add at least one info card', 'warning');
+    return false;
+    }
+
+    sectionData.title = 'Three Column Info';
+    sectionData.threeColumnInfo = { columns };
+    }
+
+    sectionsData.push(sectionData);
+    });
+
+    if (sectionsData.length === 0) {
+    return;
+    }
+
+    console.log('Submitting sections:', sectionsData);
+
+    // Submit all sections
+    let completedRequests = 0;
+    let hasError = false;
+
+    sectionsData.forEach(function(sectionData) {
+    $.ajax({
+    url: '/api/content',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(sectionData),
+    success: function(response) {
+    completedRequests++;
+    if (completedRequests === sectionsData.length && !hasError) {
+    showToast('All sections created successfully!', 'success');
+    setTimeout(function() {
+    window.location.href = '/cms/content-management';
+    }, 1000);
+    }
+    },
+    error: function(xhr) {
+    hasError = true;
+    const errorMsg = xhr.responseJSON?.message || 'Unknown error';
+    showToast('Error creating section: ' + errorMsg, 'error');
+    }
+    });
+    });
+    });
+
+    // Initialize with one section
+    $(document).ready(function() {
+    addSection(1);
+    });
+    </script>
+    ` %>

@@ -11,10 +11,28 @@ router.get('/content-management', isAuthenticated, async (req, res) => {
             .populate('page', 'name path')
             .sort({ createdAt: -1 });
         
+        // Group content by page
+        const groupedContents = {};
+        contents.forEach(content => {
+            const pageId = content.page ? content.page._id.toString() : 'no-page';
+            if (!groupedContents[pageId]) {
+                groupedContents[pageId] = {
+                    page: content.page,
+                    sections: [],
+                    status: content.status,
+                    firstContentId: content._id
+                };
+            }
+            groupedContents[pageId].sections.push(content);
+        });
+        
+        // Convert to array
+        const groupedContentsArray = Object.values(groupedContents);
+        
         res.render('cms/contentManagement', {
             title: "Content Management",
             subTitle: "Content Management",
-            contents: contents
+            contents: groupedContentsArray
         });
     } catch (error) {
         console.error('Error fetching content:', error);
@@ -30,11 +48,21 @@ router.get('/content-management', isAuthenticated, async (req, res) => {
 // Show add content form
 router.get('/add-content-management', isAuthenticated, async (req, res) => {
     try {
-        const pages = await Page.find({ status: 'active' }).sort({ name: 1 });
+        // Get all active pages
+        const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
+        
+        // Get pages that already have content
+        const pagesWithContent = await Content.distinct('page');
+        
+        // Filter out pages that already have content
+        const availablePages = allPages.filter(page => 
+            !pagesWithContent.some(contentPageId => contentPageId.toString() === page._id.toString())
+        );
+        
         res.render('cms/addContentManagement', {
             title: "Add Content Management",
             subTitle: "Add Content Management",
-            pages: pages
+            pages: availablePages
         });
     } catch (error) {
         console.error('Error fetching pages:', error);
@@ -47,21 +75,28 @@ router.get('/add-content-management', isAuthenticated, async (req, res) => {
     }
 });
 
-// Show edit content form
+// Show edit content form - loads all sections for a page
 router.get('/edit-content-management/:id', isAuthenticated, async (req, res) => {
     try {
-        const content = await Content.findById(req.params.id).populate('page');
-        const pages = await Page.find({ status: 'active' }).sort({ name: 1 });
+        const firstContent = await Content.findById(req.params.id).populate('page');
         
-        if (!content) {
+        if (!firstContent) {
             return res.redirect('/cms/content-management');
         }
+        
+        // Get all sections for this page
+        const allSections = await Content.find({ page: firstContent.page._id })
+            .sort({ createdAt: 1 });
+        
+        // Get all active pages
+        const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
         
         res.render('cms/editContentManagement', {
             title: "Edit Content Management",
             subTitle: "Edit Content Management",
-            content: content,
-            pages: pages
+            content: firstContent,
+            allSections: allSections,
+            pages: allPages
         });
     } catch (error) {
         console.error('Error fetching content:', error);

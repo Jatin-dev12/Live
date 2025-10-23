@@ -36,6 +36,63 @@ const contentSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    // Section type for different layouts
+    sectionType: {
+        type: String,
+        enum: ['default', 'hero-section', 'three-column-info'],
+        default: 'default'
+    },
+    // Hero section specific fields
+    heroSection: {
+        heading: {
+            type: String,
+            trim: true
+        },
+        paragraph: {
+            type: String,
+            trim: true
+        },
+        ctas: [{
+            text: {
+                type: String,
+                trim: true
+            },
+            link: {
+                type: String,
+                trim: true
+            },
+            style: {
+                type: String,
+                enum: ['primary', 'secondary', 'outline'],
+                default: 'primary'
+            }
+        }],
+        rightImage: {
+            type: String,
+            trim: true
+        }
+    },
+    // Three column info section
+    threeColumnInfo: {
+        columns: [{
+            title: {
+                type: String,
+                trim: true
+            },
+            description: {
+                type: String,
+                trim: true
+            },
+            buttonText: {
+                type: String,
+                trim: true
+            },
+            buttonLink: {
+                type: String,
+                trim: true
+            }
+        }]
+    },
     customFields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed

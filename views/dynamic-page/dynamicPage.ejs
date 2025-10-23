@@ -12,35 +12,113 @@
         <div class="page-content">
             <% if (typeof contents !== 'undefined' && contents.length > 0) { %>
                 <% contents.forEach(content => { %>
-                    <div class="content-section mb-32 p-24 bg-base radius-12 border">
-                        <% if (content.title) { %>
-                            <h3 class="text-xl fw-semibold mb-16"><%= content.title %></h3>
-                        <% } %>
-                        
-                        <% if (content.thumbnail) { %>
-                            <div class="mb-16">
-                                <img src="<%= content.thumbnail %>" alt="<%= content.title %>" class="w-100 radius-8" style="max-height: 400px; object-fit: cover;">
+                    <% if (content.sectionType === 'hero-section' && content.heroSection) { %>
+                        <!-- Hero Section: Left Text + Right Image -->
+                        <div class="hero-section mb-32 p-24 bg-base radius-12 border">
+                            <div class="row align-items-center">
+                                <!-- Left Side: Text Content -->
+                                <div class="col-lg-6 col-md-6 mb-24 mb-md-0">
+                                    <% if (content.heroSection.heading) { %>
+                                        <h1 class="hero-heading text-4xl fw-bold mb-16 text-neutral-900">
+                                            <%= content.heroSection.heading %>
+                                        </h1>
+                                    <% } %>
+                                    
+                                    <% if (content.heroSection.paragraph) { %>
+                                        <p class="hero-paragraph text-lg text-secondary-light mb-24 line-height-2">
+                                            <%= content.heroSection.paragraph %>
+                                        </p>
+                                    <% } %>
+                                    
+                                    <!-- CTA Buttons -->
+                                    <% if (content.heroSection.ctas && content.heroSection.ctas.length > 0) { %>
+                                        <div class="hero-ctas d-flex flex-wrap gap-12">
+                                            <% content.heroSection.ctas.forEach(cta => { %>
+                                                <% 
+                                                    let btnClass = 'btn-primary-600';
+                                                    if (cta.style === 'secondary') btnClass = 'btn-neutral-900';
+                                                    if (cta.style === 'outline') btnClass = 'btn-outline-primary-600';
+                                                %>
+                                                <a href="<%= cta.link %>" class="btn <%= btnClass %> radius-8 px-24 py-12 fw-semibold">
+                                                    <%= cta.text %>
+                                                </a>
+                                            <% }) %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                
+                                <!-- Right Side: Image -->
+                                <div class="col-lg-6 col-md-6">
+                                    <% if (content.heroSection.rightImage) { %>
+                                        <div class="hero-image-wrapper">
+                                            <img src="<%= content.heroSection.rightImage %>" 
+                                                 alt="<%= content.title %>" 
+                                                 class="w-100 radius-12 shadow-sm" 
+                                                 style="max-height: 500px; object-fit: cover;">
+                                        </div>
+                                    <% } else { %>
+                                        <div class="hero-image-placeholder bg-neutral-100 radius-12 d-flex align-items-center justify-content-center" style="height: 400px;">
+                                            <iconify-icon icon="solar:gallery-outline" class="text-6xl text-secondary-light"></iconify-icon>
+                                        </div>
+                                    <% } %>
+                                </div>
                             </div>
-                        <% } %>
-                        
-                        <% if (content.description) { %>
-                            <div class="content-description mb-16">
-                                <p class="text-secondary-light"><%= content.description %></p>
+                        </div>
+                    <% } else if (content.sectionType === 'three-column-info' && content.threeColumnInfo && content.threeColumnInfo.columns) { %>
+                        <!-- Three Column Info Section -->
+                        <div class="three-column-section mb-32 p-24 bg-base radius-12 border">
+                            <div class="row g-4">
+                                <% content.threeColumnInfo.columns.forEach(column => { %>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="info-card p-24 bg-neutral-50 radius-12 h-100 d-flex flex-column">
+                                            <% if (column.title) { %>
+                                                <h3 class="text-xl fw-bold mb-16 text-neutral-900"><%= column.title %></h3>
+                                            <% } %>
+                                            <% if (column.description) { %>
+                                                <p class="text-secondary-light mb-24 flex-grow-1"><%= column.description %></p>
+                                            <% } %>
+                                            <% if (column.buttonText && column.buttonLink) { %>
+                                                <a href="<%= column.buttonLink %>" class="btn btn-outline-neutral-900 radius-8 px-20 py-10 fw-medium align-self-start">
+                                                    <%= column.buttonText %>
+                                                </a>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }) %>
                             </div>
-                        <% } %>
-                        
-                        <% if (content.content) { %>
-                            <div class="content-body">
-                                <%- content.content %>
-                            </div>
-                        <% } %>
-                        
-                        <% if (content.category) { %>
-                            <div class="mt-16">
-                                <span class="badge bg-primary-600 text-white px-12 py-4 radius-4"><%= content.category %></span>
-                            </div>
-                        <% } %>
-                    </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Default Content Section -->
+                        <div class="content-section mb-32 p-24 bg-base radius-12 border">
+                            <% if (content.title) { %>
+                                <h3 class="text-xl fw-semibold mb-16"><%= content.title %></h3>
+                            <% } %>
+                            
+                            <% if (content.thumbnail) { %>
+                                <div class="mb-16">
+                                    <img src="<%= content.thumbnail %>" alt="<%= content.title %>" class="w-100 radius-8" style="max-height: 400px; object-fit: cover;">
+                                </div>
+                            <% } %>
+                            
+                            <% if (content.description) { %>
+                                <div class="content-description mb-16">
+                                    <p class="text-secondary-light"><%= content.description %></p>
+                                </div>
+                            <% } %>
+                            
+                            <% if (content.content) { %>
+                                <div class="content-body">
+                                    <%- content.content %>
+                                </div>
+                            <% } %>
+                            
+                            <% if (content.category) { %>
+                                <div class="mt-16">
+                                    <span class="badge bg-primary-600 text-white px-12 py-4 radius-4"><%= content.category %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } %>
                 <% }) %>
             <% } else { %>
                 <div class="text-center py-48">
@@ -54,6 +132,58 @@
 </div>
 
 <style>
+    /* Hero Section Styles */
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    .hero-heading {
+        line-height: 1.2;
+        color: #1a1a1a;
+    }
+    
+    .hero-paragraph {
+        line-height: 1.8;
+        color: #6c757d;
+    }
+    
+    .hero-ctas .btn {
+        transition: all 0.3s ease;
+        font-size: 16px;
+    }
+    
+    .hero-ctas .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .hero-image-wrapper img {
+        transition: transform 0.3s ease;
+    }
+    
+    .hero-image-wrapper:hover img {
+        transform: scale(1.02);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-heading {
+            font-size: 2rem !important;
+        }
+        
+        .hero-paragraph {
+            font-size: 1rem !important;
+        }
+        
+        .hero-ctas {
+            flex-direction: column;
+        }
+        
+        .hero-ctas .btn {
+            width: 100%;
+        }
+    }
+
+    /* Default Content Styles */
     .content-body {
         line-height: 1.8;
     }

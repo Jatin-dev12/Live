@@ -20,20 +20,23 @@
                     <tr>
                         <th scope="col">Pages</th>
                         <th scope="col">Title</th>
-                        <th scope="col">Description</th>
+                        <!-- <th scope="col">Description</th> -->
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody id="contentTableBody">
                     <% if (typeof contents !== 'undefined' && contents.length > 0) { %>
-                        <% contents.forEach(content => { %>
-                            <tr data-content-id="<%= content._id %>">
-                                <td><%= content.page ? content.page.name : 'N/A' %></td>
-                                <td class="title-table"><%= content.title %></td>
-                                <td class="desc-table"><%= content.description ? content.description.replace(/<[^>]*>/g, '').substring(0, 100) : 'No description' %><%= content.description && content.description.replace(/<[^>]*>/g, '').length > 100 ? '...' : '' %></td>
+                        <% contents.forEach(groupedContent => { %>
+                            <tr data-page-id="<%= groupedContent.page ? groupedContent.page._id : 'N/A' %>">
+                                <td><%= groupedContent.page ? groupedContent.page.name : 'N/A' %></td>
+                                <td class="title-table">
+                                    <% groupedContent.sections.forEach((section, index) => { %>
+                                        <%= section.title %><%= index < groupedContent.sections.length - 1 ? ', ' : '' %>
+                                    <% }) %>
+                                </td>
                                 <td class="text-center">
-                                    <% if (content.status === 'active') { %>
+                                    <% if (groupedContent.status === 'active') { %>
                                         <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
                                     <% } else { %>
                                         <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
@@ -42,20 +45,20 @@
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
                                         <% if (typeof canUpdate === 'function' && canUpdate('cms')) { %>
-                                        <a href="/cms/edit-content-management/<%= content._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                        <a href="/cms/edit-content-management/<%= groupedContent.firstContentId %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
                                         <% } else { %>
-                                        <a href="/cms/edit-content-management/<%= content._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                        <a href="/cms/edit-content-management/<%= groupedContent.firstContentId %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
                                         <% } %>
                                         <% if (typeof canDelete === 'function' && canDelete('cms')) { %>
-                                        <button type="button" class="delete-content-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-content-id="<%= content._id %>">
+                                        <button type="button" class="delete-page-content-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-page-id="<%= groupedContent.page ? groupedContent.page._id : '' %>">
                                             <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                         </button>
                                         <% } else { %>
-                                        <button type="button" class="delete-content-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-content-id="<%= content._id %>">
+                                        <button type="button" class="delete-page-content-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-page-id="<%= groupedContent.page ? groupedContent.page._id : '' %>">
                                             <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                         </button>
                                         <% } %>
@@ -65,7 +68,7 @@
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="5" class="text-center">No content found. Add content to your pages!</td>
+                            <td colspan="4" class="text-center">No content found. Add content to your pages!</td>
                         </tr>
                     <% } %>
                 </tbody>
@@ -126,34 +129,57 @@
         });
     });
 
-    // Delete content functionality
-    $(document).on('click', '.delete-content-btn', function () {
-        const contentId = $(this).data('content-id');
+    // Delete all content for a page
+    $(document).on('click', '.delete-page-content-btn', function () {
+        const pageId = $(this).data('page-id');
         const row = $(this).closest('tr');
 
-        if (confirm('Are you sure you want to delete this content?')) {
-            $.ajax({
-                url: '/api/content/' + contentId,
-                type: 'DELETE',
-                success: function(response) {
-                    if (response.success) {
-                        showToast('Content deleted successfully!', 'success');
-                        row.fadeOut(300, function() {
-                            $(this).remove();
-                            // Check if table is empty
-                            if ($('#contentTableBody tr').length === 0) {
-                                $('#contentTableBody').html('<tr><td colspan="5" class="text-center">No content found. Add content to your pages!</td></tr>');
-                            }
-                        });
-                    } else {
-                        showToast('Error: ' + response.message, 'error');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete all content sections for this page? This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/api/content/page/' + pageId,
+                    type: 'DELETE',
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'All content sections have been deleted.',
+                                'success'
+                            );
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+                                // Check if table is empty
+                                if ($('#contentTableBody tr').length === 0) {
+                                    $('#contentTableBody').html('<tr><td colspan="4" class="text-center">No content found. Add content to your pages!</td></tr>');
+                                }
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message || 'Failed to delete content',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON?.message || 'Unknown error occurred',
+                            'error'
+                        );
                     }
-                },
-                error: function(xhr) {
-                    showToast('Error deleting content: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
-                }
-            });
-        }
+                });
+            }
+        });
     });
 </script>
 ` %>
