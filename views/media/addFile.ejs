@@ -1,194 +1,292 @@
 <div class="custom-upload-media">
-    <nav class="custom-upload-widget">
-        <span class="upload-heading">Upload New Media</span>
-        <div class="ml-auto">
-            <a href="/media/library" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="bi bi-grid-3x3-gap me-1"></i> Media Library
-            </a>
-            <input id="fileInput" class="d-none" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
-                multiple>
-        </div>
-    </nav>
+	<nav class="custom-upload-widget">
+		<span class="upload-heading">Upload New Media</span>
+		<div class="ml-auto">
+			<a href="/media/library" class="btn btn-outline-secondary btn-sm me-2">
+				<i class="bi bi-grid-3x3-gap me-1"></i> Media Library
+			</a>
+			<input id="fileInput" class="d-none" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+				multiple>
+		</div>
+	</nav>
 
-    <main class="dragdrop-widget">
-        <div class="row">
-            <div class="col-lg-9">
-                <div id="dropzone" class="dropzone text-center">
-                    <div>
-                        <p class="lead mb-2">Drop files to upload</p>
-                        <p class="text-muted mb-3">or</p>
-                        <button id="selectFilesBtn" class="btn btn-primary btn-sm">Select Files</button>
-                        <p class="text-muted mt-3 mb-0"><small>Maximum upload file size: 10 MB.</small></p>
-                    </div>
-                </div>
+	<main class="dragdrop-widget">
+		<div class="row">
+			<div class="col-lg-9">
+				<div id="dropzone" class="dropzone text-center">
+					<div>
+						<p class="lead mb-2">Drop files to upload</p>
+						<p class="text-muted mb-3">or</p>
+						<button id="selectFilesBtn" class="btn btn-primary btn-sm">Select Files</button>
+						<p class="text-muted mt-3 mb-0"><small>Maximum upload file size: 10 MB.</small></p>
+					</div>
+				</div>
 
-                <div id="uploads" class="uploads mt-4"></div>
+				<div id="uploadsHeader" class="justify-content-between align-items-center mt-4 mb-2"
+					style="display: none;">
+					<h6 class="mb-0 text-secondary">Upload Queue</h6>
+					<button id="clearListBtn" class="btn btn-outline-danger btn-sm">
+						<i class="ri-delete-bin-line me-1"></i> Clear List
+					</button>
+				</div>
+				<div id="uploads" class="uploads"></div>
 
-            </div>
+			</div>
 
-        </div>
-    </main>
+		</div>
+	</main>
 </div>
 
 <script>
-// Inline script to ensure no caching issues
-(function () {
-	var dropzone = document.getElementById('dropzone');
-	var fileInput = document.getElementById('fileInput');
-	var selectBtn = document.getElementById('selectFilesBtn');
-	var uploads = document.getElementById('uploads');
+	// Inline script to ensure no caching issues
+	(function () {
+		var dropzone = document.getElementById('dropzone');
+		var fileInput = document.getElementById('fileInput');
+		var selectBtn = document.getElementById('selectFilesBtn');
+		var uploads = document.getElementById('uploads');
 
-	if (!dropzone || !fileInput || !uploads || !selectBtn) {
-		console.error('Required upload elements not found');
-		return;
-	}
-
-	function preventDefaults(e) {
-		e.preventDefault();
-		e.stopPropagation();
-	}
-
-	function bytesToSize(bytes) {
-		var sizes = ['B', 'KB', 'MB', 'GB'];
-		if (bytes === 0) return '0 B';
-		var i = Math.floor(Math.log(bytes) / Math.log(1024));
-		return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
-	}
-
-	function showToast(message, type) {
-		if (window.showToast) {
-			window.showToast(message, type);
-		} else {
-			alert(message);
-		}
-	}
-
-	function handleFiles(fileList) {
-		Array.from(fileList).forEach(function(file){
-			uploadFile(file);
-		});
-	}
-
-	function uploadFile(file) {
-		var item = document.createElement('div');
-		item.className = 'item';
-
-		var thumb = document.createElement('div');
-		thumb.className = 'thumb';
-
-		var meta = document.createElement('div');
-		meta.className = 'meta';
-
-		var name = document.createElement('p');
-		name.className = 'name';
-		name.textContent = file.name;
-
-		var sub = document.createElement('p');
-		sub.className = 'sub';
-		sub.textContent = bytesToSize(file.size);
-
-		var progress = document.createElement('div');
-		progress.className = 'progress';
-		var bar = document.createElement('div');
-		bar.className = 'progress-bar progress-bar-striped progress-bar-animated';
-		bar.style.width = '0%';
-		progress.appendChild(bar);
-
-		meta.appendChild(name);
-		meta.appendChild(sub);
-		meta.appendChild(progress);
-
-		item.appendChild(thumb);
-		item.appendChild(meta);
-		uploads.appendChild(item);
-
-		if (file.type && file.type.startsWith('image/')) {
-			var url = URL.createObjectURL(file);
-			thumb.style.backgroundImage = 'url(' + url + ')';
+		if (!dropzone || !fileInput || !uploads || !selectBtn) {
+			console.error('Required upload elements not found');
+			return;
 		}
 
-		var formData = new FormData();
-		formData.append('files', file);
+		function preventDefaults(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 
-		var xhr = new XMLHttpRequest();
+		function bytesToSize(bytes) {
+			var sizes = ['B', 'KB', 'MB', 'GB'];
+			if (bytes === 0) return '0 B';
+			var i = Math.floor(Math.log(bytes) / Math.log(1024));
+			return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+		}
 
-		xhr.upload.addEventListener('progress', function(e) {
-			if (e.lengthComputable) {
-				var percentComplete = (e.loaded / e.total) * 100;
-				bar.style.width = percentComplete + '%';
+		function showToast(message, type) {
+			// Remove any existing toasts first
+			var existingToasts = document.querySelectorAll('.custom-toast');
+			existingToasts.forEach(function (toast) { toast.remove(); });
+
+			// Create toast element
+			var toast = document.createElement('div');
+			var alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+			toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+			toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+			// Set border color based on type
+			if (type === 'success') {
+				toast.style.borderColor = '#28a745';
+				toast.style.backgroundColor = '#d4edda';
+				toast.style.color = '#155724';
+			} else if (type === 'error') {
+				toast.style.borderColor = '#dc3545';
+				toast.style.backgroundColor = '#f8d7da';
+				toast.style.color = '#721c24';
 			}
-		});
 
-		xhr.addEventListener('load', function() {
-			if (xhr.status === 200) {
-				var response = JSON.parse(xhr.responseText);
-				if (response.success) {
-					bar.classList.remove('progress-bar-animated');
-					bar.classList.remove('progress-bar-striped');
-					bar.classList.add('bg-success');
-					
-					var successMsg = document.createElement('p');
-					successMsg.className = 'text-success small mt-1';
-					successMsg.textContent = 'Upload complete!';
-					meta.appendChild(successMsg);
-					
-					showToast('File uploaded successfully!', 'success');
-				} else {
-					handleUploadError(item, bar, response.message || 'Upload failed');
+			var iconEmoji = type === 'error' ? '' : type === 'success' ? '✅' : 'ℹ️';
+			toast.innerHTML = '<div class="d-flex align-items-center">' +
+				'<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+				'<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+				'<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+				'</div>';
+
+			document.body.appendChild(toast);
+
+			// Add entrance animation
+			toast.style.transform = 'translateX(100%)';
+			toast.style.transition = 'transform 0.3s ease-out';
+			setTimeout(function () {
+				toast.style.transform = 'translateX(0)';
+			}, 10);
+
+			// Auto remove after duration based on type
+			var duration = type === 'success' ? 4000 : 6000;
+			setTimeout(function () {
+				if (toast.parentElement) {
+					toast.style.transform = 'translateX(100%)';
+					setTimeout(function () { toast.remove(); }, 300);
 				}
+			}, duration);
+		}
+
+		function handleFiles(fileList) {
+			Array.from(fileList).forEach(function (file) {
+				uploadFile(file);
+			});
+			updateClearButtonVisibility();
+		}
+
+		function updateClearButtonVisibility() {
+			var uploadsHeader = document.getElementById('uploadsHeader');
+			var hasItems = uploads.children.length > 0;
+			if (hasItems) {
+				uploadsHeader.style.display = 'flex';
 			} else {
-				handleUploadError(item, bar, 'Upload failed with status: ' + xhr.status);
+				uploadsHeader.style.display = 'none';
 			}
+		}
+
+		function clearUploadList() {
+			// Clear all upload items
+			uploads.innerHTML = '';
+			updateClearButtonVisibility();
+			showToast('Upload list cleared', 'info');
+		}
+
+		function uploadFile(file) {
+			var item = document.createElement('div');
+			item.className = 'item';
+
+			var thumb = document.createElement('div');
+			thumb.className = 'thumb';
+
+			var meta = document.createElement('div');
+			meta.className = 'meta';
+
+			var name = document.createElement('p');
+			name.className = 'name';
+			name.textContent = file.name;
+
+			var sub = document.createElement('p');
+			sub.className = 'sub';
+			sub.textContent = bytesToSize(file.size);
+
+			var progress = document.createElement('div');
+			progress.className = 'progress';
+			var bar = document.createElement('div');
+			bar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+			bar.style.width = '0%';
+			progress.appendChild(bar);
+
+			meta.appendChild(name);
+			meta.appendChild(sub);
+			meta.appendChild(progress);
+
+			item.appendChild(thumb);
+			item.appendChild(meta);
+			uploads.appendChild(item);
+
+			if (file.type && file.type.startsWith('image/')) {
+				var url = URL.createObjectURL(file);
+				thumb.style.backgroundImage = 'url(' + url + ')';
+			}
+
+			var formData = new FormData();
+			formData.append('files', file);
+
+			var xhr = new XMLHttpRequest();
+
+			xhr.upload.addEventListener('progress', function (e) {
+				if (e.lengthComputable) {
+					var percentComplete = (e.loaded / e.total) * 100;
+					bar.style.width = percentComplete + '%';
+				}
+			});
+
+			xhr.addEventListener('load', function () {
+				if (xhr.status === 200) {
+					var response = JSON.parse(xhr.responseText);
+					if (response.success) {
+						bar.classList.remove('progress-bar-animated');
+						bar.classList.remove('progress-bar-striped');
+						bar.classList.add('bg-success');
+
+						var successMsg = document.createElement('p');
+						successMsg.className = 'text-success small mt-1';
+						successMsg.textContent = 'Upload complete!';
+						meta.appendChild(successMsg);
+
+						showToast('✅ File uploaded successfully!', 'success');
+					} else {
+						handleUploadError(item, bar, response.message || 'Upload failed');
+					}
+				} else {
+					// Parse error response
+					var errorMessage = 'Upload failed';
+					try {
+						var response = JSON.parse(xhr.responseText);
+						if (response.message) {
+							errorMessage = response.message;
+						}
+					} catch (e) {
+						// If response is not JSON, use status-based message
+						if (xhr.status === 400) {
+							errorMessage = 'Invalid file. Please check file type and size (max 10MB)';
+						} else if (xhr.status === 413) {
+							errorMessage = 'File too large. Maximum size is 10MB';
+						} else if (xhr.status === 500) {
+							errorMessage = 'Server error. Please try again later';
+						} else {
+							errorMessage = 'Upload failed (Error ' + xhr.status + ')';
+						}
+					}
+					handleUploadError(item, bar, errorMessage);
+				}
+			});
+
+			xhr.addEventListener('error', function () {
+				handleUploadError(item, bar, '❌ Network error. Please check your connection and try again');
+			});
+
+			xhr.open('POST', '/api/media/upload');
+			xhr.send(formData);
+		}
+
+		function handleUploadError(item, bar, message) {
+			bar.classList.remove('progress-bar-animated');
+			bar.classList.remove('progress-bar-striped');
+			bar.classList.add('bg-danger');
+			bar.style.width = '100%';
+
+			var errorMsg = document.createElement('p');
+			errorMsg.className = 'text-danger small mt-1 fw-semibold';
+			errorMsg.textContent = '❌ ' + message;
+			item.querySelector('.meta').appendChild(errorMsg);
+
+			// Show detailed toast with error reason
+			showToast('❌ ' + message, 'error');
+		}
+
+		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (eventName) {
+			dropzone.addEventListener(eventName, preventDefaults, false);
 		});
 
-		xhr.addEventListener('error', function() {
-			handleUploadError(item, bar, 'Network error occurred');
+		['dragenter', 'dragover'].forEach(function (eventName) {
+			dropzone.addEventListener(eventName, function () { dropzone.classList.add('dragover'); });
+		});
+		['dragleave', 'drop'].forEach(function (eventName) {
+			dropzone.addEventListener(eventName, function () { dropzone.classList.remove('dragover'); });
 		});
 
-		xhr.open('POST', '/api/media/upload');
-		xhr.send(formData);
-	}
+		dropzone.addEventListener('drop', function (e) {
+			var dt = e.dataTransfer;
+			var files = dt.files;
+			handleFiles(files);
+		});
 
-	function handleUploadError(item, bar, message) {
-		bar.classList.remove('progress-bar-animated');
-		bar.classList.remove('progress-bar-striped');
-		bar.classList.add('bg-danger');
-		
-		var errorMsg = document.createElement('p');
-		errorMsg.className = 'text-danger small mt-1';
-		errorMsg.textContent = message;
-		item.querySelector('.meta').appendChild(errorMsg);
-		
-		showToast(message, 'error');
-	}
+		// SINGLE EVENT LISTENER - Only one click handler
+		selectBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			fileInput.click();
+		});
 
-	['dragenter','dragover','dragleave','drop'].forEach(function(eventName){
-		dropzone.addEventListener(eventName, preventDefaults, false);
-	});
+		fileInput.addEventListener('change', function (e) {
+			handleFiles(e.target.files);
+			e.target.value = '';
+		});
 
-	['dragenter','dragover'].forEach(function(eventName){
-		dropzone.addEventListener(eventName, function(){ dropzone.classList.add('dragover'); });
-	});
-	['dragleave','drop'].forEach(function(eventName){
-		dropzone.addEventListener(eventName, function(){ dropzone.classList.remove('dragover'); });
-	});
+		// Clear list button handler
+		var clearListBtn = document.getElementById('clearListBtn');
+		if (clearListBtn) {
+			clearListBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+				clearUploadList();
+			});
+		}
 
-	dropzone.addEventListener('drop', function(e){
-		var dt = e.dataTransfer;
-		var files = dt.files;
-		handleFiles(files);
-	});
-
-	// SINGLE EVENT LISTENER - Only one click handler
-	selectBtn.addEventListener('click', function(e){ 
-		e.preventDefault();
-		e.stopPropagation();
-		fileInput.click(); 
-	});
-	
-	fileInput.addEventListener('change', function(e){ 
-		handleFiles(e.target.files);
-		e.target.value = '';
-	});
-})();
+		// Initialize visibility
+		updateClearButtonVisibility();
+	})();
 </script>
