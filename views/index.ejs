@@ -249,8 +249,10 @@
                                 style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Email</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-email"
-                            style="font-size: 17px; font-weight: 600;">-</p>
+                        <div class="ms-5">
+                            <a href="#" id="modal-email" class="text-primary-600 text-decoration-none"
+                                style="font-size: 17px; font-weight: 600;">-</a>
+                        </div>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
@@ -258,8 +260,10 @@
                                 style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Phone</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-phone"
-                            style="font-size: 17px; font-weight: 600;">-</p>
+                        <div class="ms-5">
+                            <a href="#" id="modal-phone" class="text-primary-600 text-decoration-none"
+                                style="font-size: 17px; font-weight: 600;">-</a>
+                        </div>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
@@ -284,8 +288,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                    style="font-size: 16px; font-weight: 600; padding: 10px 24px;">Close</button>
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    style="font-size: 16px; font-weight: 600; padding: 10px 24px;">Close</button> -->
             </div>
         </div>
     </div>
@@ -316,8 +320,33 @@
 
                     // Populate modal with lead data
                     document.getElementById('modal-fullName').textContent = leadData.fullName || 'N/A';
-                    document.getElementById('modal-email').textContent = leadData.email || 'N/A';
-                    document.getElementById('modal-phone').textContent = leadData.phone || 'N/A';
+
+                    // Make email clickable
+                    const emailElement = document.getElementById('modal-email');
+                    if (leadData.email && leadData.email !== 'N/A') {
+                        emailElement.textContent = leadData.email;
+                        emailElement.href = 'mailto:' + leadData.email;
+                    } else {
+                        emailElement.textContent = 'N/A';
+                        emailElement.href = '#';
+                        emailElement.style.pointerEvents = 'none';
+                        emailElement.classList.remove('text-primary-600');
+                        emailElement.classList.add('text-secondary-light');
+                    }
+
+                    // Make phone clickable
+                    const phoneElement = document.getElementById('modal-phone');
+                    if (leadData.phone && leadData.phone !== 'N/A') {
+                        phoneElement.textContent = leadData.phone;
+                        phoneElement.href = 'tel:' + leadData.phone;
+                    } else {
+                        phoneElement.textContent = 'N/A';
+                        phoneElement.href = '#';
+                        phoneElement.style.pointerEvents = 'none';
+                        phoneElement.classList.remove('text-primary-600');
+                        phoneElement.classList.add('text-secondary-light');
+                    }
+
                     document.getElementById('modal-interestedIn').textContent = leadData.interestedIn || 'N/A';
                     document.getElementById('modal-notes').textContent = leadData.notes || 'No message available';
 

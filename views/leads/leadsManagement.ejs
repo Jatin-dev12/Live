@@ -1,5 +1,6 @@
 <div class="card p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+    <div
+        class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
             <form class="navbar-search">
                 <input type="text" id="tableSearch" class="bg-base h-40-px w-auto" placeholder="Search">
@@ -7,7 +8,8 @@
             </form>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <button id="exportCsvBtn" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+            <button id="exportCsvBtn"
+                class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                 <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
                 Export CSV
             </button>
@@ -32,70 +34,91 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (leads && leads.length > 0) { %>
-                        <% leads.forEach(lead => { %>
+                    <% if (leads && leads.length> 0) { %>
+                        <% leads.forEach(lead=> { %>
                             <tr>
-                                <td><%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A' %></td>
+                                <td>
+                                    <%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', {
+                                        year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.fullName || 'N/A' %></span>
+                                            <span class="text-md mb-0 fw-normal text-secondary-light">
+                                                <%= lead.fullName || 'N/A' %>
+                                            </span>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.email || 'N/A' %></span></td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light"><%= lead.phone || 'N/A' %></span></td>
+                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                        <%= lead.email || 'N/A' %>
+                                    </span></td>
+                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                        <%= lead.phone || 'N/A' %>
+                                    </span></td>
                                 <!-- <td>
                                     <span class="text-md mb-0 fw-normal text-secondary-light">
                                         <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
                                     </span>
                                 </td> -->
-                                <td><%= lead.interestedIn || 'N/A' %></td>
+                                <td>
+                                    <%= lead.interestedIn || 'N/A' %>
+                                </td>
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn" data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
-                                            <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                        <button type="button"
+                                            class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn"
+                                            data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
+                                            <iconify-icon icon="majesticons:eye-line"
+                                                class="icon text-xl"></iconify-icon>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                        <% }) %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="7" class="text-center py-4">
-                                <span class="text-secondary-light">No leads found</span>
-                            </td>
-                        </tr>
-                    <% } %>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <span class="text-secondary-light">No leads found</span>
+                                        </td>
+                                    </tr>
+                                    <% } %>
                 </tbody>
             </table>
         </div>
 
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-             <!-- <span>Showing 1 to 10 of 12 entries</span> -->
+            <!-- <span>Showing 1 to 10 of 12 entries</span> -->
             <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                        href="javascript:void(0)">
                         <iconify-icon icon="ep:d-arrow-left" class=""></iconify-icon>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600 text-white" href="javascript:void(0)">1</a>
+                    <a class="page-link text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600 text-white"
+                        href="javascript:void(0)">1</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px" href="javascript:void(0)">2</a>
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+                        href="javascript:void(0)">2</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">3</a>
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                        href="javascript:void(0)">3</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">4</a>
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                        href="javascript:void(0)">4</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">5</a>
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                        href="javascript:void(0)">5</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">
+                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                        href="javascript:void(0)">
                         <iconify-icon icon="ep:d-arrow-right" class=""></iconify-icon>
                     </a>
                 </li>
@@ -109,103 +132,149 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger-600 text-white">
-                <h4 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0" id="leadDetailsModalLabel">
+                <h4 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0"
+                    id="leadDetailsModalLabel">
                     <iconify-icon icon="mdi:account-details" class="icon" style="font-size: 32px;"></iconify-icon>
                     Lead Details
                 </h4>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body p-24">
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:calendar" class="text-danger-600" style="font-size: 28px;"></iconify-icon>
+                            <iconify-icon icon="mdi:calendar" class="text-danger-600"
+                                style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Date</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-date" style="font-size: 17px; font-weight: 600;">-</p>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-date"
+                            style="font-size: 17px; font-weight: 600;">-</p>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:account" class="text-primary-600" style="font-size: 28px;"></iconify-icon>
+                            <iconify-icon icon="mdi:account" class="text-primary-600"
+                                style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Name</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-fullName" style="font-size: 17px; font-weight: 600;">-</p>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-fullName"
+                            style="font-size: 17px; font-weight: 600;">-</p>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:email" class="text-success-600" style="font-size: 28px;"></iconify-icon>
+                            <iconify-icon icon="mdi:email" class="text-success-600"
+                                style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Email</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-email" style="font-size: 17px; font-weight: 600;">-</p>
+                        <div class="ms-5">
+                            <a href="#" id="modal-email" class="text-primary-600 text-decoration-none"
+                                style="font-size: 17px; font-weight: 600;">-</a>
+                        </div>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:phone" class="text-warning-600" style="font-size: 28px;"></iconify-icon>
+                            <iconify-icon icon="mdi:phone" class="text-warning-600"
+                                style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Phone</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-phone" style="font-size: 17px; font-weight: 600;">-</p>
+                        <div class="ms-5">
+                            <a href="#" id="modal-phone" class="text-primary-600 text-decoration-none"
+                                style="font-size: 17px; font-weight: 600;">-</a>
+                        </div>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <iconify-icon icon="mdi:web" class="text-info-600" style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Interested In (Page)</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-interestedIn" style="font-size: 17px; font-weight: 600;">-</p>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-interestedIn"
+                            style="font-size: 17px; font-weight: 600;">-</p>
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:message-text" class="text-purple-600" style="font-size: 28px;"></iconify-icon>
+                            <iconify-icon icon="mdi:message-text" class="text-purple-600"
+                                style="font-size: 28px;"></iconify-icon>
                             <label class="form-label fw-bold mb-0" style="font-size: 18px;">Full Message</label>
                         </div>
                         <div class="ms-5 p-3 bg-neutral-50 rounded" style="max-height: 200px; overflow-y: auto;">
-                            <p class="text-secondary-light mb-0" id="modal-notes" style="white-space: pre-wrap; font-size: 16px; font-weight: 500; line-height: 1.6;">-</p>
+                            <p class="text-secondary-light mb-0" id="modal-notes"
+                                style="white-space: pre-wrap; font-size: 16px; font-weight: 500; line-height: 1.6;">-
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-size: 16px; font-weight: 600; padding: 10px 24px;">Close</button>
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    style="font-size: 16px; font-weight: 600; padding: 10px 24px;">Close</button> -->
             </div>
         </div>
     </div>
 </div>
 
-<% script = `
-<script src="/js/table-search.js"></script>
-<script>
-    // Initialize table search
-    initTableSearch('tableSearch', 'dataTable');
+<% script=` <script src="/js/table-search.js">
+    </script>
+    <script>
+        // Initialize table search
+        initTableSearch('tableSearch', 'dataTable');
 
-    // Export CSV functionality
-    $('#exportCsvBtn').on('click', function() {
-        window.location.href = '/leads/export-csv';
-    });
+        // Export CSV functionality
+        $('#exportCsvBtn').on('click', function () {
+            window.location.href = '/leads/export-csv';
+        });
 
-    // View Lead Details
-    $('.view-lead-btn').on('click', function() {
-        const leadData = JSON.parse($(this).attr('data-lead-data'));
+        // View Lead Details
+        $('.view-lead-btn').on('click', function () {
+            const leadData = JSON.parse($(this).attr('data-lead-data'));
 
-        // Format and populate date
-        if (leadData.createdAt) {
-            const date = new Date(leadData.createdAt);
-            $('#modal-date').text(date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            }));
-        } else {
-            $('#modal-date').text('N/A');
-        }
+            // Format and populate date
+            if (leadData.createdAt) {
+                const date = new Date(leadData.createdAt);
+                $('#modal-date').text(date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }));
+            } else {
+                $('#modal-date').text('N/A');
+            }
 
-        // Populate modal with lead data (only fields shown in table)
-        $('#modal-fullName').text(leadData.fullName || 'N/A');
-        $('#modal-email').text(leadData.email || 'N/A');
-        $('#modal-phone').text(leadData.phone || 'N/A');
-        $('#modal-interestedIn').text(leadData.interestedIn || 'N/A');
-        $('#modal-notes').text(leadData.notes || 'No message available');
+            // Populate modal with lead data (only fields shown in table)
+            $('#modal-fullName').text(leadData.fullName || 'N/A');
 
-        // Show modal
-        $('#leadDetailsModal').modal('show');
-    });
-</script>
-` %>
+            // Make email clickable
+            const emailElement = $('#modal-email');
+            if (leadData.email && leadData.email !== 'N/A') {
+                emailElement.text(leadData.email);
+                emailElement.attr('href', 'mailto:' + leadData.email);
+                emailElement.css('pointer-events', 'auto');
+                emailElement.removeClass('text-secondary-light').addClass('text-primary-600');
+            } else {
+                emailElement.text('N/A');
+                emailElement.attr('href', '#');
+                emailElement.css('pointer-events', 'none');
+                emailElement.removeClass('text-primary-600').addClass('text-secondary-light');
+            }
+
+            // Make phone clickable
+            const phoneElement = $('#modal-phone');
+            if (leadData.phone && leadData.phone !== 'N/A') {
+                phoneElement.text(leadData.phone);
+                phoneElement.attr('href', 'tel:' + leadData.phone);
+                phoneElement.css('pointer-events', 'auto');
+                phoneElement.removeClass('text-secondary-light').addClass('text-primary-600');
+            } else {
+                phoneElement.text('N/A');
+                phoneElement.attr('href', '#');
+                phoneElement.css('pointer-events', 'none');
+                phoneElement.removeClass('text-primary-600').addClass('text-secondary-light');
+            }
+
+            $('#modal-interestedIn').text(leadData.interestedIn || 'N/A');
+            $('#modal-notes').text(leadData.notes || 'No message available');
+
+            // Show modal
+            $('#leadDetailsModal').modal('show');
+        });
+    </script>
+    ` %>

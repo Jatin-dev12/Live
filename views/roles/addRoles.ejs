@@ -356,7 +356,7 @@
                 }
             } else {
                 console.error('Field or toggle text not found!');
-                alert('Toggle not working - check console');
+                showToast('Toggle not working - check console', 'error');
             }
         }
 
@@ -817,27 +817,27 @@ async function submitUserForm() {
     const role = formData.get('role');
 
     if (!fullName || fullName.trim().length < 2) {
-        alert('Full name must be at least 2 characters long');
+        showToast('Full name must be at least 2 characters long', 'error');
         return;
     }
 
     if (!email || !email.includes('@')) {
-        alert('Please enter a valid email address');
+        showToast('Please enter a valid email address', 'error');
         return;
     }
 
     if (!password || password.length < 8) {
-        alert('Password must be at least 8 characters long');
+        showToast('Password must be at least 8 characters long', 'error');
         return;
     }
 
     if (password !== confirmPassword) {
-        alert('Passwords do not match');
+        showToast('Passwords do not match', 'error');
         return;
     }
 
     if (!role) {
-        alert('Please select a role');
+        showToast('Please select a role', 'error');
         return;
     }
 

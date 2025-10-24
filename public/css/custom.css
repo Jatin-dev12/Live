@@ -528,3 +528,8 @@ td.title-table {
 swal-toast-small{
     font-size: 18px !important;
 }
+
+.fade {
+
+    background: #00000070;
+}

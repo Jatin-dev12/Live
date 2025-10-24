@@ -66,6 +66,8 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
     try {
         const { email, password } = req.body;
 
+        console.log('🔐 Login attempt for:', email);
+
         // Check MongoDB connection
         const mongoose = require('mongoose');
         if (mongoose.connection.readyState !== 1) {
@@ -75,6 +77,8 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
                 message: 'Database connection unavailable. Please try again later.'
             });
         }
+
+        console.log('✅ Database connected');
 
         // Find user with password field
         const user = await User.findOne({ email: email.toLowerCase() })
@@ -87,29 +91,38 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             });
 
         if (!user) {
+            console.log('❌ User not found:', email);
             return res.status(401).json({
                 success: false,
-                message: 'Invalid email or password'
+                message: 'No user found with the provided details'
             });
         }
 
+        console.log('✅ User found:', user.email);
+
         // Check if user is active
         if (!user.isActive) {
+            console.log('❌ User account is inactive');
             return res.status(403).json({
                 success: false,
                 message: 'Your account has been deactivated. Please contact administrator.'
             });
         }
 
+        console.log('✅ User is active');
+
         // Verify password
         const isPasswordValid = await user.comparePassword(password);
 
         if (!isPasswordValid) {
+            console.log('❌ Invalid password');
             return res.status(401).json({
                 success: false,
-                message: 'Invalid email or password'
+                message: 'No user found with the provided details'
             });
         }
+
+        console.log('✅ Password valid');
 
         // Update last login
         user.lastLogin = new Date();
@@ -119,6 +132,8 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         req.session.userId = user._id;
         req.session.userRole = user.role.slug;
         req.session.sessionVersion = user.sessionVersion || 1;
+
+        console.log('✅ Session created');
 
         // Remove password from response
         const userResponse = user.toObject();
@@ -137,6 +152,8 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         //     redirectUrl = '/index'; // Default dashboard
         // }
 
+        console.log('✅ Login successful, redirecting to:', redirectUrl);
+
         res.json({
             success: true,
             message: 'Login successful',
@@ -146,11 +163,12 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             }
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('❌ Login error:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
-            message: 'Error during login',
-            error: error.message
+            message: 'An error occurred during login. Please try again.',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });

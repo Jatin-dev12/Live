@@ -7,9 +7,12 @@ const Permission = require('../models/Permission');
 exports.handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(err => err.msg);
+        const firstError = errorMessages[0];
+        
         return res.status(400).json({
             success: false,
-            message: 'Validation failed',
+            message: firstError || 'Validation failed',
             errors: errors.array().map(err => ({
                 field: err.path,
                 message: err.msg
