@@ -8,23 +8,32 @@
                 <form id="addUserForm" class="d-flex flex-column gap-20" onsubmit="return false;">
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Full Name <span class="text-danger-600">*</span></label>
-                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name" required autocomplete="off">
+                            <label class="form-label fw-semibold">Full Name <span
+                                    class="text-danger-600">*</span></label>
+                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name"
+                                required autocomplete="off" maxlength="15">
+                            <small class="text-muted d-block">Maximum 15 characters</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Email <span class="text-danger-600">*</span></label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required autocomplete="off">
+                            <input type="email" name="email" class="form-control" placeholder="Enter email address"
+                                required autocomplete="off">
                             <div class="invalid-feedback">Valid email is required</div>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Password <span class="text-danger-600">*</span></label>
+                            <label class="form-label fw-semibold">Password <span
+                                    class="text-danger-600">*</span></label>
                             <div class="position-relative">
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required minlength="8" autocomplete="new-password">
-                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="Enter password" required minlength="8" autocomplete="new-password">
+                                <button type="button"
+                                    class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                                    style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;"
+                                    onclick="
                                     var field = document.getElementById('password');
                                     var btn = this;
                                     if (field.type === 'password') {
@@ -36,14 +45,20 @@
                                     }
                                 ">👁️</button>
                             </div>
-                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character (@$!%*?&)</small>
+                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number &
+                                special character (@$!%*?&)</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Confirm Password <span class="text-danger-600">*</span></label>
+                            <label class="form-label fw-semibold">Confirm Password <span
+                                    class="text-danger-600">*</span></label>
                             <div class="position-relative">
-                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm password" required minlength="8" autocomplete="new-password">
-                                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2" style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;" onclick="
+                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control"
+                                    placeholder="Confirm password" required minlength="8" autocomplete="new-password">
+                                <button type="button"
+                                    class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                                    style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;"
+                                    onclick="
                                     var field = document.getElementById('confirmPassword');
                                     var btn = this;
                                     if (field.type === 'password') {
@@ -62,20 +77,25 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Select Role <span class="text-danger-600">*</span></label>
+                            <label class="form-label fw-semibold">Select Role <span
+                                    class="text-danger-600">*</span></label>
                             <select name="role" class="form-select" required>
                                 <option value="">Select Role</option>
-                                <% if (typeof roles !== 'undefined' && roles.length > 0) { %>
-                                    <% roles.forEach(role => { %>
-                                        <option value="<%= role._id %>"><%= role.name %></option>
-                                    <% }); %>
-                                <% } %>
+                                <% if (typeof roles !=='undefined' && roles.length> 0) { %>
+                                    <% roles.forEach(role=> { %>
+                                        <option value="<%= role._id %>">
+                                            <%= role.name %>
+                                        </option>
+                                        <% }); %>
+                                            <% } %>
                             </select>
                             <div class="invalid-feedback">Please select a role</div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Phone<span class="text-danger-600">*</span></label>
-                            <input type="tel" name="phone" class="form-control"  placeholder="Enter phone number" required>
+                            <input type="tel" name="phone" class="form-control" placeholder="Enter phone number"
+                                required minlength="6" maxlength="15" pattern="[0-9]{6,15}">
+                            <small class="text-muted d-block">6 to 15 digits only</small>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -87,7 +107,8 @@
                                 <button type="button" class="btn btn-sm btn-primary" onclick="selectAllPermissions()">
                                     <i class="ri-checkbox-multiple-line me-1"></i> Select All
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions()">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="deselectAllPermissions()">
                                     <i class="ri-checkbox-blank-line me-1"></i> Deselect All
                                 </button>
                             </div>
@@ -98,7 +119,8 @@
                                 <div class="col-md-6">
                                     <div class="permission-card">
                                         <label class="permission-checkbox">
-                                            <input type="checkbox" name="permissions[]" value="dashboard" id="perm_dashboard">
+                                            <input type="checkbox" name="permissions[]" value="dashboard"
+                                                id="perm_dashboard">
                                             <span class="checkmark"></span>
                                             <span class="permission-label">Dashboard</span>
                                         </label>
@@ -125,7 +147,8 @@
                                 <div class="col-md-6">
                                     <div class="permission-card">
                                         <label class="permission-checkbox">
-                                            <input type="checkbox" name="permissions[]" value="content" id="perm_content">
+                                            <input type="checkbox" name="permissions[]" value="content"
+                                                id="perm_content">
                                             <span class="checkmark"></span>
                                             <span class="permission-label">Content Management</span>
                                         </label>
@@ -253,85 +276,84 @@
     </div>
 </div>
 
-<% script = `
-    <style>
-        .permission-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #f9fafb;
-            transition: all 0.2s ease;
-        }
+<% script=` <style>
+    .permission-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    }
 
-        .permission-card:hover {
-            border-color: #d1d5db;
-            background: #f3f4f6;
-        }
+    .permission-card:hover {
+    border-color: #d1d5db;
+    background: #f3f4f6;
+    }
 
-        .permission-checkbox {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            margin: 0;
-        }
+    .permission-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    }
 
-        .permission-checkbox input[type="checkbox"] {
-            margin-right: 8px;
-            transform: scale(1.1);
-        }
+    .permission-checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+    }
 
-        .permission-label {
-            font-weight: 500;
-            color: #374151;
-            user-select: none;
-        }
+    .permission-label {
+    font-weight: 500;
+    color: #374151;
+    user-select: none;
+    }
 
-        .permission-checkbox input[type="checkbox"]:checked + .checkmark + .permission-label {
-            color: #dc3545;
-        }
+    .permission-checkbox input[type="checkbox"]:checked + .checkmark + .permission-label {
+    color: #dc3545;
+    }
 
-        .permissions-container .row {
-            margin: 0;
-        }
+    .permissions-container .row {
+    margin: 0;
+    }
 
-        .permissions-container .col-md-6 {
-            padding: 5px;
-        }
+    .permissions-container .col-md-6 {
+    padding: 5px;
+    }
 
-        /* Password toggle button styles */
-        .position-relative .btn {
-            z-index: 10 !important;
-            cursor: pointer !important;
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            padding: 4px 8px !important;
-            width: auto !important;
-            height: auto !important;
-        }
+    /* Password toggle button styles */
+    .position-relative .btn {
+    z-index: 10 !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 4px 8px !important;
+    width: auto !important;
+    height: auto !important;
+    }
 
-        .position-relative .btn:hover {
-            background: rgba(0,0,0,0.1) !important;
-            border-radius: 4px;
-        }
+    .position-relative .btn:hover {
+    background: rgba(0,0,0,0.1) !important;
+    border-radius: 4px;
+    }
 
-        .position-relative .btn:focus {
-            outline: 2px solid #007bff;
-            outline-offset: 2px;
-        }
+    .position-relative .btn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    }
 
-        .position-relative .btn i {
-            font-size: 18px !important;
-            color: #6b7280 !important;
-            pointer-events: none;
-        }
+    .position-relative .btn i {
+    font-size: 18px !important;
+    color: #6b7280 !important;
+    pointer-events: none;
+    }
 
-        #togglePasswordBtn, #toggleConfirmPasswordBtn {
-            right: 8px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-        }
+    #togglePasswordBtn, #toggleConfirmPasswordBtn {
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    }
     </style>
     <script>
         // Simple password toggle function
@@ -491,8 +513,11 @@
             const errors = [];
 
             // Validate full name
-            if (!formData.get('fullName') || formData.get('fullName').trim().length < 2) {
+            const fullName = formData.get('fullName');
+            if (!fullName || fullName.trim().length < 2) {
                 errors.push('Full name must be at least 2 characters long');
+            } else if (fullName.trim().length > 15) {
+                errors.push('Full name must not exceed 15 characters');
             }
 
             // Validate email
@@ -508,7 +533,7 @@
             console.log('Password type:', typeof password);
             console.log('Password length:', password?.length);
             if (password) {
-                console.log('Password chars:', password.split('').map(function(c, i) {
+                console.log('Password chars:', password.split('').map(function (c, i) {
                     return '[' + i + ']=\'' + c + '\' (' + c.charCodeAt(0) + ')';
                 }));
             }
@@ -555,11 +580,26 @@
                 errors.push('Please select a role');
             }
 
+            // Validate phone number
+            const phone = formData.get('phone');
+            const phoneRegex = /^[0-9]{6,15}$/;
+            if (!phone) {
+                errors.push('Phone number is required');
+            } else if (!phoneRegex.test(phone)) {
+                if (phone.length < 6) {
+                    errors.push('Phone number must be at least 6 digits');
+                } else if (phone.length > 15) {
+                    errors.push('Phone number must not exceed 15 digits');
+                } else {
+                    errors.push('Phone number must contain only digits');
+                }
+            }
+
             return errors;
         }
 
         // Handle form submission
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM loaded, looking for form...');
             const addUserForm = document.getElementById('addUserForm');
 
@@ -569,7 +609,7 @@
                 // Remove any existing event listeners
                 addUserForm.onsubmit = null;
 
-                addUserForm.addEventListener('submit', async function(e) {
+                addUserForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
                     console.log('User form submitted');
 
@@ -723,206 +763,274 @@
             }, duration);
         }
     </script>
-` %>
+    ` %>
 
-<script>
-// Global Select/Deselect all permissions functions
-function selectAllPermissions() {
-    console.log('Select All clicked');
-    const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
-    console.log('Found checkboxes:', checkboxes.length);
-    checkboxes.forEach(cb => {
-        cb.checked = true;
-        console.log('Checked:', cb.value);
-    });
-}
-
-function deselectAllPermissions() {
-    console.log('Deselect All clicked');
-    const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
-    console.log('Found checkboxes:', checkboxes.length);
-    checkboxes.forEach(cb => {
-        cb.checked = false;
-        console.log('Unchecked:', cb.value);
-    });
-}
-
-// Global toast notification function
-function showToast(message, type = 'info') {
-    // Remove any existing toasts first
-    const existingToasts = document.querySelectorAll('.custom-toast');
-    existingToasts.forEach(toast => toast.remove());
-
-    // Create toast element
-    const toast = document.createElement('div');
-    const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
-    toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
-    toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
-
-    // Set border color based on type
-    if (type === 'success') {
-        toast.style.borderColor = '#28a745';
-        toast.style.backgroundColor = '#d4edda';
-        toast.style.color = '#155724';
-    } else if (type === 'error') {
-        toast.style.borderColor = '#dc3545';
-        toast.style.backgroundColor = '#f8d7da';
-        toast.style.color = '#721c24';
-    }
-
-    const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-    toast.innerHTML = '<div class="d-flex align-items-center">' +
-        '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
-        '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
-        '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
-        '</div>';
-
-    document.body.appendChild(toast);
-
-    // Add entrance animation
-    toast.style.transform = 'translateX(100%)';
-    toast.style.transition = 'transform 0.3s ease-out';
-    setTimeout(() => {
-        toast.style.transform = 'translateX(0)';
-    }, 10);
-
-    // Auto remove after duration based on type
-    const duration = type === 'success' ? 4000 : 6000;
-    setTimeout(() => {
-        if (toast.parentElement) {
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => toast.remove(), 300);
+    <script>
+        // Global Select/Deselect all permissions functions
+        function selectAllPermissions() {
+            console.log('Select All clicked');
+            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            console.log('Found checkboxes:', checkboxes.length);
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+                console.log('Checked:', cb.value);
+            });
         }
-    }, duration);
-}
 
-// Global function for form submission - outside EJS template
-async function submitUserForm() {
-    console.log('Global submitUserForm called');
+        function deselectAllPermissions() {
+            console.log('Deselect All clicked');
+            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            console.log('Found checkboxes:', checkboxes.length);
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                console.log('Unchecked:', cb.value);
+            });
+        }
 
-    const addUserForm = document.getElementById('addUserForm');
-    if (!addUserForm) {
-        showToast('Form not found!', 'error');
-        return;
-    }
+        // Global toast notification function
+        function showToast(message, type = 'info') {
+            // Remove any existing toasts first
+            const existingToasts = document.querySelectorAll('.custom-toast');
+            existingToasts.forEach(toast => toast.remove());
 
-    // Get form data
-    const formData = new FormData(addUserForm);
+            // Create toast element
+            const toast = document.createElement('div');
+            const alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+            toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+            toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
 
-    // Basic validation
-    const fullName = formData.get('fullName');
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    const role = formData.get('role');
-
-    if (!fullName || fullName.trim().length < 2) {
-        showToast('Full name must be at least 2 characters long', 'error');
-        return;
-    }
-
-    if (!email || !email.includes('@')) {
-        showToast('Please enter a valid email address', 'error');
-        return;
-    }
-
-    if (!password || password.length < 8) {
-        showToast('Password must be at least 8 characters long', 'error');
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        showToast('Passwords do not match', 'error');
-        return;
-    }
-
-    if (!role) {
-        showToast('Please select a role', 'error');
-        return;
-    }
-
-    // Prepare user data
-    const userData = {
-        fullName: fullName.trim(),
-        email: email.toLowerCase().trim(),
-        password: password,
-        confirmPassword: confirmPassword,
-        role: role,
-        phone: formData.get('phone') || ''
-    };
-
-    // Get selected permissions
-    const permissions = [];
-    const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
-    permissionCheckboxes.forEach(checkbox => {
-        permissions.push(checkbox.value);
-    });
-
-    if (permissions.length > 0) {
-        userData.customPermissions = permissions;
-    }
-
-    console.log('Submitting user data:', userData);
-
-    // Show loading state
-    const submitBtn = document.querySelector('button[onclick="submitUserForm()"]');
-    const btnText = submitBtn.querySelector('.btn-text');
-    const btnSpinner = submitBtn.querySelector('.btn-spinner');
-
-    submitBtn.disabled = true;
-    btnText.classList.add('d-none');
-    btnSpinner.classList.remove('d-none');
-
-    try {
-        const response = await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        });
-
-        const result = await response.json();
-        console.log('API Response:', result);
-
-        if (response.ok && result.success) {
-            // Success
-            showToast('🎉 User created successfully!', 'success');
-            addUserForm.reset();
-
-            // Reset button state
-            submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnSpinner.classList.add('d-none');
-
-            // Redirect after a longer delay to see the toast
-            setTimeout(() => {
-                window.location.href = '/roles/roles-management';
-            }, 2000);
-        } else {
-            // Error
-            if (result.errors && Array.isArray(result.errors)) {
-                result.errors.forEach(error => {
-                    showToast(error.message, 'error');
-                });
-            } else {
-                const errorMessage = result.message || 'Failed to create user';
-                showToast(errorMessage, 'error');
+            // Set border color based on type
+            if (type === 'success') {
+                toast.style.borderColor = '#28a745';
+                toast.style.backgroundColor = '#d4edda';
+                toast.style.color = '#155724';
+            } else if (type === 'error') {
+                toast.style.borderColor = '#dc3545';
+                toast.style.backgroundColor = '#f8d7da';
+                toast.style.color = '#721c24';
             }
 
-            // Reset button state
-            submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnSpinner.classList.add('d-none');
-        }
-    } catch (error) {
-        console.error('Network Error:', error);
-        showToast('Network error occurred while creating user', 'error');
+            const iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            toast.innerHTML = '<div class="d-flex align-items-center">' +
+                '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+                '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+                '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+                '</div>';
 
-        // Reset button state
-        submitBtn.disabled = false;
-        btnText.classList.remove('d-none');
-        btnSpinner.classList.add('d-none');
-    }
-}
-</script>
+            document.body.appendChild(toast);
+
+            // Add entrance animation
+            toast.style.transform = 'translateX(100%)';
+            toast.style.transition = 'transform 0.3s ease-out';
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Auto remove after duration based on type
+            const duration = type === 'success' ? 4000 : 6000;
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+
+        // Real-time password validation - Global
+        let passwordValidationTimeout;
+        function validatePasswordRealtime(password) {
+            clearTimeout(passwordValidationTimeout);
+
+            passwordValidationTimeout = setTimeout(() => {
+                if (!password || password.length === 0) return;
+
+                const errors = [];
+
+                if (password.length < 8) {
+                    errors.push('Password must be at least 8 characters long');
+                }
+
+                if (!/[a-z]/.test(password)) {
+                    errors.push('Password must contain at least one lowercase letter');
+                }
+
+                if (!/[A-Z]/.test(password)) {
+                    errors.push('Password must contain at least one uppercase letter');
+                }
+
+                if (!/\d/.test(password)) {
+                    errors.push('Password must contain at least one number');
+                }
+
+                if (!/[@$!%*?&]/.test(password)) {
+                    errors.push('Password must contain at least one special character (@$!%*?&)');
+                }
+
+                if (errors.length > 0) {
+                    showToast(errors[0], 'error');
+                }
+            }, 800); // Wait 0.8 seconds after user stops typing
+        }
+
+        // Attach password validation on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('input', function () {
+                    validatePasswordRealtime(this.value);
+                });
+            }
+        });
+
+        // Global function for form submission - outside EJS template
+        async function submitUserForm() {
+            console.log('Global submitUserForm called');
+
+            const addUserForm = document.getElementById('addUserForm');
+            if (!addUserForm) {
+                showToast('Form not found!', 'error');
+                return;
+            }
+
+            // Get form data
+            const formData = new FormData(addUserForm);
+
+            // Basic validation
+            const fullName = formData.get('fullName');
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            const role = formData.get('role');
+            const phone = formData.get('phone');
+
+            if (!fullName || fullName.trim().length < 2) {
+                showToast('Full name must be at least 2 characters long', 'error');
+                return;
+            }
+
+            if (fullName.trim().length > 15) {
+                showToast('Full name must not exceed 15 characters', 'error');
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (!password || password.length < 8) {
+                showToast('Password must be at least 8 characters long', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            if (!role) {
+                showToast('Please select a role', 'error');
+                return;
+            }
+
+            // Validate phone number
+            const phoneRegex = /^[0-9]{6,15}$/;
+            if (!phone) {
+                showToast('Phone number is required', 'error');
+                return;
+            } else if (!phoneRegex.test(phone)) {
+                if (phone.length < 6) {
+                    showToast('Phone number must be at least 6 digits', 'error');
+                } else if (phone.length > 15) {
+                    showToast('Phone number must not exceed 15 digits', 'error');
+                } else {
+                    showToast('Phone number must contain only digits', 'error');
+                }
+                return;
+            }
+
+            // Prepare user data
+            const userData = {
+                fullName: fullName.trim(),
+                email: email.toLowerCase().trim(),
+                password: password,
+                confirmPassword: confirmPassword,
+                role: role,
+                phone: phone
+            };
+
+            // Get selected permissions
+            const permissions = [];
+            const permissionCheckboxes = addUserForm.querySelectorAll('input[name="permissions[]"]:checked');
+            permissionCheckboxes.forEach(checkbox => {
+                permissions.push(checkbox.value);
+            });
+
+            if (permissions.length > 0) {
+                userData.customPermissions = permissions;
+            }
+
+            console.log('Submitting user data:', userData);
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[onclick="submitUserForm()"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnSpinner = submitBtn.querySelector('.btn-spinner');
+
+            submitBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnSpinner.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const result = await response.json();
+                console.log('API Response:', result);
+
+                if (response.ok && result.success) {
+                    // Success
+                    showToast('🎉 User created successfully!', 'success');
+                    addUserForm.reset();
+
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+
+                    // Redirect after a longer delay to see the toast
+                    setTimeout(() => {
+                        window.location.href = '/roles/roles-management';
+                    }, 2000);
+                } else {
+                    // Error
+                    if (result.errors && Array.isArray(result.errors)) {
+                        result.errors.forEach(error => {
+                            showToast(error.message, 'error');
+                        });
+                    } else {
+                        const errorMessage = result.message || 'Failed to create user';
+                        showToast(errorMessage, 'error');
+                    }
+
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+                showToast('Network error occurred while creating user', 'error');
+
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+            }
+        }
+    </script>

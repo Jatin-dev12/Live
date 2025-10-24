@@ -15,15 +15,16 @@
                         <div class="col-md-6">
                             <div class="mb-20">
                                 <label for="fullName" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" value="<%= user.fullName %>" placeholder="Enter Full Name" required>
+                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" value="<%= user.fullName %>" placeholder="Enter Full Name" required autocomplete="off" maxlength="15">
+                                <small class="text-muted d-block">Maximum 15 characters</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-20">
                                 <label for="email" class="form-label fw-semibold text-primary-light text-sm mb-8">Email <span class="text-danger-600">*</span></label>
-                                <input type="email" class="form-control radius-8" id="email" name="email" value="<%= user.email %>" placeholder="Enter email address" required>
-                                <div class="invalid-feedback"></div>
+                                <input type="email" class="form-control radius-8" id="email" name="email" value="<%= user.email %>" placeholder="Enter email address" required autocomplete="off">
+                                <div class="invalid-feedback">Valid email is required</div>
                             </div>
                         </div>
                     </div>
@@ -31,9 +32,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-20">
-                                <label for="phone" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone</label>
-                                <input type="tel" class="form-control radius-8" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="Enter phone number" maxlength="15" pattern="[0-9+\-\s()]{1,15}">
-                                <small class="text-muted">Maximum 15 digits</small>
+                                <label for="phone" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone<span class="text-danger-600">*</span></label>
+                                <input type="tel" class="form-control radius-8" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="Enter phone number" required minlength="6" maxlength="15" pattern="[0-9]{6,15}">
+                                <small class="text-muted d-block">6 to 15 digits only</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -48,7 +49,7 @@
                                         </option>
                                     <% }); %>
                                 </select>
-                                <div class="invalid-feedback"></div>
+                                <div class="invalid-feedback">Please select a role</div>
                             </div>
                         </div>
                     </div>
@@ -83,12 +84,12 @@
                             <div class="mb-20">
                                 <label for="newPassword" class="form-label fw-semibold text-primary-light text-sm mb-8">New Password</label>
                                 <div class="position-relative">
-                                    <input type="password" class="form-control radius-8" id="newPassword" name="newPassword" placeholder="Enter new password" minlength="6">
+                                    <input type="password" class="form-control radius-8" id="newPassword" name="newPassword" placeholder="Enter new password" minlength="8" autocomplete="new-password">
                                     <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" onclick="togglePasswordVisibility('newPassword')">
                                         <i class="ri-eye-line" id="newPassword-icon"></i>
                                     </span>
                                 </div>
-                                <small class="text-muted">Minimum 6 characters</small>
+                                <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character (@$!%*?&)</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -96,11 +97,12 @@
                             <div class="mb-20">
                                 <label for="confirmPassword" class="form-label fw-semibold text-primary-light text-sm mb-8">Confirm Password</label>
                                 <div class="position-relative">
-                                    <input type="password" class="form-control radius-8" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                    <input type="password" class="form-control radius-8" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" minlength="8" autocomplete="new-password">
                                     <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" onclick="togglePasswordVisibility('confirmPassword')">
                                         <i class="ri-eye-line" id="confirmPassword-icon"></i>
                                     </span>
                                 </div>
+                                <small class="text-muted d-block">Re-enter your password</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -601,10 +603,97 @@ function showToast(message, type = 'info') {
     }, duration);
 }
 
+// Validate form fields
+function validateForm(formData, isPasswordChange) {
+    const errors = [];
+
+    // Validate full name
+    const fullName = formData.get('fullName');
+    if (!fullName || fullName.trim().length < 2) {
+        errors.push('Full name must be at least 2 characters long');
+    } else if (fullName.trim().length > 15) {
+        errors.push('Full name must not exceed 15 characters');
+    }
+
+    // Validate email
+    const email = formData.get('email');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        errors.push('Please enter a valid email address');
+    }
+
+    // Validate password if password change is enabled
+    if (isPasswordChange) {
+        const password = formData.get('newPassword');
+        if (!password || password.length < 8) {
+            errors.push('Password must be at least 8 characters long');
+        } else {
+            const hasLowercase = /[a-z]/.test(password);
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+            if (!hasLowercase) {
+                errors.push('Password must contain at least one lowercase letter');
+            }
+            if (!hasUppercase) {
+                errors.push('Password must contain at least one uppercase letter');
+            }
+            if (!hasNumber) {
+                errors.push('Password must contain at least one number');
+            }
+            if (!hasSpecialChar) {
+                errors.push('Password must contain at least one special character (@$!%*?&)');
+            }
+        }
+
+        // Validate confirm password
+        const confirmPassword = formData.get('confirmPassword');
+        if (password !== confirmPassword) {
+            errors.push('Passwords do not match');
+        }
+    }
+
+    // Validate role selection
+    if (!formData.get('role')) {
+        errors.push('Please select a role');
+    }
+
+    // Validate phone number
+    const phone = formData.get('phone');
+    const phoneRegex = /^[0-9]{6,15}$/;
+    if (!phone) {
+        errors.push('Phone number is required');
+    } else if (!phoneRegex.test(phone)) {
+        if (phone.length < 6) {
+            errors.push('Phone number must be at least 6 digits');
+        } else if (phone.length > 15) {
+            errors.push('Phone number must not exceed 15 digits');
+        } else {
+            errors.push('Phone number must contain only digits');
+        }
+    }
+
+    return errors;
+}
+
 // Update user function
 async function updateUser() {
     const form = document.getElementById('editUserForm');
     const formData = new FormData(form);
+
+    // Check if password change is enabled
+    const changePasswordToggle = document.getElementById('changePasswordToggle');
+    const isPasswordChange = changePasswordToggle.checked;
+
+    // Validate form
+    const validationErrors = validateForm(formData, isPasswordChange);
+    if (validationErrors.length > 0) {
+        validationErrors.forEach(error => {
+            showToast(error, 'error');
+        });
+        return;
+    }
 
     // Collect custom permissions
     const customPermissions = [];
@@ -615,8 +704,8 @@ async function updateUser() {
 
     // Get form values
     const userData = {
-        fullName: formData.get('fullName'),
-        email: formData.get('email'),
+        fullName: formData.get('fullName').trim(),
+        email: formData.get('email').toLowerCase().trim(),
         phone: formData.get('phone'),
         role: formData.get('role'),
         isActive: formData.get('isActive') === 'true',
@@ -625,41 +714,9 @@ async function updateUser() {
 
     const userId = formData.get('userId');
 
-    // Check if password change is enabled
-    const changePasswordToggle = document.getElementById('changePasswordToggle');
-    if (changePasswordToggle.checked) {
-        const newPassword = formData.get('newPassword');
-        const confirmPassword = formData.get('confirmPassword');
-
-        // Password validation
-        if (!newPassword || newPassword.trim().length < 6) {
-            showToast('Password must be at least 6 characters long', 'error');
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            showToast('Passwords do not match', 'error');
-            return;
-        }
-
-        // Add password to userData
-        userData.password = newPassword;
-    }
-
-    // Basic validation
-    if (!userData.fullName || userData.fullName.trim().length < 2) {
-        showToast('Full name must be at least 2 characters long', 'error');
-        return;
-    }
-
-    if (!userData.email || !userData.email.includes('@')) {
-        showToast('Please enter a valid email address', 'error');
-        return;
-    }
-
-    if (!userData.role) {
-        showToast('Please select a role', 'error');
-        return;
+    // Add password to userData if password change is enabled
+    if (isPasswordChange) {
+        userData.password = formData.get('newPassword');
     }
 
     // Show loading state
@@ -714,17 +771,63 @@ async function updateUser() {
     }
 }
 
-// Phone number validation - Clean and simple
+// Phone number validation - Only digits allowed
 const phoneInput = document.getElementById('phone');
 
 phoneInput.addEventListener('input', function(e) {
     let value = e.target.value;
-    // Remove invalid characters (only allow digits, +, -, spaces, parentheses)
-    value = value.replace(/[^0-9+\-\s()]/g, '');
+    // Remove all non-digit characters
+    value = value.replace(/[^0-9]/g, '');
     // Strictly limit to 15 characters
     if (value.length > 15) {
         value = value.substring(0, 15);
     }
     e.target.value = value;
+});
+
+// Real-time password validation
+let passwordValidationTimeout;
+function validatePasswordRealtime(password) {
+    clearTimeout(passwordValidationTimeout);
+
+    passwordValidationTimeout = setTimeout(() => {
+        if (!password || password.length === 0) return;
+
+        const errors = [];
+
+        if (password.length < 8) {
+            errors.push('Password must be at least 8 characters long');
+        }
+
+        if (!/[a-z]/.test(password)) {
+            errors.push('Password must contain at least one lowercase letter');
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            errors.push('Password must contain at least one uppercase letter');
+        }
+
+        if (!/\d/.test(password)) {
+            errors.push('Password must contain at least one number');
+        }
+
+        if (!/[@$!%*?&]/.test(password)) {
+            errors.push('Password must contain at least one special character (@$!%*?&)');
+        }
+
+        if (errors.length > 0) {
+            showToast(errors[0], 'error');
+        }
+    }, 800); // Wait 0.8 seconds after user stops typing
+}
+
+// Attach password validation on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const passwordField = document.getElementById('newPassword');
+    if (passwordField) {
+        passwordField.addEventListener('input', function () {
+            validatePasswordRealtime(this.value);
+        });
+    }
 });
 </script>
