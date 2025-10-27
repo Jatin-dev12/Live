@@ -58,7 +58,7 @@
                                 <option value="">Select Page</option>
                                 <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
                                     <% pages.forEach(page => { %>
-                                        <option value="<%= page.slug %>"><%= page.pageName %></option>
+                                        <option value="<%= page.slug %>"><%= page.name %></option>
                                     <% }); %>
                                 <% } %>
                                 <option value="all">All Pages</option>

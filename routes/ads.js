@@ -12,11 +12,11 @@ router.get('/ads-management', isAuthenticated, async (req, res) => {
             .populate('created_by', 'fullName email')
             .sort({ createdAt: -1 })
             .lean();
-        
+
         const placements = await AdPlacement.find({ isActive: true })
             .select('placementId name')
             .lean();
-        
+
         res.render('ads/adsManagement', {
             title: "Ads Management",
             subTitle: "Manage Advertisements",
@@ -40,14 +40,16 @@ router.get('/add-ad', isAuthenticated, async (req, res) => {
         const placements = await AdPlacement.find({ isActive: true })
             .select('_id placementId name pageLocation dimensions')
             .lean();
-        
+
         // Fetch pages from Page Master
-        const PageMaster = require('../models/PageMaster');
-        const pages = await PageMaster.find({ isActive: true })
-            .select('_id pageName slug')
-            .sort({ pageName: 1 })
+        const Page = require('../models/Page');
+        const pages = await Page.find({ status: 'active' })
+            .select('_id name slug')
+            .sort({ name: 1 })
             .lean();
-        
+
+        console.log('Fetched pages for ads:', pages); // Debug log
+
         res.render('ads/addAd', {
             title: "Add Advertisement",
             subTitle: "Create New Ad",
@@ -71,22 +73,22 @@ router.get('/edit-ad/:id', isAuthenticated, async (req, res) => {
         const ad = await Ad.findById(req.params.id)
             .populate('placement_id')
             .populate('created_by', 'fullName email');
-        
+
         if (!ad) {
             return res.redirect('/ads/ads-management');
         }
-        
+
         const placements = await AdPlacement.find({ isActive: true })
             .select('_id placementId name pageLocation dimensions')
             .lean();
-        
+
         // Fetch pages from Page Master
-        const PageMaster = require('../models/PageMaster');
-        const pages = await PageMaster.find({ isActive: true })
-            .select('_id pageName slug')
-            .sort({ pageName: 1 })
+        const Page = require('../models/Page');
+        const pages = await Page.find({ status: 'active' })
+            .select('_id name slug')
+            .sort({ name: 1 })
             .lean();
-        
+
         res.render('ads/editAd', {
             title: "Edit Advertisement",
             subTitle: "Update Ad Details",
@@ -107,7 +109,7 @@ router.get('/placements', isAuthenticated, async (req, res) => {
             .populate('createdBy', 'fullName email')
             .sort({ createdAt: -1 })
             .lean();
-        
+
         res.render('ads/adPlacements', {
             title: "Ad Placements",
             subTitle: "Manage Ad Placements",
