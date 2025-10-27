@@ -41,17 +41,26 @@ router.get('/add-ad', isAuthenticated, async (req, res) => {
             .select('_id placementId name pageLocation dimensions')
             .lean();
         
+        // Fetch pages from Page Master
+        const PageMaster = require('../models/PageMaster');
+        const pages = await PageMaster.find({ isActive: true })
+            .select('_id pageName slug')
+            .sort({ pageName: 1 })
+            .lean();
+        
         res.render('ads/addAd', {
             title: "Add Advertisement",
             subTitle: "Create New Ad",
-            placements: placements
+            placements: placements,
+            pages: pages
         });
     } catch (error) {
         console.error('Error loading add ad page:', error);
         res.render('ads/addAd', {
             title: "Add Advertisement",
             subTitle: "Create New Ad",
-            placements: []
+            placements: [],
+            pages: []
         });
     }
 });
@@ -71,11 +80,19 @@ router.get('/edit-ad/:id', isAuthenticated, async (req, res) => {
             .select('_id placementId name pageLocation dimensions')
             .lean();
         
+        // Fetch pages from Page Master
+        const PageMaster = require('../models/PageMaster');
+        const pages = await PageMaster.find({ isActive: true })
+            .select('_id pageName slug')
+            .sort({ pageName: 1 })
+            .lean();
+        
         res.render('ads/editAd', {
             title: "Edit Advertisement",
             subTitle: "Update Ad Details",
             ad: ad,
-            placements: placements
+            placements: placements,
+            pages: pages
         });
     } catch (error) {
         console.error('Error loading edit ad page:', error);

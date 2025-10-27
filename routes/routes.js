@@ -26,6 +26,7 @@ const cms = require("./cms");
 const ads = require("./ads");
 const media = require("./media");
 const roles = require("./roles");
+const urlRedirect = require("./urlRedirect");
 
 router.get("/", isAuthenticated, async (req, res) => {
   try {
@@ -233,6 +234,7 @@ router.use("/cms", cms);
 router.use("/ads", ads);
 router.use("/media", media);
 router.use("/roles", roles);
+router.use("/url-redirect", urlRedirect);
 
 // Dynamic page rendering - This should be last to catch all dynamic routes
 router.get('/:slug', isAuthenticated, async (req, res, next) => {

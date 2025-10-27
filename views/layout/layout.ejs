@@ -261,6 +261,65 @@
    <script src="/js/sessionMonitor.js"></script>
    <% } %>
 
+   <!-- Prevent Back Navigation After Logout -->
+   <script>
+       (function() {
+           // Disable browser cache for protected pages
+           window.history.forward();
+           
+           function noBack() {
+               window.history.forward();
+           }
+           
+           // Prevent back button
+           window.onload = noBack;
+           window.onpageshow = function(evt) { 
+               if (evt.persisted) noBack(); 
+           };
+           window.onunload = function() { void(0); };
+           
+           // Check if user is logged in on page load
+           window.addEventListener('pageshow', function(event) {
+               // Check if page is loaded from cache (back/forward button)
+               if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                   // Verify session is still valid
+                   fetch('/api/auth/check-session', {
+                       method: 'GET',
+                       credentials: 'include'
+                   })
+                   .then(response => response.json())
+                   .then(data => {
+                       if (!data.authenticated) {
+                           // Session expired or user logged out, redirect to login
+                           window.location.replace('/authentication/signin');
+                       }
+                   })
+                   .catch(() => {
+                       // On error, redirect to login for safety
+                       window.location.replace('/authentication/signin');
+                   });
+               }
+           });
+           
+           // Additional check on focus (when user returns to tab)
+           window.addEventListener('focus', function() {
+               fetch('/api/auth/check-session', {
+                   method: 'GET',
+                   credentials: 'include'
+               })
+               .then(response => response.json())
+               .then(data => {
+                   if (!data.authenticated) {
+                       window.location.replace('/authentication/signin');
+                   }
+               })
+               .catch(() => {
+                   // Silently fail on focus check to avoid disrupting user
+               });
+           });
+       })();
+   </script>
+
    <!-- Add the script block here -->
    <% if (typeof script !== 'undefined') { %>
     <%- script %>

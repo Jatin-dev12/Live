@@ -359,4 +359,16 @@ router.get('/session-check', async (req, res) => {
     }
 });
 
+// Check session endpoint for client-side protection
+router.get('/check-session', (req, res) => {
+    if (req.session && req.session.userId) {
+        return res.json({
+            authenticated: true
+        });
+    }
+    return res.json({
+        authenticated: false
+    });
+});
+
 module.exports = router;

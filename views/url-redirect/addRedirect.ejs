@@ -1,0 +1,105 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Add New URL Redirect</h5>
+    </div>
+    <div class="card-body">
+        <form id="addRedirectForm">
+            <div class="row gy-3">
+                <div class="col-md-6">
+                    <label class="form-label">Old URL <span class="text-danger">*</span></label>
+                    <input type="text" name="oldUrl" id="oldUrl" class="form-control" placeholder="/old-page" required>
+                    <small class="text-muted">Enter the old URL path (e.g., /old-page or /blog/old-post)</small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">New URL <span class="text-danger">*</span></label>
+                    <input type="text" name="newUrl" id="newUrl" class="form-control" placeholder="/new-page" required>
+                    <small class="text-muted">Enter the new URL path or full URL</small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Redirect Type</label>
+                    <input type="text" class="form-control" value="301 - Permanent Redirect" readonly disabled>
+                    <small class="text-muted">All redirects use 301 (Permanent) for SEO</small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select name="isActive" id="isActive" class="form-select">
+                        <option value="true" selected>Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="btn-text">Create Redirect</span>
+                        <span class="btn-spinner d-none">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </span>
+                    </button>
+                    <a href="/url-redirect/url-redirects" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% script=` <script>
+    document.getElementById('addRedirectForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnSpinner = submitBtn.querySelector('.btn-spinner');
+
+    // Show loading
+    submitBtn.disabled = true;
+    btnText.classList.add('d-none');
+    btnSpinner.classList.remove('d-none');
+
+    const formData = {
+    oldUrl: document.getElementById('oldUrl').value.trim(),
+    newUrl: document.getElementById('newUrl').value.trim(),
+    redirectType: 301,
+    isActive: document.getElementById('isActive').value === 'true'
+    };
+
+    // Ensure URLs start with /
+    if (!formData.oldUrl.startsWith('/') && !formData.oldUrl.startsWith('http')) {
+    formData.oldUrl = '/' + formData.oldUrl;
+    }
+    if (!formData.newUrl.startsWith('/') && !formData.newUrl.startsWith('http')) {
+    formData.newUrl = '/' + formData.newUrl;
+    }
+
+    try {
+    const response = await fetch('/api/url-redirects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+    showToast(result.message, 'success');
+    setTimeout(() => {
+    window.location.href = '/url-redirect/url-redirects';
+    }, 1500);
+    } else {
+    showToast(result.message, 'error');
+    submitBtn.disabled = false;
+    btnText.classList.remove('d-none');
+    btnSpinner.classList.add('d-none');
+    }
+    } catch (error) {
+    console.error('Error:', error);
+    showToast('An error occurred', 'error');
+    submitBtn.disabled = false;
+    btnText.classList.remove('d-none');
+    btnSpinner.classList.add('d-none');
+    }
+    });
+    </script>
+    ` %>

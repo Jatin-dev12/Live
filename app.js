@@ -78,6 +78,7 @@ const uploadApi = require('./routes/api/uploadApi');
 const adsApi = require('./routes/api/adsApi');
 const mediaApi = require('./routes/api/mediaApi');
 const menuApi = require('./routes/api/menuApi');
+const urlRedirectApi = require('./routes/api/urlRedirectApi');
 
 // Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
 const pageRouter = require('./routes/routes');
@@ -94,9 +95,14 @@ app.use('/api', uploadApi);
 app.use('/api', adsApi);
 app.use('/api/media', mediaApi);
 app.use('/api/menus', menuApi);
+app.use('/api/url-redirects', urlRedirectApi);
 
 // Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function
+
+// URL Redirect Middleware (after routes are registered, before 404)
+const handleUrlRedirect = require('./middleware/urlRedirect');
+app.use(handleUrlRedirect);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -350,9 +350,38 @@
                     document.getElementById('modal-interestedIn').textContent = leadData.interestedIn || 'N/A';
                     document.getElementById('modal-notes').textContent = leadData.notes || 'No message available';
 
+                    // Toggle sidebar when modal opens (using the same classes as sidebar-toggle button)
+                    const sidebar = document.querySelector('.sidebar');
+                    const dashboardMain = document.querySelector('.dashboard-main');
+                    const sidebarToggle = document.querySelector('.sidebar-toggle');
+
+                    if (sidebar) {
+                        sidebar.classList.toggle('active');
+                    }
+                    if (dashboardMain) {
+                        dashboardMain.classList.toggle('active');
+                    }
+                    if (sidebarToggle) {
+                        sidebarToggle.classList.toggle('active');
+                    }
+
                     // Show modal
                     const modal = new bootstrap.Modal(document.getElementById('leadDetailsModal'));
                     modal.show();
+
+                    // When modal closes, toggle sidebar back to original state
+                    const modalElement = document.getElementById('leadDetailsModal');
+                    modalElement.addEventListener('hidden.bs.modal', function () {
+                        if (sidebar) {
+                            sidebar.classList.toggle('active');
+                        }
+                        if (dashboardMain) {
+                            dashboardMain.classList.toggle('active');
+                        }
+                        if (sidebarToggle) {
+                            sidebarToggle.classList.toggle('active');
+                        }
+                    }, { once: true });
                 });
             });
         });

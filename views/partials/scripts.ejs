@@ -69,12 +69,19 @@ $(document).ready(function() {
             type: 'POST',
             success: function(response) {
                 if (response.success) {
-                    window.location.href = response.redirectUrl || '/authentication/sign-in';
+                    // Clear browser history and prevent back navigation
+                    window.history.pushState(null, null, window.location.href);
+                    window.onpopstate = function () {
+                        window.history.go(1);
+                    };
+                    
+                    // Use replace instead of href to prevent back navigation
+                    window.location.replace(response.redirectUrl || '/authentication/signin');
                 }
             },
             error: function() {
                 // Even if there's an error, redirect to login page
-                window.location.href = '/authentication/sign-in';
+                window.location.replace('/authentication/signin');
             }
         });
     });

@@ -56,12 +56,11 @@
                             <label class="form-label">Page <span class="text-danger">*</span></label>
                             <select name="page_name" id="page_name" class="form-select" required>
                                 <option value="">Select Page</option>
-                                <option value="home">Home Page</option>
-                                <option value="about">About Page</option>
-                                <option value="services">Services Page</option>
-                                <option value="products">Products Page</option>
-                                <option value="blog">Blog Page</option>
-                                <option value="contact">Contact Page</option>
+                                <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
+                                    <% pages.forEach(page => { %>
+                                        <option value="<%= page.slug %>"><%= page.pageName %></option>
+                                    <% }); %>
+                                <% } %>
                                 <option value="all">All Pages</option>
                             </select>
                             <small class="text-muted">Select which page to display the ad</small>
