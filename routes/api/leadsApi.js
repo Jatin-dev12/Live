@@ -5,8 +5,8 @@ const Lead = require('../../models/Lead');
 // Create new lead (Public endpoint - no authentication required for frontend forms)
 router.post('/submit', async (req, res) => {
     try {
-        const { fullName, email, phone, interestedIn, notes } = req.body;
-        
+        const { fullName, company, email, contactNo, subject, message, website } = req.body;
+
         // Validation
         if (!fullName || !email) {
             return res.status(400).json({
@@ -14,7 +14,7 @@ router.post('/submit', async (req, res) => {
                 message: 'Name and email are required'
             });
         }
-        
+
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -23,20 +23,21 @@ router.post('/submit', async (req, res) => {
                 message: 'Please provide a valid email address'
             });
         }
-        
+
         // Create new lead
         const lead = new Lead({
             fullName: fullName.trim(),
+            company: company ? company.trim() : undefined,
             email: email.toLowerCase().trim(),
-            phone: phone ? phone.trim() : undefined,
-            interestedIn: interestedIn ? interestedIn.trim() : undefined,
-            notes: notes ? notes.trim() : undefined,
-            status: 'new',
-            source: 'website'
+            phone: contactNo ? contactNo.trim() : undefined,
+            interestedIn: subject ? subject.trim() : undefined,
+            notes: message ? message.trim() : undefined,
+            source: 'Website', // must match enum case
+            status: 'New'      // must match enum case
         });
-        
+
         await lead.save();
-        
+
         res.json({
             success: true,
             message: 'Thank you! Your inquiry has been submitted successfully. We will contact you soon.',
