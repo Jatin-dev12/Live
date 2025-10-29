@@ -18,20 +18,28 @@
                 <h6 class="mb-0">Add Menu</h6>
                 <button id="selectAllBtn" class="btn btn-primary btn-sm">Select All</button>
             </div>
-            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                <% if (typeof pages !=='undefined' && pages.length> 0) { %>
-                    <% pages.forEach(page=> { %>
-                        <div class="form-check mb-2 d-flex align-items-center">
-                            <input class="form-check-input page-checkbox" type="checkbox" id="page-<%= page._id %>"
-                                data-title="<%= page.name %>" data-url="<%= page.path %>">
-                            <label class="form-check-label" for="page-<%= page._id %>">
-                                <%= page.name %>
-                            </label>
-                        </div>
-                        <% }); %>
-                            <% } else { %>
-                                <p class="text-muted text-center">No pages available</p>
-                                <% } %>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="addMenuBody">
+                <div id="pageListLoader" class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-danger" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted mt-2 mb-0">Loading pages...</p>
+                </div>
+                <div id="pageListContent" style="display: none;">
+                    <% if (typeof pages !=='undefined' && pages.length> 0) { %>
+                        <% pages.forEach(page=> { %>
+                            <div class="form-check mb-2 d-flex align-items-center">
+                                <input class="form-check-input page-checkbox" type="checkbox" id="page-<%= page._id %>"
+                                    data-title="<%= page.name %>" data-url="<%= page.path %>">
+                                <label class="form-check-label" for="page-<%= page._id %>">
+                                    <%= page.name %>
+                                </label>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p class="text-muted text-center">No pages available</p>
+                                    <% } %>
+                </div>
             </div>
             <div class="card-footer">
                 <button id="addToMenuBtn" class="btn btn-primary btn-sm w-100">Add to Menu</button>

@@ -5,10 +5,8 @@ let isSelectAllActive = false;
 document.addEventListener('DOMContentLoaded', function () {
     initializeMenuManagement();
     // Auto-load header menu by default
-    setTimeout(() => {
-        document.getElementById('menuSelect').value = 'header-menu';
-        loadMenu();
-    }, 100);
+    document.getElementById('menuSelect').value = 'header-menu';
+    loadMenu();
 });
 
 function initializeMenuManagement() {
@@ -50,6 +48,7 @@ async function loadMenu() {
             document.getElementById('menuStructurePanel').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
             renderMenuItems();
+            showPageList();
             showNotification('Menu loaded successfully', 'success');
         } else {
             await createDefaultMenu(menuSlug);
@@ -58,6 +57,13 @@ async function loadMenu() {
         console.error('Error loading menu:', error);
         await createDefaultMenu(menuSlug);
     }
+}
+
+function showPageList() {
+    const loader = document.getElementById('pageListLoader');
+    const content = document.getElementById('pageListContent');
+    if (loader) loader.style.display = 'none';
+    if (content) content.style.display = 'block';
 }
 
 async function createDefaultMenu(slug) {
@@ -79,6 +85,7 @@ async function createDefaultMenu(slug) {
             document.getElementById('menuStructurePanel').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
             renderMenuItems();
+            showPageList();
             showNotification(`${name} created successfully`, 'success');
         }
     } catch (error) {
