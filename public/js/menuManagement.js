@@ -22,7 +22,12 @@ function initializeMenuManagement() {
 function toggleSelectAll() {
     const checkboxes = document.querySelectorAll('.page-checkbox');
     isSelectAllActive = !isSelectAllActive;
-    checkboxes.forEach(cb => cb.checked = isSelectAllActive);
+    checkboxes.forEach(cb => {
+        const parentDiv = cb.closest('.form-check');
+        if (parentDiv.style.display !== 'none') {
+            cb.checked = isSelectAllActive;
+        }
+    });
     document.getElementById('selectAllBtn').textContent = isSelectAllActive ? 'Deselect All' : 'Select All';
 }
 
@@ -129,6 +134,7 @@ function renderMenuItems() {
 
     if (menuItems.length === 0) {
         menuList.innerHTML = '<p class="text-muted text-center py-4">No menu items yet. Add pages from the left panel.</p>';
+        updateAvailablePages();
         return;
     }
 
@@ -149,6 +155,36 @@ function renderMenuItems() {
     });
 
     makeItemsDraggable();
+    updateAvailablePages();
+}
+
+function updateAvailablePages() {
+    const checkboxes = document.querySelectorAll('.page-checkbox');
+    const menuUrls = menuItems.map(item => item.url);
+    let visibleCount = 0;
+    
+    checkboxes.forEach(checkbox => {
+        const pageUrl = checkbox.dataset.url;
+        const parentDiv = checkbox.closest('.form-check');
+        
+        if (menuUrls.includes(pageUrl)) {
+            parentDiv.style.setProperty('display', 'none', 'important');
+            checkbox.checked = false;
+        } else {
+            parentDiv.style.removeProperty('display');
+            visibleCount++;
+        }
+    });
+    
+    // Hide Select All button if no pages are available
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) {
+        if (visibleCount === 0) {
+            selectAllBtn.style.display = 'none';
+        } else {
+            selectAllBtn.style.display = 'block';
+        }
+    }
 }
 
 function escapeHtml(text) {
@@ -301,9 +337,10 @@ function showNotification(message, type = 'info') {
         hideClass: {
             popup: ''
         },
-         customClass: {
-                title: 'swal-toast-small'
-            },
+        customClass: {
+            title: 'swal-toast-small',
+            popup: 'swal-toast-small-popup'
+        },
     });
 
     Toast.fire({
