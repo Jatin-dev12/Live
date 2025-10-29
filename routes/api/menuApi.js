@@ -5,7 +5,7 @@ const Page = require('../../models/Page');
 const { isAuthenticated } = require('../../middleware/auth');
 
 // Get all menus
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/',async (req, res) => {
     try {
         const menus = await Menu.find().sort({ createdAt: -1 });
         res.json({ success: true, menus });
