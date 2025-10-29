@@ -244,20 +244,9 @@ async function removeMenuItem(index) {
     if (result.isConfirmed) {
         menuItems.splice(index, 1);
         renderMenuItems();
-
-        // Auto-save to database
-        await saveMenu();
-
-        // Swal.fire({
-        //     title: 'Removed!',
-        //     text: 'Menu item has been removed.',
-        //     icon: 'success',
-        //     timer: 1500,
-        //     showConfirmButton: false,
-        //     showClass: {
-        //         popup: 'swal2-noanimation'
-        //     }
-        // });
+        
+        // Show reminder to save
+        showNotification('Please click "Save Menu" to save changes', 'info', 2000);
     }
 }
 
@@ -267,12 +256,21 @@ async function saveMenu(showNotif = false) {
         return;
     }
 
+    const saveBtn = document.getElementById('saveBtn');
+    const originalText = saveBtn.innerHTML;
+    
+    // Show loader
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+
     try {
         const getResponse = await fetch(`/api/menus/${currentMenuSlug}`);
         const getData = await getResponse.json();
 
         if (!getData.success || !getData.menu) {
             if (showNotif) showNotification('Menu not found', 'error');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
             return;
         }
 
@@ -283,6 +281,11 @@ async function saveMenu(showNotif = false) {
         });
 
         const data = await response.json();
+        
+        // Reset button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+        
         if (data.success) {
             if (showNotif) showNotification('Menu saved successfully', 'success');
             return true;
@@ -292,6 +295,8 @@ async function saveMenu(showNotif = false) {
         }
     } catch (error) {
         console.error('Error saving menu:', error);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
         if (showNotif) showNotification('Error saving menu', 'error');
         return false;
     }
@@ -324,12 +329,12 @@ async function resetMenu() {
     }
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', timer = 500) {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 1000,
+        timer: timer,
         timerProgressBar: true,
         showClass: {
             popup: 'swal2-noanimation'
