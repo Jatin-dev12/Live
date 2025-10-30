@@ -264,6 +264,15 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     try {
         const { name, path, status, metaTitle, metaDescription, metaKeywords } = req.body;
         
+        // Get the old page data before update
+        const oldPage = await Page.findById(req.params.id);
+        if (!oldPage) {
+            return res.status(404).json({
+                success: false,
+                message: 'Page not found'
+            });
+        }
+        
         // Check if another page has the same name or path
         const existingPage = await Page.findOne({
             _id: { $ne: req.params.id },
@@ -291,11 +300,36 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             { new: true, runValidators: true }
         );
         
-        if (!page) {
-            return res.status(404).json({
-                success: false,
-                message: 'Page not found'
-            });
+        // If page is deactivated, remove it from all menus
+        if (status === 'inactive' && oldPage.status === 'active') {
+            console.log('Page deactivated, removing from menus. Old path:', oldPage.path, 'New path:', page.path);
+            const Menu = require('../../models/Menu');
+            const menus = await Menu.find();
+            
+            let removedCount = 0;
+            for (const menu of menus) {
+                const originalLength = menu.items.length;
+                console.log(`Checking menu: ${menu.name}, items before:`, menu.items.length);
+                console.log('Menu items URLs:', menu.items.map(i => i.url));
+                
+                // Check both old and new paths
+                menu.items = menu.items.filter(item => {
+                    const matches = item.url === page.path || item.url === oldPage.path;
+                    if (matches) {
+                        console.log(`Removing item with URL: ${item.url} from menu: ${menu.name}`);
+                    }
+                    return !matches;
+                });
+                
+                console.log(`Menu: ${menu.name}, items after:`, menu.items.length);
+                
+                if (menu.items.length !== originalLength) {
+                    await menu.save();
+                    removedCount++;
+                    console.log(`Saved menu: ${menu.name}`);
+                }
+            }
+            console.log(`Removed page from ${removedCount} menu(s)`);
         }
         
         res.json({
@@ -316,7 +350,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
 // Delete page
 router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
-        const page = await Page.findByIdAndDelete(req.params.id);
+        const page = await Page.findById(req.params.id);
         
         if (!page) {
             return res.status(404).json({
@@ -325,13 +359,46 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        console.log('Deleting page:', page.name, 'with path:', page.path);
+        
+        // Remove page from all menus before deleting
+        const Menu = require('../../models/Menu');
+        const menus = await Menu.find();
+        
+        let removedCount = 0;
+        for (const menu of menus) {
+            const originalLength = menu.items.length;
+            console.log(`Checking menu: ${menu.name}, items before:`, menu.items.length);
+            
+            // Filter out items that match the page path
+            menu.items = menu.items.filter(item => {
+                const matches = item.url === page.path;
+                if (matches) {
+                    console.log(`Removing item with URL: ${item.url} from menu: ${menu.name}`);
+                }
+                return !matches;
+            });
+            
+            console.log(`Menu: ${menu.name}, items after:`, menu.items.length);
+            
+            if (menu.items.length !== originalLength) {
+                await menu.save();
+                removedCount++;
+                console.log(`Saved menu: ${menu.name}`);
+            }
+        }
+        
+        console.log(`Removed page from ${removedCount} menu(s)`);
+        
+        // Delete the page
+        await Page.findByIdAndDelete(req.params.id);
+        
         // Also delete all content associated with this page
-        const Content = require('../../models/Content');
         await Content.deleteMany({ page: req.params.id });
         
         res.json({
             success: true,
-            message: 'Page and associated content deleted successfully'
+            message: `Page deleted successfully and removed from ${removedCount} menu(s)`
         });
     } catch (error) {
         console.error('Error deleting page:', error);

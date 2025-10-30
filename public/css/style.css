@@ -15166,7 +15166,7 @@ td.fc-header-center {
 .sidebar-logo img {
   max-height: unset;
   width: auto !important;
-  height: 100% !important;
+  /* height: 100% !important; */
 }
 
 .sidebar-logo img.dark-logo {
