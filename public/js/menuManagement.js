@@ -5,10 +5,8 @@ let isSelectAllActive = false;
 document.addEventListener('DOMContentLoaded', function () {
     initializeMenuManagement();
     // Auto-load header menu by default
-    setTimeout(() => {
-        document.getElementById('menuSelect').value = 'header-menu';
-        loadMenu();
-    }, 100);
+    document.getElementById('menuSelect').value = 'header-menu';
+    loadMenu();
 });
 
 function initializeMenuManagement() {
@@ -22,7 +20,12 @@ function initializeMenuManagement() {
 function toggleSelectAll() {
     const checkboxes = document.querySelectorAll('.page-checkbox');
     isSelectAllActive = !isSelectAllActive;
-    checkboxes.forEach(cb => cb.checked = isSelectAllActive);
+    checkboxes.forEach(cb => {
+        const parentDiv = cb.closest('.form-check');
+        if (parentDiv.style.display !== 'none') {
+            cb.checked = isSelectAllActive;
+        }
+    });
     document.getElementById('selectAllBtn').textContent = isSelectAllActive ? 'Deselect All' : 'Select All';
 }
 
@@ -45,6 +48,7 @@ async function loadMenu() {
             document.getElementById('menuStructurePanel').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
             renderMenuItems();
+            showPageList();
             showNotification('Menu loaded successfully', 'success');
         } else {
             await createDefaultMenu(menuSlug);
@@ -53,6 +57,13 @@ async function loadMenu() {
         console.error('Error loading menu:', error);
         await createDefaultMenu(menuSlug);
     }
+}
+
+function showPageList() {
+    const loader = document.getElementById('pageListLoader');
+    const content = document.getElementById('pageListContent');
+    if (loader) loader.style.display = 'none';
+    if (content) content.style.display = 'block';
 }
 
 async function createDefaultMenu(slug) {
@@ -74,6 +85,7 @@ async function createDefaultMenu(slug) {
             document.getElementById('menuStructurePanel').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
             renderMenuItems();
+            showPageList();
             showNotification(`${name} created successfully`, 'success');
         }
     } catch (error) {
@@ -129,6 +141,7 @@ function renderMenuItems() {
 
     if (menuItems.length === 0) {
         menuList.innerHTML = '<p class="text-muted text-center py-4">No menu items yet. Add pages from the left panel.</p>';
+        updateAvailablePages();
         return;
     }
 
@@ -149,6 +162,36 @@ function renderMenuItems() {
     });
 
     makeItemsDraggable();
+    updateAvailablePages();
+}
+
+function updateAvailablePages() {
+    const checkboxes = document.querySelectorAll('.page-checkbox');
+    const menuUrls = menuItems.map(item => item.url);
+    let visibleCount = 0;
+    
+    checkboxes.forEach(checkbox => {
+        const pageUrl = checkbox.dataset.url;
+        const parentDiv = checkbox.closest('.form-check');
+        
+        if (menuUrls.includes(pageUrl)) {
+            parentDiv.style.setProperty('display', 'none', 'important');
+            checkbox.checked = false;
+        } else {
+            parentDiv.style.removeProperty('display');
+            visibleCount++;
+        }
+    });
+    
+    // Hide Select All button if no pages are available
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) {
+        if (visibleCount === 0) {
+            selectAllBtn.style.display = 'none';
+        } else {
+            selectAllBtn.style.display = 'block';
+        }
+    }
 }
 
 function escapeHtml(text) {
@@ -208,20 +251,9 @@ async function removeMenuItem(index) {
     if (result.isConfirmed) {
         menuItems.splice(index, 1);
         renderMenuItems();
-
-        // Auto-save to database
-        await saveMenu();
-
-        // Swal.fire({
-        //     title: 'Removed!',
-        //     text: 'Menu item has been removed.',
-        //     icon: 'success',
-        //     timer: 1500,
-        //     showConfirmButton: false,
-        //     showClass: {
-        //         popup: 'swal2-noanimation'
-        //     }
-        // });
+        
+        // Show reminder to save
+        showNotification('Please click "Save Menu" to save changes', 'info', 2000);
     }
 }
 
@@ -231,12 +263,21 @@ async function saveMenu(showNotif = false) {
         return;
     }
 
+    const saveBtn = document.getElementById('saveBtn');
+    const originalText = saveBtn.innerHTML;
+    
+    // Show loader
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+
     try {
         const getResponse = await fetch(`/api/menus/${currentMenuSlug}`);
         const getData = await getResponse.json();
 
         if (!getData.success || !getData.menu) {
             if (showNotif) showNotification('Menu not found', 'error');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
             return;
         }
 
@@ -247,6 +288,11 @@ async function saveMenu(showNotif = false) {
         });
 
         const data = await response.json();
+        
+        // Reset button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+        
         if (data.success) {
             if (showNotif) showNotification('Menu saved successfully', 'success');
             return true;
@@ -256,6 +302,8 @@ async function saveMenu(showNotif = false) {
         }
     } catch (error) {
         console.error('Error saving menu:', error);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
         if (showNotif) showNotification('Error saving menu', 'error');
         return false;
     }
@@ -288,12 +336,12 @@ async function resetMenu() {
     }
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', timer = 500) {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 1000,
+        timer: timer,
         timerProgressBar: true,
         showClass: {
             popup: 'swal2-noanimation'
@@ -301,9 +349,10 @@ function showNotification(message, type = 'info') {
         hideClass: {
             popup: ''
         },
-         customClass: {
-                title: 'swal-toast-small'
-            },
+        customClass: {
+            title: 'swal-toast-small',
+            popup: 'swal-toast-small-popup'
+        },
     });
 
     Toast.fire({

@@ -1,4 +1,4 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
             <form class="navbar-search">
@@ -113,11 +113,22 @@
     });
 
     // Delete page functionality
-    $(document).on('click', '.delete-page-btn', function () {
+    $(document).on('click', '.delete-page-btn', async function () {
         const pageId = $(this).data('page-id');
         const row = $(this).closest('tr');
 
-        if (confirm('Are you sure you want to delete this page? All associated content will also be deleted.')) {
+        const result = await Swal.fire({
+            title: 'Delete Page?',
+            text: 'Are you sure you want to delete this page?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (result.isConfirmed) {
             $.ajax({
                 url: '/api/pages/' + pageId,
                 type: 'DELETE',
