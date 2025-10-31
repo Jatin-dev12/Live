@@ -1,0 +1,280 @@
+<% if (typeof content !== 'undefined') { %>
+<div class="row gy-4">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="text-xl mb-0">Edit Content</h6>
+            </div>
+            <div class="card-body p-24">
+                <form id="editContentForm" class="d-flex flex-column gap-20">
+                    <input type="hidden" id="contentId" value="<%= content._id %>">
+
+                    <div>
+                        <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
+                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
+                            <option value="">-- Select a Page --</option>
+                            <% if (typeof pages !== 'undefined' && pages.length > 0) { %>
+                                <% pages.forEach(page => { %>
+                                    <option value="<%= page._id %>" <%= content.page && content.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %></option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Status: </label>
+                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                            <option value="active" <%= content.status === 'active' ? 'selected' : '' %>>Active</option>
+                            <option value="inactive" <%= content.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                        </select>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Style to ensure fields stay visible -->
+                    <style>
+                        [class$="-fields"]:not(.active) { display: none !important; }
+                        [class$="-fields"].active { display: block !important; }
+                    </style>
+
+                    <!-- Sections Container -->
+                    <div id="sectionsContainer">
+                        <% if (allSections && allSections.length > 0) { %>
+                            <% allSections.forEach(function(section, index) { %>
+                                <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4" data-id="<%= section._id %>">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-lg mb-0">Section <%= index + 1 %></h6>
+                                        <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">Remove Section</button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="hidden" class="original-section-type" value="<%= section.sectionType %>">
+                                        <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
+                                        <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
+                                            <option value="image-with-text" <%= section.sectionType === 'image-with-text' ? 'selected' : '' %>>Image with Text</option>
+                                            <option value="image-with-list" <%= section.sectionType === 'image-with-list' ? 'selected' : '' %>>Image with List</option>
+                                            <option value="heading-subheading" <%= section.sectionType === 'heading-subheading' ? 'selected' : '' %>>Heading with Subheading</option>
+                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section</option>
+                                            <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Dynamic fields based on section type -->
+                                    <div class="section-fields">
+                                        <!-- Image with Text Fields -->
+                                        <div class="image-with-text-fields <%= section.sectionType === 'image-with-text' ? 'active' : '' %>">
+                                            <div class="mb-3">
+                                                <label class="form-label">Heading:</label>
+                                                <input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" 
+                                                       value="<%= section.customFields?.heading || '' %>" placeholder="Heading">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Subheading:</label>
+                                                <input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading"
+                                                       value="<%= section.customFields?.subheading || '' %>" placeholder="Subheading">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Text:</label>
+                                                <textarea class="form-control border border-neutral-200 radius-8 iwt-text" 
+                                                          rows="4" placeholder="Description"><%= section.customFields?.richText || '' %></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input iwt-left" type="checkbox" 
+                                                           <%= section.customFields?.imageOnLeft ? 'checked' : '' %>>
+                                                    <label class="form-check-label">Image on Left</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image with List Fields -->
+                                        <div class="image-with-list-fields <%= section.sectionType === 'image-with-list' ? 'active' : '' %>">
+                                            <!-- Similar structure to Image with Text, but with list items -->
+                                        </div>
+
+                                        <!-- Heading + Subheading Fields -->
+                                        <div class="heading-subheading-fields <%= section.sectionType === 'heading-subheading' ? 'active' : '' %>">
+                                            <!-- Heading and subheading fields -->
+                                        </div>
+
+                                        <!-- Hero Section Fields -->
+                                        <div class="hero-section-fields <%= section.sectionType === 'hero-section' ? 'active' : '' %>">
+                                            <!-- Hero section specific fields -->
+                                        </div>
+
+                                        <!-- Three Column Info Fields -->
+                                        <div class="three-column-info-fields <%= section.sectionType === 'three-column-info' ? 'active' : '' %>">
+                                            <!-- Three column layout fields -->
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="alert alert-warning">No sections found. Add a new section below.</div>
+                        <% } %>
+                    </div>
+
+                    <!-- Add Section Button -->
+                    <div class="text-center mb-3">
+                        <button type="button" class="btn btn-outline-primary-600 radius-8" id="addSectionBtn">
+                            Add Section
+                        </button>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Section Template (Hidden) -->
+                    <div id="sectionTemplate" class="d-none">
+                        <!-- Template content here -->
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-600 radius-8">Update Content</button>
+                </form>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    // Initialize sections
+                    function initializeSections() {
+                        $('.section-block').each(function(index) {
+                            $(this).find('h6').text('Section #' + (index + 1));
+                        });
+                    }
+
+                    // Handle section type changes
+                    $(document).on('change', '.section-type-select', function() {
+                        const $block = $(this).closest('.section-block');
+                        const sectionType = $(this).val();
+                        
+                        $block.find('[class$="-fields"]').removeClass('active');
+                        if (sectionType) {
+                            $block.find('.' + sectionType + '-fields').addClass('active');
+                        }
+                    });
+
+                    // Add new section
+                    $('#addSectionBtn').on('click', function() {
+                        const currentSectionCount = $('.section-block').length + 1;
+                        const $template = $('#sectionTemplate').children().first().clone();
+                        
+                        $template.find('h6').text('Section #' + currentSectionCount);
+                        $template.attr('data-section-id', currentSectionCount);
+                        
+                        $('#sectionsContainer').append($template);
+                        $template.removeClass('d-none');
+                        
+                        initializeSections();
+                    });
+
+                    // Remove section
+                    $(document).on('click', '.remove-section-btn', function() {
+                        $(this).closest('.section-block').remove();
+                        initializeSections();
+                    });
+
+                    // Handle file uploads
+                    function initializeFileUpload(prefix) {
+                        $(document).on('change', '.upload-file-' + prefix + '-input', function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                const $wrapper = $(this).closest('.upload-image-wrapper');
+                                
+                                reader.onload = function(e) {
+                                    $wrapper.find('.uploaded-img-' + prefix + '__preview').attr('src', e.target.result);
+                                    $wrapper.find('.uploaded-img-' + prefix).removeClass('d-none');
+                                    $wrapper.find('.upload-file-' + prefix).addClass('d-none');
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        });
+
+                        // Remove image
+                        $(document).on('click', '.uploaded-img-' + prefix + '__remove', function() {
+                            const $wrapper = $(this).closest('.upload-image-wrapper');
+                            $wrapper.find('.uploaded-img-' + prefix).addClass('d-none');
+                            $wrapper.find('.upload-file-' + prefix).removeClass('d-none');
+                            $wrapper.find('.upload-file-' + prefix + '-input').val('');
+                        });
+                    }
+
+                    // Initialize all upload types
+                    ['iwt', 'iwl', 'hero'].forEach(initializeFileUpload);
+
+                    // Handle list items
+                    $(document).on('click', '.add-iwl-item-btn', function() {
+                        const $itemsContainer = $(this).siblings('.iwl-items');
+                        const newItem = `
+                            <div class="iwl-item d-flex align-items-center gap-2 mb-2">
+                                <input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input">
+                                <button type="button" class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>
+                            </div>
+                        `;
+                        $itemsContainer.append(newItem);
+                    });
+
+                    $(document).on('click', '.remove-iwl-item', function() {
+                        $(this).closest('.iwl-item').remove();
+                    });
+
+                    // Form submission
+                    $('#editContentForm').on('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const formData = new FormData();
+                        formData.append('contentId', $('#contentId').val());
+                        formData.append('pageId', $('#pageId').val());
+                        formData.append('status', $('#status').val());
+
+                        const sections = [];
+                        $('.section-block').each(function(index) {
+                            const $section = $(this);
+                            const sectionType = $section.find('.section-type-select').val();
+                            const section = {
+                                id: $section.data('id'),
+                                order: index + 1,
+                                sectionType: sectionType,
+                                customFields: {}
+                            };
+
+                            // Add fields based on section type
+                            if (sectionType === 'image-with-text') {
+                                section.customFields = {
+                                    heading: $section.find('.iwt-heading').val(),
+                                    subheading: $section.find('.iwt-subheading').val(),
+                                    richText: $section.find('.iwt-text').val(),
+                                    imageOnLeft: $section.find('.iwt-left').is(':checked')
+                                };
+                            }
+                            // Add other section type handling as needed
+
+                            sections.push(section);
+                        });
+
+                        formData.append('sections', JSON.stringify(sections));
+
+                        // Submit to server
+                        $.ajax({
+                            url: '/api/content/update',
+                            method: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                // Handle success
+                                window.location.href = '/cms/content-management';
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle error
+                                console.error('Error updating content:', error);
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+<% } else { %>
+<div class="alert alert-danger">Content not found.</div>
+<% } %>

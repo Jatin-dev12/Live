@@ -198,6 +198,27 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+// Reorder multiple sections for a page
+router.post('/reorder', isAuthenticated, async (req, res) => {
+	try {
+		const { updates } = req.body; // [{ id, order }]
+		if (!Array.isArray(updates) || updates.length === 0) {
+			return res.status(400).json({ success: false, message: 'updates array is required' });
+		}
+		const bulkOps = updates.map(u => ({
+			updateOne: {
+				filter: { _id: u.id },
+				update: { $set: { order: Number(u.order) || 0 } }
+			}
+		}));
+		await Content.bulkWrite(bulkOps);
+		res.json({ success: true, message: 'Sections reordered successfully' });
+	} catch (error) {
+		console.error('Error reordering sections:', error);
+		res.status(500).json({ success: false, message: 'Error reordering sections', error: error.message });
+	}
+});
+
 // Delete all content for a specific page
 router.delete('/page/:pageId', isAuthenticated, async (req, res) => {
     try {

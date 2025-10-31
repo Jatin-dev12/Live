@@ -75,9 +75,155 @@
             <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
             <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
                 <option value="">-- Please Select Section --</option>
+                <option value="image-with-text">Image with Text</option>
+                <option value="image-with-list">Image with List</option>
+                <option value="heading-subheading">Heading with Subheading</option>
+                <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
+                <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
                 <option value="hero-section">Hero Section (Left Text + Right Image)</option>
                 <option value="three-column-info">Three Column Info Cards</option>
             </select>
+        </div>
+
+        <!-- Image with Text Fields -->
+        <div class="image-with-text-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" placeholder="Heading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Subheading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading" placeholder="Subheading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Text:</label>
+                <textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input iwt-left" type="checkbox" id="iwt-left-\${id}" checked>
+                <label class="form-check-label" for="iwt-left-\${id}">Image on Left</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Image</label>
+                <div class="upload-image-wrapper">
+                    <div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                    </div>
+                    <label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Image</span>
+                        <input type="file" class="upload-file-iwt-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image with List Fields -->
+        <div class="image-with-list-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading">
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input iwl-left" type="checkbox" id="iwl-left-\${id}" checked>
+                <label class="form-check-label" for="iwl-left-\${id}">Image on Left</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">List Items:</label>
+                <div class="iwl-items"></div>
+                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-iwl-item-btn">Add Item</button>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Image</label>
+                <div class="upload-image-wrapper">
+                    <div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                    </div>
+                    <label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Image</span>
+                        <input type="file" class="upload-file-iwl-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heading + Subheading Fields -->
+        <div class="heading-subheading-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 hs-heading" placeholder="Heading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Subheading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 hs-subheading" placeholder="Subheading">
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input hs-center" type="checkbox" id="hs-center-\${id}" checked>
+                <label class="form-check-label" for="hs-center-\${id}">Center Align</label>
+            </div>
+        </div>
+
+        <!-- Left Heading + Image, Right Text Fields -->
+        <div class="left-heading-image-right-text-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Left Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 lhrt-heading" placeholder="Heading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
+                <div class="upload-image-wrapper">
+                    <div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                    </div>
+                    <label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Image</span>
+                        <input type="file" class="upload-file-lhrt-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Right Text:</label>
+                <textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text" rows="4" placeholder="Text"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Heading + Image, Left Text Fields -->
+        <div class="right-heading-image-left-text-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Right Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 rhlt-heading" placeholder="Heading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Right Image</label>
+                <div class="upload-image-wrapper">
+                    <div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                    </div>
+                    <label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Image</span>
+                        <input type="file" class="upload-file-rhlt-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Left Text:</label>
+                <textarea class="form-control border border-neutral-200 radius-8 rhlt-left-text" rows="4" placeholder="Text"></textarea>
+            </div>
         </div>
 
         <!-- Hero Section Fields -->
@@ -149,15 +295,79 @@
     const $section = $(this).closest('.section-block');
     const sectionType = $(this).val();
 
+    $section.find('.image-with-text-fields').hide();
+    $section.find('.image-with-list-fields').hide();
+    $section.find('.heading-subheading-fields').hide();
+    $section.find('.left-heading-image-right-text-fields').hide();
+    $section.find('.right-heading-image-left-text-fields').hide();
     $section.find('.hero-section-fields').hide();
     $section.find('.three-column-fields').hide();
 
-    if (sectionType === 'hero-section') {
-    $section.find('.hero-section-fields').show();
+    if (sectionType === 'image-with-text') {
+        $section.find('.image-with-text-fields').show();
+    } else if (sectionType === 'image-with-list') {
+        $section.find('.image-with-list-fields').show();
+    } else if (sectionType === 'heading-subheading') {
+        $section.find('.heading-subheading-fields').show();
+    } else if (sectionType === 'left-heading-image-right-text') {
+        $section.find('.left-heading-image-right-text-fields').show();
+    } else if (sectionType === 'right-heading-image-left-text') {
+        $section.find('.right-heading-image-left-text-fields').show();
+    } else if (sectionType === 'hero-section') {
+        $section.find('.hero-section-fields').show();
     } else if (sectionType === 'three-column-info') {
-    $section.find('.three-column-fields').show();
+        $section.find('.three-column-fields').show();
     }
     });
+    // Dynamic list items for Image with List
+    $(document).on('click', '.add-iwl-item-btn', function() {
+        const $container = $(this).siblings('.iwl-items');
+        const idx = $container.find('.iwl-item').length + 1;
+        const html = '<div class="iwl-item d-flex align-items-center gap-2 mb-2">'
+            + '<input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input" placeholder="Item #' + idx + '">' 
+            + '<button type="button" class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>'
+            + '</div>';
+        $container.append(html);
+    });
+    $(document).on('click', '.remove-iwl-item', function() { $(this).closest('.iwl-item').remove(); });
+
+    // Image uploads for new types
+    function handleUpload(inputSelector, uploadedCls, previewCls, removeBtnCls, labelCls, folder) {
+        $(document).on('change', inputSelector, function(e) {
+            if (e.target.files.length) {
+                const $section = $(this).closest('.section-block');
+                const file = e.target.files[0];
+                const $input = $(this);
+                const src = URL.createObjectURL(file);
+                $section.find(previewCls).attr('src', src);
+                $section.find(uploadedCls).removeClass('d-none');
+                $section.find(labelCls).addClass('d-none');
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('folder', folder);
+                $.ajax({
+                    url: '/api/upload', type: 'POST', data: formData, processData: false, contentType: false,
+                    success: function(response) {
+                        if (response.success) { $input.data('uploaded', true); $input.data('serverPath', response.url); showToast('Image uploaded', 'success'); }
+                        else { showToast('Upload failed', 'error'); }
+                    },
+                    error: function(xhr) { showToast('Upload error', 'error'); }
+                });
+            }
+        });
+        $(document).on('click', removeBtnCls, function() {
+            const $section = $(this).closest('.section-block');
+            $section.find(previewCls).attr('src', '');
+            $section.find(uploadedCls).addClass('d-none');
+            $section.find(labelCls).removeClass('d-none');
+            $section.find(inputSelector).val('').data('uploaded', false).data('serverPath', '');
+        });
+    }
+    handleUpload('.upload-file-iwt-input', '.uploaded-img-iwt', '.uploaded-img-iwt__preview', '.uploaded-img-iwt__remove', '.upload-file-iwt', 'sections');
+    handleUpload('.upload-file-iwl-input', '.uploaded-img-iwl', '.uploaded-img-iwl__preview', '.uploaded-img-iwl__remove', '.upload-file-iwl', 'sections');
+    handleUpload('.upload-file-lhrt-input', '.uploaded-img-lhrt', '.uploaded-img-lhrt__preview', '.uploaded-img-lhrt__remove', '.upload-file-lhrt', 'sections');
+    handleUpload('.upload-file-rhlt-input', '.uploaded-img-rhlt', '.uploaded-img-rhlt__preview', '.uploaded-img-rhlt__remove', '.upload-file-rhlt', 'sections');
+
 
     // Remove Section
     $(document).on('click', '.remove-section-btn', function() {
@@ -349,7 +559,49 @@
     sectionType: sectionType
     };
 
-    if (sectionType === 'hero-section') {
+    if (sectionType === 'image-with-text') {
+        const heading = $section.find('.iwt-heading').val() || '';
+        const subheading = $section.find('.iwt-subheading').val() || '';
+        const text = $section.find('.iwt-text').val() || '';
+        const imageOnLeft = $section.find('.iwt-left').is(':checked');
+        const $imageInput = $section.find('.upload-file-iwt-input');
+        const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
+        sectionData.title = heading || 'Image with Text';
+        sectionData.customFields = { heading, subheading, richText: text, image: imageSrc, imageOnLeft };
+        sectionData.thumbnail = imageSrc;
+    } else if (sectionType === 'image-with-list') {
+        const heading = $section.find('.iwl-heading').val() || '';
+        const imageOnLeft = $section.find('.iwl-left').is(':checked');
+        const items = [];
+        $section.find('.iwl-item-input').each(function(){ const v = $(this).val(); if (v) items.push(v); });
+        const $imageInput = $section.find('.upload-file-iwl-input');
+        const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
+        sectionData.title = heading || 'Image with List';
+        sectionData.customFields = { heading, items, image: imageSrc, imageOnLeft };
+        sectionData.thumbnail = imageSrc;
+    } else if (sectionType === 'heading-subheading') {
+        const heading = $section.find('.hs-heading').val() || '';
+        const subheading = $section.find('.hs-subheading').val() || '';
+        const alignCenter = $section.find('.hs-center').is(':checked');
+        sectionData.title = heading || 'Heading';
+        sectionData.customFields = { heading, subheading, alignCenter };
+    } else if (sectionType === 'left-heading-image-right-text') {
+        const heading = $section.find('.lhrt-heading').val() || '';
+        const $imageInput = $section.find('.upload-file-lhrt-input');
+        const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
+        const rightText = $section.find('.lhrt-right-text').val() || '';
+        sectionData.title = heading || 'Section';
+        sectionData.customFields = { leftHeading: heading, leftImage: imageSrc, rightText };
+        sectionData.thumbnail = imageSrc;
+    } else if (sectionType === 'right-heading-image-left-text') {
+        const heading = $section.find('.rhlt-heading').val() || '';
+        const $imageInput = $section.find('.upload-file-rhlt-input');
+        const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
+        const leftText = $section.find('.rhlt-left-text').val() || '';
+        sectionData.title = heading || 'Section';
+        sectionData.customFields = { rightHeading: heading, rightImage: imageSrc, leftText };
+        sectionData.thumbnail = imageSrc;
+    } else if (sectionType === 'hero-section') {
     const heading = $section.find('.hero-heading').val();
     if (!heading) {
     showToast('Please enter a heading for the hero section', 'warning');
@@ -398,6 +650,10 @@
     sectionData.threeColumnInfo = { columns };
     }
 
+    // set order based on position in container (1-based)
+    sectionData.order = $('#sectionsContainer .section-block').index($section) + 1;
+    // ensure pageId is included
+    sectionData.pageId = pageId;
     sectionsData.push(sectionData);
     });
 

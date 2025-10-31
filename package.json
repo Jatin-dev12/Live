@@ -12,7 +12,8 @@
     "seed:leads": "node scripts/seedLeadsAndContacts.js",
     "fix:permissions": "node scripts/fixUserPermissions.js",
     "fix:all-permissions": "node scripts/fixAllUserPermissions.js",
-    "check:permissions": "node scripts/checkUserPermissions.js"
+    "check:permissions": "node scripts/checkUserPermissions.js",
+    "seed:section-types": "node scripts/seedSectionTypes.js"
   },
   "author": "Pixcels Themes",
   "license": "ISC",

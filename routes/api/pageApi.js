@@ -18,7 +18,7 @@ router.get('/public/all', async (req, res) => {
                     page: page._id, 
                     status: 'active' 
                 })
-                .select('title category description content thumbnail order createdAt updatedAt')
+                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
                 .sort({ order: 1, createdAt: -1 });
                 
                 return {
@@ -31,14 +31,18 @@ router.get('/public/all', async (req, res) => {
                     metaKeywords: page.metaKeywords,
                     createdAt: page.createdAt,
                     updatedAt: page.updatedAt,
-                    contents: contents.map(content => ({
+                    sections: contents.map(content => ({
                         _id: content._id,
+                        type: content.sectionType,
                         title: content.title,
                         category: content.category,
                         description: content.description,
                         content: content.content,
                         thumbnail: content.thumbnail,
                         order: content.order,
+                        heroSection: content.heroSection,
+                        threeColumnInfo: content.threeColumnInfo,
+                        customFields: content.customFields,
                         createdAt: content.createdAt,
                         updatedAt: content.updatedAt
                     }))
@@ -86,7 +90,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             page: page._id, 
             status: 'active' 
         })
-        .select('title category description content thumbnail order createdAt updatedAt')
+        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
         .sort({ order: 1, createdAt: -1 });
         
         // Set proper content type and send JSON without escaping HTML
@@ -103,14 +107,18 @@ router.get('/public/slug/:slug', async (req, res) => {
                 metaKeywords: page.metaKeywords,
                 createdAt: page.createdAt,
                 updatedAt: page.updatedAt,
-                contents: contents.map(content => ({
+                sections: contents.map(content => ({
                     _id: content._id,
+                    type: content.sectionType,
                     title: content.title,
                     category: content.category,
                     description: content.description,
                     content: content.content,
                     thumbnail: content.thumbnail,
                     order: content.order,
+                    heroSection: content.heroSection,
+                    threeColumnInfo: content.threeColumnInfo,
+                    customFields: content.customFields,
                     createdAt: content.createdAt,
                     updatedAt: content.updatedAt
                 }))
