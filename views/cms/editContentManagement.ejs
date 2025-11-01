@@ -96,7 +96,7 @@
 
                                     <!-- Dynamic fields based on section type -->
                                     <div class="section-fields asdf">
-                                        <pre><%= JSON.stringify(section, null, 2) %></pre>
+                                        <!-- <pre><%= JSON.stringify(section, null, 2) %></pre> -->
                                         <% if (section.sectionType==='image-with-text' ) { %>
                                             <div class="image-with-text-fields active">
                                                 <div class="mb-3">
@@ -263,7 +263,7 @@
                                                     <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
                                                     <div class="upload-image-wrapper">
                                                         <div
-                                                            class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-50 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                                            class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-30 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
                                                             <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover"
                                                                 src="<%= section.customFields?.image || '/images/user.png' %>"
                                                                 alt="image">
@@ -292,6 +292,70 @@
                             <div class="alert alert-warning">No sections found for this page. Add a new
                                 section below.</div>
                         <% } %>
+                    </div>
+
+                    <div id="originalSection" class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50 d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-lg mb-0">Section #Placeholder</h6>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
+                            <select class="form-control border border-neutral-200 radius-8 section-type section-type-select">
+                                <option value="">-- Please Select Section --</option>
+                                <option value="image-with-text">Image with Text</option>
+                                <option value="image-with-list">Image with List</option>
+                                <option value="heading-subheading">Heading with Subheading</option>
+                                <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
+                                <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
+                                <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+                                <option value="three-column-info">Three Column Info Cards</option>
+                            </select>
+                        </div>
+
+                        <div class="image-with-text-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" placeholder="Heading"></div>
+                            <div class="mb-3"><label class="form-label">Subheading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading" placeholder="Subheading"></div>
+                            <div class="mb-3"><label class="form-label">Text:</label><textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea></div>
+                            <div class="form-check mb-3"><input class="form-check-input iwt-left" type="checkbox" id="iwt-left-__ID_PLACEHOLDER__" checked><label class="form-check-label" for="iwt-left-__ID_PLACEHOLDER__">Image on Left</label></div>
+                            <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*" data-server-url=""></label></div></div>
+                        </div>
+
+                        <div class="image-with-list-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading"></div>
+                            <div class="form-check mb-3"><input class="form-check-input iwl-left" type="checkbox" id="iwl-left-__ID_PLACEHOLDER__" checked><label class="form-check-label" for="iwl-left-__ID_PLACEHOLDER__">Image on Left</label></div>
+                            <div class="mb-3"><label class="form-label">List Items:</label><div class="iwl-items"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-iwl-item-btn">Add Item</button></div>
+                            <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*" data-server-url=""></label></div></div>
+                        </div>
+
+                        <div class="heading-subheading-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-heading" placeholder="Heading"></div>
+                            <div class="mb-3"><label class="form-label">Subheading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-subheading" placeholder="Subheading"></div>
+                            <div class="form-check mb-3"><input class="form-check-input hs-center" type="checkbox" id="hs-center-__ID_PLACEHOLDER__" checked><label class="form-check-label" for="hs-center-__ID_PLACEHOLDER__">Center Align</label></div>
+                        </div>
+
+                        <div class="left-heading-image-right-text-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Left Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 lhrt-heading" placeholder="Heading"></div>
+                            <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*" data-server-url=""></label></div></div>
+                            <div class="mb-3"><label class="form-label">Right Text:</label><textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text" rows="4" placeholder="Text"></textarea></div>
+                        </div>
+
+                        <div class="right-heading-image-left-text-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Right Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 rhlt-heading" placeholder="Heading"></div>
+                            <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*" data-server-url=""></label></div></div>
+                            <div class="mb-3"><label class="form-label">Left Text:</label><textarea class="form-control border border-neutral-200 radius-8 rhlt-left-text" rows="4" placeholder="Text"></textarea></div>
+                        </div>
+
+                        <div class="hero-section-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
+                            <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
+                            <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button></div>
+                            <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*" data-server-url=""></label></div></div>
+                        </div>
+                        
+                        <div class="three-column-info-fields" style="display: none;">
+                            <div class="mb-3"><label class="form-label">Info Cards:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2" id="addColumnBtn"> Add Info Card </button></div>
+                        </div>
                     </div>
 
                     <!-- Add Section Button -->
@@ -744,7 +808,8 @@
             // Clear inputs/textareas and reset selects
             $tpl.find('input[type="text"], textarea').val('');
             $tpl.find('select.section-type, select.section-type-select, select.section-type-select').val('');
-            $tpl.find('.section-fields > div').removeClass('active');
+            // Hide all section-specific field containers in the cloned template
+            $tpl.find("[class$='-fields']").hide();
 
             // Reset image previews and upload controls inside the template
             $tpl.find('[class^="uploaded-img-"]').each(function() {
@@ -756,7 +821,26 @@
             $tpl.find('input[type="file"]').val('');
 
             // Append cleaned-up section to container
+            // Add a remove button to match Add Content behaviour
+            const $h6 = $tpl.find('h6').first();
+            // ensure we set the heading text then append remove button
+            $h6.text(heading);
+            $h6.append(' <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn float-end">Remove Section</button>');
+
             $("#sectionsContainer").append($tpl);
+
+            // Renumber all sections after adding
+            renumberSections();
+        }
+
+        // Renumber sections to keep numbering and data-section-id consistent
+        function renumberSections() {
+            $('#sectionsContainer .section-block').each(function(index) {
+                const newNumber = index + 1;
+                $(this).attr('data-id', $(this).data('id') || `new-section-${Date.now() + index}`);
+                const $h6 = $(this).find('h6').first();
+                $h6.contents().filter(function(){ return this.nodeType === 3; }).first().replaceWith('Section ' + newNumber + ' ');
+            });
         }
 
         // Main document ready function
@@ -782,7 +866,7 @@
                 });
 
             // "Add Section" button
-            $("#addSectionBtn").on("click", addNewSection);
+            $("#addSectionBtn").off("click").on("click", addNewSection);
 
             // Initialize all image upload handlers
             handleImageUpload(".upload-file-iwt-input", ".uploaded-img-iwt__preview", ".uploaded-img-iwt__remove", ".upload-image-wrapper", "section");

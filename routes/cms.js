@@ -139,7 +139,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             },
             order: 1
         };
-        console.log("---------processedSectionss",processedSections);
+        // console.log("---------processedSectionss",processedSections);
         
         // Prepare response data with all necessary fields
         const responseData = {
@@ -170,7 +170,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             })),
             pages: allPages
         };
-        console.log('---------------------responseData',responseData.allSections);
+        // console.log('---------------------responseData',responseData.allSections);
         
         
         return res.render('cms/editContentManagement', responseData);
