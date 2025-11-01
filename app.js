@@ -51,6 +51,10 @@ app.set('layout', './layout/layout');
 const { loadMenus } = require('./middleware/menuMiddleware');
 app.use(loadMenus);
 
+// Load site settings middleware (make settings available in all views)
+const { loadSiteSettings } = require('./middleware/siteSettingsMiddleware');
+app.use(loadSiteSettings);
+
 // Set up views directory and view engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
