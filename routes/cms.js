@@ -139,7 +139,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             },
             order: 1
         };
-
+        console.log("---------processedSectionss",processedSections);
+        
         // Prepare response data with all necessary fields
         const responseData = {
             title: "Edit Content Management",
@@ -149,11 +150,13 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             allSections: processedSections.map(section => ({
                 ...section,
                 customFields: {
-                    heading: section.customFields?.heading || '',
+                    heading: section.customFields?.heading || section.customFields?.leftHeading || '',
+                    leftHeading: section.customFields?.leftHeading || '',
                     subheading: section.customFields?.subheading || '',
                     alignCenter: section.customFields?.alignCenter === true,
-                    image: section.customFields?.image || '',
-                    imageOnLeft: section.customFields?.imageOnLeft === true
+                    image: section.customFields?.image || section.customFields?.leftImage || '',
+                    imageOnLeft: section.customFields?.imageOnLeft === true,
+                    rightText: section.customFields?.rightText || '',
                 },
                 heroSection: {
                     heading: section.heroSection?.heading || '',
@@ -167,6 +170,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             })),
             pages: allPages
         };
+        console.log('---------------------responseData',responseData.allSections);
+        
         
         return res.render('cms/editContentManagement', responseData);
     } catch (error) {

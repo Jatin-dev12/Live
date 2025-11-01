@@ -5,7 +5,7 @@
   "created": "December 2024",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "dev": "nodemon app.js",
     "seed": "node scripts/seedDatabase.js",
     "seed:roles": "node scripts/seedRolesAndPermissions.js",
@@ -18,7 +18,7 @@
   "author": "Pixcels Themes",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

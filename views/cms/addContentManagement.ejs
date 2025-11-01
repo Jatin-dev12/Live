@@ -343,8 +343,9 @@
                 $section.find(uploadedCls).removeClass('d-none');
                 $section.find(labelCls).addClass('d-none');
                 const formData = new FormData();
-                formData.append('file', file);
+                // append folder before file so multer destination can read it reliably
                 formData.append('folder', folder);
+                formData.append('file', file);
                 $.ajax({
                     url: '/api/upload', type: 'POST', data: formData, processData: false, contentType: false,
                     success: function(response) {
@@ -363,10 +364,10 @@
             $section.find(inputSelector).val('').data('uploaded', false).data('serverPath', '');
         });
     }
-    handleUpload('.upload-file-iwt-input', '.uploaded-img-iwt', '.uploaded-img-iwt__preview', '.uploaded-img-iwt__remove', '.upload-file-iwt', 'sections');
-    handleUpload('.upload-file-iwl-input', '.uploaded-img-iwl', '.uploaded-img-iwl__preview', '.uploaded-img-iwl__remove', '.upload-file-iwl', 'sections');
-    handleUpload('.upload-file-lhrt-input', '.uploaded-img-lhrt', '.uploaded-img-lhrt__preview', '.uploaded-img-lhrt__remove', '.upload-file-lhrt', 'sections');
-    handleUpload('.upload-file-rhlt-input', '.uploaded-img-rhlt', '.uploaded-img-rhlt__preview', '.uploaded-img-rhlt__remove', '.upload-file-rhlt', 'sections');
+    handleUpload('.upload-file-iwt-input', '.uploaded-img-iwt', '.uploaded-img-iwt__preview', '.uploaded-img-iwt__remove', '.upload-file-iwt', 'section');
+    handleUpload('.upload-file-iwl-input', '.uploaded-img-iwl', '.uploaded-img-iwl__preview', '.uploaded-img-iwl__remove', '.upload-file-iwl', 'section');
+    handleUpload('.upload-file-lhrt-input', '.uploaded-img-lhrt', '.uploaded-img-lhrt__preview', '.uploaded-img-lhrt__remove', '.upload-file-lhrt', 'section');
+    handleUpload('.upload-file-rhlt-input', '.uploaded-img-rhlt', '.uploaded-img-rhlt__preview', '.uploaded-img-rhlt__remove', '.upload-file-rhlt', 'section');
 
 
     // Remove Section
@@ -440,8 +441,9 @@
     
     // Upload to server
     const formData = new FormData();
-    formData.append('file', file);
+    // ensure folder is sent before file
     formData.append('folder', 'hero');
+    formData.append('file', file);
     
     $.ajax({
     url: '/api/upload',

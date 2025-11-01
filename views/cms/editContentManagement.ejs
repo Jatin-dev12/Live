@@ -39,7 +39,7 @@
                     <hr class="my-3">
 
                     <!-- Style to ensure fields stay visible -->
-                    <style>
+                    <!-- <style>
                         /* Hide all section field containers by default */
                         div[class$="-fields"]:not(.active) {
                             display: none !important;
@@ -60,7 +60,7 @@
                         #threeColumnFields.active {
                             display: block !important;
                         }
-                    </style>
+                    </style> -->
 
                     <script>
                         // Only use jQuery-based initialization to avoid conflicts
@@ -81,25 +81,22 @@
                                                 class="text-danger-600">*</span></label>
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
                                             required>
-                                            <option value="image-with-text" <%=section.sectionType==='image-with-text'
-                                                ? 'selected' : '' %>>Image with Text</option>
-                                            <option value="image-with-list" <%=section.sectionType==='image-with-list'
-                                                ? 'selected' : '' %>>Image with List</option>
-                                            <option value="heading-subheading"
-                                                <%=section.sectionType==='heading-subheading' ? 'selected' : '' %>
-                                                >Heading with Subheading</option>
-                                            <option value="hero-section" <%=section.sectionType==='hero-section'
-                                                ? 'selected' : '' %>>Hero Section</option>
-                                            <option value="three-column-info"
-                                                <%=section.sectionType==='three-column-info' ? 'selected' : '' %>>Three
-                                                Column Info</option>
+                                            <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
+                                            <option value="image-with-text" <%= section.sectionType === 'image-with-text' ? 'selected' : '' %>>Image with Text</option>
+                                            <option value="image-with-list" <%= section.sectionType === 'image-with-list' ? 'selected' : '' %>>Image with List</option>
+                                            <option value="heading-subheading" <%= section.sectionType === 'heading-subheading' ? 'selected' : '' %>>Heading with Subheading</option>
+                                            <option value="left-heading-image-right-text" <%= section.sectionType === 'left-heading-image-right-text' ? 'selected' : '' %>>Left Heading + Image, Right Text</option>
+                                            <option value="right-heading-image-left-text" <%= section.sectionType === 'right-heading-image-left-text' ? 'selected' : '' %>>Right Heading + Image, Left Text</option>
+                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section (Left Text + Right Image)</option>
+                                            <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info Cards</option>
                                         </select>
                                     </div>
 
                                     <!-- server-side renders active fields; per-block JS removed -->
 
                                     <!-- Dynamic fields based on section type -->
-                                    <div class="section-fields">
+                                    <div class="section-fields asdf">
+                                        <pre><%= JSON.stringify(section, null, 2) %></pre>
                                         <% if (section.sectionType==='image-with-text' ) { %>
                                             <div class="image-with-text-fields active">
                                                 <div class="mb-3">
@@ -253,6 +250,40 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
+                                            <div class="left-heading-image-right-text-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Left Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 lhrt-heading"
+                                                        value="<%= section.customFields?.leftHeading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
+                                                    <div class="upload-image-wrapper">
+                                                        <div
+                                                            class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-50 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                                            <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover"
+                                                                src="<%= section.customFields?.image || '/images/user.png' %>"
+                                                                alt="image">
+                                                        </div>
+                                                        <label
+                                                            class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                                                            <iconify-icon icon="solar:camera-outline"
+                                                                class="text-xl text-secondary-light"></iconify-icon>
+                                                            <span class="fw-semibold text-secondary-light">Upload Image</span>
+                                                            <input type="file" class="upload-file-lhrt-input" hidden accept="image/*">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Right Text:</label>
+                                                    <textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text"
+                                                        rows="4"
+                                                        placeholder="Text"><%= section.customFields?.rightText || '' %></textarea>
+                                                </div>
+                                            </div>
                                         <% } %>
                                     </div>
                                 </div>
@@ -275,7 +306,8 @@
 
                     <!-- Hidden: Original Section Block Template -->
                     <div class="d-none">
-                        <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4"
+                        <!-- template (not a real .section-block so it won't be counted) -->
+                        <div class="section-template border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4"
                             id="originalSection"
                             data-section-id="">
                             <h6 class="text-lg mb-3">Section Content</h6>
@@ -300,33 +332,7 @@
                                 </select>
                             </div>
 
-                            <script>
-                                $(document).ready(function () {
-                                    // Initialize all sections
-                                    function initializeSections() {
-                                        $('.section-block').each(function () {
-                                            const $section = $(this);
-                                            const sectionType = $section.find('.section-type').val();
-
-                                            // Remove active class from all fields first
-                                            $section.find('.section-fields > div').removeClass('active');
-
-                                            // Add active class to the current section type fields
-                                            if (sectionType) {
-                                                $section.find(`.${sectionType}-fields`).addClass('active');
-                                            }
-                                        });
-                                    }
-
-                                    // Run initialization on page load
-                                    initializeSections();
-
-
-
-                                    // Re-run initialization after any dynamic changes
-                                    $(document).on('sectionAdded sectionRemoved', initializeSections);
-                                });
-                            </script>
+                            <!-- template helper script removed (initialization handled globally) -->
 
                             <!-- Image with Text Fields -->
                             <div
@@ -687,8 +693,9 @@
 
                     // AJAX upload
                     const formData = new FormData();
-                    formData.append("file", file);
+                    // append folder first so multer's destination sees it when processing the file
                     formData.append("folder", folderName);
+                    formData.append("file", file);
 
                     $.ajax({
                         url: "/api/upload",
@@ -700,6 +707,8 @@
                             if (response.success) {
                                 // Store the URL in a data attribute for submission
                                 $input.data("server-url", response.url);
+                                console.log("server-url", response);
+                                
                                 showToast("Image uploaded successfully", "success");
                             } else {
                                 showToast(response.message || "Image upload failed", "error");
@@ -724,34 +733,36 @@
         // Function to add a new section to the DOM
         function addNewSection() {
             const sectionId = `new-section-${Date.now()}`; // Unique ID for the new section
-            const newSection = `
-                <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4" data-id="${sectionId}">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="text-lg mb-0">New Section</h6>
-                        <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">Remove</button>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
-                        <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
-                            <option value="">-- Select --</option>
-                            <option value="image-with-text">Image with Text</option>
-                            <option value="image-with-list">Image with List</option>
-                            <option value="heading-subheading">Heading with Subheading</option>
-                            <option value="hero-section">Hero Section</option>
-                            <option value="three-column-info">Three Column Info</option>
-                        </select>
-                    </div>
-                    <div class="section-fields">
-                        <!-- Fields will be dynamically shown here -->
-                    </div>
-                </div>`;
-            $("#sectionsContainer").append(newSection);
+            const currentCount = $("#sectionsContainer .section-block").length;
+            const heading = `Section #${currentCount + 1}`;
+
+            // Clone the hidden template, convert to a real .section-block and clear values
+            const $tpl = $("#originalSection").clone();
+            $tpl.removeAttr('id').removeClass('d-none').addClass('section-block').attr('data-id', sectionId);
+            $tpl.find('h6').text(heading);
+
+            // Clear inputs/textareas and reset selects
+            $tpl.find('input[type="text"], textarea').val('');
+            $tpl.find('select.section-type, select.section-type-select, select.section-type-select').val('');
+            $tpl.find('.section-fields > div').removeClass('active');
+
+            // Reset image previews and upload controls inside the template
+            $tpl.find('[class^="uploaded-img-"]').each(function() {
+                $(this).addClass('d-none');
+            });
+            $tpl.find('[class^="upload-file-"]').each(function() {
+                $(this).removeClass('d-none');
+            });
+            $tpl.find('input[type="file"]').val('');
+
+            // Append cleaned-up section to container
+            $("#sectionsContainer").append($tpl);
         }
 
         // Main document ready function
         $(document).ready(function () {
-            // Initialize existing sections
-            $(".section-block").each(function () {
+            // Initialize existing sections (only real sections inside the container)
+            $("#sectionsContainer .section-block").each(function () {
                 toggleSectionFields($(this));
             });
 
@@ -774,8 +785,10 @@
             $("#addSectionBtn").on("click", addNewSection);
 
             // Initialize all image upload handlers
-            handleImageUpload(".upload-file-iwt-input", ".uploaded-img-iwt__preview", ".uploaded-img-iwt__remove", ".upload-image-wrapper", "sections");
-            handleImageUpload(".upload-file-iwl-input", ".uploaded-img-iwl__preview", ".uploaded-img-iwl__remove", ".upload-image-wrapper", "sections");
+            handleImageUpload(".upload-file-iwt-input", ".uploaded-img-iwt__preview", ".uploaded-img-iwt__remove", ".upload-image-wrapper", "section");
+            handleImageUpload(".upload-file-iwl-input", ".uploaded-img-iwl__preview", ".uploaded-img-iwl__remove", ".upload-image-wrapper", "section");
+            handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
+            handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
             handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
             // Form submission logic
@@ -794,7 +807,7 @@
                 const sectionsData = [];
                 let isValid = true;
 
-                $(".section-block").each(function (index) {
+                $("#sectionsContainer .section-block").each(function (index) {
                     const $section = $(this);
                     const sectionType = $section.find(".section-type-select").val();
 
@@ -833,6 +846,16 @@
                         sectionData.heroSection.heading = $section.find(".hero-heading").val();
                         sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
                         sectionData.heroSection.rightImage = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    } else if (sectionType === "left-heading-image-right-text") {
+                        // Left heading + image on left, right text
+                        sectionData.customFields.leftHeading = $section.find('.lhrt-heading').val();
+                        sectionData.customFields.leftImage = $section.find('.upload-file-lhrt-input').data('server-url') || $section.find('.uploaded-img-lhrt__preview').attr('src');
+                        sectionData.customFields.rightText = $section.find('.lhrt-right-text').val();
+                    } else if (sectionType === "right-heading-image-left-text") {
+                        // Right heading + image on right, left text
+                        sectionData.customFields.rightHeading = $section.find('.rhlt-heading').val();
+                        sectionData.customFields.rightImage = $section.find('.upload-file-rhlt-input').data('server-url') || $section.find('.uploaded-img-rhlt__preview').attr('src');
+                        sectionData.customFields.leftText = $section.find('.rhlt-left-text').val();
                     } else if (sectionType === "three-column-info") {
                         sectionData.threeColumnInfo.columns = $section.find(".column-item").map(function () {
                             return {
