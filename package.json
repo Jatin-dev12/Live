@@ -5,19 +5,20 @@
   "created": "December 2024",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "dev": "nodemon app.js",
     "seed": "node scripts/seedDatabase.js",
     "seed:roles": "node scripts/seedRolesAndPermissions.js",
     "seed:leads": "node scripts/seedLeadsAndContacts.js",
     "fix:permissions": "node scripts/fixUserPermissions.js",
     "fix:all-permissions": "node scripts/fixAllUserPermissions.js",
-    "check:permissions": "node scripts/checkUserPermissions.js"
+    "check:permissions": "node scripts/checkUserPermissions.js",
+    "seed:section-types": "node scripts/seedSectionTypes.js"
   },
   "author": "Pixcels Themes",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

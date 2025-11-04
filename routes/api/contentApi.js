@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Content = require('../../models/Content');
 const Page = require('../../models/Page');
+const mongoose = require('mongoose');
 const { isAuthenticated } = require('../../middleware/auth');
 
 // Get all content
@@ -143,6 +144,93 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update content
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
+        // If the request contains a sections array, perform a bulk sync for the page
+        if (Array.isArray(req.body.sections)) {
+            const { pageId, status, sections } = req.body;
+
+            // pageId is required to map sections
+            if (!pageId) {
+                return res.status(400).json({ success: false, message: 'pageId is required when updating multiple sections' });
+            }
+
+            // verify page exists
+            const page = await Page.findById(pageId);
+            if (!page) {
+                return res.status(404).json({ success: false, message: 'Page not found' });
+            }
+
+            // Fetch existing sections for this page
+            const existing = await Content.find({ page: pageId }).lean();
+            const existingIds = existing.map(s => s._id.toString());
+
+            const providedExistingIds = [];
+            const updatePromises = [];
+            const createPromises = [];
+
+            sections.forEach(s => {
+                // normalize order and status
+                const orderVal = Number(s.order) || 0;
+                const sectionStatus = s.status || status || 'active';
+
+                // If id looks like a valid ObjectId, update existing
+                if (s.id && mongoose.Types.ObjectId.isValid(s.id)) {
+                    providedExistingIds.push(s.id);
+                    const updateFields = {
+                        ...(s.sectionType !== undefined && { sectionType: s.sectionType }),
+                        ...(s.title !== undefined && { title: s.title }),
+                        ...(s.thumbnail !== undefined && { thumbnail: s.thumbnail }),
+                        status: sectionStatus,
+                        order: orderVal,
+                        ...(s.customFields !== undefined && { customFields: s.customFields }),
+                        ...(s.heroSection !== undefined && { heroSection: s.heroSection }),
+                        ...(s.threeColumnInfo !== undefined && { threeColumnInfo: s.threeColumnInfo }),
+                        updatedBy: req.user ? req.user._id : null
+                    };
+
+                    updatePromises.push(Content.findByIdAndUpdate(s.id, updateFields, { new: true, runValidators: true }));
+                } else {
+                    // Create new section
+                    const newContent = new Content({
+                        page: pageId,
+                        title: s.title || (s.customFields && (s.customFields.heading || s.customFields.leftHeading || s.customFields.rightHeading)) || 'Section',
+                        status: sectionStatus,
+                        order: orderVal,
+                        sectionType: s.sectionType || 'default',
+                        customFields: s.customFields || undefined,
+                        heroSection: s.heroSection || undefined,
+                        threeColumnInfo: s.threeColumnInfo || undefined,
+                        thumbnail: s.thumbnail || undefined,
+                        createdBy: req.user ? req.user._id : null,
+                        updatedBy: req.user ? req.user._id : null
+                    });
+                    createPromises.push(newContent.save());
+                }
+            });
+
+            // execute creates and updates
+            const updatedResults = await Promise.all(updatePromises.map(p => p.catch(e => ({ error: e.message }))));
+            const createdResults = await Promise.all(createPromises.map(p => p.catch(e => ({ error: e.message }))));
+
+            // delete any existing sections that were removed in the payload
+            const toDelete = existingIds.filter(id => !providedExistingIds.includes(id));
+            let deleteResult = { deletedCount: 0 };
+            if (toDelete.length > 0) {
+                deleteResult = await Content.deleteMany({ _id: { $in: toDelete } });
+            }
+
+            return res.json({
+                success: true,
+                message: 'Sections synchronized successfully',
+                data: {
+                    updated: updatedResults.length,
+                    created: createdResults.length,
+                    deleted: deleteResult.deletedCount || 0,
+                    updatedResults,
+                    createdResults
+                }
+            });
+        }
+
         const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo } = req.body;
         
         // Verify page exists if pageId is being updated
@@ -196,6 +284,27 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             error: error.message
         });
     }
+});
+
+// Reorder multiple sections for a page
+router.post('/reorder', isAuthenticated, async (req, res) => {
+	try {
+		const { updates } = req.body; // [{ id, order }]
+		if (!Array.isArray(updates) || updates.length === 0) {
+			return res.status(400).json({ success: false, message: 'updates array is required' });
+		}
+		const bulkOps = updates.map(u => ({
+			updateOne: {
+				filter: { _id: u.id },
+				update: { $set: { order: Number(u.order) || 0 } }
+			}
+		}));
+		await Content.bulkWrite(bulkOps);
+		res.json({ success: true, message: 'Sections reordered successfully' });
+	} catch (error) {
+		console.error('Error reordering sections:', error);
+		res.status(500).json({ success: false, message: 'Error reordering sections', error: error.message });
+	}
 });
 
 // Delete all content for a specific page

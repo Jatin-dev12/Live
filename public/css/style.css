@@ -14945,7 +14945,7 @@ td.fc-header-center {
 
 .navbar-search {
   position: relative;
-  display: none;
+  display: none !important;
 }
 
 @media (min-width: 992px) {

@@ -84,10 +84,11 @@ router.post('/upload', isAuthenticated, dynamicUpload.single('file'), (req, res)
                 message: 'No file uploaded'
             });
         }
-
+        console.log("req.body.folder",req.body.folder);
+        
         const folder = req.body.folder || 'general';
         const filePath = '/uploads/' + folder + '/' + req.file.filename;
-
+         console.log("filePath",filePath);
         res.json({
             success: true,
             message: 'File uploaded successfully',

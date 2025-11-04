@@ -20,8 +20,8 @@
                                         content.page._id.toString()===page._id.toString() ? 'selected' : '' %>><%=
                                             page.name %>
                                     </option>
-                                    <% }) %>
-                                        <% } %>
+                                <% }) %>
+                            <% } %>
                         </select>
                     </div>
 
@@ -38,7 +38,240 @@
 
                     <!-- Sections Container -->
                     <div id="sectionsContainer">
-                        <!-- Existing section will be loaded here -->
+                        <% if (allSections && allSections.length> 0) { %>
+                            <% allSections.forEach(function(section, index) { %>
+                                <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4"
+                                    data-id="<%= section._id %>">
+                                    <!-- <h6 class="text-lg mb-3">Section <%= index + 1 %>
+                                    </h6> -->
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-lg mb-0">Section <%= index + 1 %></h6>
+                                        <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
+                                            Remove Section
+                                        </button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="hidden" class="original-section-type"
+                                            value="<%= section.sectionType %>">
+                                        <label class="form-label">Section Type: <span
+                                                class="text-danger-600">*</span></label>
+                                        <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
+                                            >
+                                            <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
+                                            <option value="image-with-text" <%= section.sectionType === 'image-with-text' ? 'selected' : '' %>>Image with Text</option>
+                                            <option value="image-with-list" <%= section.sectionType === 'image-with-list' ? 'selected' : '' %>>Image with List</option>
+                                            <option value="heading-subheading" <%= section.sectionType === 'heading-subheading' ? 'selected' : '' %>>Heading with Subheading</option>
+                                            <option value="left-heading-image-right-text" <%= section.sectionType === 'left-heading-image-right-text' ? 'selected' : '' %>>Left Heading + Image, Right Text</option>
+                                            <option value="right-heading-image-left-text" <%= section.sectionType === 'right-heading-image-left-text' ? 'selected' : '' %>>Right Heading + Image, Left Text</option>
+                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section (Left Text + Right Image)</option>
+                                            <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info Cards</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- server-side renders active fields; per-block JS removed -->
+
+                                    <!-- Dynamic fields based on section type -->
+                                    <div class="section-fields asdf">
+                                        <!-- <pre><%= JSON.stringify(section, null, 2) %></pre> -->
+                                        <% if (section.sectionType==='image-with-text' ) { %>
+                                            <div class="image-with-text-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 iwt-heading"
+                                                        value="<%= section.customFields?.heading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Subheading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 iwt-subheading"
+                                                        value="<%= section.customFields?.subheading || '' %>"
+                                                        placeholder="Subheading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Text:</label>
+                                                    <textarea
+                                                        class="form-control border border-neutral-200 radius-8 iwt-text"
+                                                        rows="4"
+                                                        placeholder="Description"><%= section.customFields?.richText || '' %></textarea>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='image-with-list' ) { %>
+                                            <div class="image-with-list-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 iwl-heading"
+                                                        value="<%= section.customFields?.heading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">List Items:</label>
+                                                    <div class="iwl-items">
+                                                        <% (section.customFields?.items || []).forEach(function(it){
+                                                            %>
+                                                            <div
+                                                                class="iwl-item d-flex align-items-center gap-2 mb-2">
+                                                                <input type="text"
+                                                                    class="form-control border border-neutral-200 radius-8 iwl-item-input"
+                                                                    value="<%= it %>">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>
+                                                            </div>
+                                                            <% }) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='heading-subheading' ) { %>
+                                            <div class="heading-subheading-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 hs-heading"
+                                                        value="<%= section.customFields?.heading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Subheading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 hs-subheading"
+                                                        value="<%= section.customFields?.subheading || '' %>"
+                                                        placeholder="Subheading">
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input hs-center" type="checkbox"
+                                                        <%=section.customFields?.alignCenter ? 'checked' : ''
+                                                        %>>
+                                                    <label class="form-check-label">Center Align</label>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='hero-section' ) { %>
+                                            <div class="hero-section-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 hero-heading"
+                                                        value="<%= section.heroSection?.heading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Paragraph:</label>
+                                                    <textarea
+                                                        class="form-control border border-neutral-200 radius-8 hero-paragraph"
+                                                        rows="4"
+                                                        placeholder="Paragraph"><%= section.heroSection?.paragraph || '' %></textarea>
+                                                </div>
+                                                <% if (section.heroSection?.rightImage) { %>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Current Image:</label>
+                                                        <div class="existing-image">
+                                                            <img src="<%= section.heroSection.rightImage %>"
+                                                                class="img-thumbnail"
+                                                                style="max-height: 200px;">
+                                                        </div>
+                                                    </div>
+                                                    <% } %>
+                                            </div>
+                                        <% } else if (section.sectionType==='three-column-info' ) { %>
+                                            <div class="three-column-info-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Info Cards:</label>
+                                                    <div class="column-container">
+                                                        
+                                                        <% (section.threeColumnInfo?.columns ||
+                                                            []).forEach(function(col, idx){ %>
+                                                            <div
+                                                                class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span
+                                                                        class="fw-semibold text-sm">Card
+                                                                        #<%= idx + 1 %></span>
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-danger-600 remove-column-btn"><iconify-icon
+                                                                            icon="mdi:delete"></iconify-icon></button>
+                                                                </div>
+                                                                <div class="mb-2"><label
+                                                                        class="form-label text-sm">Title:</label>
+                                                                    <input type="text"
+                                                                        class="form-control border border-neutral-200 radius-8 column-title"
+                                                                        value="<%= col.title %>"
+                                                                        placeholder="e.g., Call Out 1">
+                                                                </div>
+                                                                <div class="mb-2"><label
+                                                                        class="form-label text-sm">Description:</label>
+                                                                    <textarea
+                                                                        class="form-control border border-neutral-200 radius-8 column-description"
+                                                                        rows="3"
+                                                                        placeholder="Enter description"><%= col.description %></textarea>
+                                                                </div>
+                                                                <div class="mb-2"><label
+                                                                        class="form-label text-sm">Button
+                                                                        Text:</label>
+                                                                    <input type="text"
+                                                                        class="form-control border border-neutral-200 radius-8 column-btn-text"
+                                                                        value="<%= col.buttonText %>"
+                                                                        placeholder="e.g., More">
+                                                                </div>
+                                                                <div><label
+                                                                        class="form-label text-sm">Button
+                                                                        Link:</label>
+                                                                    <input type="text"
+                                                                        class="form-control border border-neutral-200 radius-8 column-btn-link"
+                                                                        value="<%= col.buttonLink %>"
+                                                                        placeholder="e.g., /learn-more">
+                                                                </div>
+                                                            </div>
+                                                        <% }) %>
+                                                        
+
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
+                                            <div class="left-heading-image-right-text-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Left Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 lhrt-heading"
+                                                        value="<%= section.customFields?.leftHeading || '' %>"
+                                                        placeholder="Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
+                                                    <div class="upload-image-wrapper">
+                                                        <div
+                                                            class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-30 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                                            <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover"
+                                                                src="<%= section.customFields?.image || '/images/user.png' %>"
+                                                                alt="image">
+                                                        </div>
+                                                        <label
+                                                            class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                                                            <iconify-icon icon="solar:camera-outline"
+                                                                class="text-xl text-secondary-light"></iconify-icon>
+                                                            <span class="fw-semibold text-secondary-light">Upload Image</span>
+                                                            <input type="file" class="upload-file-lhrt-input" hidden accept="image/*">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Right Text:</label>
+                                                    <textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text"
+                                                        rows="4"
+                                                        placeholder="Text"><%= section.customFields?.rightText || '' %></textarea>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="alert alert-warning">No sections found for this page. Add a new
+                                section below.</div>
+                        <% } %>
                     </div>
 
                     <!-- Add Section Button -->
@@ -51,619 +284,447 @@
 
                     <hr class="my-3">
 
-                    <!-- Hidden: Original Section Block Template -->
+                    <!-- Hidden: Section Block Template -->
                     <div class="d-none">
-                        <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50"
-                            id="originalSection">
-                            <h6 class="text-lg mb-3">Section Content</h6>
-
-                            <div class="mb-3">
-                                <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
-                                <select class="form-control border border-neutral-200 radius-8" id="sectionType"
-                                    required>
-                                    <option value="hero-section" <%=content.sectionType==='hero-section' ? 'selected'
-                                        : '' %>>Hero Section (Left Text + Right Image)</option>
-                                    <option value="three-column-info" <%=content.sectionType==='three-column-info'
-                                        ? 'selected' : '' %>>Three Column Info Cards</option>
-                                </select>
-                            </div>
-
-                            <!-- Hero Section Fields -->
-                            <div id="heroSectionFields"
-                                style="display: <%= content.sectionType === 'hero-section' ? 'block' : 'none' %>;">
-                                <div class="mb-3">
-                                    <label class="form-label">Heading: <span class="text-danger-600">*</span></label>
-                                    <input type="text" class="form-control border border-neutral-200 radius-8"
-                                        id="heroHeading"
-                                        value="<%= content.heroSection && content.heroSection.heading ? content.heroSection.heading : '' %>"
-                                        placeholder="Enter main heading">
+                        <div id="originalSection">
+                            <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="__ID__">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="text-lg mb-0">Section #__ID__</h6>
+                                    <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">Remove Section</button>
                                 </div>
-
                                 <div class="mb-3">
-                                    <label class="form-label">Paragraph:</label>
-                                    <textarea class="form-control border border-neutral-200 radius-8" id="heroParagraph"
-                                        rows="4"
-                                        placeholder="Enter description text"><%= content.heroSection && content.heroSection.paragraph ? content.heroSection.paragraph : '' %></textarea>
+                                    <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
+                                    <select class="form-control border border-neutral-200 radius-8 section-type-select" >
+                                        <option value="">-- Please Select Section --</option>
+                                        <option value="image-with-text">Image with Text</option>
+                                        <option value="image-with-list">Image with List</option>
+                                        <option value="heading-subheading">Heading with Subheading</option>
+                                        <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
+                                        <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
+                                        <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+                                        <option value="three-column-info">Three Column Info Cards</option>
+                                    </select>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Call-to-Action Buttons:</label>
-                                    <div id="ctaContainer">
-                                        <% if (content.heroSection && content.heroSection.ctas &&
-                                            content.heroSection.ctas.length> 0) { %>
-                                            <% content.heroSection.ctas.forEach((cta, index)=> { %>
-                                                <div
-                                                    class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <span class="fw-semibold text-sm">Button #<%= index + 1 %>
-                                                        </span>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger-600 remove-cta-btn">
-                                                            <iconify-icon icon="mdi:delete"></iconify-icon>
-                                                        </button>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label class="form-label text-sm">Button Text:</label>
-                                                        <input type="text"
-                                                            class="form-control border border-neutral-200 radius-8 cta-text"
-                                                            value="<%= cta.text %>" placeholder="e.g., Why join ACRM">
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label class="form-label text-sm">Button Link:</label>
-                                                        <input type="text"
-                                                            class="form-control border border-neutral-200 radius-8 cta-link"
-                                                            value="<%= cta.link %>" placeholder="e.g., /about-us">
-                                                    </div>
-                                                    <div>
-                                                        <label class="form-label text-sm">Button Style:</label>
-                                                        <select
-                                                            class="form-control border border-neutral-200 radius-8 cta-style">
-                                                            <option value="primary" <%=cta.style==='primary'
-                                                                ? 'selected' : '' %>>Primary (Red)</option>
-                                                            <option value="secondary" <%=cta.style==='secondary'
-                                                                ? 'selected' : '' %>>Secondary (Dark)</option>
-                                                            <option value="outline" <%=cta.style==='outline'
-                                                                ? 'selected' : '' %>>Outline</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <% }) %>
-                                                    <% } %>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2"
-                                        id="addCtaBtn">
-                                        Add CTA Button
-                                    </button>
+                                <div class="image-with-text-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" placeholder="Heading"></div>
+                                    <div class="mb-3"><label class="form-label">Subheading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading" placeholder="Subheading"></div>
+                                    <div class="mb-3"><label class="form-label">Text:</label><textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea></div>
+                                    <div class="form-check mb-3"><input class="form-check-input iwt-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold text-neutral-900">Upload Hero Image</label>
-                                    <div class="upload-image-wrapper">
-                                        <div
-                                            class="uploaded-img-hero <%= content.heroSection && content.heroSection.rightImage ? '' : 'd-none' %> position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
-                                            <button type="button"
-                                                class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
-                                                <iconify-icon icon="radix-icons:cross-2"
-                                                    class="text-2xl text-white"></iconify-icon>
-                                            </button>
-                                            <img id="uploaded-img-hero__preview" class="w-100 h-100 object-fit-cover"
-                                                src="<%= content.heroSection && content.heroSection.rightImage ? content.heroSection.rightImage : '/images/user.png' %>"
-                                                alt="image">
-                                        </div>
-                                        <label
-                                            class="upload-file-hero <%= content.heroSection && content.heroSection.rightImage ? 'd-none' : '' %> h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"
-                                            for="upload-file-hero">
-                                            <iconify-icon icon="solar:camera-outline"
-                                                class="text-xl text-secondary-light"></iconify-icon>
-                                            <span class="fw-semibold text-secondary-light">Upload Hero Image</span>
-                                            <input id="upload-file-hero" type="file" hidden accept="image/*">
-                                        </label>
-                                    </div>
+                                <div class="image-with-list-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading"></div>
+                                    <div class="form-check mb-3"><input class="form-check-input iwl-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
+                                    <div class="mb-3"><label class="form-label">List Items:</label><div class="iwl-items"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-iwl-item-btn">Add Item</button></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*"></label></div></div>
                                 </div>
-                            </div>
-
-                            <!-- Three Column Info Fields -->
-                            <div id="threeColumnFields"
-                                style="display: <%= content.sectionType === 'three-column-info' ? 'block' : 'none' %>;">
-                                <div class="mb-3">
-                                    <label class="form-label">Info Cards:</label>
-                                    <div id="columnContainer">
-                                        <% if (content.threeColumnInfo && content.threeColumnInfo.columns &&
-                                            content.threeColumnInfo.columns.length> 0) { %>
-                                            <% content.threeColumnInfo.columns.forEach((column, index)=> { %>
-                                                <div
-                                                    class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <span class="fw-semibold text-sm">Card #<%= index + 1 %></span>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger-600 remove-column-btn">
-                                                            <iconify-icon icon="mdi:delete"></iconify-icon>
-                                                        </button>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label class="form-label text-sm">Title:</label>
-                                                        <input type="text"
-                                                            class="form-control border border-neutral-200 radius-8 column-title"
-                                                            value="<%= column.title %>" placeholder="e.g., Call Out 1">
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label class="form-label text-sm">Description:</label>
-                                                        <textarea
-                                                            class="form-control border border-neutral-200 radius-8 column-description"
-                                                            rows="3"
-                                                            placeholder="Enter description"><%= column.description %></textarea>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label class="form-label text-sm">Button Text:</label>
-                                                        <input type="text"
-                                                            class="form-control border border-neutral-200 radius-8 column-btn-text"
-                                                            value="<%= column.buttonText %>" placeholder="e.g., More">
-                                                    </div>
-                                                    <div>
-                                                        <label class="form-label text-sm">Button Link:</label>
-                                                        <input type="text"
-                                                            class="form-control border border-neutral-200 radius-8 column-btn-link"
-                                                            value="<%= column.buttonLink %>"
-                                                            placeholder="e.g., /learn-more">
-                                                    </div>
-                                                </div>
-                                                <% }) %>
-                                                    <% } %>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2"
-                                        id="addColumnBtn">
-                                         Add Info Card
-                                    </button>
+                                <div class="heading-subheading-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-heading" placeholder="Heading"></div>
+                                    <div class="mb-3"><label class="form-label">Subheading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-subheading" placeholder="Subheading"></div>
+                                    <div class="form-check mb-3"><input class="form-check-input hs-center" type="checkbox" checked><label class="form-check-label">Center Align</label></div>
+                                </div>
+                                <div class="left-heading-image-right-text-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Left Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 lhrt-heading" placeholder="Heading"></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label">Right Text:</label><textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text" rows="4" placeholder="Text"></textarea></div>
+                                </div>
+                                <div class="right-heading-image-left-text-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Right Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 rhlt-heading" placeholder="Heading"></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label">Left Text:</label><textarea class="form-control border border-neutral-200 radius-8 rhlt-left-text" rows="4" placeholder="Text"></textarea></div>
+                                </div>
+                                <div class="hero-section-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
+                                    <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
+                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
+                                </div>
+                                <div class="three-column-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Info Cards:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="d-flex align-items-center justify-content-center gap-3">
-                        <a href="/cms/content-management"
-                            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-                            Cancel
-                        </a>
-                        <button type="submit"
-                            class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                            Update All Sections
-                        </button>
-                    </div>
-                </form>
             </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-3">
+                <a href="/cms/content-management"
+                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                    Update All Sections
+                </button>
+            </div>
+            </form>
         </div>
     </div>
 </div>
+</div>
 
 <% script=` <script>
-    const originalContentId = $('#contentId').val();
-
-    // Load existing section on page load
-    $(document).ready(function () {
-    loadExistingSection();
-    });
-
-    // Load the existing section into the container
-    function loadExistingSection() {
-    const $originalSection = $('#originalSection').parent().html();
-    const sectionHtml = $originalSection.replace('id="originalSection"', \`data-section-id="1" data-existing="true"
-    data-content-id="\${originalContentId}"\`);
-    $('#sectionsContainer').append(sectionHtml);
-
-    // Initialize the section type toggle for existing section
-    toggleSectionTypeForSection($('.section-block[data-section-id="1"]'));
+    
+    // Centralized function to toggle the visibility of section fields
+    function toggleSectionFields($section) {
+        const sectionType = $section.find(".section-type-select").val();
+        
+        // Hide all fields first
+        $section.find('.image-with-text-fields').hide();
+        $section.find('.image-with-list-fields').hide();
+        $section.find('.heading-subheading-fields').hide();
+        $section.find('.left-heading-image-right-text-fields').hide();
+        $section.find('.right-heading-image-left-text-fields').hide();
+        $section.find('.hero-section-fields').hide();
+        $section.find('.three-column-fields').hide();
+        
+        // Show only the relevant fields based on section type
+        if (sectionType === 'image-with-text') {
+            $section.find('.image-with-text-fields').show();
+        } else if (sectionType === 'image-with-list') {
+            $section.find('.image-with-list-fields').show();
+        } else if (sectionType === 'heading-subheading') {
+            $section.find('.heading-subheading-fields').show();
+        } else if (sectionType === 'left-heading-image-right-text') {
+            $section.find('.left-heading-image-right-text-fields').show();
+        } else if (sectionType === 'right-heading-image-left-text') {
+            $section.find('.right-heading-image-left-text-fields').show();
+        } else if (sectionType === 'hero-section') {
+            $section.find('.hero-section-fields').show();
+        } else if (sectionType === 'three-column-info') {
+            $section.find('.three-column-fields').show();
+        }
     }
 
-    // Add new section
-    $('#addSectionBtn').on('click', function() {
-    // Count only new sections (not the existing one)
-    const newSectionCount = $('.section-block[data-existing="false"]').length + 1;
-    addNewSection(newSectionCount);
-    });
-
-    function addNewSection(id) {
-    const sectionHtml = \`
-    <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="\${id}"
-        data-existing="false">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="text-lg mb-0">New Section #\${id}</h6>
-            <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
-                <iconify-icon icon="mdi:delete"></iconify-icon> Remove Section
-            </button>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
-            <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
-                <option value="">-- Please Select Section --</option>
-                <option value="hero-section">Hero Section (Left Text + Right Image)</option>
-                <option value="three-column-info">Three Column Info Cards</option>
-            </select>
-        </div>
-
-        <!-- Hero Section Fields -->
-        <div class="hero-section-fields" style="display: none;">
-            <div class="mb-3">
-                <label class="form-label">Heading: <span class="text-danger-600">*</span></label>
-                <input type="text" class="form-control border border-neutral-200 radius-8 hero-heading"
-                    placeholder="Enter main heading">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Paragraph:</label>
-                <textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4"
-                    placeholder="Enter description text"></textarea>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Call-to-Action Buttons:</label>
-                <div class="cta-container"></div>
-                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">
-                    Add CTA Button
-                </button>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold text-neutral-900">Upload Hero Image</label>
-                <div class="upload-image-wrapper">
-                    <div
-                        class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
-                        <button type="button"
-                            class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
-                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
-                        </button>
-                        <img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png"
-                            alt="image">
-                    </div>
-                    <label
-                        class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
-                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
-                        <span class="fw-semibold text-secondary-light">Upload Hero Image</span>
-                        <input type="file" class="upload-file-hero-input" hidden accept="image/*">
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Three Column Info Fields -->
-        <div class="three-column-fields" style="display: none;">
-            <div class="mb-3">
-                <label class="form-label">Info Cards:</label>
-                <div class="column-container"></div>
-                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">
-                     Add Info Card
-                </button>
-            </div>
-        </div>
-    </div>
-    \`;
-    // Append new section to the sections container (it will appear at the bottom)
-    $('#sectionsContainer').append(sectionHtml);
+    // Function to add a new "Image with List" item
+    function addIwlItem($container) {
+        const newItem = \`
+            <div class="iwl-item d-flex align-items-center gap-2 mb-2">
+                <input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input" placeholder="New Item">
+                <button type="button" class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>
+            </div>\`;
+        $container.append(newItem);
     }
 
-    // Toggle section type for a specific section
-    function toggleSectionTypeForSection($section) {
-    const sectionType = $section.find('.section-type-select, #sectionType').val();
-    $section.find('.hero-section-fields, #heroSectionFields').hide();
-    $section.find('.three-column-fields, #threeColumnFields').hide();
+    // Generic image upload handler to keep code DRY
+    function handleImageUpload(inputSelector, previewSelector, removeSelector, wrapperSelector, folderName) {
+        $(document).on("change", inputSelector, function (e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const $wrapper = $(this).closest(wrapperSelector);
+                const $preview = $wrapper.find(previewSelector);
+                const $remove = $wrapper.find(removeSelector);
+                const $input = $(this);
 
-    if (sectionType === 'hero-section') {
-    $section.find('.hero-section-fields, #heroSectionFields').show();
-    } else if (sectionType === 'three-column-info') {
-    $section.find('.three-column-fields, #threeColumnFields').show();
+                // Use FileReader for a robust preview
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    $preview.attr("src", event.target.result).show();
+                    $remove.show();
+                    $input.hide(); // Hide the input label
+                };
+                reader.readAsDataURL(file);
+
+                // AJAX upload
+                const formData = new FormData();
+                // append folder first so multer's destination sees it when processing the file
+                formData.append("folder", folderName);
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/api/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Store the URL in a data attribute for submission
+                            $input.data("server-url", response.url);
+                            console.log("server-url", response);
+                            
+                            showToast("Image uploaded successfully", "success");
+                        } else {
+                            showToast(response.message || "Image upload failed", "error");
+                        }
+                    },
+                    error: function (xhr) {
+                        showToast(xhr.responseJSON?.message || "An error occurred", "error");
+                    }
+                });
+            }
+        });
+
+        // Handle image removal
+        $(document).on("click", removeSelector, function () {
+            const $wrapper = $(this).closest(wrapperSelector);
+            $wrapper.find(previewSelector).attr("src", "").hide();
+            $(this).hide();
+            $wrapper.find(inputSelector).val("").data("server-url", "").show(); // Clear input and data
+        });
     }
+
+    // Function to add a new section to the DOM
+    function addNewSection() {
+        const sectionId = \`new-section-\${Date.now()}\`; // Unique ID for the new section
+        const currentCount = $("#sectionsContainer .section-block").length;
+        const heading = \`Section #\${currentCount + 1}\`;
+
+        // Clone the inner .section-block from the template
+        const $tpl = $("#originalSection .section-block").clone();
+        $tpl.attr('data-section-id', sectionId);
+        $tpl.find('h6').first().text(heading);
+
+        // Clear inputs/textareas and reset selects
+        $tpl.find('input[type="text"], textarea').val('');
+        $tpl.find('select').val('');
+        // Hide all section-specific field containers in the cloned template
+        $tpl.find("[class$='-fields']").hide();
+
+        // Reset image previews and upload controls inside the template
+        $tpl.find('[class^="uploaded-img-"]').each(function() {
+            $(this).addClass('d-none');
+        });
+        $tpl.find('[class^="upload-file-"]').each(function() {
+            $(this).removeClass('d-none');
+        });
+        $tpl.find('input[type="file"]').val('');
+
+        // Append cleaned-up section to container
+        $("#sectionsContainer").append($tpl);
+
+        // Renumber all sections after adding
+        renumberSections();
     }
 
-    // Section type change
-    $(document).on('change', '.section-type-select, #sectionType', function() {
-    const $section = $(this).closest('.section-block');
-    toggleSectionTypeForSection($section);
-    });
-
-    // Remove section
-    $(document).on('click', '.remove-section-btn', function() {
-    $(this).closest('.section-block').remove();
-    renumberSections();
-    });
-
-    // Renumber sections after removal
+    // Renumber sections to keep numbering and data-section-id consistent
     function renumberSections() {
-    let newSectionNumber = 1;
-    $('.section-block').each(function(index) {
-    const isExisting = $(this).data('existing') === true;
-    if (isExisting) {
-    // Keep "Section Content" for the original section
-    $(this).find('h6').first().text('Section Content');
-    } else {
-    // Renumber new sections
-    $(this).attr('data-section-id', newSectionNumber);
-    $(this).find('h6').first().text('New Section #' + newSectionNumber);
-    newSectionNumber++;
-    }
-    });
+        $('#sectionsContainer .section-block').each(function(index) {
+            const newNumber = index + 1;
+            $(this).attr('data-id', $(this).data('id') || \`new-section-\${Date.now() + index}\`);
+            const $h6 = $(this).find('h6').first();
+            $h6.contents().filter(function(){ return this.nodeType === 3; }).first().replaceWith('Section ' + newNumber + ' ');
+        });
     }
 
-    // Add CTA Button
-    $(document).on('click', '.add-cta-btn, #addCtaBtn', function () {
-    const $container = $(this).siblings('.cta-container, #ctaContainer');
-    const ctaCount = $container.find('.cta-item').length + 1;
-    const ctaHtml = \`
-    <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="fw-semibold text-sm">Button #\${ctaCount}</span>
-            <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">
-                <iconify-icon icon="mdi:delete"></iconify-icon>
-            </button>
-        </div>
-        <div class="mb-2">
-            <label class="form-label text-sm">Button Text:</label>
-            <input type="text" class="form-control border border-neutral-200 radius-8 cta-text"
-                placeholder="e.g., Why join ACRM">
-        </div>
-        <div class="mb-2">
-            <label class="form-label text-sm">Button Link:</label>
-            <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
-                placeholder="e.g., /about-us">
-        </div>
-        <div>
-            <label class="form-label text-sm">Button Style:</label>
-            <select class="form-control border border-neutral-200 radius-8 cta-style">
-                <option value="primary">Primary (Red)</option>
-                <option value="secondary">Secondary (Dark)</option>
-                <option value="outline">Outline</option>
-            </select>
-        </div>
-    </div>
-    \`;
-    $container.append(ctaHtml);
-    });
+    // Main document ready function
+    $(document).ready(function () {
+        // Initialize existing sections (only real sections inside the container)
+        $("#sectionsContainer .section-block").each(function () {
+            toggleSectionFields($(this));
+        });
 
-    // Remove CTA
-    $(document).on('click', '.remove-cta-btn', function () {
-    $(this).closest('.cta-item').remove();
-    });
+        // Event delegation for dynamic elements
+        $("#sectionsContainer")
+            .on("change", ".section-type-select", function () {
+                toggleSectionFields($(this).closest(".section-block"));
+            })
+            .on("click", ".remove-section-btn", function () {
+                $(this).closest(".section-block").remove();
+                renumberSections();
+            })
+            .on("click", ".add-iwl-item-btn", function () {
+                addIwlItem($(this).siblings(".iwl-items"));
+            })
+            .on("click", ".remove-iwl-item", function () {
+                $(this).parent().remove();
+            })
+            .on("click", ".add-cta-btn", function() {
+                const $container = $(this).siblings('.cta-container');
+                const ctaCount = $container.find('.cta-item').length + 1;
+                const ctaHtml = \`
+                    <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-sm">Button #\${ctaCount}</span>
+                            <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">
+                                <iconify-icon icon="mdi:delete"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Button Text:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 cta-text" placeholder="e.g., Why join ACRM">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Button Link:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 cta-link" placeholder="e.g., /about-us">
+                        </div>
+                        <div>
+                            <label class="form-label text-sm">Button Style:</label>
+                            <select class="form-control border border-neutral-200 radius-8 cta-style">
+                                <option value="primary">Primary (Red)</option>
+                                <option value="secondary">Secondary (Dark)</option>
+                                <option value="outline">Outline</option>
+                            </select>
+                        </div>
+                    </div>\`;
+                $container.append(ctaHtml);
+            })
+            .on("click", ".remove-cta-btn", function() {
+                $(this).closest('.cta-item').remove();
+            })
+            .on("click", ".add-column-btn", function() {
+                const $container = $(this).siblings('.column-container');
+                const columnCount = $container.find('.column-item').length + 1;
+                const columnHtml = \`
+                    <div class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-sm">Card #\${columnCount}</span>
+                            <button type="button" class="btn btn-sm btn-danger-600 remove-column-btn">
+                                <iconify-icon icon="mdi:delete"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Title:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 column-title" placeholder="e.g., Call Out 1">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Description:</label>
+                            <textarea class="form-control border border-neutral-200 radius-8 column-description" rows="3" placeholder="Enter description"></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Button Text:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-text" placeholder="e.g., More">
+                        </div>
+                        <div>
+                            <label class="form-label text-sm">Button Link:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-link" placeholder="e.g., /learn-more">
+                        </div>
+                    </div>\`;
+                $container.append(columnHtml);
+            })
+            .on("click", ".remove-column-btn", function() {
+                $(this).closest('.column-item').remove();
+            });
 
-    // Hero Image Upload
-    $(document).on('change', '.upload-file-hero-input, #upload-file-hero', function(e) {
-    if (e.target.files.length) {
-    const $section = $(this).closest('.section-block');
-    const file = e.target.files[0];
-    const $input = $(this);
+        // "Add Section" button
+        $("#addSectionBtn").off("click").on("click", addNewSection);
 
-    // Show preview immediately
-    const src = URL.createObjectURL(file);
-    $section.find('.uploaded-img-hero__preview, #uploaded-img-hero__preview').attr('src', src);
-    $section.find('.uploaded-img-hero').removeClass('d-none');
-    $section.find('.upload-file-hero').addClass('d-none');
+        // Initialize all image upload handlers
+        handleImageUpload(".upload-file-iwt-input", ".uploaded-img-iwt__preview", ".uploaded-img-iwt__remove", ".upload-image-wrapper", "section");
+        handleImageUpload(".upload-file-iwl-input", ".uploaded-img-iwl__preview", ".uploaded-img-iwl__remove", ".upload-image-wrapper", "section");
+        handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
+        handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
+        handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
-    // Upload to server
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', 'hero');
+        // Form submission logic
+        $("#editContentForm").on("submit", function (e) {
+            e.preventDefault();
 
-    $.ajax({
-    url: '/api/upload',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function(response) {
-    if (response.success) {
-    // Store the server path
-    $input.data('uploaded', true);
-    $input.data('serverPath', response.url);
-    showToast('Image uploaded successfully', 'success');
-    } else {
-    showToast('Failed to upload image', 'error');
-    $section.find('.uploaded-img-hero').addClass('d-none');
-    $section.find('.upload-file-hero').removeClass('d-none');
-    $input.val('');
-    }
-    },
-    error: function(xhr) {
-    showToast('Error uploading image: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
-    $section.find('.uploaded-img-hero').addClass('d-none');
-    $section.find('.upload-file-hero').removeClass('d-none');
-    $input.val('');
-    }
-    });
-    }
-    });
+            const contentId = $("#contentId").val();
+            const pageId = $("#pageId").val();
+            const status = $("#status").val();
 
-    // Remove Hero Image
-    $(document).on('click', '.uploaded-img-hero__remove', function() {
-    const $section = $(this).closest('.section-block');
-    $section.find('.uploaded-img-hero__preview, #uploaded-img-hero__preview').attr('src', '');
-    $section.find('.uploaded-img-hero').addClass('d-none');
-    $section.find('.upload-file-hero').removeClass('d-none');
-    $section.find('.upload-file-hero-input, #upload-file-hero').val('').data('uploaded', false).data('serverPath', '');
-    });
+            if (!pageId) {
+                showToast("Please select a page.", "warning");
+                return;
+            }
 
-    // Add Column
-    $(document).on('click', '.add-column-btn, #addColumnBtn', function () {
-    const $container = $(this).siblings('.column-container, #columnContainer');
-    const columnCount = $container.find('.column-item').length + 1;
-    const columnHtml = \`
-    <div class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="fw-semibold text-sm">Card #\${columnCount}</span>
-            <button type="button" class="btn btn-sm btn-danger-600 remove-column-btn">
-                <iconify-icon icon="mdi:delete"></iconify-icon>
-            </button>
-        </div>
-        <div class="mb-2">
-            <label class="form-label text-sm">Title:</label>
-            <input type="text" class="form-control border border-neutral-200 radius-8 column-title"
-                placeholder="e.g., Call Out 1">
-        </div>
-        <div class="mb-2">
-            <label class="form-label text-sm">Description:</label>
-            <textarea class="form-control border border-neutral-200 radius-8 column-description" rows="3"
-                placeholder="Enter description"></textarea>
-        </div>
-        <div class="mb-2">
-            <label class="form-label text-sm">Button Text:</label>
-            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-text"
-                placeholder="e.g., More">
-        </div>
-        <div>
-            <label class="form-label text-sm">Button Link:</label>
-            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-link"
-                placeholder="e.g., /learn-more">
-        </div>
-    </div>
-    \`;
-    $container.append(columnHtml);
-    });
+            const sectionsData = [];
+            let isValid = true;
 
-    // Remove Column
-    $(document).on('click', '.remove-column-btn', function () {
-    $(this).closest('.column-item').remove();
-    });
+            $("#sectionsContainer .section-block").each(function (index) {
+                const $section = $(this);
+                const sectionType = $section.find(".section-type-select").val();
 
-    // Form Submission
-    $('#editContentForm').on('submit', function (e) {
-    e.preventDefault();
+                if (!sectionType) {
+                    showToast("Please select a section type for all sections.", "warning");
+                    isValid = false;
+                    return false; // Break the loop
+                }
 
-    const pageId = $('#pageId').val();
-    const status = $('#status').val();
+                const sectionData = {
+                    id: $section.data("id"), // Keep track of the section
+                    order: index + 1,
+                    sectionType: sectionType,
+                    customFields: {},
+                    heroSection: {},
+                    threeColumnInfo: {}
+                };
 
-    if (!pageId) {
-    showToast('Please select a page', 'warning');
-    return;
-    }
+                // Populate data based on section type
+                if (sectionType === "image-with-text") {
+                    sectionData.customFields.heading = $section.find(".iwt-heading").val();
+                    sectionData.customFields.subheading = $section.find(".iwt-subheading").val();
+                    sectionData.customFields.richText = $section.find(".iwt-text").val();
+                    sectionData.customFields.image = $section.find(".upload-file-iwt-input").data("server-url") || $section.find(".uploaded-img-iwt__preview").attr("src");
+                } else if (sectionType === "image-with-list") {
+                    sectionData.customFields.heading = $section.find(".iwl-heading").val();
+                    sectionData.customFields.items = $section.find(".iwl-item-input").map(function () {
+                        return $(this).val();
+                    }).get();
+                    sectionData.customFields.image = $section.find(".upload-file-iwl-input").data("server-url") || $section.find(".uploaded-img-iwl__preview").attr("src");
+                } else if (sectionType === "heading-subheading") {
+                    sectionData.customFields.heading = $section.find(".hs-heading").val();
+                    sectionData.customFields.subheading = $section.find(".hs-subheading").val();
+                    sectionData.customFields.alignCenter = $section.find(".hs-center").is(":checked");
+                } else if (sectionType === "hero-section") {
+                    const ctas = [];
+                    $section.find(".cta-item").each(function () {
+                        const text = $(this).find(".cta-text").val();
+                        const link = $(this).find(".cta-link").val();
+                        const style = $(this).find(".cta-style").val();
+                        if (text && link) {
+                            ctas.push({ text, link, style });
+                        }
+                    });
+                    sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
+                    sectionData.heroSection.rightImage = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    sectionData.heroSection.ctas = ctas;
+                } else if (sectionType === "left-heading-image-right-text") {
+                    // Left heading + image on left, right text
+                    sectionData.customFields.leftHeading = $section.find('.lhrt-heading').val();
+                    sectionData.customFields.leftImage = $section.find('.upload-file-lhrt-input').data('server-url') || $section.find('.uploaded-img-lhrt__preview').attr('src');
+                    sectionData.customFields.rightText = $section.find('.lhrt-right-text').val();
+                } else if (sectionType === "right-heading-image-left-text") {
+                    // Right heading + image on right, left text
+                    sectionData.customFields.rightHeading = $section.find('.rhlt-heading').val();
+                    sectionData.customFields.rightImage = $section.find('.upload-file-rhlt-input').data('server-url') || $section.find('.uploaded-img-rhlt__preview').attr('src');
+                    sectionData.customFields.leftText = $section.find('.rhlt-left-text').val();
+                } else if (sectionType === "three-column-info") {
+                    sectionData.threeColumnInfo.columns = $section.find(".column-item").map(function () {
+                        return {
+                            title: $(this).find(".column-title").val(),
+                            description: $(this).find(".column-description").val(),
+                            buttonText: $(this).find(".column-btn-text").val(),
+                            buttonLink: $(this).find(".column-btn-link").val()
+                        };
+                    }).get();
+                }
 
-    const $sections = $('.section-block');
-    if ($sections.length === 0) {
-    showToast('Please add at least one section', 'warning');
-    return;
-    }
+                sectionsData.push(sectionData);
+            });
 
-    const sectionsData = [];
-    const updateRequests = [];
-    const createRequests = [];
+            if (!isValid) return;
 
-    $sections.each(function() {
-    const $section = $(this);
-    const isExisting = $section.data('existing') === true;
-    const contentId = $section.data('content-id');
-    const sectionType = $section.find('.section-type-select, #sectionType').val();
+            // Consolidate all data into one payload
+            const payload = {
+                pageId: pageId,
+                status: status,
+                sections: sectionsData
+            };
 
-    if (!sectionType) {
-    showToast('Please select a section type for all sections', 'warning');
-    return false;
-    }
-
-    const sectionData = {
-    pageId: pageId,
-    status: status,
-    sectionType: sectionType
-    };
-
-    if (sectionType === 'hero-section') {
-    const heading = $section.find('.hero-heading, #heroHeading').val();
-    if (!heading) {
-    showToast('Please enter a heading for the hero section', 'warning');
-    return false;
-    }
-
-    const ctas = [];
-    $section.find('.cta-item').each(function() {
-    const text = $(this).find('.cta-text').val();
-    const link = $(this).find('.cta-link').val();
-    const style = $(this).find('.cta-style').val();
-    if (text && link) {
-    ctas.push({ text, link, style });
-    }
-    });
-
-    const $imageInput = $section.find('.upload-file-hero-input, #upload-file-hero');
-    const $imgPreview = $section.find('.uploaded-img-hero__preview, #uploaded-img-hero__preview');
-    const currentImageSrc = $imgPreview.attr('src');
-    const imageUploaded = $imageInput.data('uploaded');
-
-    // Use server path if newly uploaded, otherwise use existing image path
-    let imageToSave = '';
-    if (imageUploaded) {
-    imageToSave = $imageInput.data('serverPath');
-    } else if (currentImageSrc && !currentImageSrc.includes('/images/user.png') && !currentImageSrc.startsWith('blob:'))
-    {
-    imageToSave = currentImageSrc;
-    }
-
-    sectionData.title = heading;
-    sectionData.heroSection = {
-    heading: heading,
-    paragraph: $section.find('.hero-paragraph, #heroParagraph').val(),
-    ctas: ctas,
-    rightImage: imageToSave
-    };
-    } else if (sectionType === 'three-column-info') {
-    const columns = [];
-    $section.find('.column-item').each(function() {
-    const title = $(this).find('.column-title').val();
-    const description = $(this).find('.column-description').val();
-    const buttonText = $(this).find('.column-btn-text').val();
-    const buttonLink = $(this).find('.column-btn-link').val();
-    if (title && description) {
-    columns.push({ title, description, buttonText, buttonLink });
-    }
-    });
-
-    if (columns.length === 0) {
-    showToast('Please add at least one info card', 'warning');
-    return false;
-    }
-
-    sectionData.title = 'Three Column Info';
-    sectionData.threeColumnInfo = { columns };
-    }
-
-    if (isExisting) {
-    // Update existing section
-    updateRequests.push({
-    url: '/api/content/' + contentId,
-    type: 'PUT',
-    data: sectionData
-    });
-    } else {
-    // Create new section
-    createRequests.push({
-    url: '/api/content',
-    type: 'POST',
-    data: sectionData
-    });
-    }
-    });
-
-    // Execute all requests
-    const allRequests = [...updateRequests, ...createRequests];
-    let completedRequests = 0;
-    let hasError = false;
-
-    if (allRequests.length === 0) {
-    return;
-    }
-
-    allRequests.forEach(function(request) {
-    $.ajax({
-    url: request.url,
-    type: request.type,
-    contentType: 'application/json',
-    data: JSON.stringify(request.data),
-    success: function(response) {
-    completedRequests++;
-    if (completedRequests === allRequests.length && !hasError) {
-    showToast('All sections updated successfully!', 'success');
-    setTimeout(function() {
-    window.location.href = '/cms/content-management';
-    }, 1000);
-    }
-    },
-    error: function(xhr) {
-    hasError = true;
-    const errorMsg = xhr.responseJSON?.message || 'Unknown error';
-    showToast('Error saving section: ' + errorMsg, 'error');
-    }
-    });
-    });
+            // Single AJAX call to update everything
+            $.ajax({
+                url: \`/api/content/\${contentId}\`,
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        showToast("Content updated successfully!", "success");
+                        // Redirect after a short delay
+                        setTimeout(() => {
+                            window.location.href = "/cms/content-management";
+                        }, 1000);
+                    } else {
+                        showToast(response.message || "An error occurred.", "error");
+                    }
+                },
+                error: function (xhr) {
+                    showToast(xhr.responseJSON?.message || "An error occurred.", "error");
+                }
+            });
+        });
     });
     </script>
     ` %>

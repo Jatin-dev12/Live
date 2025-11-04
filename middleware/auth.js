@@ -5,7 +5,7 @@ const Role = require('../models/Role');
 exports.isAuthenticated = async (req, res, next) => {
     try {
         if (!req.session || !req.session.userId) {
-            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                 return res.status(401).json({
                     success: false,
                     message: 'Authentication required. Please login.'
@@ -26,7 +26,7 @@ exports.isAuthenticated = async (req, res, next) => {
 
         if (!user) {
             req.session.destroy();
-            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                 return res.status(401).json({
                     success: false,
                     message: 'User not found. Please login again.'
@@ -37,7 +37,7 @@ exports.isAuthenticated = async (req, res, next) => {
 
         if (!user.isActive) {
             req.session.destroy();
-            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                 return res.status(403).json({
                     success: false,
                     message: 'Your account has been deactivated.'
@@ -147,7 +147,7 @@ exports.isAuthenticated = async (req, res, next) => {
         next();
     } catch (error) {
         console.error('Authentication error:', error);
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
             return res.status(500).json({
                 success: false,
                 message: 'Authentication error occurred'
@@ -178,7 +178,7 @@ exports.hasRole = (...roles) => {
             }
 
             if (!roles.includes(userRole.slug)) {
-                if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                     return res.status(403).json({
                         success: false,
                         message: 'You do not have permission to access this resource'
@@ -239,7 +239,7 @@ exports.hasPermission = (...permissions) => {
             const hasPermission = permissions.some(permission => userPermissions.includes(permission));
 
             if (!hasPermission) {
-                if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                     return res.status(403).json({
                         success: false,
                         message: 'You do not have permission to perform this action'
@@ -272,7 +272,7 @@ exports.isSuperAdmin = async (req, res, next) => {
         const userRole = await Role.findById(req.user.role);
         
         if (!userRole || userRole.slug !== 'super-admin') {
-            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
                 return res.status(403).json({
                     success: false,
                     message: 'Super admin access required'

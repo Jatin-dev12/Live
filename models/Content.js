@@ -39,7 +39,7 @@ const contentSchema = new mongoose.Schema({
     // Section type for different layouts
     sectionType: {
         type: String,
-        enum: ['default', 'hero-section', 'three-column-info'],
+        trim: true,
         default: 'default'
     },
     // Hero section specific fields

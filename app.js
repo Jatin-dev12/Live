@@ -84,6 +84,7 @@ const mediaApi = require('./routes/api/mediaApi');
 const menuApi = require('./routes/api/menuApi');
 const urlRedirectApi = require('./routes/api/urlRedirectApi');
 const leadsApi = require('./routes/api/leadsApi');
+const sectionTypeApi = require('./routes/api/sectionTypeApi');
 
 // Import Page Router & Define All Routes (MUST be before API routes to avoid conflicts)
 const pageRouter = require('./routes/routes');
@@ -102,6 +103,7 @@ app.use('/api/media', mediaApi);
 app.use('/api/menus', menuApi);
 app.use('/api/url-redirects', urlRedirectApi);
 app.use('/api/leads', leadsApi);
+app.use('/api/section-types', sectionTypeApi);
 
 // Register page router AFTER API routes
 pageRouter(app); // Pass the app object to the pageRouter function

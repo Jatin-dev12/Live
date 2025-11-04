@@ -19,8 +19,7 @@ router.get('/content-management', isAuthenticated, async (req, res) => {
                 groupedContents[pageId] = {
                     page: content.page,
                     sections: [],
-                    status: content.status,
-                    firstContentId: content._id
+                    status: content.status
                 };
             }
             groupedContents[pageId].sections.push(content);
@@ -45,24 +44,17 @@ router.get('/content-management', isAuthenticated, async (req, res) => {
     }
 });
 
-// Show add content form
+// GET /add-content-management (show form to add sections to any page)
 router.get('/add-content-management', isAuthenticated, async (req, res) => {
     try {
-        // Get all active pages
+        // Get all active pages regardless of their content status
         const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
-        
-        // Get pages that already have content
-        const pagesWithContent = await Content.distinct('page');
-        
-        // Filter out pages that already have content
-        const availablePages = allPages.filter(page => 
-            !pagesWithContent.some(contentPageId => contentPageId.toString() === page._id.toString())
-        );
-        
+
+        // Allow adding content to any page (even those with content)
         res.render('cms/addContentManagement', {
             title: "Add Content Management",
             subTitle: "Add Content Management",
-            pages: availablePages
+            pages: allPages
         });
     } catch (error) {
         console.error('Error fetching pages:', error);
@@ -76,31 +68,120 @@ router.get('/add-content-management', isAuthenticated, async (req, res) => {
 });
 
 // Show edit content form - loads all sections for a page
-router.get('/edit-content-management/:id', isAuthenticated, async (req, res) => {
+router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res) => {
     try {
-        const firstContent = await Content.findById(req.params.id).populate('page');
+        const { pageId } = req.params;
         
-        if (!firstContent) {
-            return res.redirect('/cms/content-management');
+        // Get page details first
+        const page = await Page.findById(pageId);
+        if (!page) {
+            return res.render('cms/contentManagement', {
+                title: "Content Management",
+                subTitle: "Content Management",
+                contents: [],
+                error: 'Page not found'
+            });
         }
-        
+
         // Get all sections for this page
-        const allSections = await Content.find({ page: firstContent.page._id })
-            .sort({ createdAt: 1 });
-        
-        // Get all active pages
+        const allSections = await Content.find({ page: pageId })
+            .sort({ order: 1, createdAt: 1 })
+            .lean();
+            
+        // Get all active pages for dropdown
         const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
         
-        res.render('cms/editContentManagement', {
+        // Process each section to ensure all fields are present
+        const processedSections = (allSections || []).map(section => ({
+            ...section,
+            _id: section._id || null,
+            title: section.title || '',
+            status: section.status || 'active',
+            page: section.page || page._id,
+            sectionType: section.sectionType || '',
+            order: section.order || 1,
+            customFields: {
+                ...section.customFields,
+                heading: section.customFields?.heading || '',
+                subheading: section.customFields?.subheading || '',
+                alignCenter: section.customFields?.alignCenter !== false,
+                image: section.customFields?.image || ''
+            },
+            heroSection: {
+                ...section.heroSection,
+                heading: section.heroSection?.heading || '',
+                paragraph: section.heroSection?.paragraph || '',
+                ctas: section.heroSection?.ctas || [],
+                rightImage: section.heroSection?.rightImage || ''
+            },
+            threeColumnInfo: {
+                ...section.threeColumnInfo,
+                columns: section.threeColumnInfo?.columns || []
+            }
+        }));
+
+        // Get first section or create default
+        const firstSection = processedSections.length > 0 ? processedSections[0] : {
+            _id: null,
+            title: '',
+            status: 'active',
+            page: page._id,
+            sectionType: '',
+            customFields: {},
+            heroSection: {
+                heading: '',
+                paragraph: '',
+                ctas: [],
+                rightImage: ''
+            },
+            threeColumnInfo: {
+                columns: []
+            },
+            order: 1
+        };
+        // console.log("---------processedSectionss",processedSections);
+        
+        // Prepare response data with all necessary fields
+        const responseData = {
             title: "Edit Content Management",
             subTitle: "Edit Content Management",
-            content: firstContent,
-            allSections: allSections,
+            page: page,
+            content: firstSection,
+            allSections: processedSections.map(section => ({
+                ...section,
+                customFields: {
+                    heading: section.customFields?.heading || section.customFields?.leftHeading || '',
+                    leftHeading: section.customFields?.leftHeading || '',
+                    subheading: section.customFields?.subheading || '',
+                    alignCenter: section.customFields?.alignCenter === true,
+                    image: section.customFields?.image || section.customFields?.leftImage || '',
+                    imageOnLeft: section.customFields?.imageOnLeft === true,
+                    rightText: section.customFields?.rightText || '',
+                },
+                heroSection: {
+                    heading: section.heroSection?.heading || '',
+                    paragraph: section.heroSection?.paragraph || '',
+                    ctas: section.heroSection?.ctas || [],
+                    rightImage: section.heroSection?.rightImage || ''
+                },
+                threeColumnInfo: {
+                    columns: section.threeColumnInfo?.columns || []
+                }
+            })),
             pages: allPages
-        });
+        };
+        // console.log('---------------------responseData',responseData.allSections);
+        
+        
+        return res.render('cms/editContentManagement', responseData);
     } catch (error) {
-        console.error('Error fetching content:', error);
-        res.redirect('/cms/content-management');
+        console.error('Error in edit content route:', error);
+        return res.render('cms/contentManagement', {
+            title: "Content Management",
+            subTitle: "Content Management",
+            contents: [],
+            error: 'Error loading content: ' + error.message
+        });
     }
 });
 
