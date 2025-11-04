@@ -74,6 +74,22 @@ const contentSchema = new mongoose.Schema({
     },
     // Three column info section
     threeColumnInfo: {
+        heading: {
+            type: String,
+            trim: true
+        },
+        subheading: {
+            type: String,
+            trim: true
+        },
+        image: {
+            type: String,
+            trim: true
+        },
+        imageOnLeft: {
+            type: Boolean,
+            default: true
+        },
         columns: [{
             title: {
                 type: String,

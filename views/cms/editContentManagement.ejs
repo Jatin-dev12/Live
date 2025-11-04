@@ -174,7 +174,59 @@
                                                     <% } %>
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
+                                            <!-- <pre><%= JSON.stringify(section) %></pre> -->
+                                            <!-- <pre><%= JSON.stringify(section.threeColumnInfo.heading) %></pre> -->
                                             <div class="three-column-info-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Section Heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 tci-heading"
+                                                        value="<%= section.threeColumnInfo?.heading || '' %>"
+                                                        placeholder="Main Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Section Sub-heading:</label>
+                                                    <input type="text"
+                                                        class="form-control border border-neutral-200 radius-8 tci-subheading"
+                                                        value="<%= section.threeColumnInfo?.subheading || '' %>"
+                                                        placeholder="Sub-heading">
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input tci-image-left" type="checkbox"
+                                                        <%=section.threeColumnInfo?.imageOnLeft ? 'checked' : '' %>>
+                                                    <label class="form-check-label">Image on Left</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold text-neutral-900">Upload Section Image</label>
+                                                    <div class="upload-image-wrapper">
+                                                        <% if (section.threeColumnInfo?.image) { %>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Current Image:</label>
+                                                                <div class="existing-image">
+                                                                    <img src="<%= section.threeColumnInfo.image %>"
+                                                                        class="img-thumbnail"
+                                                                        style="max-height: 200px;">
+                                                                </div>
+                                                            </div>
+                                                        <% } %>
+                                                        <div
+                                                            class="uploaded-img-tci d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                                            <button type="button" class="uploaded-img-tci__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                                                <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                            </button>
+                                                            <img class="uploaded-img-tci__preview w-100 h-100 object-fit-cover"
+                                                                src="/images/user.png"
+                                                                alt="image">
+                                                        </div>
+                                                        <label
+                                                            class="upload-file-tci h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                                                            <iconify-icon icon="solar:camera-outline"
+                                                                class="text-xl text-secondary-light"></iconify-icon>
+                                                            <span class="fw-semibold text-secondary-light">Upload Image</span>
+                                                            <input type="file" class="upload-file-tci-input" hidden accept="image/*" data-existing-image="<%= section.threeColumnInfo?.image || '' %>">
+                                                        </label>
+                                                    </div>
+                                                </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Info Cards:</label>
                                                     <div class="column-container">
@@ -340,6 +392,10 @@
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="three-column-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Section Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 tci-heading" placeholder="Main Heading"></div>
+                                    <div class="mb-3"><label class="form-label">Section Sub-heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 tci-subheading" placeholder="Sub-heading"></div>
+                                    <div class="form-check mb-3"><input class="form-check-input tci-image-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Section Image</label><div class="upload-image-wrapper"><div class="uploaded-img-tci d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-tci__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-tci__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-tci h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-tci-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Info Cards:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button></div>
                                 </div>
                             </div>
@@ -604,6 +660,58 @@
         handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
+        
+        // Three Column Info image handler with proper show/hide logic
+        $(document).on("change", ".upload-file-tci-input", function (e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const $section = $(this).closest(".section-block");
+                const $wrapper = $(this).closest(".upload-image-wrapper");
+                const $input = $(this);
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    $wrapper.find(".uploaded-img-tci__preview").attr("src", event.target.result);
+                    $wrapper.find(".uploaded-img-tci").removeClass("d-none");
+                    $wrapper.find(".upload-file-tci").hide();
+                };
+                reader.readAsDataURL(file);
+
+                // Upload to server
+                const formData = new FormData();
+                formData.append("folder", "section");
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/api/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            $input.data("server-url", response.url);
+                            showToast("Image uploaded successfully", "success");
+                        } else {
+                            showToast(response.message || "Image upload failed", "error");
+                        }
+                    },
+                    error: function (xhr) {
+                        showToast(xhr.responseJSON?.message || "An error occurred", "error");
+                    }
+                });
+            }
+        });
+
+        // Three Column Info image remove handler
+        $(document).on("click", ".uploaded-img-tci__remove", function () {
+            const $wrapper = $(this).closest(".upload-image-wrapper");
+            $wrapper.find(".uploaded-img-tci__preview").attr("src", "");
+            $wrapper.find(".uploaded-img-tci").addClass("d-none");
+            $wrapper.find(".upload-file-tci").show();
+            $wrapper.find(".upload-file-tci-input").val("").data("server-url", "");
+        });
 
         // Form submission logic
         $("#editContentForm").on("submit", function (e) {
@@ -681,6 +789,19 @@
                     sectionData.customFields.rightImage = $section.find('.upload-file-rhlt-input').data('server-url') || $section.find('.uploaded-img-rhlt__preview').attr('src');
                     sectionData.customFields.leftText = $section.find('.rhlt-left-text').val();
                 } else if (sectionType === "three-column-info") {
+                    const $tciInput = $section.find(".upload-file-tci-input");
+                    const newImageUrl = $tciInput.data("server-url");
+                    const existingImageUrl = $tciInput.data("existing-image");
+                    const heading = $section.find(".tci-heading").val();
+                    const subheading = $section.find(".tci-subheading").val();
+                    const imageUrl = newImageUrl || existingImageUrl || "";
+                    
+                    sectionData.title = heading || "Three Column Info";
+                    sectionData.thumbnail = imageUrl;
+                    sectionData.threeColumnInfo.heading = heading;
+                    sectionData.threeColumnInfo.subheading = subheading;
+                    sectionData.threeColumnInfo.imageOnLeft = $section.find(".tci-image-left").is(":checked");
+                    sectionData.threeColumnInfo.image = imageUrl;
                     sectionData.threeColumnInfo.columns = $section.find(".column-item").map(function () {
                         return {
                             title: $(this).find(".column-title").val(),

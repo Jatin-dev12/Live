@@ -185,7 +185,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Get single page by ID
+// Get single page by ID with sections
 router.get('/:id', isAuthenticated, async (req, res) => {
     try {
         const page = await Page.findById(req.params.id)
@@ -208,6 +208,56 @@ router.get('/:id', isAuthenticated, async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching page',
+            error: error.message
+        });
+    }
+});
+
+// Get all sections for a specific page
+router.get('/:id/sections', isAuthenticated, async (req, res) => {
+    try {
+        const { status = 'all' } = req.query;
+        
+        // Verify page exists
+        const page = await Page.findById(req.params.id);
+        if (!page) {
+            return res.status(404).json({
+                success: false,
+                message: 'Page not found'
+            });
+        }
+        
+        // Build query
+        let query = { page: req.params.id };
+        if (status !== 'all') {
+            query.status = status;
+        }
+        
+        // Get all sections for this page
+        const sections = await Content.find(query)
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
+            .sort({ order: 1, createdAt: -1 })
+            .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email');
+        
+        res.json({
+            success: true,
+            data: {
+                page: {
+                    _id: page._id,
+                    name: page.name,
+                    slug: page.slug,
+                    path: page.path
+                },
+                sections: sections,
+                total: sections.length
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching page sections:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching page sections',
             error: error.message
         });
     }
