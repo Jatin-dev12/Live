@@ -84,7 +84,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 // Create new content
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards } = req.body;
         
         // Validate required fields
         if (!pageId || !title) {
@@ -115,6 +115,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             sectionType: sectionType || 'default',
             heroSection: heroSection || undefined,
             threeColumnInfo: threeColumnInfo || undefined,
+            callOutCards: callOutCards || undefined,
             customFields,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
@@ -184,6 +185,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         ...(s.customFields !== undefined && { customFields: s.customFields }),
                         ...(s.heroSection !== undefined && { heroSection: s.heroSection }),
                         ...(s.threeColumnInfo !== undefined && { threeColumnInfo: s.threeColumnInfo }),
+                        ...(s.callOutCards !== undefined && { callOutCards: s.callOutCards }),
                         updatedBy: req.user ? req.user._id : null
                     };
 
@@ -199,6 +201,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         customFields: s.customFields || undefined,
                         heroSection: s.heroSection || undefined,
                         threeColumnInfo: s.threeColumnInfo || undefined,
+                        callOutCards: s.callOutCards || undefined,
                         thumbnail: s.thumbnail || undefined,
                         createdBy: req.user ? req.user._id : null,
                         updatedBy: req.user ? req.user._id : null
@@ -231,7 +234,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards } = req.body;
         
         // Verify page exists if pageId is being updated
         if (pageId) {
@@ -258,6 +261,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 sectionType,
                 heroSection,
                 threeColumnInfo,
+                callOutCards,
                 customFields,
                 updatedBy: req.user._id
             },

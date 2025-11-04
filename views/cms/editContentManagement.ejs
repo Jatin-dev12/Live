@@ -65,6 +65,7 @@
                                             <option value="right-heading-image-left-text" <%= section.sectionType === 'right-heading-image-left-text' ? 'selected' : '' %>>Right Heading + Image, Left Text</option>
                                             <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section (Left Text + Right Image)</option>
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info Cards</option>
+                                            <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Cards</option>
                                         </select>
                                     </div>
 
@@ -282,6 +283,49 @@
                                                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button>
                                                 </div>
                                             </div>
+                                        <% } else if (section.sectionType==='call-out-cards' ) { %>
+                                            <div class="call-out-cards-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Call Out Cards:</label>
+                                                    <!-- Debug: <%= JSON.stringify(section.callOutCards) %> -->
+                                                    <div class="callout-container">
+                                                        <% 
+                                                        const cards = section.callOutCards?.cards || [];
+                                                        if (cards.length === 0) { %>
+                                                            <p class="text-muted">No cards found. Click "Add Call Out Card" to create one.</p>
+                                                        <% }
+                                                        cards.forEach(function(card, idx){ %>
+                                                            <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                                                        <iconify-icon icon="mdi:delete"></iconify-icon>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
+                                                                    <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading"
+                                                                        value="<%= card.heading %>" placeholder="e.g., Call Out 1" required>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label text-sm">Subheading:</label>
+                                                                    <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="2"
+                                                                        placeholder="Enter subheading"><%= card.subheading || '' %></textarea>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="form-label text-sm">Link:</label>
+                                                                    <input type="text" class="form-control border border-neutral-200 radius-8 callout-link"
+                                                                        value="<%= card.link || '' %>" placeholder="e.g., /more">
+                                                                </div>
+                                                            </div>
+                                                        <% }) %>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
+                                                        Add Call Out Card
+                                                    </button>
+                                                    <small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small>
+                                                </div>
+                                            </div>
                                         <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
@@ -355,6 +399,7 @@
                                         <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
                                         <option value="hero-section">Hero Section (Left Text + Right Image)</option>
                                         <option value="three-column-info">Three Column Info Cards</option>
+                                        <option value="call-out-cards">Call Out Cards</option>
                                     </select>
                                 </div>
                                 <div class="image-with-text-fields" style="display: none;">
@@ -398,6 +443,9 @@
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Section Image</label><div class="upload-image-wrapper"><div class="uploaded-img-tci d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-tci__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-tci__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-tci h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-tci-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Info Cards:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button></div>
                                 </div>
+                                <div class="call-out-cards-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Call Out Cards:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -432,6 +480,7 @@
         $section.find('.right-heading-image-left-text-fields').hide();
         $section.find('.hero-section-fields').hide();
         $section.find('.three-column-fields').hide();
+        $section.find('.call-out-cards-fields').hide();
         
         // Show only the relevant fields based on section type
         if (sectionType === 'image-with-text') {
@@ -448,6 +497,8 @@
             $section.find('.hero-section-fields').show();
         } else if (sectionType === 'three-column-info') {
             $section.find('.three-column-fields').show();
+        } else if (sectionType === 'call-out-cards') {
+            $section.find('.call-out-cards-fields').show();
         }
     }
 
@@ -649,6 +700,52 @@
             })
             .on("click", ".remove-column-btn", function() {
                 $(this).closest('.column-item').remove();
+            })
+            .on("click", ".add-callout-btn", function() {
+                const $container = $(this).siblings('.callout-container');
+                const calloutCount = $container.find('.callout-item').length;
+                
+                // Max 6 cards
+                if (calloutCount >= 6) {
+                    showToast('Maximum 6 call out cards allowed', 'warning');
+                    return;
+                }
+                
+                const cardNumber = calloutCount + 1;
+                const calloutHtml = \`
+                    <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
+                            <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                <iconify-icon icon="mdi:delete"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="e.g., Call Out #\${cardNumber}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Subheading:</label>
+                            <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="2" placeholder="Enter subheading"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label text-sm">Link:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-link" placeholder="e.g., /more">
+                        </div>
+                    </div>\`;
+                $container.append(calloutHtml);
+            })
+            .on("click", ".remove-callout-btn", function() {
+                const $container = $(this).closest('.callout-container');
+                const calloutCount = $container.find('.callout-item').length;
+                
+                // Min 1 card
+                if (calloutCount <= 1) {
+                    showToast('Minimum 1 call out card required', 'warning');
+                    return;
+                }
+                
+                $(this).closest('.callout-item').remove();
             });
 
         // "Add Section" button
@@ -810,6 +907,37 @@
                             buttonLink: $(this).find(".column-btn-link").val()
                         };
                     }).get();
+                } else if (sectionType === "call-out-cards") {
+                    const cards = $section.find(".callout-item").map(function () {
+                        return {
+                            heading: $(this).find(".callout-heading").val(),
+                            subheading: $(this).find(".callout-subheading").val(),
+                            link: $(this).find(".callout-link").val()
+                        };
+                    }).get();
+                    
+                    if (cards.length === 0) {
+                        showToast('Please add at least one call out card', 'warning');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    if (cards.length > 3) {
+                        showToast('Maximum 3 call out cards allowed', 'warning');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    // Check if all cards have headings
+                    const invalidCard = cards.find(card => !card.heading);
+                    if (invalidCard) {
+                        showToast('All call out cards must have a heading', 'warning');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    sectionData.title = cards[0].heading || "Call Out Cards";
+                    sectionData.callOutCards = { cards: cards };
                 }
 
                 sectionsData.push(sectionData);

@@ -82,6 +82,7 @@
                 <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
                 <option value="hero-section">Hero Section (Left Text + Right Image)</option>
                 <option value="three-column-info">Three Column Info Cards</option>
+                <option value="call-out-cards">Call Out Cards</option>
             </select>
         </div>
 
@@ -312,6 +313,20 @@
                 </button>
             </div>
         </div>
+
+        <!-- Call Out Cards Fields -->
+        <div class="call-out-cards-fields" style="display: none;">
+            <div class="mb-3">
+                <label class="form-label">Call Out Cards:</label>
+                <div class="callout-container">
+                    <!-- Cards will be added here -->
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
+                    Add Call Out Card
+                </button>
+                <small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small>
+            </div>
+        </div>
     </div>
     \`;
 
@@ -330,6 +345,7 @@
     $section.find('.right-heading-image-left-text-fields').hide();
     $section.find('.hero-section-fields').hide();
     $section.find('.three-column-fields').hide();
+    $section.find('.call-out-cards-fields').hide();
 
     if (sectionType === 'image-with-text') {
         $section.find('.image-with-text-fields').show();
@@ -345,6 +361,8 @@
         $section.find('.hero-section-fields').show();
     } else if (sectionType === 'three-column-info') {
         $section.find('.three-column-fields').show();
+    } else if (sectionType === 'call-out-cards') {
+        $section.find('.call-out-cards-fields').show();
     }
     });
     // Dynamic list items for Image with List
@@ -555,6 +573,57 @@
     $(this).closest('.column-item').remove();
     });
 
+    // Add Call Out Card
+    $(document).on('click', '.add-callout-btn', function() {
+    const $container = $(this).siblings('.callout-container');
+    const calloutCount = $container.find('.callout-item').length;
+    
+    // Max 6 cards
+    if (calloutCount >= 6) {
+        showToast('Maximum 6 call out cards allowed', 'warning');
+        return;
+    }
+    
+    const cardNumber = calloutCount + 1;
+    const calloutHtml = \`
+    <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
+            <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                <iconify-icon icon="mdi:delete"></iconify-icon>
+            </button>
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="e.g., Call Out #\${cardNumber}" required>
+        </div>
+        <div class="mb-2">
+            <label class="form-label text-sm">Subheading:</label>
+            <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="2" placeholder="Enter subheading"></textarea>
+        </div>
+        <div>
+            <label class="form-label text-sm">Link:</label>
+            <input type="text" class="form-control border border-neutral-200 radius-8 callout-link" placeholder="e.g., /more">
+        </div>
+    </div>
+    \`;
+    $container.append(calloutHtml);
+    });
+
+    // Remove Call Out Card
+    $(document).on('click', '.remove-callout-btn', function() {
+    const $container = $(this).closest('.callout-container');
+    const calloutCount = $container.find('.callout-item').length;
+    
+    // Min 1 card
+    if (calloutCount <= 1) {
+        showToast('Minimum 1 call out card required', 'warning');
+        return;
+    }
+    
+    $(this).closest('.callout-item').remove();
+    });
+
     // Form Submission
     $('#addContentForm').on('submit', function(e) {
     e.preventDefault();
@@ -692,6 +761,29 @@
         columns: columns 
     };
     sectionData.thumbnail = imageSrc;
+    } else if (sectionType === 'call-out-cards') {
+    const cards = [];
+    $section.find('.callout-item').each(function() {
+    const heading = $(this).find('.callout-heading').val();
+    const subheading = $(this).find('.callout-subheading').val();
+    const link = $(this).find('.callout-link').val();
+    if (heading) {
+    cards.push({ heading, subheading, link });
+    }
+    });
+
+    if (cards.length === 0) {
+    showToast('Please add at least one call out card', 'warning');
+    return false;
+    }
+
+    if (cards.length > 3) {
+    showToast('Maximum 3 call out cards allowed', 'warning');
+    return false;
+    }
+
+    sectionData.title = cards[0].heading || 'Call Out Cards';
+    sectionData.callOutCards = { cards: cards };
     }
 
     // set order based on position in container (1-based)
