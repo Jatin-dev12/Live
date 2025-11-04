@@ -1,0 +1,52 @@
+<!-- Social Media Links - Auto-populated from Site Settings -->
+<div class="social-links">
+    <% if (typeof siteSettings !== 'undefined' && siteSettings.socialMedia) { %>
+        <% if (siteSettings.socialMedia.facebook) { %>
+            <a href="<%= siteSettings.socialMedia.facebook %>" target="_blank" rel="noopener noreferrer" class="social-link facebook">
+                <i class="ri-facebook-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.twitter) { %>
+            <a href="<%= siteSettings.socialMedia.twitter %>" target="_blank" rel="noopener noreferrer" class="social-link twitter">
+                <i class="ri-twitter-x-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.instagram) { %>
+            <a href="<%= siteSettings.socialMedia.instagram %>" target="_blank" rel="noopener noreferrer" class="social-link instagram">
+                <i class="ri-instagram-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.linkedin) { %>
+            <a href="<%= siteSettings.socialMedia.linkedin %>" target="_blank" rel="noopener noreferrer" class="social-link linkedin">
+                <i class="ri-linkedin-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.youtube) { %>
+            <a href="<%= siteSettings.socialMedia.youtube %>" target="_blank" rel="noopener noreferrer" class="social-link youtube">
+                <i class="ri-youtube-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.telegram) { %>
+            <a href="<%= siteSettings.socialMedia.telegram %>" target="_blank" rel="noopener noreferrer" class="social-link telegram">
+                <i class="ri-telegram-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.tiktok) { %>
+            <a href="<%= siteSettings.socialMedia.tiktok %>" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
+                <i class="ri-tiktok-fill"></i>
+            </a>
+        <% } %>
+        
+        <% if (siteSettings.socialMedia.whatsapp) { %>
+            <a href="https://wa.me/<%= siteSettings.socialMedia.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener noreferrer" class="social-link whatsapp">
+                <i class="ri-whatsapp-fill"></i>
+            </a>
+        <% } %>
+    <% } %>
+</div>

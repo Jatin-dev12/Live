@@ -1,0 +1,393 @@
+<div class="card  p-0 radius-12 overflow-hidden">
+    <div class="card-body p-40">
+        <h6 class="text-xl mb-24">Site Settings</h6>
+
+        <form id="siteSettingsForm">
+            <!-- General Information Section -->
+            <div class="mb-32">
+                <!-- <h6 class="text-lg mb-16 pb-8 border-bottom">General Information</h6> -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="mb-20">
+                            <label for="logo" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Site Logo
+                            </label>
+                            <div class="d-flex align-items-center gap-3" style="align-content: center;">
+                                <% if (settings.logo) { %>
+                                    <img src="<%= settings.logo %>" alt="Site Logo" id="logoPreview"
+                                        style="max-height: 80px; max-width: 200px; object-fit: contain;">
+                                    <% } else { %>
+                                        <img src="/images/logo.png" alt="Default Logo" id="logoPreview"
+                                            style="max-height: 80px; max-width: 200px; object-fit: contain;">
+                                        <% } %>
+                                            <div class="flex-grow-1">
+                                                <input type="file" class="form-control radius-8" id="logoInput"
+                                                    accept="image/*">
+                                                <!-- <small class="text-muted">Recommended: PNG, JPG, SVG (Max 5MB)</small> -->
+                                            </div>
+                                            <button type="button" id="uploadLogoBtn"
+                                                class="btn btn-sm btn-primary">Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="contactNumber" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-phone-line me-2"></i>Contact Number
+                            </label>
+                            <input type="text" class="form-control radius-8" id="contactNumber" name="contactNumber"
+                                placeholder="" value="<%= settings.contactNumber || '' %>">
+                            <!-- <small class="text-muted">Enter with country code (e.g., +1234567890)</small> -->
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="whatsappNumber" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-whatsapp-line text-success-600 me-2"></i>WhatsApp Number
+                            </label>
+                            <input type="text" class="form-control radius-8" id="whatsappNumber" name="whatsappNumber"
+                                placeholder="" value="<%= settings.whatsappNumber || '' %>">
+                            <!-- <small class="text-muted">Enter with country code (e.g., +1234567890)</small> -->
+                        </div>
+                    </div>
+                    <!-- <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="siteName" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Site Name <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" class="form-control radius-8" id="siteName" name="siteName" 
+                                   placeholder="Enter site name" value="<%= settings.siteName || '' %>" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="contactEmail" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Contact Email <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="email" class="form-control radius-8" id="contactEmail" name="contactEmail" 
+                                   placeholder="contact@example.com" value="<%= settings.contactEmail || '' %>" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="contactPhone" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Contact Phone
+                            </label>
+                            <input type="text" class="form-control radius-8" id="contactPhone" name="contactPhone" 
+                                   placeholder="+1 234 567 8900" value="<%= settings.contactPhone || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="mb-20">
+                            <label for="siteDescription" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Site Description
+                            </label>
+                            <textarea class="form-control radius-8" id="siteDescription" name="siteDescription" 
+                                      rows="3" placeholder="Enter site description"><%= settings.siteDescription || '' %></textarea>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Social Media Links Section -->
+            <div class="mb-32">
+                <h6 class="text-lg mb-16 pb-8 border-bottom">Social Media Links</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="facebook" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-facebook-fill text-primary-600 me-2"></i>Facebook URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="facebook" name="facebook" placeholder=""
+                                value="<%= settings.socialMedia?.facebook || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="twitter" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-twitter-x-fill text-dark me-2"></i>Twitter/X URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="twitter" name="twitter" placeholder=""
+                                value="<%= settings.socialMedia?.twitter || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="instagram" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-instagram-fill text-danger-600 me-2"></i>Instagram URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="instagram" name="instagram"
+                                placeholder="" value="<%= settings.socialMedia?.instagram || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="linkedin" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-linkedin-fill text-info-600 me-2"></i>LinkedIn URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="linkedin" name="linkedin" placeholder=""
+                                value="<%= settings.socialMedia?.linkedin || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="youtube" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-youtube-fill text-danger-600 me-2"></i>YouTube URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="youtube" name="youtube" placeholder=""
+                                value="<%= settings.socialMedia?.youtube || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="telegram" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                <i class="ri-telegram-fill text-info-600 me-2"></i>Telegram URL
+                            </label>
+                            <input type="url" class="form-control radius-8" id="telegram" name="telegram" placeholder=""
+                                value="<%= settings.socialMedia?.telegram || '' %>">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SMTP Configuration Section -->
+            <div class="mb-32">
+                <h6 class="text-lg mb-16 pb-8 border-bottom">SMTP Email Configuration</h6>
+                <div class="row">
+                    <!-- <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="smtpHost" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                SMTP Host <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" class="form-control radius-8" id="smtpHost" name="smtpHost"
+                                placeholder="" value="<%= settings.smtp?.host || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mb-20">
+                            <label for="smtpPort" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                SMTP Port <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="number" class="form-control radius-8" id="smtpPort" name="smtpPort"
+                                placeholder="587"
+                                value="<%= settings.smtp?.port && settings.smtp.port !== 587 ? settings.smtp.port : '' %>">
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-sm-3">
+                        <div class="mb-20">
+                            <label for="smtpSecure" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Use SSL/TLS
+                            </label>
+                            <select class="form-control radius-8 form-select" id="smtpSecure" name="smtpSecure">
+                                <option value="false" <%=!settings.smtp?.secure ? 'selected' : '' %>>No (TLS)</option>
+                                <option value="true" <%=settings.smtp?.secure ? 'selected' : '' %>>Yes (SSL)</option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="smtpUsername" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                SMTP Username <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" class="form-control radius-8" id="smtpUsername" name="smtpUsername"
+                                placeholder="" value="<%= settings.smtp?.username || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="smtpPassword" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                SMTP Password <span class="text-danger-600">*</span>
+                            </label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control radius-8" id="smtpPassword"
+                                    name="smtpPassword" placeholder="" value="<%= settings.smtp?.password || '' %>"
+                                    style="padding-right: 45px;">
+                                <button type="button" id="togglePassword" class="btn btn-sm position-absolute"
+                                    style="right: 5px; top: 50%; transform: translateY(-50%); border: none; background: transparent; padding: 5px 10px;">
+                                    <i class="ri-eye-line" id="eyeIcon" style="font-size: 18px; color: #666;"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">For Gmail, use App Password</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="smtpFromEmail" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                From Email <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="email" class="form-control radius-8" id="smtpFromEmail" name="smtpFromEmail"
+                                placeholder="" value="<%= settings.smtp?.fromEmail || '' %>">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-20">
+                            <label for="smtpFromName" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                From Name <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" class="form-control radius-8" id="smtpFromName" name="smtpFromName"
+                                placeholder="" value="<%= settings.smtp?.fromName || '' %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center justify-content-center gap-3 mt-24">
+                <button type="button" id="testSmtpBtn"
+                    class="border border-info-600 bg-hover-info-200 text-info-600 text-md px-40 py-11 radius-8">
+                    Test SMTP
+                </button>
+                <button type="reset"
+                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-40 py-11 radius-8">
+                    Reset
+                </button>
+                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-24 py-12 radius-8">
+                    Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Upload Logo
+    document.getElementById('uploadLogoBtn').addEventListener('click', async function () {
+        const fileInput = document.getElementById('logoInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showToast('error', 'Please select a logo file');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('logo', file);
+
+        const btn = this;
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Uploading...';
+
+        try {
+            const response = await fetch('/settings/upload-logo', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('success', result.message);
+                // Update preview
+                document.getElementById('logoPreview').src = result.logoPath;
+                fileInput.value = '';
+            } else {
+                showToast('error', result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('error', 'Failed to upload logo');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    });
+
+    // Preview logo before upload
+    document.getElementById('logoInput').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('logoPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('siteSettingsForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/settings/site-settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('success', result.message);
+            } else {
+                showToast('error', result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('error', 'Failed to save settings');
+        }
+    });
+
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('smtpPassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.className = 'ri-eye-off-line';
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.className = 'ri-eye-line';
+        }
+    });
+
+    // Test SMTP Connection
+    document.getElementById('testSmtpBtn').addEventListener('click', async function () {
+        const btn = this;
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Testing...';
+
+        try {
+            const response = await fetch('/settings/test-smtp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('success', 'SMTP connection successful!');
+            } else {
+                showToast('error', 'SMTP test failed: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('error', 'Failed to test SMTP connection');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    });
+
+    function showToast(type, message) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+</script>

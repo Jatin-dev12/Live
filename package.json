@@ -30,6 +30,7 @@
     "express-validator": "^7.0.1",
     "mongoose": "^8.1.0",
     "multer": "^2.0.2",
+    "nodemailer": "^6.9.8",
     "path": "^0.12.7"
   }
 }

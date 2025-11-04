@@ -1,154 +1,166 @@
 <aside class="sidebar">
-    <button type="button" class="sidebar-close-btn">
-        <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
-    </button>
-    <div>
-        <a href="/index" class="sidebar-logo">
-            <img src="/images/logo.png" alt="site logo" class="light-logo">
-            <img src="/images/logo-light.png" alt="site logo" class="dark-logo">
-            <img src="/images/logo-icon.png" alt="site logo" class="logo-icon">
+  <button type="button" class="sidebar-close-btn">
+    <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
+  </button>
+  <div>
+    <a href="/index" class="sidebar-logo">
+      <img src="/images/logo.png" alt="site logo" class="light-logo" />
+      <img src="/images/logo-light.png" alt="site logo" class="dark-logo" />
+      <img src="/images/logo-icon.png" alt="site logo" class="logo-icon" />
+    </a>
+  </div>
+  <div class="sidebar-menu-area">
+    <ul class="sidebar-menu" id="sidebar-menu">
+      <!-- Dashboard - Only visible if permission is granted -->
+      <% if (typeof userRole !=='undefined' && (userRole==='super-admin' ||
+      (typeof userPermissions !=='undefined' &&
+      userPermissions.includes('dashboard')))) { %>
+      <li class="active-pagee">
+        <a href="/index">
+          <iconify-icon
+            icon="solar:home-smile-angle-outline"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Dashboard</span>
         </a>
-    </div>
-    <div class="sidebar-menu-area">
-        <ul class="sidebar-menu" id="sidebar-menu">
-            <!-- Dashboard - Only visible if permission is granted -->
-            <% if (typeof userRole !=='undefined' && (userRole==='super-admin' || (typeof userPermissions !=='undefined'
-                && userPermissions.includes('dashboard')))) { %>
-                <li class="active-pagee">
-                    <a href="/index">
-                        <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <% } %>
+      </li>
+      <% } %>
 
-                    <!-- Users Management - Only Super Admin -->
-                    <% if (userRole==='super-admin' ) { %>
-                        <li>
-                            <a href="/roles/roles-management">
-                                <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>
-                                <span>Users Management</span>
-                            </a>
-                        </li>
-                        <% } %>
+      <!-- Users Management - Only Super Admin -->
+      <% if (userRole==='super-admin' ) { %>
+      <li>
+        <a href="/roles/roles-management">
+          <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>
+          <span>Users Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                            <!-- Website Page Master - If has cms permission -->
-                            <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
-                                userModules.includes('cms'))) { %>
-                                <li>
-                                    <a href="/page-master/web-page-master">
-                                        <iconify-icon icon="fluent-mdl2:page-data" class="menu-icon"></iconify-icon>
-                                        <span>Website Page Master</span>
-                                    </a>
-                                </li>
-                                <% } %>
+      <!-- Website Page Master - If has cms permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('cms'))) { %>
+      <li>
+        <a href="/page-master/web-page-master">
+          <iconify-icon
+            icon="fluent-mdl2:page-data"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Website Page Master</span>
+        </a>
+      </li>
+      <% } %>
 
-                                    <!-- Content Management - If has content permission -->
-                                    <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
-                                        userModules.includes('content'))) { %>
-                                        <li>
-                                            <a href="/cms/content-management">
-                                                <iconify-icon icon="streamline-ultimate:content-paper-edit" width="23"
-                                                    height="23" class="menu-icon"></iconify-icon>
-                                                <span>Content Management</span>
-                                            </a>
-                                        </li>
-                                        <% } %>
+      <!-- Content Management - If has content permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('content'))) { %>
+      <li>
+        <a href="/cms/content-management">
+          <iconify-icon
+            icon="streamline-ultimate:content-paper-edit"
+            width="23"
+            height="23"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Content Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                                            <!-- Menu Management - If has menu permission -->
-                                            <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
-                                                userModules.includes('menu'))) { %>
-                                                <li>
-                                                    <a href="/menu-management/nav-menus">
-                                                        <iconify-icon icon="solar:document-text-outline"
-                                                            class="menu-icon"></iconify-icon>
-                                                        <span>Menu Management</span>
-                                                    </a>
-                                                </li>
-                                                <% } %>
+      <!-- Menu Management - If has menu permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('menu'))) { %>
+      <li>
+        <a href="/menu-management/nav-menus">
+          <iconify-icon
+            icon="solar:document-text-outline"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Menu Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                    <!-- Media - If has Media permission -->
-                                                    <% if (typeof userModules !=='undefined' &&
-                                                        (userRole==='super-admin' || userModules.includes('media'))) {
-                                                        %>
-                                                        <li>
-                                                            <a href="/media/library">
-                                                                <iconify-icon icon="iconoir:media-image-folder"
-                                                                    width="21" height="22"
-                                                                    class="menu-icon"></iconify-icon>
-                                                                <span>Media</span>
-                                                            </a>
-                                                        </li>
-                                                        <% } %>
+      <!-- Media - If has Media permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('media'))) { %>
+      <li>
+        <a href="/media/library">
+          <iconify-icon
+            icon="iconoir:media-image-folder"
+            width="21"
+            height="22"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Media</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                            <!-- SEO Management - If has SEO permission -->
-                                                            <% if (typeof userModules !=='undefined' &&
-                                                                (userRole==='super-admin' ||
-                                                                userModules.includes('seo'))) { %>
-                                                                <li>
-                                                                    <a href="/seo/seo-management">
-                                                                        <iconify-icon icon="mingcute:storage-line"
-                                                                            class="menu-icon"></iconify-icon>
-                                                                        <span>SEO Management</span>
-                                                                    </a>
-                                                                </li>
-                                                                <% } %>
+      <!-- SEO Management - If has SEO permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('seo'))) { %>
+      <li>
+        <a href="/seo/seo-management">
+          <iconify-icon
+            icon="mingcute:storage-line"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>SEO Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                                    <!-- Ads Management - If has ads permission -->
-                                                                    <% if (typeof userModules !=='undefined' &&
-                                                                        (userRole==='super-admin' ||
-                                                                        userModules.includes('ads'))) { %>
-                                                                        <li>
-                                                                            <a href="/ads/ads-management">
-                                                                                <iconify-icon
-                                                                                    icon="streamline-logos:google-ads-logo"
-                                                                                    width="22" height="22"
-                                                                                    class="menu-icon"></iconify-icon>
-                                                                                <span>Ads Management</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <% } %>
+      <!-- Ads Management - If has ads permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('ads'))) { %>
+      <li>
+        <a href="/ads/ads-management">
+          <iconify-icon
+            icon="streamline-logos:google-ads-logo"
+            width="22"
+            height="22"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Ads Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                                            <!-- Leads Management - If has leads permission -->
-                                                                            <% if (typeof userModules !=='undefined' &&
-                                                                                (userRole==='super-admin' ||
-                                                                                userModules.includes('leads'))) { %>
-                                                                                <li>
-                                                                                    <a href="/leads/leads-management">
-                                                                                        <iconify-icon
-                                                                                            icon="material-symbols-light:leaderboard-outline"
-                                                                                            width="26" height="26"
-                                                                                            class="menu-icon"></iconify-icon>
-                                                                                        <span>Leads Management</span>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <% } %>
+      <!-- Leads Management - If has leads permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('leads'))) { %>
+      <li>
+        <a href="/leads/leads-management">
+          <iconify-icon
+            icon="material-symbols-light:leaderboard-outline"
+            width="26"
+            height="26"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>Leads Management</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                                                    <!-- URL Redirect Management - Super Admin only -->
-                                                                                    <% if (userRole==='super-admin' ) {
-                                                                                        %>
-                                                                                        <li>
-                                                                                            <a
-                                                                                                href="/url-redirect/url-redirects">
-                                                                                                <iconify-icon
-                                                                                                    icon="material-symbols:link"
-                                                                                                    width="24"
-                                                                                                    height="24"
-                                                                                                    class="menu-icon"></iconify-icon>
-                                                                                                <span>URL
-                                                                                                    Redirects</span>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                        <% } %>
+      <!-- URL Redirect Management - Super Admin only -->
+      <% if (userRole==='super-admin' ) { %>
+      <li>
+        <a href="/url-redirect/url-redirects">
+          <iconify-icon
+            icon="material-symbols:link"
+            width="24"
+            height="24"
+            class="menu-icon"
+          ></iconify-icon>
+          <span>URL Redirects</span>
+        </a>
+      </li>
+      <% } %>
 
-                                                                                            <!-- Resources & Publications (Blog) - If has blog permission -->
-                                                                                            <% if (typeof userModules
-                                                                                                !=='undefined' &&
-                                                                                                (userRole==='super-admin'
-                                                                                                ||
-                                                                                                userModules.includes('blog')))
-                                                                                                { %>
-                                                                                                <!-- <li>
+      <!-- Resources & Publications (Blog) - If has blog permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('blog'))) { %>
+      <!-- <li>
                                                                                                     <a
                                                                                                         href="/blog/blog">
                                                                                                         <i
@@ -157,107 +169,64 @@
                                                                                                     </a>
 
                                                                                                 </li> -->
-                                                                                                <% } %>
+      <% } %>
 
-                                                                                                    <!-- Subscribed Users - If has subscribers permission -->
-                                                                                                    <% if (typeof
-                                                                                                        userModules
-                                                                                                        !=='undefined'
-                                                                                                        &&
-                                                                                                        (userRole==='super-admin'
-                                                                                                        ||
-                                                                                                        userModules.includes('subscribers')))
-                                                                                                        { %>
-                                                                                                        <!-- <li>
+      <!-- Subscribed Users - If has subscribers permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('subscribers'))) { %>
+      <!-- <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
                     <span>Subscribed Users</span>
                 </a>
             </li> -->
-                                                                                                        <% } %>
+      <% } %>
 
-                                                                                                            <!-- Events Management - If has events permission -->
-                                                                                                            <% if
-                                                                                                                (typeof
-                                                                                                                userModules
-                                                                                                                !=='undefined'
-                                                                                                                &&
-                                                                                                                (userRole==='super-admin'
-                                                                                                                ||
-                                                                                                                userModules.includes('events')))
-                                                                                                                { %>
-                                                                                                                <!-- <li>
+      <!-- Events Management - If has events permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('events'))) { %>
+      <!-- <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
                     <span>Events Management</span>
                 </a>
             </li> -->
-                                                                                                                <% } %>
+      <% } %>
 
-                                                                                                                    <!-- Forms & Enquiries - If has forms permission -->
-                                                                                                                    <% if
-                                                                                                                        (typeof
-                                                                                                                        userModules
-                                                                                                                        !=='undefined'
-                                                                                                                        &&
-                                                                                                                        (userRole==='super-admin'
-                                                                                                                        ||
-                                                                                                                        userModules.includes('forms')))
-                                                                                                                        {
-                                                                                                                        %>
-                                                                                                                        <!-- <li>
+      <!-- Forms & Enquiries - If has forms permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('forms'))) { %>
+      <!-- <li>
                 <a href="javascript:void(0)">
                     <iconify-icon icon="heroicons:document" class="menu-icon"></iconify-icon>
                     <span> Forms & Enquiries</span>
                 </a>
             </li> -->
-                                                                                                                        <% }
-                                                                                                                            %>
+      <% } %>
 
-                                                                                                                            <!-- Reports & Analytics - If has reports permission -->
-                                                                                                                            <% if
-                                                                                                                                (typeof
-                                                                                                                                userModules
-                                                                                                                                !=='undefined'
-                                                                                                                                &&
-                                                                                                                                (userRole==='super-admin'
-                                                                                                                                ||
-                                                                                                                                userModules.includes('reports')))
-                                                                                                                                {
-                                                                                                                                %>
-                                                                                                                                <!-- <li>
+      <!-- Reports & Analytics - If has reports permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('reports'))) { %>
+      <!-- <li>
                 <a href="javascript:void(0)">
                      <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
                     <span>Reports & Analytics</span>
                 </a>
             </li> -->
-                                                                                                                                <% }
-                                                                                                                                    %>
+      <% } %>
 
-                                                                                                                                    <!-- Site Settings - If has settings permission -->
-                                                                                                                                    <% if
-                                                                                                                                        (typeof
-                                                                                                                                        userModules
-                                                                                                                                        !=='undefined'
-                                                                                                                                        &&
-                                                                                                                                        (userRole==='super-admin'
-                                                                                                                                        ||
-                                                                                                                                        userModules.includes('settings')))
-                                                                                                                                        {
-                                                                                                                                        %>
-                                                                                                                                        <!-- <li>
-                                                                                                                                            <a
-                                                                                                                                                href="/settings/company">
-                                                                                                                                                <iconify-icon
-                                                                                                                                                    icon="icon-park-outline:setting-two"
-                                                                                                                                                    class="menu-icon"></iconify-icon>
-                                                                                                                                                <span>Site
-                                                                                                                                                    Url
-                                                                                                                                                    Settings</span>
-                                                                                                                                            </a>
-                                                                                                                                        </li> -->
-                                                                                                                                        <% }
-                                                                                                                                            %>
-        </ul>
-    </div>
+      <!-- Site Settings - If has settings permission -->
+      <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
+      userModules.includes('settings'))) { %>
+      <li>
+        <a href="/settings/site-settings">
+          <iconify-icon
+            icon="icon-park-outline:setting-two"
+            class="menu-icon"></iconify-icon>
+          <span>Site Settings</span>
+        </a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
 </aside>
