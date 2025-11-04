@@ -115,7 +115,10 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 rightImage: section.heroSection?.rightImage || ''
             },
             threeColumnInfo: {
-                ...section.threeColumnInfo,
+                heading: section.threeColumnInfo?.heading || section.customFields?.heading || '',
+                subheading: section.threeColumnInfo?.subheading || section.customFields?.subheading || '',
+                imageOnLeft: section.threeColumnInfo?.imageOnLeft ?? section.customFields?.imageOnLeft ?? false,
+                image: section.threeColumnInfo?.image || section.customFields?.image || '',
                 columns: section.threeColumnInfo?.columns || []
             }
         }));
@@ -165,6 +168,11 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     rightImage: section.heroSection?.rightImage || ''
                 },
                 threeColumnInfo: {
+                    ...section.threeColumnInfo,
+                    heading: section.threeColumnInfo?.heading || '',
+                    subheading: section.threeColumnInfo?.subheading || '',
+                    imageOnLeft: section.threeColumnInfo?.imageOnLeft ?? false,
+                    image: section.threeColumnInfo?.image || '',
                     columns: section.threeColumnInfo?.columns || []
                 }
             })),

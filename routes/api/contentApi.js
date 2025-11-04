@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const { isAuthenticated } = require('../../middleware/auth');
 
 // Get all content
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const { status, page = 1, limit = 10, pageId } = req.query;
         

@@ -275,6 +275,34 @@
         <!-- Three Column Info Fields -->
         <div class="three-column-fields" style="display: none;">
             <div class="mb-3">
+                <label class="form-label">Section Heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 tci-heading" placeholder="Main Heading">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Section Sub-heading:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 tci-subheading" placeholder="Sub-heading">
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input tci-image-left" type="checkbox" id="tci-image-left-\${id}" checked>
+                <label class="form-check-label" for="tci-image-left-\${id}">Image on Left</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-neutral-900">Upload Section Image</label>
+                <div class="upload-image-wrapper">
+                    <div class="uploaded-img-tci d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img-tci__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                            <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                        </button>
+                        <img class="uploaded-img-tci__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                    </div>
+                    <label class="upload-file-tci h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload Image</span>
+                        <input type="file" class="upload-file-tci-input" hidden accept="image/*">
+                    </label>
+                </div>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Info Cards:</label>
                 <div class="column-container">
                     <!-- Columns will be added here -->
@@ -368,6 +396,7 @@
     handleUpload('.upload-file-iwl-input', '.uploaded-img-iwl', '.uploaded-img-iwl__preview', '.uploaded-img-iwl__remove', '.upload-file-iwl', 'section');
     handleUpload('.upload-file-lhrt-input', '.uploaded-img-lhrt', '.uploaded-img-lhrt__preview', '.uploaded-img-lhrt__remove', '.upload-file-lhrt', 'section');
     handleUpload('.upload-file-rhlt-input', '.uploaded-img-rhlt', '.uploaded-img-rhlt__preview', '.uploaded-img-rhlt__remove', '.upload-file-rhlt', 'section');
+    handleUpload('.upload-file-tci-input', '.uploaded-img-tci', '.uploaded-img-tci__preview', '.uploaded-img-tci__remove', '.upload-file-tci', 'section');
 
 
     // Remove Section
@@ -632,6 +661,12 @@
     rightImage: imageSrc
     };
     } else if (sectionType === 'three-column-info') {
+    const heading = $section.find('.tci-heading').val();
+    const subheading = $section.find('.tci-subheading').val();
+    const imageOnLeft = $section.find('.tci-image-left').is(':checked');
+    const $imageInput = $section.find('.upload-file-tci-input');
+    const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
+    
     const columns = [];
     $section.find('.column-item').each(function() {
     const title = $(this).find('.column-title').val();
@@ -648,8 +683,15 @@
     return false;
     }
 
-    sectionData.title = 'Three Column Info';
-    sectionData.threeColumnInfo = { columns };
+    sectionData.title = heading || 'Three Column Info';
+    sectionData.threeColumnInfo = { 
+        heading: heading,
+        subheading: subheading,
+        imageOnLeft: imageOnLeft,
+        image: imageSrc,
+        columns: columns 
+    };
+    sectionData.thumbnail = imageSrc;
     }
 
     // set order based on position in container (1-based)
