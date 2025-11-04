@@ -235,7 +235,7 @@ router.get('/:id/sections', isAuthenticated, async (req, res) => {
         
         // Get all sections for this page
         const sections = await Content.find(query)
-            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards createdAt updatedAt')
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email');
