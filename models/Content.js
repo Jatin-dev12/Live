@@ -109,6 +109,24 @@ const contentSchema = new mongoose.Schema({
             }
         }]
     },
+    // Call Out Cards section
+    callOutCards: {
+        cards: [{
+            heading: {
+                type: String,
+                trim: true,
+                required: true
+            },
+            subheading: {
+                type: String,
+                trim: true
+            },
+            link: {
+                type: String,
+                trim: true
+            }
+        }]
+    },
     customFields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed

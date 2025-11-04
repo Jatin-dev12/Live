@@ -120,6 +120,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 imageOnLeft: section.threeColumnInfo?.imageOnLeft ?? section.customFields?.imageOnLeft ?? false,
                 image: section.threeColumnInfo?.image || section.customFields?.image || '',
                 columns: section.threeColumnInfo?.columns || []
+            },
+            callOutCards:{
+                cards: section.callOutCards?.cards || []
             }
         }));
 
@@ -174,6 +177,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     imageOnLeft: section.threeColumnInfo?.imageOnLeft ?? false,
                     image: section.threeColumnInfo?.image || '',
                     columns: section.threeColumnInfo?.columns || []
+                },
+                callOutCards: {
+                    cards: section.callOutCards?.cards || []
                 }
             })),
             pages: allPages
