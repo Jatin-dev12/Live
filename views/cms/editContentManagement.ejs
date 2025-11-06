@@ -37,6 +37,11 @@
                     <hr class="my-3">
 
                     <!-- Sections Container -->
+
+                    <!-- commented out tyoes -->
+                    <!-- 
+                    in another file
+                     -->
                     <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
@@ -58,12 +63,7 @@
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
                                             >
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
-                                            <option value="image-with-text" <%= section.sectionType === 'image-with-text' ? 'selected' : '' %>>Image with Text</option>
-                                            <option value="image-with-list" <%= section.sectionType === 'image-with-list' ? 'selected' : '' %>>Image with List</option>
-                                            <option value="heading-subheading" <%= section.sectionType === 'heading-subheading' ? 'selected' : '' %>>Heading with Subheading</option>
-                                            <option value="left-heading-image-right-text" <%= section.sectionType === 'left-heading-image-right-text' ? 'selected' : '' %>>Left Heading + Image, Right Text</option>
-                                            <option value="right-heading-image-left-text" <%= section.sectionType === 'right-heading-image-left-text' ? 'selected' : '' %>>Right Heading + Image, Left Text</option>
-                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section (Left Text + Right Image)</option>
+                                            
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info Cards</option>
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Cards</option>
                                         </select>
@@ -229,7 +229,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Info Cards:</label>
+                                                    <label class="form-label">CTA:</label>
                                                     <div class="column-container">
                                                         
                                                         <% (section.threeColumnInfo?.columns ||
@@ -280,7 +280,7 @@
                                                         
 
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add CTA</button>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='call-out-cards' ) { %>
@@ -381,6 +381,16 @@
                     <hr class="my-3">
 
                     <!-- Hidden: Section Block Template -->
+                     <!-- 
+                    // commeneted out types
+                        /*
+                        <option value="image-with-text">Image with Text</option>
+                        <option value="image-with-list">Image with List</option>
+                        <option value="heading-subheading">Heading with Subheading</option>
+                        <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
+                        <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
+                        <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+                        */ -->
                     <div class="d-none">
                         <div id="originalSection">
                             <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="__ID__">
@@ -392,12 +402,7 @@
                                     <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
                                     <select class="form-control border border-neutral-200 radius-8 section-type-select" >
                                         <option value="">-- Please Select Section --</option>
-                                        <option value="image-with-text">Image with Text</option>
-                                        <option value="image-with-list">Image with List</option>
-                                        <option value="heading-subheading">Heading with Subheading</option>
-                                        <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
-                                        <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
-                                        <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+                                        
                                         <option value="three-column-info">Three Column Info Cards</option>
                                         <option value="call-out-cards">Call Out Cards</option>
                                     </select>
@@ -441,7 +446,7 @@
                                     <div class="mb-3"><label class="form-label">Section Sub-heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 tci-subheading" placeholder="Sub-heading"></div>
                                     <div class="form-check mb-3"><input class="form-check-input tci-image-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Section Image</label><div class="upload-image-wrapper"><div class="uploaded-img-tci d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-tci__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-tci__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-tci h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-tci-input" hidden accept="image/*"></label></div></div>
-                                    <div class="mb-3"><label class="form-label">Info Cards:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add Info Card</button></div>
+                                    <div class="mb-3"><label class="form-label">CTA:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add CTA</button></div>
                                 </div>
                                 <div class="call-out-cards-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Call Out Cards:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
