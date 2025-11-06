@@ -137,7 +137,7 @@ router.get('/public/slug/:slug', async (req, res) => {
 });
 
 // Get all pages (authenticated)
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const { status, search, page = 1, limit = 10 } = req.query;
         
@@ -214,7 +214,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 });
 
 // Get all sections for a specific page
-router.get('/:id/sections', isAuthenticated, async (req, res) => {
+router.get('/:id/sections', async (req, res) => {
     try {
         const { status = 'all' } = req.query;
         
