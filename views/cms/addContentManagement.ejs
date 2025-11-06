@@ -61,6 +61,15 @@
     addSection(currentSectionCount);
     });
 
+    // commeneted out types
+    /*
+    <option value="image-with-text">Image with Text</option>
+    <option value="image-with-list">Image with List</option>
+    <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
+    <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
+    <option value="hero-section">Hero Section (Left Text + Right Image)</option>
+    <option value="heading-subheading">Heading with Subheading</option>
+    */
     function addSection(id) {
     const sectionHtml = \`
     <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="\${id}">
@@ -75,12 +84,6 @@
             <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
             <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
                 <option value="">-- Please Select Section --</option>
-                <option value="image-with-text">Image with Text</option>
-                <option value="image-with-list">Image with List</option>
-                <option value="heading-subheading">Heading with Subheading</option>
-                <option value="left-heading-image-right-text">Left Heading + Image, Right Text</option>
-                <option value="right-heading-image-left-text">Right Heading + Image, Left Text</option>
-                <option value="hero-section">Hero Section (Left Text + Right Image)</option>
                 <option value="three-column-info">Three Column Info Cards</option>
                 <option value="call-out-cards">Call Out Cards</option>
             </select>
@@ -304,12 +307,12 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Info Cards:</label>
+                <label class="form-label">CTA:</label>
                 <div class="column-container">
                     <!-- Columns will be added here -->
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">
-                     Add Info Card
+                     Add CTA
                 </button>
             </div>
         </div>
