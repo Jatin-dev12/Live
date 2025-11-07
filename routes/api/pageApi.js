@@ -4,6 +4,29 @@ const Page = require('../../models/Page');
 const Content = require('../../models/Content');
 const { isAuthenticated } = require('../../middleware/auth');
 
+
+router.get('/all-pages/search', async (req, res) => {
+  try {
+    const q = req.query.q || '';
+    if (!q) return res.json([]);
+
+    const pages = await Page.find({
+      $or: [
+        { name: { $regex: q, $options: 'i' } },
+        { slug: { $regex: q, $options: 'i' } }
+      ]
+    })
+    .limit(10)
+    .select('name slug');
+
+    res.json(pages);
+  } catch (err) {
+    console.error('Search error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 // Public API - Get all active pages with content (no authentication required)
 router.get('/public/all', async (req, res) => {
     try {
