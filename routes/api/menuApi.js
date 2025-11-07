@@ -4,25 +4,74 @@ const Menu = require('../../models/Menu');
 const Page = require('../../models/Page');
 const { isAuthenticated } = require('../../middleware/auth');
 
-// Get all menus
+// Get all menus with hierarchical structure (PUBLIC for testing)
 router.get('/',async (req, res) => {
     try {
         const menus = await Menu.find().sort({ createdAt: -1 });
-        res.json({ success: true, menus });
+        
+        console.log('=== ALL MENUS FROM DB ===');
+        menus.forEach(menu => {
+            console.log(`Menu: ${menu.name} (${menu.slug})`);
+            console.log('Raw items:', JSON.stringify(menu.items, null, 2));
+        });
+        console.log('========================');
+        
+        // Transform menus to include hierarchical structure
+        const menusWithHierarchy = menus.map(menu => {
+            const menuObj = menu.toObject();
+            menuObj.items = buildMenuHierarchy(menuObj.items);
+            return menuObj;
+        });
+        
+        res.json({ success: true, menus: menusWithHierarchy });
     } catch (error) {
         console.error('Error fetching menus:', error);
         res.status(500).json({ success: false, message: 'Error fetching menus' });
     }
 });
 
-// Get menu by slug
+// Helper function to build menu hierarchy
+function buildMenuHierarchy(items) {
+    const itemMap = {};
+    const rootItems = [];
+    
+    // Create a map of all items
+    items.forEach(item => {
+        itemMap[item._id.toString()] = { ...item.toObject ? item.toObject() : item, children: [] };
+    });
+    
+    // Build the hierarchy
+    items.forEach(item => {
+        const itemId = item._id.toString();
+        const parentId = item.parentId ? item.parentId.toString() : null;
+        
+        if (parentId && itemMap[parentId]) {
+            itemMap[parentId].children.push(itemMap[itemId]);
+        } else {
+            rootItems.push(itemMap[itemId]);
+        }
+    });
+    
+    return rootItems;
+}
+
+// Get menu by slug with hierarchical structure
 router.get('/:slug', isAuthenticated, async (req, res) => {
     try {
         const menu = await Menu.findOne({ slug: req.params.slug });
         if (!menu) {
             return res.status(404).json({ success: false, message: 'Menu not found' });
         }
-        res.json({ success: true, menu });
+        
+        console.log('Raw menu items from DB:', JSON.stringify(menu.items, null, 2));
+        
+        // Transform menu items to hierarchical structure
+        const menuObj = menu.toObject();
+        menuObj.items = buildMenuHierarchy(menuObj.items);
+        
+        console.log('Hierarchical menu items:', JSON.stringify(menuObj.items, null, 2));
+        
+        res.json({ success: true, menu: menuObj });
     } catch (error) {
         console.error('Error fetching menu:', error);
         res.status(500).json({ success: false, message: 'Error fetching menu' });

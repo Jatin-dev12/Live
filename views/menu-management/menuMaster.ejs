@@ -76,17 +76,49 @@
 <% script=` <script src="/js/menuManagement.js">
     </script>
     <style>
+        .menu-item-wrapper {
+            margin-bottom: 4px;
+        }
+
         .menu-item-row {
             padding: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             border: 1px solid #dee2e6;
             border-radius: 4px;
             background: #fff;
-            cursor: move;
+            transition: all 0.2s;
         }
 
         .menu-item-row:hover {
             background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .menu-item-row[data-level="1"] {
+            background: #f8f9fa;
+            border-left: 3px solid #0d6efd;
+        }
+
+        .menu-item-row[data-level="2"] {
+            background: #e9ecef;
+            border-left: 3px solid #6c757d;
+        }
+
+        .children-container {
+            margin-top: 4px;
+        }
+
+        .drag-handle {
+            cursor: move;
+        }
+
+        .toggle-children-btn {
+            text-decoration: none !important;
+            color: #666;
+        }
+
+        .toggle-children-btn:hover {
+            color: #000;
         }
 
         .form-check-input {
@@ -116,6 +148,20 @@
 
         .swal2-toast .swal2-title {
             font-size: 12px !important;
+        }
+
+        .badge {
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+
+        .btn-sm iconify-icon {
+            font-size: 16px;
+        }
+
+        .swal2-html-container {
+            max-height: 450px;
+            overflow-y: auto;
         }
     </style>
     ` %>
