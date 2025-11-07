@@ -3684,7 +3684,9 @@ html[data-theme=dark] .bg-light-pink {
 .max-w-740-px {
   max-width: 740px;
 }
-
+.callout-item .form-group, .mb-2 {
+  position: relative;
+}
 @media (max-width: 1399px) {
   .max-w-740-px {
     max-width: 500px;
