@@ -109,7 +109,7 @@ const contentSchema = new mongoose.Schema({
             }
         }]
     },
-    // Call Out Cards section
+    // Call Out Section section
     callOutCards: {
         cards: [{
             heading: {

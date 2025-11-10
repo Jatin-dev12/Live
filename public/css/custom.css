@@ -559,3 +559,15 @@ swal-toast-small{
 .autocomplete-list.border.bg-white.position-absolute.w-100.radius-8.shadow-sm.mt-1 {
     width: 96% !important;
 }
+
+button.swal2-confirm.swal2-styled {
+    background: #ce1126;
+}
+
+
+.set-sub{
+        font-size: 12px !important;
+    padding: 6px 8px !important;
+    font-weight: 500 !important;
+    background: #ce1126 !important;
+}

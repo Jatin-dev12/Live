@@ -56,9 +56,19 @@ async function loadMenu() {
 
         if (data.success && data.menu) {
             currentMenuSlug = menuSlug;
-            console.log('Raw menu data from API:', data.menu.items);
-            menuItems = flattenMenuItems(data.menu.items || []);
-            console.log('Flattened menu items:', menuItems);
+            
+            // Use the flat items directly from API (already normalized with string IDs)
+            menuItems = data.menu.flatItems || [];
+            
+            console.log('=== Loaded Menu Items ===');
+            console.log('Total items:', menuItems.length);
+            menuItems.forEach((item, index) => {
+                console.log(`[${index}] ${item.title}`);
+                console.log(`    _id: "${item._id}"`);
+                console.log(`    parentId: "${item.parentId || 'null'}"`);
+            });
+            console.log('========================');
+            
             const menuName = menuSlug === 'header-menu' ? 'Header Menu' : 'Footer Menu';
             document.getElementById('currentMenuName').textContent = `${menuName}`;
             document.getElementById('menuStructurePanel').style.display = 'block';
@@ -76,24 +86,44 @@ async function loadMenu() {
 }
 
 // Flatten hierarchical menu structure for editing
+// When API returns hierarchical data (with submenus nested), we need to flatten it
+// but ensure we don't duplicate items and preserve the correct parentId
 function flattenMenuItems(items, parentId = null) {
     let flattened = [];
+    
     items.forEach(item => {
+        // Normalize IDs to strings
+        const itemId = item._id ? String(item._id) : item.title;
+        
+        // CRITICAL FIX: Use the item's stored parentId from database if it exists
+        // Only use the passed parentId if the item doesn't have one stored
+        // This preserves the parent-child relationships from the database
+        const storedParentId = item.parentId ? String(item.parentId) : null;
+        const actualParentId = storedParentId || (parentId ? String(parentId) : null);
+        
+        console.log(`Flatten: ${item.title} - stored parentId: ${storedParentId}, passed parentId: ${parentId}, using: ${actualParentId}`);
+        
         const flatItem = {
-            _id: item._id || item.title, // Use _id if available, fallback to title
+            _id: itemId,
             title: item.title,
             url: item.url,
             target: item.target || '_self',
             order: item.order || 0,
             isActive: item.isActive !== false,
-            parentId: item.parentId || parentId // Preserve existing parentId or use passed one
+            parentId: actualParentId
         };
+        
         flattened.push(flatItem);
         
-        if (item.children && item.children.length > 0) {
-            flattened = flattened.concat(flattenMenuItems(item.children, item._id || item.title));
+        // Recursively flatten submenus
+        const subItems = item.submenus || item.children || [];
+        if (subItems.length > 0) {
+            console.log(`  -> ${item.title} has ${subItems.length} submenus, recursing...`);
+            // Pass the current item's _id as parentId for its children
+            flattened = flattened.concat(flattenMenuItems(subItems, itemId));
         }
     });
+    
     return flattened;
 }
 
@@ -201,12 +231,6 @@ function renderMenuItems() {
         });
     });
 
-    document.querySelectorAll('.toggle-children-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            toggleChildren(this.dataset.id);
-        });
-    });
-
     makeItemsDraggable();
     updateAvailablePages();
 }
@@ -215,77 +239,93 @@ function buildHierarchy(items) {
     const itemMap = {};
     const rootItems = [];
     
-    // First pass: create map of all items using MongoDB _id
+    console.log('=== Building Hierarchy ===');
+    
+    // First pass: create map of all items
     items.forEach(item => {
-        const itemId = item._id ? item._id.toString() : item.title;
-        itemMap[itemId] = { ...item, children: [] };
+        const itemId = item._id ? String(item._id) : item.title;
+        itemMap[itemId] = { ...item, _id: itemId, submenus: [] };
+    });
+    
+    console.log('Item Map:');
+    Object.keys(itemMap).forEach(id => {
+        console.log(`  "${id}" -> ${itemMap[id].title}`);
     });
     
     // Second pass: build parent-child relationships
     items.forEach(item => {
-        const itemId = item._id ? item._id.toString() : item.title;
-        const parentId = item.parentId ? item.parentId.toString() : null;
+        const itemId = item._id ? String(item._id) : item.title;
+        const parentId = item.parentId ? String(item.parentId) : null;
         
         if (parentId && itemMap[parentId]) {
-            itemMap[parentId].children.push(itemMap[itemId]);
+            // Add as submenu to parent
+            console.log(`✓ ${item.title} -> submenu of ${itemMap[parentId].title}`);
+            itemMap[parentId].submenus.push(itemMap[itemId]);
         } else {
+            // Add as root item
+            if (parentId) {
+                console.log(`✗ ${item.title} -> parent "${parentId}" NOT FOUND! Adding as root.`);
+            }
             rootItems.push(itemMap[itemId]);
         }
     });
+    
+    console.log('\n=== Final Hierarchy ===');
+    rootItems.forEach(item => {
+        console.log(`${item.title} (${item.submenus.length} submenus)`);
+        item.submenus.forEach(sub => {
+            console.log(`  └─ ${sub.title}`);
+        });
+    });
+    console.log('=======================\n');
     
     return rootItems;
 }
 
 function renderHierarchy(items, level = 0) {
-    return items.map(item => {
+    let html = '';
+    
+    items.forEach(item => {
         const itemId = item._id || item.title;
-        const hasChildren = item.children && item.children.length > 0;
+        const hasSubmenus = item.submenus && item.submenus.length > 0;
         const indent = level * 30;
         
-        return `
-            <div class="menu-item-wrapper" data-id="${itemId}">
-                <div class="menu-item-row" data-id="${itemId}" data-level="${level}" style="margin-left: ${indent}px;">
-                    <div class="d-flex align-items-center justify-content-between">
+        // WordPress-style visual indicators
+        const levelIndicator = level > 0 ? '— '.repeat(level) : '';
+        
+        // Render the parent item
+        html += `
+            <div class="menu-item-wrapper" data-id="${itemId}" data-level="${level}">
+                <div class="menu-item-row" data-id="${itemId}" data-level="${level}" style="padding-left: ${indent}px; border-left: ${level > 0 ? '3px solid #ce1126' : 'none'}; margin-left: ${level > 0 ? '20px' : '0'};">
+                    <div class="d-flex align-items-center justify-content-between  px-3" style="background: ${level > 0 ? '#f8f9fa' : 'white'}; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 4px; padding-top:8px; padding-bottom:8px;">
                         <div class="d-flex align-items-center gap-2 flex-grow-1">
-                            <iconify-icon icon="material-symbols:drag-indicator" class="drag-handle" style="cursor: move;"></iconify-icon>
-                            ${level > 0 ? '<iconify-icon icon="material-symbols:subdirectory-arrow-right" style="color: #999;"></iconify-icon>' : ''}
-                            <span class="fw-${level === 0 ? 'semibold' : 'normal'}">${escapeHtml(item.title)}</span>
-                            ${hasChildren ? `
-                                <button class="btn btn-sm btn-link p-0 toggle-children-btn" data-id="${itemId}" title="Toggle Children">
-                                    <iconify-icon icon="material-symbols:expand-more" class="toggle-icon-${itemId}"></iconify-icon>
-                                </button>
-                                <span class="badge bg-secondary">${item.children.length}</span>
+                            <iconify-icon icon="material-symbols:drag-indicator" class="drag-handle" style="cursor: move; color: #6c757d;"></iconify-icon>
+                           
+                            <span class="fw-${level === 0 ? 'bold' : 'normal'}" style="color: ${level === 0 ? '#212529' : '#495057'};">${escapeHtml(item.title)}</span>
+                            ${hasSubmenus ? `
+                                <span class="badge set-sub text-white">${item.submenus.length} submenu${item.submenus.length > 1 ? 's' : ''}</span>
                             ` : ''}
                         </div>
                         <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-outline-primary add-submenu-btn" data-id="${itemId}" title="Add Submenu">
-                                <iconify-icon icon="material-symbols:add"></iconify-icon>
+                            <button class=" d-flex align-items-center gap-1  btn btn-sm btn-outline-primary add-submenu-btn" data-id="${itemId}" title="Add Submenu">
+                                <iconify-icon icon="material-symbols:add"></iconify-icon> Sub
                             </button>
-                            <button class="btn btn-sm btn-outline-danger remove-item-btn" data-id="${itemId}">
+                            <button class="btn btn-sm btn-outline-danger remove-item-btn" data-id="${itemId}" title="Remove">
                                 <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                             </button>
                         </div>
                     </div>
                 </div>
-                ${hasChildren ? `<div class="children-container" data-parent="${itemId}" style="display: block;">${renderHierarchy(item.children, level + 1)}</div>` : ''}
             </div>
         `;
-    }).join('');
-}
-
-function toggleChildren(itemId) {
-    const container = document.querySelector(`.children-container[data-parent="${itemId}"]`);
-    const icon = document.querySelector(`.toggle-icon-${itemId}`);
-    
-    if (container) {
-        if (container.style.display === 'none') {
-            container.style.display = 'block';
-            icon.setAttribute('icon', 'material-symbols:expand-more');
-        } else {
-            container.style.display = 'none';
-            icon.setAttribute('icon', 'material-symbols:chevron-right');
+        
+        // Render submenus directly below the parent (inline)
+        if (hasSubmenus) {
+            html += renderHierarchy(item.submenus, level + 1);
         }
-    }
+    });
+    
+    return html;
 }
 
 function showSubmenuPageList(parentId) {
@@ -320,8 +360,8 @@ function showSubmenuPageList(parentId) {
                     margin-bottom: -2px;
                 }
                 .submenu-modal-tab.active {
-                    color: #0d6efd;
-                    border-bottom-color: #0d6efd;
+                    color: #ce1126;
+                    border-bottom-color: #ce1126;
                 }
                 .submenu-modal-content {
                     display: none;
@@ -349,7 +389,7 @@ function showSubmenuPageList(parentId) {
                 }
                 .page-item:hover {
                     background: #f8f9fa;
-                    border-color: #0d6efd;
+                    border-color: #ce1126;
                 }
                 .page-item input[type="checkbox"] {
                     width: 18px;
@@ -359,7 +399,7 @@ function showSubmenuPageList(parentId) {
                     margin: 0;
                     margin-right: 12px;
                     cursor: pointer;
-                    accent-color: #0d6efd;
+                    accent-color: #ce1126;
                     -webkit-appearance: checkbox;
                     appearance: checkbox;
                 }
@@ -394,7 +434,7 @@ function showSubmenuPageList(parentId) {
                 .form-group input:focus,
                 .form-group select:focus {
                     outline: none;
-                    border-color: #0d6efd;
+                    border-color: #ce1126;
                 }
                 .select-all-btn {
                     background: #f0f0f0;
@@ -408,6 +448,7 @@ function showSubmenuPageList(parentId) {
                 .select-all-btn:hover {
                     background: #e0e0e0;
                 }
+         
             </style>
             
             <div class="submenu-modal-tabs">
@@ -416,7 +457,7 @@ function showSubmenuPageList(parentId) {
             </div>
             
             <div id="pages-content" class="submenu-modal-content active">
-                <button class="select-all-btn" id="selectAllBtn">Select All</button>
+               
                 <div class="page-list">
                     ${pageListHtml}
                 </div>
@@ -466,7 +507,7 @@ function showSubmenuPageList(parentId) {
                 document.querySelectorAll('.submenu-page-checkbox').forEach(cb => {
                     cb.checked = selectAllState;
                 });
-                this.textContent = selectAllState ? 'Deselect All' : 'Select All';
+                // this.textContent = selectAllState ? 'Deselect All' : 'Select All';
             });
         },
         preConfirm: () => {
@@ -514,20 +555,27 @@ function showSubmenuPageList(parentId) {
     }).then(async (result) => {
         if (result.isConfirmed && result.value) {
             // Find the parent item to get its MongoDB _id
-            const parentItem = menuItems.find(item => (item._id && item._id.toString() === parentId) || item.title === parentId);
-            const actualParentId = parentItem && parentItem._id ? parentItem._id.toString() : parentId;
+            console.log('=== Adding Submenu ===');
+            console.log('Looking for parent with ID:', parentId);
+            console.log('Available items:', menuItems.map(i => `${i.title} (${i._id})`));
             
-            console.log('Adding submenu with parentId:', actualParentId);
+            const parentItem = menuItems.find(item => (item._id && item._id.toString() === parentId) || item.title === parentId);
+            console.log('Found parent item:', parentItem ? parentItem.title : 'NOT FOUND');
+            
+            const actualParentId = parentItem && parentItem._id ? parentItem._id.toString() : parentId;
+            console.log('Using parentId:', actualParentId);
             
             result.value.items.forEach(item => {
-                menuItems.push({
+                const newItem = {
                     title: item.title,
                     url: item.url,
                     target: item.target,
                     order: menuItems.length,
                     isActive: true,
                     parentId: actualParentId
-                });
+                };
+                console.log('Adding new submenu item:', newItem);
+                menuItems.push(newItem);
             });
             
             const saved = await saveMenu(true);
@@ -673,14 +721,24 @@ async function saveMenu(showNotif = false) {
         }
 
         // Clean up items before saving
-        const cleanedItems = menuItems.map(item => ({
-            title: item.title,
-            url: item.url,
-            target: item.target || '_self',
-            order: item.order || 0,
-            isActive: item.isActive !== false,
-            parentId: item.parentId || null
-        }));
+        // IMPORTANT: Include _id to preserve MongoDB IDs and maintain parentId relationships
+        const cleanedItems = menuItems.map(item => {
+            const cleanItem = {
+                title: item.title,
+                url: item.url,
+                target: item.target || '_self',
+                order: item.order || 0,
+                isActive: item.isActive !== false,
+                parentId: item.parentId || null
+            };
+            
+            // Preserve _id if it exists (to maintain parent-child relationships)
+            if (item._id) {
+                cleanItem._id = item._id;
+            }
+            
+            return cleanItem;
+        });
 
         console.log('=== SAVING MENU ===');
         console.log('Cleaned items being sent to API:', JSON.stringify(cleanedItems, null, 2));
