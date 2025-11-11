@@ -79,11 +79,27 @@
     height: 100vh;
     overflow-y: auto;
     margin-top: 20px;
-    padding-bottom: 80px !important;
+    padding-bottom: 120px !important;
 }
 
 main.dashboard-main {
     overflow: hidden;
+}
+
+/* Fix for edit content management footer */
+#editContentForm {
+    padding-bottom: 20px;
+}
+
+#editContentForm > .d-flex.align-items-center.justify-content-center.gap-3 {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* Hide footer on edit content management page */
+#editContentForm ~ footer.d-footer,
+body:has(#editContentForm) footer.d-footer {
+    display: none !important;
 }
 
 /* 13 oct  */
@@ -532,4 +548,26 @@ swal-toast-small{
 .fade {
 
     background: #00000070;
+}
+
+.autocomplete-item.p-2.text-sm.cursor-pointer.hover\:bg-neutral-100 {
+    padding: 10px !important;
+    font-size: 14px !important;
+    color: black;
+
+}
+.autocomplete-list.border.bg-white.position-absolute.w-100.radius-8.shadow-sm.mt-1 {
+    width: 96% !important;
+}
+
+button.swal2-confirm.swal2-styled {
+    background: #ce1126;
+}
+
+
+.set-sub{
+        font-size: 12px !important;
+    padding: 6px 8px !important;
+    font-weight: 500 !important;
+    background: #ce1126 !important;
 }

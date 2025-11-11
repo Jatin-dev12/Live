@@ -70,7 +70,7 @@
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
                                             
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Three Column Info Cards</option>
-                                            <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Cards</option>
+                                            <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
                                         </select>
                                     </div>
 
@@ -291,7 +291,7 @@
                                         <% } else if (section.sectionType==='call-out-cards' ) { %>
                                             <div class="call-out-cards-fields active">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Call Out Cards:</label>
+                                                    <label class="form-label">Call Out Section:</label>
                                                     <!-- Debug: <%= JSON.stringify(section.callOutCards) %> -->
                                                     <div class="callout-container">
                                                         <% 
@@ -409,7 +409,7 @@
                                         <option value="">-- Please Select Section --</option>
                                         
                                         <option value="three-column-info">Three Column Info Cards</option>
-                                        <option value="call-out-cards">Call Out Cards</option>
+                                        <option value="call-out-cards">Call Out Section</option>
                                     </select>
                                 </div>
                                 <div class="image-with-text-fields" style="display: none;">
@@ -454,7 +454,7 @@
                                     <div class="mb-3"><label class="form-label">CTA:</label><div class="column-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add CTA</button></div>
                                 </div>
                                 <div class="call-out-cards-fields" style="display: none;">
-                                    <div class="mb-3"><label class="form-label">Call Out Cards:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
+                                    <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
                                 </div>
                             </div>
                         </div>
@@ -717,7 +717,7 @@
                 
                 // Max 6 cards
                 if (calloutCount >= 6) {
-                    showToast('Maximum 6 call out cards allowed', 'warning');
+                    showToast('Maximum 6 Call Out Section allowed', 'warning');
                     return;
                 }
                 
@@ -933,7 +933,7 @@
                     }
                     
                     if (cards.length > 3) {
-                        showToast('Maximum 3 call out cards allowed', 'warning');
+                        showToast('Maximum 3 Call Out Section allowed', 'warning');
                         isValid = false;
                         return false;
                     }
@@ -941,12 +941,12 @@
                     // Check if all cards have headings
                     const invalidCard = cards.find(card => !card.heading);
                     if (invalidCard) {
-                        showToast('All call out cards must have a heading', 'warning');
+                        showToast('All Call Out Section must have a heading', 'warning');
                         isValid = false;
                         return false;
                     }
                     
-                    sectionData.title = cards[0].heading || "Call Out Cards";
+                    sectionData.title = cards[0].heading || "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
                 }
 

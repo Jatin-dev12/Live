@@ -84,8 +84,8 @@
                 <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
                 <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
                     <option value="">-- Please Select Section --</option>
-                    <option value="three-column-info">Heading With buttons</option>
-                    <option value="call-out-cards">Card Carousel with button</option>
+                    <option value="three-column-info">Header Section</option>
+                    <option value="call-out-cards">Call Out Section</option>
                 </select>
             </div>
 
@@ -315,10 +315,10 @@
                 </div>
             </div>
 
-            <!-- Call Out Cards Fields -->
+            <!-- Call Out Section Fields -->
             <div class="call-out-cards-fields" style="display: none;">
                 <div class="mb-3">
-                    <label class="form-label">Call Out Cards:</label>
+                    <label class="form-label">Call Out Section:</label>
                     <div class="callout-container">
                         <!-- Cards will be added here -->
                     </div>
@@ -583,7 +583,7 @@
         
         // Max 6 cards
         if (calloutCount >= 6) {
-            showToast('Maximum 6 call out cards allowed', 'warning');
+            showToast('Maximum 6 Call Out Section allowed', 'warning');
             return;
         }
     
@@ -829,11 +829,11 @@
         }
 
         if (cards.length > 6) {
-            showToast('Maximum 6 call out cards allowed', 'warning');
+            showToast('Maximum 6 Call Out Section allowed', 'warning');
             return false;
         }
 
-        sectionData.title = cards[0].heading || 'Call Out Cards';
+        sectionData.title = cards[0].heading || 'Call Out Section';
             sectionData.callOutCards = { cards: cards };
         }
 

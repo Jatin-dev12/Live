@@ -9,18 +9,17 @@ router.get('/',async (req, res) => {
     try {
         const menus = await Menu.find().sort({ createdAt: -1 });
         
-        console.log('=== ALL MENUS FROM DB ===');
-        menus.forEach(menu => {
-            console.log(`Menu: ${menu.name} (${menu.slug})`);
-            console.log('Raw items:', JSON.stringify(menu.items, null, 2));
-        });
-        console.log('========================');
-        
-        // Transform menus to include hierarchical structure
+        // Transform menus to include hierarchical structure with submenu names
         const menusWithHierarchy = menus.map(menu => {
             const menuObj = menu.toObject();
-            menuObj.items = buildMenuHierarchy(menuObj.items);
-            return menuObj;
+            const hierarchicalItems = buildMenuHierarchy(menuObj.items);
+            
+            return {
+                ...menuObj,
+                items: hierarchicalItems,
+                // Add a formatted structure for easy display
+                structure: formatMenuStructure(hierarchicalItems)
+            };
         });
         
         res.json({ success: true, menus: menusWithHierarchy });
@@ -35,9 +34,20 @@ function buildMenuHierarchy(items) {
     const itemMap = {};
     const rootItems = [];
     
-    // Create a map of all items
+    // Create a map of all items with normalized IDs
     items.forEach(item => {
-        itemMap[item._id.toString()] = { ...item.toObject ? item.toObject() : item, children: [] };
+        const itemObj = item.toObject ? item.toObject() : item;
+        const itemId = item._id.toString();
+        
+        // Normalize the item object - ensure _id and parentId are strings
+        const normalizedItem = {
+            ...itemObj,
+            _id: itemId,
+            parentId: itemObj.parentId ? itemObj.parentId.toString() : null,
+            submenus: []
+        };
+        
+        itemMap[itemId] = normalizedItem;
     });
     
     // Build the hierarchy
@@ -46,13 +56,36 @@ function buildMenuHierarchy(items) {
         const parentId = item.parentId ? item.parentId.toString() : null;
         
         if (parentId && itemMap[parentId]) {
-            itemMap[parentId].children.push(itemMap[itemId]);
+            // Add to parent's submenus
+            itemMap[parentId].submenus.push(itemMap[itemId]);
         } else {
+            // Root level item
             rootItems.push(itemMap[itemId]);
         }
     });
     
     return rootItems;
+}
+
+// Helper function to format menu structure for display
+function formatMenuStructure(items, level = 0) {
+    let structure = [];
+    
+    items.forEach(item => {
+        structure.push({
+            title: item.title,
+            url: item.url,
+            level: level,
+            hasSubmenus: item.submenus && item.submenus.length > 0,
+            submenuCount: item.submenus ? item.submenus.length : 0
+        });
+        
+        if (item.submenus && item.submenus.length > 0) {
+            structure = structure.concat(formatMenuStructure(item.submenus, level + 1));
+        }
+    });
+    
+    return structure;
 }
 
 // Get menu by slug with hierarchical structure
@@ -63,15 +96,37 @@ router.get('/:slug', isAuthenticated, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Menu not found' });
         }
         
-        console.log('Raw menu items from DB:', JSON.stringify(menu.items, null, 2));
-        
-        // Transform menu items to hierarchical structure
+        // Get menu object
         const menuObj = menu.toObject();
-        menuObj.items = buildMenuHierarchy(menuObj.items);
         
-        console.log('Hierarchical menu items:', JSON.stringify(menuObj.items, null, 2));
+        console.log('=== API: Creating flatItems ===');
+        console.log('Raw items from DB:', menuObj.items.length);
         
-        res.json({ success: true, menu: menuObj });
+        // Return BOTH flat and hierarchical structures
+        // Flat structure for editing, hierarchical for display
+        const flatItems = menuObj.items.map((item, index) => {
+            const flatItem = {
+                ...item,
+                _id: item._id.toString(),
+                parentId: item.parentId ? item.parentId.toString() : null
+            };
+            console.log(`[${index}] ${item.title}: _id="${flatItem._id}", parentId="${flatItem.parentId}"`);
+            return flatItem;
+        });
+        
+        console.log('===============================');
+        
+        const hierarchicalItems = buildMenuHierarchy(menuObj.items);
+        
+        res.json({ 
+            success: true, 
+            menu: {
+                ...menuObj,
+                items: hierarchicalItems, // Hierarchical for display
+                flatItems: flatItems, // Flat for editing
+                structure: formatMenuStructure(hierarchicalItems)
+            }
+        });
     } catch (error) {
         console.error('Error fetching menu:', error);
         res.status(500).json({ success: false, message: 'Error fetching menu' });
