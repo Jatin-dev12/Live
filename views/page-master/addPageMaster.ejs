@@ -27,15 +27,15 @@
                                 <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page
                                     Name <span class="text-danger-600">*</span></label>
                                 <input type="text" class="form-control radius-8" id="name" name="name"
-                                    placeholder="Enter Page Name" maxlength="20" pattern="[A-Za-z\s]+"
-                                    title="Only letters and spaces allowed, max 20 characters" required>
-                                <small class="text-muted">Only letters allowed (max 20 characters)</small>
+                                    placeholder="Enter Page Name" maxlength="30" pattern="[A-Za-z\s]+"
+                                    title="Only letters and spaces allowed, max 30 characters" required>
+                                <small class="text-muted">Only letters allowed (max 30 characters)</small>
                             </div>
                             <div class="mb-20">
                                 <label for="path"
                                     class="form-label fw-semibold text-primary-light text-sm mb-8">Path</label>
                                 <input type="text" class="form-control radius-8" id="path" name="path"
-                                    placeholder="e.g., /about or /services">
+                                    placeholder="e.g., /about or /services" readonly>
                                 <small class="text-muted">Path will be auto-generated from page name if left
                                     empty</small>
                             </div>
@@ -76,69 +76,104 @@
 <% script=` <script>
     $(document).ready(function() {
     // Validate page name input - only letters and spaces, max 20 characters
-    $('#name').on('input', function() {
-    let value = $(this).val();
-    // Remove any numbers and special characters except spaces
-    value = value.replace(/[^A-Za-z\s]/g, '');
-    // Limit to 20 characters
-    if (value.length > 20) {
-    value = value.substring(0, 20);
-    }
-    $(this).val(value);
+    /* $('#name').on('input', function() {
+        let value = $(this).val();
+        // Remove any numbers and special characters except spaces
+        value = value.replace(/[^A-Za-z\s]/g, '');
+        // Limit to 20 characters
+        if (value.length > 20) {
+        value = value.substring(0, 20);
+        }
+        $(this).val(value);
 
-    // Auto-generate path from page name
-    const slug = value.toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-    const path = slug === 'home' ? '/' : '/' + slug;
-    $('#path').val(path);
+        // Auto-generate path from page name
+        const slug = value.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+        const path = slug === 'home' ? '/' : '/' + slug;
+        $('#path').val(path);
+    }); */
+    $('#name').on('input', function() {
+        let value = $(this).val();
+
+        // 1. FILTER INPUT: Allow ONLY letters, numbers, and standard spaces.
+        // The previous fix ensures we allow standard spaces:
+        const cleanedValue = value.replace(/[^A-Za-z0-9\s ]/g, '');
+
+        // Update the input field only if cleaning occurred
+        if (value !== cleanedValue) {
+            $(this).val(cleanedValue);
+            value = cleanedValue; 
+        }
+        
+        // 2. ENFORCE MAX LENGTH (30 characters)
+        if (value.length > 30) {
+            value = value.substring(0, 30);
+            if ($(this).val().length > 30) {
+                $(this).val(value);
+            }
+        }
+
+        // 3. AUTO-GENERATE ROBUST SLUG/PATH
+        const slug = value.toLowerCase()
+        // 1. Replace ALL non-alphanumeric characters (including spaces and symbols) 
+        //    with a single hyphen. This is the most reliable way to create a slug.
+        .replace(/[^a-z0-9]+/g, '-') 
+        // 2. Remove any leading or trailing hyphens
+        .replace(/^-+|-+$/g, ''); 
+
+        // Determine the final path
+        // If the slug is empty, set path to '', otherwise prepend '/'
+        const path = slug === '' ? '' : (slug === 'home' ? '/' : '/' + slug);
+
+        $('#path').val(path);
     });
 
     // Handle form submission
     $('#addPageForm').on('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const formData = {
-    name: $('#name').val(),
-    path: $('#path').val() || undefined,
-    status: $('#status').val(),
-    metaTitle: $('#metaTitle').val(),
-    metaDescription: $('#metaDescription').val()
-    };
+        const formData = {
+            name: $('#name').val(),
+            path: $('#path').val() || undefined,
+            status: $('#status').val(),
+            metaTitle: $('#metaTitle').val(),
+            metaDescription: $('#metaDescription').val()
+        };
 
-    $.ajax({
-    url: '/api/pages',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(formData),
-    success: function(response) {
-    if (response.success) {
-    showToast('Page created successfully!', 'success');
-    setTimeout(function() {
-    window.location.href = '/page-master/web-page-master';
-    }, 1000);
-    } else {
-    showToast('Error: ' + response.message, 'error');
-    }
-    },
-    error: function(xhr) {
-    console.error('Full error:', xhr);
-    let errorMessage = 'Unknown error';
+        $.ajax({
+            url: '/api/pages',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Page created successfully!', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/page-master/web-page-master';
+                    }, 1000);
+                } else {
+                    showToast('Error: ' + response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                console.error('Full error:', xhr);
+                let errorMessage = 'Unknown error';
 
-    if (xhr.responseJSON) {
-    errorMessage = xhr.responseJSON.message || xhr.responseJSON.error || 'Unknown error';
-    } else if (xhr.responseText) {
-    try {
-    const errorData = JSON.parse(xhr.responseText);
-    errorMessage = errorData.message || errorData.error || 'Unknown error';
-    } catch (e) {
-    errorMessage = xhr.responseText;
-    }
-    }
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.message || xhr.responseJSON.error || 'Unknown error';
+                } else if (xhr.responseText) {
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        errorMessage = errorData.message || errorData.error || 'Unknown error';
+                    } catch (e) {
+                        errorMessage = xhr.responseText;
+                    }
+                }
 
-    showToast('Error creating page: ' + errorMessage, 'error');
-    }
-    });
+                showToast('Error creating page: ' + errorMessage, 'error');
+            }
+        });
     });
     });
     </script>

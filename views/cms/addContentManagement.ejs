@@ -793,9 +793,9 @@
                     const description = $(this).find('.column-description').val();
                     const buttonText = $(this).find('.column-btn-text').val();
                     const buttonLink = $(this).find('.column-btn-link').val();
-                    if (title && description) {
+                    // if (title && description) {
                         columns.push({ title, description, buttonText, buttonLink });
-                    }
+                    // }
                 });
 
                 if (columns.length === 0) {
