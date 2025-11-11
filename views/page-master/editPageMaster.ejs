@@ -13,7 +13,7 @@
                             </div>
                             <div class="mb-20">
                                 <label for="path" class="form-label fw-semibold text-primary-light text-sm mb-8">Path <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="path" name="path" value="<%= page.path %>" placeholder="e.g., /about or /services" required>
+                                <input type="text" class="form-control radius-8" id="path" name="path" value="<%= page.path %>" placeholder="e.g., /about or /services" required readonly>
                             </div>
                             <div class="mb-20">
                                 <label for="status" class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
@@ -49,6 +49,27 @@
 <% script = `
 <script>
     $(document).ready(function() {
+        $('#name').on('input', function() {
+            let value = $(this).val();
+
+            // 1. FILTER INPUT: Allow ONLY letters, numbers, and standard spaces.
+            // The previous fix ensures we allow standard spaces:
+            const cleanedValue = value.replace(/[^A-Za-z0-9\s ]/g, '');
+
+            // Update the input field only if cleaning occurred
+            if (value !== cleanedValue) {
+                $(this).val(cleanedValue);
+                value = cleanedValue; 
+            }
+            
+            // 2. ENFORCE MAX LENGTH (30 characters)
+            if (value.length > 30) {
+                value = value.substring(0, 30);
+                if ($(this).val().length > 30) {
+                    $(this).val(value);
+                }
+            }
+        });
         // Handle form submission
         $('#editPageForm').on('submit', function(e) {
             e.preventDefault();

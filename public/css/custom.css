@@ -138,6 +138,9 @@ body:has(#editContentForm) footer.d-footer {
 .pagination {
     display: none !important;
 }
+div#menuStructurePanel .d-flex.align-items-center.justify-content-between.px-3 {
+    text-transform: capitalize;
+}
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;
