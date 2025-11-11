@@ -181,8 +181,8 @@ router.get('/', async (req, res) => {
         
         const pages = await Page.find(query)
             .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(parseInt(limit))
+            // .skip(skip)
+            // .limit(parseInt(limit))
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email');
         

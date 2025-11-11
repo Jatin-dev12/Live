@@ -308,7 +308,7 @@ function renderHierarchy(items, level = 0) {
                         </div>
                         <div class="d-flex gap-1">
                             <button class=" d-flex align-items-center gap-1  btn btn-sm btn-outline-primary add-submenu-btn" data-id="${itemId}" title="Add Submenu">
-                                <iconify-icon icon="material-symbols:add"></iconify-icon> Sub
+                                <iconify-icon icon="material-symbols:add"></iconify-icon> Sub Menu
                             </button>
                             <button class="btn btn-sm btn-outline-danger remove-item-btn" data-id="${itemId}" title="Remove">
                                 <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
