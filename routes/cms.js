@@ -135,8 +135,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
         
         // Prepare response data with all necessary fields
         const responseData = {
-            title: "Edit Content Management",
-            subTitle: "Edit Content Management",
+            title: "Manage Content",
+            subTitle: "Manage Content",
             page: page,
             content: firstSection,
             allSections: processedSections.map(section => ({

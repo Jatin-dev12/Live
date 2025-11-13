@@ -21,9 +21,9 @@
                                 <select class="form-control radius-8" id="template" name="template">
                                     <!-- <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option> -->
                                     <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
-                                    <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
+                                    <!-- <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
-                                    <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option>
+                                    <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option> -->
                                 </select>
                                 <small class="text-muted">Changing template will replace all existing sections</small>
                             </div>
@@ -103,19 +103,26 @@
                 description: 'This template includes:<br>• Hero section (heading + subheading)<br>• 3 Callout Cards (heading, paragraph, button text, button link)',
                 image: '/images/templates/home-template-preview.svg'
             },
-            about: {
-                description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
-                image: '/images/templates/about-template-preview.svg'
-            },
-            legislation: {
-                description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
-                image: '/images/templates/legislation-template-preview.svg'
-            },
-            membership: {
-                description: 'This template includes:<br>• Hero section (heading + subheading)',
-                image: '/images/templates/membership-template-preview.svg'
-            }
+            // about: {
+            //     description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
+            //     image: '/images/templates/about-template-preview.svg'
+            // },
+            // legislation: {
+            //     description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
+            //     image: '/images/templates/legislation-template-preview.svg'
+            // },
+            // membership: {
+            //     description: 'This template includes:<br>• Hero section (heading + subheading)',
+            //     image: '/images/templates/membership-template-preview.svg'
+            // }
         };
+        const $defaultPreview = $('#templatePreview');
+        const $defaultDescription = $('#templateDescription');
+        const $defaultImage = $('#templateImage');
+        $defaultDescription.html(templateData["home"].description);
+        $defaultImage.attr('src', templateData["home"].image);
+        $defaultImage.show();
+        $defaultPreview.show();
 
         const originalTemplate = $('#template').val();
 
