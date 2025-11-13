@@ -53,7 +53,7 @@
       <!-- Content Management - If has content permission -->
       <% if (typeof userModules !=='undefined' && (userRole==='super-admin' ||
       userModules.includes('content'))) { %>
-      <li>
+      <!-- <li>
         <a href="/cms/content-management">
           <iconify-icon
             icon="streamline-ultimate:content-paper-edit"
@@ -63,7 +63,7 @@
           ></iconify-icon>
           <span>Content Management</span>
         </a>
-      </li>
+      </li> -->
       <% } %>
 
       <!-- Menu Management - If has menu permission -->

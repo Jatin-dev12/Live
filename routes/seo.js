@@ -28,7 +28,8 @@ router.get('/seo-management', isAuthenticated, async (req, res) => {
 router.get('/add-seo-content', isAuthenticated, async (req, res) => {
     try {
         // Get pages that don't have SEO yet
-        const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
+        // const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
+        const allPages = await Page.find({ status: { $in: ['active', 'inactive'] } }).sort({ name: 1 });
         const pagesWithSEO = await SEO.find().select('page');
         const pageIdsWithSEO = pagesWithSEO.map(seo => seo.page.toString());
         
