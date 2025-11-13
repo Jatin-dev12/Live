@@ -8,8 +8,11 @@ const templates = {
         type: 'hero-section', 
         fields: { 
           heading: 'Welcome to Our Website', 
-          paragraph: 'Enter your hero section description here',
-          ctas: [],
+          paragraph: 'Enter hero section description here',
+          ctas: [
+            { text: 'Get Started', link: '', style: 'primary' },
+            { text: 'Learn More', link: '', style: 'secondary' }
+          ],
           rightImage: ''
         } 
       },
@@ -17,9 +20,9 @@ const templates = {
         type: 'call-out-cards',
         fields: {
           cards: [
-            { heading: 'Call Out Card 1', subheading: 'Enter your description here', link: '' },
-            { heading: 'Call Out Card 2', subheading: 'Enter your description here', link: '' },
-            { heading: 'Call Out Card 3', subheading: 'Enter your description here', link: '' }
+            { heading: 'Call Out Card 1', subheading: 'Enter description here', link: '' },
+            { heading: 'Call Out Card 2', subheading: 'Enter description here', link: '' },
+            { heading: 'Call Out Card 3', subheading: 'Enter description here', link: '' }
           ]
         }
       }
@@ -77,7 +80,7 @@ const templates = {
         type: 'call-out-cards',
         fields: {
           cards: [
-            { heading: 'Call Out Card', subheading: 'Enter your description here', link: '' }
+            { heading: 'Call Out Card', subheading: 'Enter description here', link: '' }
           ]
         }
       }

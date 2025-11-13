@@ -71,7 +71,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             .lean();
             
         // Get all active pages for dropdown
-        const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
+       const allPages = await Page.find({ status: { $in: ['active', 'inactive'] } }).sort({ name: 1 });
+
         
         // Process each section to ensure all fields are present
         const processedSections = (allSections || []).map(section => ({
@@ -172,7 +173,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             })),
             pages: allPages
         };
-        // console.log('---------------------responseData',responseData.allSections);
+        console.log('---------------------page',page);
         
         
         return res.render('cms/editContentManagement', responseData);
