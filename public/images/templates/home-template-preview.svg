@@ -1,24 +1,72 @@
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="400" height="300" fill="url(#bg)" stroke="#ddd" stroke-width="2"/>
-  <text x="200" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Home Template</text>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  
   <!-- Hero Section -->
-  <rect x="20" y="50" width="360" height="80" fill="#4f46e5" rx="8"/>
-  <text x="200" y="75" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">Hero Section</text>
-  <text x="200" y="95" text-anchor="middle" font-family="Arial" font-size="10" fill="white" opacity="0.9">Welcome message and description</text>
-  <!-- Cards Section -->
-  <rect x="20" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
-  <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 1</text>
-  <text x="75" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
-  <rect x="145" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
-  <text x="200" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 2</text>
-  <text x="200" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
-  <rect x="270" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
-  <text x="325" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 3</text>
-  <text x="325" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
+  <rect x="10" y="10" width="380" height="120" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  
+  <!-- Hero Content Left Side -->
+  <rect x="20" y="25" width="180" height="12" fill="#343a40" rx="2"/>
+  <text x="22" y="35" font-family="Arial, sans-serif" font-size="10" fill="#343a40" font-weight="bold">Hero Heading</text>
+  
+  <rect x="20" y="45" width="160" height="6" fill="#6c757d" rx="1"/>
+  <rect x="20" y="55" width="140" height="6" fill="#6c757d" rx="1"/>
+  <text x="22" y="63" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">Hero description text</text>
+  
+  <!-- CTA Buttons -->
+  <rect x="20" y="75" width="60" height="20" fill="#dc3545" rx="3"/>
+  <text x="35" y="87" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Primary</text>
+  
+  <rect x="90" y="75" width="60" height="20" fill="transparent" stroke="#6c757d" stroke-width="1" rx="3"/>
+  <text x="120" y="87" font-family="Arial, sans-serif" font-size="8" fill="#6c757d" text-anchor="middle">Secondary</text>
+  
+  <!-- Hero Image Right Side -->
+  <rect x="220" y="25" width="150" height="90" fill="#e9ecef" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <circle cx="295" cy="55" r="15" fill="#adb5bd"/>
+  <rect x="270" y="75" width="50" height="4" fill="#adb5bd" rx="2"/>
+  <rect x="280" y="85" width="30" height="4" fill="#adb5bd" rx="2"/>
+  <text x="295" y="100" font-family="Arial, sans-serif" font-size="8" fill="#6c757d" text-anchor="middle">Image</text>
+  
+  <!-- Call Out Cards Section -->
+  <text x="20" y="155" font-family="Arial, sans-serif" font-size="10" fill="#343a40" font-weight="bold">Call Out Cards</text>
+  
+  <!-- Card 1 -->
+  <rect x="10" y="165" width="120" height="120" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <rect x="20" y="175" width="80" height="8" fill="#343a40" rx="1"/>
+  <text x="22" y="183" font-family="Arial, sans-serif" font-size="8" fill="#343a40" font-weight="bold">Call Out 1</text>
+  
+  <rect x="20" y="190" width="90" height="4" fill="#6c757d" rx="1"/>
+  <rect x="20" y="198" width="70" height="4" fill="#6c757d" rx="1"/>
+  <rect x="20" y="206" width="85" height="4" fill="#6c757d" rx="1"/>
+  
+  <rect x="20" y="220" width="50" height="16" fill="transparent" stroke="#dc3545" stroke-width="1" rx="2"/>
+  <text x="45" y="230" font-family="Arial, sans-serif" font-size="7" fill="#dc3545" text-anchor="middle">More</text>
+  
+  <!-- Card 2 -->
+  <rect x="140" y="165" width="120" height="120" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <rect x="150" y="175" width="80" height="8" fill="#343a40" rx="1"/>
+  <text x="152" y="183" font-family="Arial, sans-serif" font-size="8" fill="#343a40" font-weight="bold">Call Out 2</text>
+  
+  <rect x="150" y="190" width="90" height="4" fill="#6c757d" rx="1"/>
+  <rect x="150" y="198" width="70" height="4" fill="#6c757d" rx="1"/>
+  <rect x="150" y="206" width="85" height="4" fill="#6c757d" rx="1"/>
+  
+  <rect x="150" y="220" width="50" height="16" fill="transparent" stroke="#dc3545" stroke-width="1" rx="2"/>
+  <text x="175" y="230" font-family="Arial, sans-serif" font-size="7" fill="#dc3545" text-anchor="middle">More</text>
+  
+  <!-- Card 3 -->
+  <rect x="270" y="165" width="120" height="120" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <rect x="280" y="175" width="80" height="8" fill="#343a40" rx="1"/>
+  <text x="282" y="183" font-family="Arial, sans-serif" font-size="8" fill="#343a40" font-weight="bold">Call Out 3</text>
+  
+  <rect x="280" y="190" width="90" height="4" fill="#6c757d" rx="1"/>
+  <rect x="280" y="198" width="70" height="4" fill="#6c757d" rx="1"/>
+  <rect x="280" y="206" width="85" height="4" fill="#6c757d" rx="1"/>
+  
+  <rect x="280" y="220" width="50" height="16" fill="transparent" stroke="#dc3545" stroke-width="1" rx="2"/>
+  <text x="305" y="230" font-family="Arial, sans-serif" font-size="7" fill="#dc3545" text-anchor="middle">More</text>
+  
+  <!-- Template Label -->
+  <rect x="320" y="10" width="70" height="20" fill="#dc3545" rx="3"/>
+  <text x="355" y="22" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle" font-weight="bold">HOME TEMPLATE</text>
 </svg>

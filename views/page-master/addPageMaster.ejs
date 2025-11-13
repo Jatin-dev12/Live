@@ -46,9 +46,9 @@
                                     <select class="form-control radius-8" id="template" name="template">
                                         <!-- <option value="">-- No Template (Empty Page) --</option> -->
                                         <option value="home">Home Template - Hero + 3 Callout Cards</option>
-                                        <!-- <option value="about">About Template - Hero with Button + Tabs Section</option> -->
-                                        <!-- <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option> -->
-                                        <!-- <option value="membership">Membership Template - Hero Section Only</option> -->
+                                        <!-- <option value="about">About Template - Hero with Button + Tabs Section</option>
+                                        <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
+                                        <option value="membership">Membership Template - Hero Section Only</option> -->
                                     </select>
                                     <small class="text-muted">Select a template to auto-create page sections</small>
                                 </div>
@@ -137,7 +137,14 @@
             image: '/images/templates/membership-template-preview.svg'
         }
     };
-
+    //default template selection preview
+    const $defaultPreview = $('#templatePreview');
+    const $defaultDescription = $('#templateDescription');
+    const $defaultImage = $('#templateImage');
+    $defaultDescription.html(templateData["home"].description);
+    $defaultImage.attr('src', templateData["home"].image);
+    $defaultImage.show();
+    $defaultPreview.show();
     // Handle template selection
     $('#template').on('change', function() {
         const selectedTemplate = $(this).val();
