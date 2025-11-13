@@ -28,7 +28,7 @@
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
                                             disabled>
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
-                                            
+
                                             <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section</option>
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Header Section</option>
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
@@ -198,7 +198,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Buttons:</label>
                                                     <div class="column-container">
-                                                        
+
                                                         <% (section.threeColumnInfo?.columns ||
                                                             []).forEach(function(col, idx){ %>
                                                             <div
@@ -242,7 +242,7 @@
                                                                 </div>
                                                             </div>
                                                         <% }) %>
-                                                        
+
 
                                                     </div>
                                                     <small class="text-muted">Buttons are defined by the page template</small>
@@ -254,7 +254,7 @@
                                                     <label class="form-label">Card Carousels:</label>
                                                     <!-- Debug: <%= JSON.stringify(section.callOutCards) %> -->
                                                     <div class="callout-container">
-                                                        <% 
+                                                        <%
                                                         const cards = section.callOutCards?.cards || [];
                                                         if (cards.length === 0) { %>
                                                             <p class="text-muted">No cards found. Click "Add Call Out Card" to create one.</p>
@@ -291,7 +291,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Tabs:</label>
                                                     <div class="tabs-container">
-                                                        <% 
+                                                        <%
                                                         const tabs = section.tabsSection?.tabs || [];
                                                         if (tabs.length === 0) { %>
                                                             <p class="text-muted">No tabs found. Default 8 tabs will be created.</p>
@@ -412,10 +412,10 @@
                     <!-- Sections Container -->
 
                     <!-- commented out tyoes -->
-                    <!-- 
+                    <!--
                     in another file
                      -->
-                    
+
 
                     <!-- Template-based sections only - no manual section addition -->
                     <div class="alert alert-info text-center">
@@ -425,7 +425,7 @@
                     <hr class="my-3">
 
                     <!-- Hidden: Section Block Template -->
-                     <!-- 
+                     <!--
                     // commeneted out types
                         /*
                         <option value="image-with-text">Image with Text</option>
@@ -446,7 +446,7 @@
                                     <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
                                     <select class="form-control border border-neutral-200 radius-8 section-type-select" >
                                         <option value="">-- Please Select Section --</option>
-                                        
+
                                         <option value="hero-section">Hero Section</option>
                                         <option value="three-column-info">Header Section</option>
                                         <option value="call-out-cards">Call Out Section</option>
@@ -509,7 +509,7 @@
                     </div>
             </div>
 
-            
+
             </form>
         </div>
     </div>
@@ -517,11 +517,11 @@
 </div>
 
 <% script=` <script>
-    
+
     // Centralized function to toggle the visibility of section fields
     function toggleSectionFields($section) {
         const sectionType = $section.find(".section-type-select").val();
-        
+
         // Hide all fields first
         $section.find('.image-with-text-fields').hide();
         $section.find('.image-with-list-fields').hide();
@@ -532,7 +532,7 @@
         $section.find('.three-column-fields').hide();
         $section.find('.call-out-cards-fields').hide();
         $section.find('.tabs-section-fields').hide();
-        
+
         // Show only the relevant fields based on section type
         if (sectionType === 'image-with-text') {
             $section.find('.image-with-text-fields').show();
@@ -618,7 +618,7 @@
                             // Store the URL in a data attribute for submission
                             $input.data("server-url", response.url);
                             console.log("server-url", response);
-                            
+
                             showToast("Image uploaded successfully", "success");
                         } else {
                             showToast(response.message || "Image upload failed", "error");
@@ -663,7 +663,7 @@
         handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
-        
+
         // Three Column Info image handler with proper show/hide logic
         $(document).on("change", ".upload-file-tci-input", function (e) {
             if (e.target.files && e.target.files[0]) {
@@ -802,7 +802,7 @@
                     const heading = $section.find(".tci-heading").val();
                     const subheading = $section.find(".tci-subheading").val();
                     const imageUrl = newImageUrl || existingImageUrl || "";
-                    
+
                     sectionData.title = heading || "Three Column Info";
                     sectionData.thumbnail = imageUrl;
                     sectionData.threeColumnInfo.heading = heading;
@@ -825,19 +825,19 @@
                             link: $(this).find(".callout-link").val()
                         };
                     }).get();
-                    
+
                     if (cards.length === 0) {
                         showToast('Please add at least one call out card', 'warning');
                         isValid = false;
                         return false;
                     }
-                    
+
                     if (cards.length > 6) {
                         showToast('Maximum 6 Call Out Section allowed', 'warning');
                         isValid = false;
                         return false;
                     }
-                    
+
                     // Check if all cards have headings
                     const invalidCard = cards.find(card => !card.heading);
                     if (invalidCard) {
@@ -845,7 +845,7 @@
                         isValid = false;
                         return false;
                     }
-                    
+
                     sectionData.title = cards[0].heading || "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
@@ -856,7 +856,7 @@
                             paragraph: $(this).find(".tab-paragraph").val()
                         };
                     }).get();
-                    
+
                     sectionData.title = "Tabs Section";
                     sectionData.tabsSection = { tabs: tabs };
                 }
@@ -899,7 +899,7 @@
         // Handle "Update & Manage SEO" button
         $("#updateAndSeoBtn").on("click", function(e) {
             e.preventDefault();
-            
+
             // First update the content, then redirect to SEO management
             const contentId = $("#contentId").val();
             const pageId = $("#pageId").val();
@@ -974,20 +974,20 @@
                             link: $(this).find(".callout-link").val()
                         };
                     }).get();
-                    
+
                     if (cards.length === 0) {
                         showToast('Please add at least one call out card', 'warning');
                         isValid = false;
                         return false;
                     }
-                    
+
                     const invalidCard = cards.find(card => !card.heading);
                     if (invalidCard) {
                         showToast('All Call Out Section must have a heading', 'warning');
                         isValid = false;
                         return false;
                     }
-                    
+
                     sectionData.title = cards[0].heading || "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
@@ -998,7 +998,7 @@
                             paragraph: $(this).find(".tab-paragraph").val()
                         };
                     }).get();
-                    
+
                     sectionData.title = "Tabs Section";
                     sectionData.tabsSection = { tabs: tabs };
                 }
@@ -1074,7 +1074,7 @@
 
             if (!pages || pages.length === 0) return;
 
-            const $list = $('<div class="autocomplete-list border bg-white position-absolute w-100 radius-8 shadow-sm mt-1"></div>');
+            const $list = $('<div class="autocomplete-list border bg-white position-absolute w-100 radius-8 shadow-sm mt-1 z-1"></div>');
 
             pages.forEach(page => {
                 const $item = $(\`
