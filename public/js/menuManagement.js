@@ -231,6 +231,12 @@ function renderMenuItems() {
         });
     });
 
+    document.querySelectorAll('.edit-submenu-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            editSubmenuItem(this.dataset.id);
+        });
+    });
+
     makeItemsDraggable();
     updateAvailablePages();
 }
@@ -307,6 +313,9 @@ function renderHierarchy(items, level = 0) {
                             ` : ''}
                         </div>
                         <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-secondary edit-submenu-btn" data-id="${itemId}" title="Edit">
+                                <iconify-icon icon="material-symbols:edit-outline"></iconify-icon>
+                            </button>
                             <button class=" d-flex align-items-center gap-1  btn btn-sm btn-outline-primary add-submenu-btn" data-id="${itemId}" title="Add Submenu">
                                 <iconify-icon icon="material-symbols:add"></iconify-icon> Sub Menu
                             </button>
@@ -326,6 +335,105 @@ function renderHierarchy(items, level = 0) {
     });
     
     return html;
+}
+
+function editSubmenuItem(itemId) {
+    const item = menuItems.find(i => (i._id || i.title) === itemId);
+    
+    if (!item) {
+        showNotification('Item not found', 'error');
+        return;
+    }
+    
+    // Check if it's a main menu or submenu
+    const isMainMenu = !item.parentId;
+    
+    Swal.fire({
+        title: isMainMenu ? 'Edit Menu' : 'Edit Submenu',
+        html: `
+            <style>
+                .edit-form {
+                    text-align: left;
+                }
+                .form-group {
+                    margin-bottom: 15px;
+                }
+                .form-group label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: 500;
+                    font-size: 14px;
+                }
+                .form-group input,
+                .form-group select {
+                    width: 100%;
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                .form-group input:focus,
+                .form-group select:focus {
+                    outline: none;
+                    border-color: #ce1126;
+                }
+            </style>
+            
+            <div class="edit-form">
+                <div class="form-group">
+                    <label>Menu Title *</label>
+                    <input type="text" id="editTitle" value="${escapeHtml(item.title)}" placeholder="Enter menu title">
+                </div>
+                <div class="form-group">
+                    <label>URL *</label>
+                    <input type="text" id="editUrl" value="${escapeHtml(item.url)}" placeholder="https://example.com or /page">
+                </div>
+                <div class="form-group">
+                    <label>Open In</label>
+                    <select id="editTarget">
+                        <option value="_self" ${item.target === '_self' ? 'selected' : ''}>Same Window</option>
+                        <option value="_blank" ${item.target === '_blank' ? 'selected' : ''}>New Window</option>
+                    </select>
+                </div>
+            </div>
+        `,
+        width: '500px',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const title = document.getElementById('editTitle').value.trim();
+            const url = document.getElementById('editUrl').value.trim();
+            const target = document.getElementById('editTarget').value;
+            
+            if (!title) {
+                Swal.showValidationMessage('Please enter a menu title');
+                return false;
+            }
+            if (!url) {
+                Swal.showValidationMessage('Please enter a URL');
+                return false;
+            }
+            
+            return { title, url, target };
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed && result.value) {
+            // Update the item
+            item.title = result.value.title;
+            item.url = result.value.url;
+            item.target = result.value.target;
+            
+            const saved = await saveMenu(true);
+            if (saved) {
+                await loadMenu();
+                const menuType = item.parentId ? 'Submenu' : 'Menu';
+                showNotification(`${menuType} updated successfully`, 'success');
+            } else {
+                renderMenuItems();
+            }
+        }
+    });
 }
 
 function showSubmenuPageList(parentId) {
