@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Preview Generator</title>
+    <style>
+        .template-preview {
+            width: 400px;
+            height: 300px;
+            border: 2px solid #ddd;
+            margin: 20px;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+        }
+        
+        .template-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .hero-section {
+            background: #4f46e5;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .hero-text {
+            font-size: 10px;
+            opacity: 0.9;
+        }
+        
+        .cards-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            flex: 1;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        
+        .card-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .card-text {
+            font-size: 8px;
+            color: #666;
+        }
+        
+        .tabs-section {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        
+        .tab {
+            padding: 3px 8px;
+            background: #f3f4f6;
+            border-radius: 3px;
+            font-size: 8px;
+        }
+        
+        .tab.active {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 9px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Template Preview Generator</h1>
+    <p>Right-click on each template preview and "Save image as..." to save the preview images.</p>
+    
+    <!-- Home Template -->
+    <div class="template-preview" id="home-template">
+        <div class="template-title">Home Template</div>
+        <div class="hero-section">
+            <div class="hero-title">Hero Section</div>
+            <div class="hero-text">Welcome message and description</div>
+        </div>
+        <div class="cards-section">
+            <div class="card">
+                <div class="card-title">Card 1</div>
+                <div class="card-text">Description</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Card 2</div>
+                <div class="card-text">Description</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Card 3</div>
+                <div class="card-text">Description</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Template -->
+    <div class="template-preview" id="about-template">
+        <div class="template-title">About Template</div>
+        <div class="hero-section">
+            <div class="hero-title">About Us Hero</div>
+            <div class="hero-text">Learn more about our organization</div>
+            <div class="buttons">
+                <button class="btn btn-primary">Learn More</button>
+            </div>
+        </div>
+        <div class="tabs-section">
+            <div class="tabs">
+                <div class="tab active">Tab 1</div>
+                <div class="tab">Tab 2</div>
+                <div class="tab">Tab 3</div>
+                <div class="tab">Tab 4</div>
+            </div>
+            <div style="font-size: 8px; color: #666;">Tab content area with 8 tabs total</div>
+        </div>
+    </div>
+    
+    <!-- Legislation Template -->
+    <div class="template-preview" id="legislation-template">
+        <div class="template-title">Legislation Template</div>
+        <div class="hero-section">
+            <div class="hero-title">Legislation & Policy</div>
+            <div class="hero-text">Stay informed about our initiatives</div>
+            <div class="buttons">
+                <button class="btn btn-primary">View Legislation</button>
+                <button class="btn btn-secondary">Policy Docs</button>
+            </div>
+        </div>
+        <div class="cards-section">
+            <div class="card" style="flex: none; width: 100%;">
+                <div class="card-title">Call Out Card</div>
+                <div class="card-text">Important information or announcement</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Membership Template -->
+    <div class="template-preview" id="membership-template">
+        <div class="template-title">Membership Template</div>
+        <div class="hero-section" style="height: 120px; display: flex; flex-direction: column; justify-content: center;">
+            <div class="hero-title">Membership</div>
+            <div class="hero-text">Join our community and become part of something greater</div>
+        </div>
+        <div style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
+            Simple hero section only
+        </div>
+    </div>
+
+    <script>
+        // Function to convert div to image (you'll need to use a library like html2canvas for this)
+        console.log('To create actual images:');
+        console.log('1. Use browser developer tools to take screenshots of each template preview');
+        console.log('2. Or use html2canvas library to programmatically generate images');
+        console.log('3. Save them as PNG files in public/images/templates/ directory');
+    </script>
+</body>
+</html>

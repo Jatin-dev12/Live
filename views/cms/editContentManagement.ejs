@@ -7,53 +7,18 @@
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
                     <input type="hidden" id="contentId" value="<%= content._id %>">
-
-                    <div>
-                        <label class="form-label" for="pageId">Select Page: <span
-                                class="text-danger-600">*</span></label>
-                        <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId"
-                            required>
-                            <option value="">-- Select a Page --</option>
-                            <% if (typeof pages !=='undefined' && pages.length> 0) { %>
-                                <% pages.forEach(page=> { %>
-                                    <option value="<%= page._id %>" <%=content.page &&
-                                        content.page._id.toString()===page._id.toString() ? 'selected' : '' %>><%=
-                                            page.name %>
-                                    </option>
-                                <% }) %>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label">Status: </label>
-                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
-                            <option value="active" <%=content.status==='active' ? 'selected' : '' %>>Active</option>
-                            <option value="inactive" <%=content.status==='inactive' ? 'selected' : '' %>>Inactive
-                            </option>
-                        </select>
-                    </div>
-
-                    <hr class="my-3">
-
-                    <!-- Sections Container -->
-
-                    <!-- commented out tyoes -->
-                    <!-- 
-                    in another file
-                     -->
-                    <div id="sectionsContainer">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
-                                <div class="section-block border border-neutral-300 radius-8 p-4 bg-neutral-50 mb-4"
+                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-4"
                                     data-id="<%= section._id %>">
                                     <!-- <h6 class="text-lg mb-3">Section <%= index + 1 %>
                                     </h6> -->
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="text-lg mb-0">Section <%= index + 1 %></h6>
-                                        <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
-                                            Remove Section
-                                        </button>
+                                        <span class="badge bg-primary-600">Template Section</span>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" class="original-section-type"
@@ -61,11 +26,13 @@
                                         <label class="form-label">Section Type: <span
                                                 class="text-danger-600">*</span></label>
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
-                                            >
+                                            disabled>
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
                                             
+                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section</option>
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Header Section</option>
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
+                                            <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
                                         </select>
                                     </div>
 
@@ -241,9 +208,7 @@
                                                                     <span
                                                                         class="fw-semibold text-sm">Button
                                                                         #<%= idx + 1 %></span>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-danger-600 remove-column-btn"><iconify-icon
-                                                                            icon="mdi:delete"></iconify-icon></button>
+                                                                    <span class="badge bg-secondary">Template Button</span>
                                                                 </div>
                                                                 <!-- <div class="mb-2"><label
                                                                         class="form-label text-sm">Title:</label>
@@ -280,7 +245,7 @@
                                                         
 
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-column-btn">Add CTA</button>
+                                                    <small class="text-muted">Buttons are defined by the page template</small>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='call-out-cards' ) { %>
@@ -298,9 +263,7 @@
                                                             <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                                     <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
-                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
-                                                                        <iconify-icon icon="mdi:delete"></iconify-icon>
-                                                                    </button>
+                                                                    <span class="badge bg-secondary">Template Card</span>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
@@ -320,13 +283,45 @@
                                                             </div>
                                                         <% }) %>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
-                                                        Add Call Out Card
-                                                    </button>
-                                                    <small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small>
+                                                    <small class="text-muted">Cards are defined by the page template</small>
                                                 </div>
                                             </div>
-                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
+                                        <% } else if (section.sectionType==='tabs-section' ) { %>
+                                            <div class="tabs-section-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Tabs:</label>
+                                                    <div class="tabs-container">
+                                                        <% 
+                                                        const tabs = section.tabsSection?.tabs || [];
+                                                        if (tabs.length === 0) { %>
+                                                            <p class="text-muted">No tabs found. Default 8 tabs will be created.</p>
+                                                        <% }
+                                                        tabs.forEach(function(tab, idx){ %>
+                                                            <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span class="fw-semibold text-sm">Tab #<%= idx + 1 %></span>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label text-sm">Title:</label>
+                                                                    <input type="text" class="form-control border border-neutral-200 radius-8 tab-title"
+                                                                        value="<%= tab.title || '' %>" placeholder="Tab Title">
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label text-sm">Heading:</label>
+                                                                    <input type="text" class="form-control border border-neutral-200 radius-8 tab-heading"
+                                                                        value="<%= tab.heading || '' %>" placeholder="Tab Heading">
+                                                                </div>
+                                                                <div>
+                                                                    <label class="form-label text-sm">Paragraph:</label>
+                                                                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3"
+                                                                        placeholder="Tab content"><%= tab.paragraph || '' %></textarea>
+                                                                </div>
+                                                            </div>
+                                                        <% }) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>""
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
                                                     <label class="form-label">Left Heading:</label>
@@ -369,13 +364,62 @@
                                 section below.</div>
                         <% } %>
                     </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="page-status-widget">
+                                <div>
+                                    <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
+                                    <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required>
+                                        <option value="">-- Select a Page --</option>
+                                        <% if (typeof pages !=='undefined' && pages.length> 0) { %>
+                                            <% pages.forEach(page=> { %>
+                                                <option value="<%= page._id %>" <%=content.page && content.page._id.toString()===page._id.toString()
+                                                    ? 'selected' : '' %>><%= page.name %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
 
-                    <!-- Add Section Button -->
-                    <div class="text-center mb-3" id="addSectionBtnContainer">
-                        <button type="button" class="btn btn-outline-primary-600 radius-8" id="addSectionBtn">
+                                <div>
+                                    <label class="form-label">Status: </label>
+                                    <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                                        <option value="active" <%=content.status==='active' ? 'selected' : '' %>>Active</option>
+                                        <option value="inactive" <%=content.status==='inactive' ? 'selected' : '' %>>Inactive
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="d-flex publish-btns">
+                                <a href="/cms/content-management"
+                                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                    Cancel
+                                </a>
+                                <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                                    Update & Manage SEO
+                                </button>
+                                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                                    Update Sections
+                                </button>
+                            </div>
+                        </div>
 
-                            Add Section
-                        </button>
+
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Sections Container -->
+
+                    <!-- commented out tyoes -->
+                    <!-- 
+                    in another file
+                     -->
+                    
+
+                    <!-- Template-based sections only - no manual section addition -->
+                    <div class="alert alert-info text-center">
+                        <small><strong>Note:</strong> This page uses a predefined template. To change the section structure, edit the page template in <a href="/page-master/web-page-master">Page Master</a>.</small>
                     </div>
 
                     <hr class="my-3">
@@ -393,7 +437,7 @@
                         */ -->
                     <div class="d-none">
                         <div id="originalSection">
-                            <div class="section-block border border-neutral-300 radius-8 p-4 mb-4 bg-neutral-50" data-section-id="__ID__">
+                            <div class="section-block border border-neutral-300 radius-8 p-5 mb-4 bg-neutral-50" data-section-id="__ID__">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="text-lg mb-0">Section #__ID__</h6>
                                     <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">Remove Section</button>
@@ -403,8 +447,10 @@
                                     <select class="form-control border border-neutral-200 radius-8 section-type-select" >
                                         <option value="">-- Please Select Section --</option>
                                         
+                                        <option value="hero-section">Hero Section</option>
                                         <option value="three-column-info">Header Section</option>
                                         <option value="call-out-cards">Call Out Section</option>
+                                        <option value="tabs-section">Tabs Section</option>
                                     </select>
                                 </div>
                                 <div class="image-with-text-fields" style="display: none;">
@@ -455,20 +501,15 @@
                                 <div class="call-out-cards-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
                                 </div>
+                                <div class="tabs-section-fields" style="display: none;">
+                                    <div class="mb-3"><label class="form-label">Tabs:</label><div class="tabs-container"></div><small class="text-muted d-block mt-1">8 tabs will be created automatically</small></div>
+                                </div>
                             </div>
                         </div>
                     </div>
             </div>
 
-            <div class="d-flex align-items-center justify-content-center gap-3">
-                <a href="/cms/content-management"
-                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-                    Cancel
-                </a>
-                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                    Update All Sections
-                </button>
-            </div>
+            
             </form>
         </div>
     </div>
@@ -490,6 +531,7 @@
         $section.find('.hero-section-fields').hide();
         $section.find('.three-column-fields').hide();
         $section.find('.call-out-cards-fields').hide();
+        $section.find('.tabs-section-fields').hide();
         
         // Show only the relevant fields based on section type
         if (sectionType === 'image-with-text') {
@@ -508,18 +550,37 @@
             $section.find('.three-column-fields').show();
         } else if (sectionType === 'call-out-cards') {
             $section.find('.call-out-cards-fields').show();
+        } else if (sectionType === 'tabs-section') {
+            $section.find('.tabs-section-fields').show();
+            // Auto-create 8 tabs if none exist
+            const $tabsContainer = $section.find('.tabs-container');
+            if ($tabsContainer.find('.tab-item').length === 0) {
+                for (let i = 1; i <= 8; i++) {
+                    const tabHtml = \`
+                        <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-sm">Tab #\${i}</span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-sm">Title:</label>
+                                <input type="text" class="form-control border border-neutral-200 radius-8 tab-title" placeholder="Tab Title">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-sm">Heading:</label>
+                                <input type="text" class="form-control border border-neutral-200 radius-8 tab-heading" placeholder="Tab Heading">
+                            </div>
+                            <div>
+                                <label class="form-label text-sm">Paragraph:</label>
+                                <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3" placeholder="Tab content"></textarea>
+                            </div>
+                        </div>\`;
+                    $tabsContainer.append(tabHtml);
+                }
+            }
         }
     }
 
-    // Function to add a new "Image with List" item
-    function addIwlItem($container) {
-        const newItem = \`
-            <div class="iwl-item d-flex align-items-center gap-2 mb-2">
-                <input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input" placeholder="New Item">
-                <button type="button" class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>
-            </div>\`;
-        $container.append(newItem);
-    }
+    // Template sections have fixed structure - no dynamic item management
 
     // Generic image upload handler to keep code DRY
     function handleImageUpload(inputSelector, previewSelector, removeSelector, wrapperSelector, folderName) {
@@ -579,48 +640,7 @@
         });
     }
 
-    // Function to add a new section to the DOM
-    function addNewSection() {
-        const sectionId = \`new-section-\${Date.now()}\`; // Unique ID for the new section
-        const currentCount = $("#sectionsContainer .section-block").length;
-        const heading = \`Section #\${currentCount + 1}\`;
-
-        // Clone the inner .section-block from the template
-        const $tpl = $("#originalSection .section-block").clone();
-        $tpl.attr('data-section-id', sectionId);
-        $tpl.find('h6').first().text(heading);
-
-        // Clear inputs/textareas and reset selects
-        $tpl.find('input[type="text"], textarea').val('');
-        $tpl.find('select').val('');
-        // Hide all section-specific field containers in the cloned template
-        $tpl.find("[class$='-fields']").hide();
-
-        // Reset image previews and upload controls inside the template
-        $tpl.find('[class^="uploaded-img-"]').each(function() {
-            $(this).addClass('d-none');
-        });
-        $tpl.find('[class^="upload-file-"]').each(function() {
-            $(this).removeClass('d-none');
-        });
-        $tpl.find('input[type="file"]').val('');
-
-        // Append cleaned-up section to container
-        $("#sectionsContainer").append($tpl);
-
-        // Renumber all sections after adding
-        renumberSections();
-    }
-
-    // Renumber sections to keep numbering and data-section-id consistent
-    function renumberSections() {
-        $('#sectionsContainer .section-block').each(function(index) {
-            const newNumber = index + 1;
-            $(this).attr('data-id', $(this).data('id') || \`new-section-\${Date.now() + index}\`);
-            const $h6 = $(this).find('h6').first();
-            $h6.contents().filter(function(){ return this.nodeType === 3; }).first().replaceWith('Section ' + newNumber + ' ');
-        });
-    }
+    // Template sections are fixed - no dynamic section management needed
 
     // Main document ready function
     $(document).ready(function () {
@@ -629,137 +649,13 @@
             toggleSectionFields($(this));
         });
 
-        // Event delegation for dynamic elements
-        $("#sectionsContainer")
-            .off("click", ".add-column-btn")
-            .on("change", ".section-type-select", function () {
-                toggleSectionFields($(this).closest(".section-block"));
-            })
-            .on("click", ".remove-section-btn", function () {
-                $(this).closest(".section-block").remove();
-                renumberSections();
-            })
-            .on("click", ".add-iwl-item-btn", function () {
-                addIwlItem($(this).siblings(".iwl-items"));
-            })
-            .on("click", ".remove-iwl-item", function () {
-                $(this).parent().remove();
-            })
-            .on("click", ".add-cta-btn", function() {
-                const $container = $(this).siblings('.cta-container');
-                const ctaCount = $container.find('.cta-item').length + 1;
-                const ctaHtml = \`
-                    <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold text-sm">Button #\${ctaCount}</span>
-                            <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">
-                                <iconify-icon icon="mdi:delete"></iconify-icon>
-                            </button>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Button Text:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 cta-text" placeholder="e.g., Why join ACRM">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Button Link:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 cta-link" placeholder="e.g., /about-us">
-                        </div>
-                        <div>
-                            <label class="form-label text-sm">Button Style:</label>
-                            <select class="form-control border border-neutral-200 radius-8 cta-style">
-                                <option value="primary">Primary (Red)</option>
-                                <option value="secondary">Secondary (Dark)</option>
-                                <option value="outline">Outline</option>
-                            </select>
-                        </div>
-                    </div>\`;
-                $container.append(ctaHtml);
-            })
-            .on("click", ".remove-cta-btn", function() {
-                $(this).closest('.cta-item').remove();
-            })
-            .on("click", ".add-column-btn", function() {
-                const $container = $(this).siblings('.column-container');
-                const columnCount = $container.find('.column-item').length + 1;
-                const columnHtml = \`
-                    <div class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold text-sm">Button #\${columnCount}</span>
-                            <button type="button" class="btn btn-sm btn-danger-600 remove-column-btn">
-                                <iconify-icon icon="mdi:delete"></iconify-icon>
-                            </button>
-                        </div>
-                        <!-- <div class="mb-2">
-                            <label class="form-label text-sm">Title:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 column-title" placeholder="e.g., Call Out 1">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Description:</label>
-                            <textarea class="form-control border border-neutral-200 radius-8 column-description" rows="3" placeholder="Enter description"></textarea>
-                        </div> -->
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Button Text:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-text" placeholder="e.g., More">
-                        </div>
-                        <div>
-                            <label class="form-label text-sm">Button Link:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 column-btn-link" placeholder="e.g., /learn-more">
-                        </div>
-                    </div>\`;
-                $container.append(columnHtml);
-            })
-            .on("click", ".remove-column-btn", function() {
-                $(this).closest('.column-item').remove();
-            })
-            .on("click", ".add-callout-btn", function() {
-                const $container = $(this).siblings('.callout-container');
-                const calloutCount = $container.find('.callout-item').length;
-                
-                // Max 6 cards
-                if (calloutCount >= 6) {
-                    showToast('Maximum 6 Call Out Section allowed', 'warning');
-                    return;
-                }
-                
-                const cardNumber = calloutCount + 1;
-                const calloutHtml = \`
-                    <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
-                            <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
-                                <iconify-icon icon="mdi:delete"></iconify-icon>
-                            </button>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="e.g., Call Out #\${cardNumber}" required>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label text-sm">Paragraph:</label>
-                            <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="2" placeholder="Enter Paragraph"></textarea>
-                        </div>
-                        <div>
-                            <label class="form-label text-sm">Link:</label>
-                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-link" placeholder="e.g., /more">
-                        </div>
-                    </div>\`;
-                $container.append(calloutHtml);
-            })
-            .on("click", ".remove-callout-btn", function() {
-                const $container = $(this).closest('.callout-container');
-                const calloutCount = $container.find('.callout-item').length;
-                
-                // Min 1 card
-                if (calloutCount <= 1) {
-                    showToast('Minimum 1 call out card required', 'warning');
-                    return;
-                }
-                
-                $(this).closest('.callout-item').remove();
-            });
-
-        // "Add Section" button
-        $("#addSectionBtn").off("click").on("click", addNewSection);
+        // Template sections are read-only - prevent structure changes
+        $("#sectionsContainer").on("change", ".section-type-select", function () {
+            showToast('Section types are fixed by the page template. Change the template in Page Master to modify structure.', 'warning');
+            // Revert to original value
+            const originalType = $(this).closest('.section-block').find('.original-section-type').val();
+            $(this).val(originalType);
+        });
 
         // Initialize all image upload handlers
         handleImageUpload(".upload-file-iwt-input", ".uploaded-img-iwt__preview", ".uploaded-img-iwt__remove", ".upload-image-wrapper", "section");
@@ -838,7 +734,11 @@
 
             $("#sectionsContainer .section-block").each(function (index) {
                 const $section = $(this);
-                const sectionType = $section.find(".section-type-select").val();
+                // For template-based pages, get from original value if select is disabled
+                let sectionType = $section.find(".section-type-select").val();
+                if (!sectionType || $section.find(".section-type-select").is(':disabled')) {
+                    sectionType = $section.find(".original-section-type").val();
+                }
 
                 if (!sectionType) {
                     showToast("Please select a section type for all sections.", "warning");
@@ -948,6 +848,17 @@
                     
                     sectionData.title = cards[0].heading || "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
+                } else if (sectionType === "tabs-section") {
+                    const tabs = $section.find(".tab-item").map(function () {
+                        return {
+                            title: $(this).find(".tab-title").val(),
+                            heading: $(this).find(".tab-heading").val(),
+                            paragraph: $(this).find(".tab-paragraph").val()
+                        };
+                    }).get();
+                    
+                    sectionData.title = "Tabs Section";
+                    sectionData.tabsSection = { tabs: tabs };
                 }
 
                 sectionsData.push(sectionData);
@@ -980,6 +891,167 @@
                     }
                 },
                 error: function (xhr) {
+                    showToast(xhr.responseJSON?.message || "An error occurred.", "error");
+                }
+            });
+        });
+
+        // Handle "Update & Manage SEO" button
+        $("#updateAndSeoBtn").on("click", function(e) {
+            e.preventDefault();
+            
+            // First update the content, then redirect to SEO management
+            const contentId = $("#contentId").val();
+            const pageId = $("#pageId").val();
+            const status = $("#status").val();
+
+            if (!pageId) {
+                showToast("Please select a page.", "warning");
+                return;
+            }
+
+            const sectionsData = [];
+            let isValid = true;
+
+            // Same validation and data collection as the main form
+            $("#sectionsContainer .section-block").each(function (index) {
+                const $section = $(this);
+                // For template-based pages, get from original value if select is disabled
+                let sectionType = $section.find(".section-type-select").val();
+                if (!sectionType || $section.find(".section-type-select").is(':disabled')) {
+                    sectionType = $section.find(".original-section-type").val();
+                }
+
+                if (!sectionType) {
+                    showToast("Please select a section type for all sections.", "warning");
+                    isValid = false;
+                    return false;
+                }
+
+                const sectionData = {
+                    id: $section.data("id"),
+                    order: index + 1,
+                    sectionType: sectionType,
+                    customFields: {},
+                    heroSection: {},
+                    threeColumnInfo: {}
+                };
+
+                // Same data population logic as main form (abbreviated for brevity)
+                if (sectionType === "hero-section") {
+                    const ctas = [];
+                    $section.find(".cta-item").each(function () {
+                        const text = $(this).find(".cta-text").val();
+                        const link = $(this).find(".cta-link").val();
+                        const style = $(this).find(".cta-style").val();
+                        if (text && link) {
+                            ctas.push({ text, link, style });
+                        }
+                    });
+                    sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
+                    sectionData.heroSection.rightImage = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    sectionData.heroSection.ctas = ctas;
+                } else if (sectionType === "three-column-info") {
+                    const heading = $section.find(".tci-heading").val();
+                    const subheading = $section.find(".tci-subheading").val();
+                    sectionData.title = heading || "Three Column Info";
+                    sectionData.threeColumnInfo.heading = heading;
+                    sectionData.threeColumnInfo.subheading = subheading;
+                    sectionData.threeColumnInfo.columns = $section.find(".column-item").map(function () {
+                        return {
+                            title: $(this).find(".column-title").val(),
+                            description: $(this).find(".column-description").val(),
+                            buttonText: $(this).find(".column-btn-text").val(),
+                            buttonLink: $(this).find(".column-btn-link").val()
+                        };
+                    }).get();
+                } else if (sectionType === "call-out-cards") {
+                    const cards = $section.find(".callout-item").map(function () {
+                        return {
+                            heading: $(this).find(".callout-heading").val(),
+                            subheading: $(this).find(".callout-subheading").val(),
+                            link: $(this).find(".callout-link").val()
+                        };
+                    }).get();
+                    
+                    if (cards.length === 0) {
+                        showToast('Please add at least one call out card', 'warning');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    const invalidCard = cards.find(card => !card.heading);
+                    if (invalidCard) {
+                        showToast('All Call Out Section must have a heading', 'warning');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    sectionData.title = cards[0].heading || "Call Out Section";
+                    sectionData.callOutCards = { cards: cards };
+                } else if (sectionType === "tabs-section") {
+                    const tabs = $section.find(".tab-item").map(function () {
+                        return {
+                            title: $(this).find(".tab-title").val(),
+                            heading: $(this).find(".tab-heading").val(),
+                            paragraph: $(this).find(".tab-paragraph").val()
+                        };
+                    }).get();
+                    
+                    sectionData.title = "Tabs Section";
+                    sectionData.tabsSection = { tabs: tabs };
+                }
+
+                sectionsData.push(sectionData);
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Update content first, then redirect to SEO
+            const payload = {
+                pageId: pageId,
+                status: status,
+                sections: sectionsData
+            };
+
+            $.ajax({
+                url: \`/api/content/\${contentId}\`,
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        showToast("Content updated successfully! Redirecting to SEO management...", "success");
+                        setTimeout(() => {
+                            // Check if SEO exists for this page via API, then redirect appropriately
+                            $.ajax({
+                                url: \`/api/seo/check-page/\${pageId}\`,
+                                type: 'GET',
+                                success: function(seoResponse) {
+                                    if (seoResponse.success && seoResponse.seoExists) {
+                                        // SEO exists, go to edit
+                                        window.location.href = \`/seo/edit-seo-content/\${seoResponse.seoId}?from=content\`;
+                                    } else {
+                                        // No SEO, go to add with page pre-selected
+                                        window.location.href = \`/seo/add-seo-content?pageId=\${pageId}&from=content\`;
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("SEO check failed:", error);
+                                    // Fallback to SEO management page
+                                    window.location.href = '/seo/seo-management';
+                                }
+                            });
+                        }, 1000);
+                    } else {
+                        showToast(response.message || "An error occurred.", "error");
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Content update failed:", xhr.responseJSON?.message || xhr.statusText);
                     showToast(xhr.responseJSON?.message || "An error occurred.", "error");
                 }
             });

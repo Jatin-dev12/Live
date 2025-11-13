@@ -16,6 +16,12 @@ const menuListEl = document.getElementById('menuList');
 const saveBtn = document.getElementById('saveBtn');
 const resetBtn = document.getElementById('resetBtn');
 
+// Exit early if required elements don't exist (not on menu management page)
+if (!pagesListEl || !addToMenuBtn || !selectAllBtn || !menuListEl || !saveBtn || !resetBtn) {
+  // Not on menu management page, skip initialization
+  return;
+}
+
 let menuTree = [];
 
 function renderPages() {
@@ -199,6 +205,7 @@ function restore() {
   }
 }
 
+if (addToMenuBtn) {
 addToMenuBtn.addEventListener('click', () => {
   const checked = pagesListEl.querySelectorAll('input[type="checkbox"]:checked');
   checked.forEach(cb => {
@@ -210,19 +217,25 @@ addToMenuBtn.addEventListener('click', () => {
   renderMenu();
   persist();
 });
+}
 
+if (selectAllBtn) {
 selectAllBtn.addEventListener('click', (e) => {
   e.preventDefault();
   const inputs = pagesListEl.querySelectorAll('input[type="checkbox"]');
   const allChecked = Array.from(inputs).every(i => i.checked);
   inputs.forEach(i => i.checked = !allChecked);
 });
+}
 
+if (saveBtn) {
 saveBtn.addEventListener('click', () => {
   persist();
   alert('Menu saved locally (localStorage). Integrate with backend as needed.');
 });
+}
 
+if (resetBtn) {
 resetBtn.addEventListener('click', () => {
   if (confirm('Clear the menu?')) {
     menuTree = [];
@@ -230,10 +243,13 @@ resetBtn.addEventListener('click', () => {
     renderMenu();
   }
 });
+}
 
-// Init
-renderPages();
-restore();
-renderMenu();
+// Init only if on menu management page
+if (pagesListEl && menuListEl) {
+  renderPages();
+  restore();
+  renderMenu();
+}
 
 

@@ -104,6 +104,26 @@ router.get('/seo/page/:pageId', isAuthenticated, async (req, res) => {
     }
 });
 
+// Check if SEO exists for a page (for content management integration)
+router.get('/seo/check-page/:pageId', isAuthenticated, async (req, res) => {
+    try {
+        const seo = await SEO.findOne({ page: req.params.pageId });
+        
+        res.json({
+            success: true,
+            seoExists: !!seo,
+            seoId: seo ? seo._id : null
+        });
+    } catch (error) {
+        console.error('Error checking SEO record:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error checking SEO record',
+            error: error.message
+        });
+    }
+});
+
 // Create new SEO record
 router.post('/seo', isAuthenticated, async (req, res) => {
     try {

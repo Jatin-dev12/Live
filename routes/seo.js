@@ -36,17 +36,34 @@ router.get('/add-seo-content', isAuthenticated, async (req, res) => {
             !pageIdsWithSEO.includes(page._id.toString())
         );
         
+        // Check if coming from content management with a specific page
+        const { pageId, from } = req.query;
+        let selectedPageId = null;
+        let pageName = '';
+        
+        if (pageId) {
+            const page = await Page.findById(pageId);
+            if (page && availablePages.some(p => p._id.toString() === pageId)) {
+                selectedPageId = pageId;
+                pageName = page.name;
+            }
+        }
+        
         res.render('seo/addSeoContent', {
             title: "Add SEO Content",
-            subTitle: "Add SEO Content",
-            pages: availablePages
+            subTitle: selectedPageId ? `Add SEO Content for ${pageName}` : "Add SEO Content",
+            pages: availablePages,
+            selectedPageId: selectedPageId,
+            fromContent: from === 'content'
         });
     } catch (error) {
         console.error('Error fetching pages:', error);
         res.render('seo/addSeoContent', {
             title: "Add SEO Content",
             subTitle: "Add SEO Content",
-            pages: []
+            pages: [],
+            selectedPageId: null,
+            fromContent: false
         });
     }
 });
@@ -72,12 +89,15 @@ router.get('/edit-seo-content/:id', isAuthenticated, async (req, res) => {
             title: "Edit SEO Content",
             subTitle: "Edit SEO Content",
             seo,
-            pages: availablePages
+            pages: availablePages,
+            fromContent: req.query.from === 'content'
         });
     } catch (error) {
         console.error('Error fetching SEO record:', error);
         res.redirect('/seo/seo-management');
     }
 });
+
+
 
 module.exports = router;

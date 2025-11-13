@@ -36,6 +36,12 @@ const pageSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    template: {
+        type: String,
+        trim: true,
+        enum: ['', 'home', 'about', 'legislation', 'membership'],
+        default: ''
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
