@@ -13,13 +13,13 @@
                                 <input type="text" class="form-control radius-8" id="name" name="name" value="<%= page.name %>" placeholder="Enter Page Name" required>
                             </div>
                             <div class="mb-20">
-                                <label for="path" class="form-label fw-semibold text-primary-light text-sm mb-8">Path <span class="text-danger-600">*</span></label>
+                                <label for="path" class="form-label fw-semibold text-primary-light text-sm mb-8">Slug <span class="text-danger-600">*</span></label>
                                 <input type="text" class="form-control radius-8" id="path" name="path" value="<%= page.path %>" placeholder="e.g., /about or /services" required readonly>
                             </div>
                             <div class="mb-20">
                                 <label for="template" class="form-label fw-semibold text-primary-light text-sm mb-8">Page Template</label>
                                 <select class="form-control radius-8" id="template" name="template">
-                                    <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option>
+                                    <!-- <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option> -->
                                     <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
                                     <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
@@ -69,8 +69,8 @@
                     <div class="status-dropdown">
                         <label for="status" class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
                                 <select class="form-controlradius-8" id="status" name="status">
-                                    <option value="active" <%= page.status === 'active' ? 'selected' : '' %>>Active</option>
-                                    <option value="inactive" <%= page.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                                    <option value="inactive" <%= page.status === 'inactive' ? 'selected' : '' %>>Draft</option>
+                                    <option value="active" <%= page.status === 'active' ? 'selected' : '' %>>Publish</option>
                                 </select>
                     </div>
                     <div class="d-flex publish-btns">

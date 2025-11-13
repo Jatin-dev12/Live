@@ -2,7 +2,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header border-bottom">
-                <h6 class="text-xl mb-0">Edit Content Section</h6>
+                <h6 class="text-xl mb-0">Edit Content Section > <%= page.name %></h6>
             </div>
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
@@ -129,6 +129,40 @@
                                                         class="form-control border border-neutral-200 radius-8 hero-paragraph"
                                                         rows="4"
                                                         placeholder="Paragraph"><%= section.heroSection?.paragraph || '' %></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Call To Action Buttons:</label>
+                                                    <div class="cta-container">
+                                                        <% if (section.heroSection?.ctas && section.heroSection.ctas.length > 0) { %>
+                                                            <% section.heroSection.ctas.forEach(function(cta, index) { %>
+                                                                <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                        <span class="fw-semibold text-sm">CTA Button #<%= index + 1 %></span>
+                                                                        <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">Remove</button>
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label text-sm">Button Text:</label>
+                                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cta-text"
+                                                                            value="<%= cta.text || '' %>" placeholder="e.g., Learn More">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label text-sm">Button Link:</label>
+                                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
+                                                                            value="<%= cta.link || '' %>" placeholder="e.g., /about">
+                                                                    </div>
+                                                                    <!-- <div>
+                                                                        <label class="form-label text-sm">Button Style:</label>
+                                                                        <select class="form-control border border-neutral-200 radius-8 cta-style">
+                                                                            <option value="primary" <%= cta.style === 'primary' ? 'selected' : '' %>>Primary</option>
+                                                                            <option value="secondary" <%= cta.style === 'secondary' ? 'selected' : '' %>>Secondary</option>
+                                                                            <option value="outline" <%= cta.style === 'outline' ? 'selected' : '' %>>Outline</option>
+                                                                        </select>
+                                                                    </div> -->
+                                                                </div>
+                                                            <% }) %>
+                                                        <% } %>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 <% if (section.heroSection?.rightImage) { %>
                                                     <div class="mb-3">
@@ -384,9 +418,8 @@
                                 <div>
                                     <label class="form-label">Status: </label>
                                     <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
-                                        <option value="active" <%=content.status==='active' ? 'selected' : '' %>>Active</option>
-                                        <option value="inactive" <%=content.status==='inactive' ? 'selected' : '' %>>Inactive
-                                        </option>
+                                        <option value="inactive" <%=page.status=='inactive' ? 'selected' : '' %>>Draft</option>
+                                        <option value="active" <%=page.status=='active' ? 'selected' : '' %>>Publish</option>
                                     </select>
                                 </div>
                             </div>
@@ -396,10 +429,10 @@
                                     Cancel
                                 </a>
                                 <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Update & Manage SEO
+                                    Save & Manage SEO
                                 </button>
                                 <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Update Sections
+                                    Save Changes
                                 </button>
                             </div>
                         </div>
@@ -1057,7 +1090,7 @@
             });
         });
     });
-    $(document).on('input', '.callout-link,.column-btn-link', function() {
+    $(document).on('input', '.callout-link,.column-btn-link,.cta-link', function() {
         const $input = $(this);
         const query = $input.val().trim();
 
@@ -1102,9 +1135,54 @@
     });
 
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('.callout-link, .autocomplete-list').length) {
+        if (!$(e.target).closest('.callout-link, .column-btn-link, .cta-link, .autocomplete-list').length) {
             $('.autocomplete-list').remove();
         }
     });
+
+    // CTA Button Handlers
+    $(document).on('click', '.add-cta-btn', function() {
+        const $container = $(this).siblings('.cta-container');
+        const ctaCount = $container.find('.cta-item').length;
+        
+        if (ctaCount >= 3) {
+            showToast('Maximum 3 CTA buttons allowed', 'warning');
+            return;
+        }
+        
+        const ctaHtml = \`
+            <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold text-sm">CTA Button #\${ctaCount + 1}</span>
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">Remove</button>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-sm">Button Text:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 cta-text"
+                        placeholder="e.g., Learn More">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-sm">Button Link:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
+                        placeholder="e.g., /about">
+                </div>
+            </div>
+        \`;
+        
+        $container.append(ctaHtml);
+        updateCtaNumbers($container);
+    });
+
+    $(document).on('click', '.remove-cta-btn', function() {
+        const $container = $(this).closest('.cta-container');
+        $(this).closest('.cta-item').remove();
+        updateCtaNumbers($container);
+    });
+
+    function updateCtaNumbers($container) {
+        $container.find('.cta-item').each(function(index) {
+            $(this).find('.fw-semibold').text(\`CTA Button #\${index + 1}\`);
+        });
+    }
     </script>
     ` %>
