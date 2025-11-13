@@ -1142,10 +1142,12 @@
 
     // CTA Button Handlers
     $(document).on('click', '.add-cta-btn', function() {
+        
         const $container = $(this).siblings('.cta-container');
         const ctaCount = $container.find('.cta-item').length;
         
         if (ctaCount >= 3) {
+            $(this).attr("disabled", true);
             showToast('Maximum 3 CTA buttons allowed', 'warning');
             return;
         }
