@@ -615,6 +615,7 @@ swal-toast-small{
 }
 .autocomplete-list.border.bg-white.position-absolute.w-100.radius-8.shadow-sm.mt-1 {
     width: 96% !important;
+    z-index: 11;
 }
 
 button.swal2-confirm.swal2-styled {

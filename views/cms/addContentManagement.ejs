@@ -371,7 +371,7 @@
         const $container = $(this).siblings('.iwl-items');
         const idx = $container.find('.iwl-item').length + 1;
         const html = '<div class="iwl-item d-flex align-items-center gap-2 mb-2">'
-            + '<input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input" placeholder="Item #' + idx + '">' 
+            + '<input type="text" class="form-control border border-neutral-200 radius-8 iwl-item-input" placeholder="Item #' + idx + '">'
             + '<button type="button" class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>'
             + '</div>';
         $container.append(html);
@@ -480,19 +480,19 @@
     const $section = $(this).closest('.section-block');
     const file = e.target.files[0];
     const $input = $(this);
-    
+
     // Show preview immediately
     const src = URL.createObjectURL(file);
     $section.find('.uploaded-img-hero__preview').attr('src', src);
     $section.find('.uploaded-img-hero').removeClass('d-none');
     $section.find('.upload-file-hero').addClass('d-none');
-    
+
     // Upload to server
     const formData = new FormData();
     // ensure folder is sent before file
     formData.append('folder', 'hero');
     formData.append('file', file);
-    
+
     $.ajax({
     url: '/api/upload',
     type: 'POST',
@@ -580,13 +580,13 @@
     console.log("Add Call Out Card");
         const $container = $(this).siblings('.callout-container');
         const calloutCount = $container.find('.callout-item').length;
-        
+
         // Max 6 cards
         if (calloutCount >= 6) {
             showToast('Maximum 6 Call Out Section allowed', 'warning');
             return;
         }
-    
+
         const cardNumber = calloutCount + 1;
         const calloutHtml = \`
         <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
@@ -629,7 +629,7 @@
 
             if (!pages || pages.length === 0) return;
 
-            const $list = $('<div class="autocomplete-list border bg-white position-absolute w-100 radius-8 shadow-sm mt-1"></div>');
+            const $list = $('<div class="autocomplete-list border bg-white position-absolute w-100 radius-8 shadow-sm mt-1 z-1"></div>');
 
             pages.forEach(page => {
                 const $item = $(\`
@@ -665,13 +665,13 @@
     $(document).on('click', '.remove-callout-btn', function() {
         const $container = $(this).closest('.callout-container');
         const calloutCount = $container.find('.callout-item').length;
-        
+
         // Min 1 card
         if (calloutCount <= 1) {
             showToast('Minimum 1 call out card required', 'warning');
             return;
         }
-    
+
         $(this).closest('.callout-item').remove();
     });
 
@@ -786,7 +786,7 @@
                 const imageOnLeft = $section.find('.tci-image-left').is(':checked');
                 const $imageInput = $section.find('.upload-file-tci-input');
                 const imageSrc = $imageInput.data('uploaded') ? $imageInput.data('serverPath') : '';
-                
+
                 const columns = [];
                 $section.find('.column-item').each(function() {
                     const title = $(this).find('.column-title').val();
@@ -804,12 +804,12 @@
                 }
 
                 sectionData.title = heading || 'Three Column Info';
-                sectionData.threeColumnInfo = { 
+                sectionData.threeColumnInfo = {
                     heading: heading,
                     subheading: subheading,
                     imageOnLeft: imageOnLeft,
                     image: imageSrc,
-                    columns: columns 
+                    columns: columns
                 };
                 sectionData.thumbnail = imageSrc;
             } else if (sectionType === 'call-out-cards') {
