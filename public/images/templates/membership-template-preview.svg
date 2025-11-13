@@ -1,0 +1,17 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" stroke="#ddd" stroke-width="2"/>
+  <text x="200" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Membership Template</text>
+  <!-- Hero Section -->
+  <rect x="20" y="70" width="360" height="120" fill="#4f46e5" rx="8"/>
+  <text x="200" y="115" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="white">Membership</text>
+  <text x="200" y="140" text-anchor="middle" font-family="Arial" font-size="12" fill="white" opacity="0.9">Join our community and become part</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Arial" font-size="12" fill="white" opacity="0.9">of something greater</text>
+  <!-- Simple note -->
+  <text x="200" y="230" text-anchor="middle" font-family="Arial" font-size="12" fill="#666">Simple hero section only</text>
+</svg>

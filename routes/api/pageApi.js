@@ -289,7 +289,7 @@ router.get('/:id/sections', async (req, res) => {
 // Create new page
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template } = req.body;
         
         // Validate required fields
         if (!name) {
@@ -318,11 +318,63 @@ router.post('/', isAuthenticated, async (req, res) => {
             metaTitle,
             metaDescription,
             metaKeywords,
+            template: template || '',
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
         });
         
         await page.save();
+        
+        // If a template is selected, auto-create sections
+        if (template) {
+            const { templates } = require('../../config/templates');
+            const templateConfig = templates[template];
+            
+            if (templateConfig && templateConfig.sections) {
+                const sectionsToCreate = templateConfig.sections.map((section, index) => {
+                    const sectionData = {
+                        page: page._id,
+                        title: section.type === 'hero-section' ? 'Hero Section' : 
+                               section.type === 'call-out-cards' ? 'Call Out Cards' :
+                               section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                        status: 'active',
+                        order: index + 1,
+                        sectionType: section.type,
+                        createdBy: req.user ? req.user._id : null,
+                        updatedBy: req.user ? req.user._id : null
+                    };
+                    
+                    // Map template fields to appropriate section structure
+                    if (section.type === 'hero-section') {
+                        // Only include CTAs that have both text and link
+                        const validCtas = (section.fields.ctas || []).filter(cta => cta.text && cta.text.trim());
+                        sectionData.heroSection = {
+                            heading: section.fields.heading || '',
+                            paragraph: section.fields.paragraph || '',
+                            ctas: validCtas,
+                            rightImage: section.fields.rightImage || ''
+                        };
+                    } else if (section.type === 'call-out-cards') {
+                        // Only include cards that have a heading
+                        const validCards = (section.fields.cards || []).filter(card => card.heading && card.heading.trim());
+                        if (validCards.length > 0) {
+                            sectionData.callOutCards = {
+                                cards: validCards
+                            };
+                        }
+                    } else if (section.type === 'tabs-section') {
+                        sectionData.tabsSection = {
+                            tabs: section.fields.tabs || []
+                        };
+                    }
+                    
+                    return sectionData;
+                });
+                
+                // Create all sections
+                await Content.insertMany(sectionsToCreate);
+            }
+        }
         
         res.status(201).json({
             success: true,
@@ -343,7 +395,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update page
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template } = req.body;
         
         // Get the old page data before update
         const oldPage = await Page.findById(req.params.id);
@@ -367,6 +419,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Check if template is changing
+        const templateChanged = template !== undefined && template !== oldPage.template;
+        
         const page = await Page.findByIdAndUpdate(
             req.params.id,
             {
@@ -376,10 +431,66 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 metaTitle,
                 metaDescription,
                 metaKeywords,
+                template: template || '',
                 updatedBy: req.user ? req.user._id : null
             },
             { new: true, runValidators: true }
         );
+
+        // If template changed, recreate all sections
+        if (templateChanged) {
+            // Delete all existing content for this page
+            await Content.deleteMany({ page: req.params.id });
+            
+            // Create new sections based on template
+            if (template) {
+                const { templates } = require('../../config/templates');
+                const templateConfig = templates[template];
+                
+                if (templateConfig && templateConfig.sections) {
+                    const sectionsToCreate = templateConfig.sections.map((section, index) => {
+                        const sectionData = {
+                            page: page._id,
+                            title: section.type === 'hero-section' ? 'Hero Section' : 
+                                   section.type === 'call-out-cards' ? 'Call Out Cards' :
+                                   section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                            status: 'active',
+                            order: index + 1,
+                            sectionType: section.type,
+                            createdBy: req.user ? req.user._id : null,
+                            updatedBy: req.user ? req.user._id : null
+                        };
+                        
+                        // Map template fields to appropriate section structure
+                        if (section.type === 'hero-section') {
+                            const validCtas = (section.fields.ctas || []).filter(cta => cta.text && cta.text.trim());
+                            sectionData.heroSection = {
+                                heading: section.fields.heading || '',
+                                paragraph: section.fields.paragraph || '',
+                                ctas: validCtas,
+                                rightImage: section.fields.rightImage || ''
+                            };
+                        } else if (section.type === 'call-out-cards') {
+                            const validCards = (section.fields.cards || []).filter(card => card.heading && card.heading.trim());
+                            if (validCards.length > 0) {
+                                sectionData.callOutCards = {
+                                    cards: validCards
+                                };
+                            }
+                        } else if (section.type === 'tabs-section') {
+                            sectionData.tabsSection = {
+                                tabs: section.fields.tabs || []
+                            };
+                        }
+                        
+                        return sectionData;
+                    });
+                    
+                    // Create all sections
+                    await Content.insertMany(sectionsToCreate);
+                }
+            }
+        }
         
         // If page is deactivated, remove it from all menus
         if (status === 'inactive' && oldPage.status === 'active') {

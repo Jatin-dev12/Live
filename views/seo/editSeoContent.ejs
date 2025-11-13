@@ -126,6 +126,9 @@
                                     <span id="btnText">Update </span>
                                     <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
                                 </button>
+                                <!-- <% if (locals.fromContent) { %>
+                                    <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">Back to Content</a>
+                                <% } %> -->
                                 <a href="/seo/seo-management" class="btn btn-secondary px-4">Cancel</a>
                             </div>
                         </div>
@@ -310,7 +313,13 @@
             if (result.success) {
                 showToast('SEO record updated successfully!', 'success');
                 setTimeout(() => {
-                    window.location.href = '/seo/seo-management';
+                    // Check if we came from content management
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('from') === 'content') {
+                        window.location.href = '/cms/content-management';
+                    } else {
+                        window.location.href = '/seo/seo-management';
+                    }
                 }, 1500);
             } else {
                 showToast(result.message || 'Failed to update SEO record', 'error');

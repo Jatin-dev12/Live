@@ -1,0 +1,24 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" stroke="#ddd" stroke-width="2"/>
+  <text x="200" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Home Template</text>
+  <!-- Hero Section -->
+  <rect x="20" y="50" width="360" height="80" fill="#4f46e5" rx="8"/>
+  <text x="200" y="75" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">Hero Section</text>
+  <text x="200" y="95" text-anchor="middle" font-family="Arial" font-size="10" fill="white" opacity="0.9">Welcome message and description</text>
+  <!-- Cards Section -->
+  <rect x="20" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
+  <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 1</text>
+  <text x="75" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
+  <rect x="145" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
+  <text x="200" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 2</text>
+  <text x="200" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
+  <rect x="270" y="150" width="110" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
+  <text x="325" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold">Card 3</text>
+  <text x="325" y="190" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Description</text>
+</svg>

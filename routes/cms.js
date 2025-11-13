@@ -44,27 +44,9 @@ router.get('/content-management', isAuthenticated, async (req, res) => {
     }
 });
 
-// GET /add-content-management (show form to add sections to any page)
-router.get('/add-content-management', isAuthenticated, async (req, res) => {
-    try {
-        // Get all active pages regardless of their content status
-        const allPages = await Page.find({ status: 'active' }).sort({ name: 1 });
-
-        // Allow adding content to any page (even those with content)
-        res.render('cms/addContentManagement', {
-            title: "Add Content Management",
-            subTitle: "Add Content Management",
-            pages: allPages
-        });
-    } catch (error) {
-        console.error('Error fetching pages:', error);
-        res.render('cms/addContentManagement', {
-            title: "Add Content Management",
-            subTitle: "Add Content Management",
-            pages: [],
-            error: 'Error loading pages'
-        });
-    }
+// Redirect add-content-management to page master since sections are template-based
+router.get('/add-content-management', isAuthenticated, (req, res) => {
+    res.redirect('/page-master/web-page-master?message=Use templates to create structured pages');
 });
 
 // Show edit content form - loads all sections for a page
@@ -123,6 +105,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             },
             callOutCards:{
                 cards: section.callOutCards?.cards || []
+            },
+            tabsSection: {
+                tabs: section.tabsSection?.tabs || []
             }
         }));
 
@@ -180,6 +165,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 },
                 callOutCards: {
                     cards: section.callOutCards?.cards || []
+                },
+                tabsSection: {
+                    tabs: section.tabsSection?.tabs || []
                 }
             })),
             pages: allPages

@@ -1,98 +1,160 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card  p-0 radius-12">
     <div class="card-body p-24">
-        <div class="row justify-content-center">
-            <div class="col-xxl-6 col-xl-8 col-lg-10">
-                <div class="card border">
-                    <div class="card-body">
-                        <!-- <h6 class="text-md text-primary-light mb-16">Profile Image</h6> -->
+        <form id="addPageForm">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border">
+                        <div class="card-body">
+                            <!-- <h6 class="text-md text-primary-light mb-16">Profile Image</h6> -->
 
-                        <!-- Upload Image Start -->
-                        <!-- <div class="mb-24 mt-16">
-                            <div class="avatar-upload">
-                                <div class="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
-                                    <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" hidden>
-                                    <label for="imageUpload" class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle">
-                                        <iconify-icon icon="solar:camera-outline" class="icon"></iconify-icon>
-                                    </label>
+                            <!-- Upload Image Start -->
+                            <!-- <div class="mb-24 mt-16">
+                                <div class="avatar-upload">
+                                    <div class="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
+                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" hidden>
+                                        <label for="imageUpload" class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle">
+                                            <iconify-icon icon="solar:camera-outline" class="icon"></iconify-icon>
+                                        </label>
+                                    </div>
+                                    <div class="avatar-preview">
+                                        <div id="imagePreview"> </div>
+                                    </div>
                                 </div>
-                                <div class="avatar-preview">
-                                    <div id="imagePreview"> </div>
-                                </div>
-                            </div>
-                        </div> -->
-                        <!-- Upload Image End -->
-
-                        <form id="addPageForm">
-                            <div class="mb-20">
-                                <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page
-                                    Name <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="name" name="name"
-                                    placeholder="Enter Page Name" maxlength="30" pattern="[A-Za-z\s]+"
-                                    title="Only letters and spaces allowed, max 30 characters" required>
-                                <small class="text-muted">Only letters allowed (max 30 characters)</small>
-                            </div>
-                            <div class="mb-20">
-                                <label for="path"
-                                    class="form-label fw-semibold text-primary-light text-sm mb-8">Path</label>
-                                <input type="text" class="form-control radius-8" id="path" name="path"
-                                    placeholder="e.g., /about or /services" readonly>
-                                <small class="text-muted">Path will be auto-generated from page name if left
-                                    empty</small>
-                            </div>
-                            <div class="mb-20">
-                                <label for="status"
-                                    class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
-                                <select class="form-control radius-8" id="status" name="status">
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                            <!-- <div class="mb-20">
-                                <label for="metaTitle" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Title</label>
-                                <input type="text" class="form-control radius-8" id="metaTitle" name="metaTitle" placeholder="Enter Meta Title for SEO">
-                            </div>
-                            <div class="mb-20">
-                                <label for="metaDescription" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Description</label>
-                                <textarea class="form-control radius-8" id="metaDescription" name="metaDescription" rows="3" placeholder="Enter Meta Description for SEO"></textarea>
                             </div> -->
-                            <div class="d-flex align-items-center justify-content-center gap-3">
-                                <a href="/page-master/web-page-master"
-                                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-                                    Cancel
-                                </a>
-                                <button type="submit"
-                                    class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Save
-                                </button>
-                            </div>
-                        </form>
+                            <!-- Upload Image End -->
+
+                            <!-- <form id="addPageForm"> -->
+                                <div class="mb-20">
+                                    <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page
+                                        Name <span class="text-danger-600">*</span></label>
+                                    <input type="text" class="form-control radius-8" id="name" name="name"
+                                        placeholder="Enter Page Name" maxlength="30" pattern="[A-Za-z\s]+"
+                                        title="Only letters and spaces allowed, max 30 characters" required>
+                                    <small class="text-muted">Only letters allowed (max 30 characters)</small>
+                                </div>
+                                <div class="mb-20">
+                                    <label for="path"
+                                        class="form-label fw-semibold text-primary-light text-sm mb-8">Path</label>
+                                    <input type="text" class="form-control radius-8" id="path" name="path"
+                                        placeholder="e.g., /about or /services" readonly>
+                                    <small class="text-muted">Path will be auto-generated from page name if left
+                                        empty</small>
+                                </div>
+                                <div class="mb-20">
+                                    <label for="template"
+                                        class="form-label fw-semibold text-primary-light text-sm mb-8">Select Template</label>
+                                    <select class="form-control radius-8" id="template" name="template">
+                                        <option value="">-- No Template (Empty Page) --</option>
+                                        <option value="home">Home Template - Hero + 3 Callout Cards</option>
+                                        <option value="about">About Template - Hero with Button + Tabs Section</option>
+                                        <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
+                                        <option value="membership">Membership Template - Hero Section Only</option>
+                                    </select>
+                                    <small class="text-muted">Select a template to auto-create page sections</small>
+                                </div>
+                                <div class="mb-20" id="templatePreview" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <h6 class="mb-2">Template Preview:</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div id="templateDescription"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="templateImageContainer" class="text-center">
+                                                    <img id="templateImage" src="" alt="Template Preview" class="img-fluid rounded border" style="max-height: 200px; display: none;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-20">
+                                    <label for="status"
+                                        class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
+                                    <select class="form-control radius-8" id="status" name="status">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <!-- <div class="mb-20">
+                                    <label for="metaTitle" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Title</label>
+                                    <input type="text" class="form-control radius-8" id="metaTitle" name="metaTitle" placeholder="Enter Meta Title for SEO">
+                                </div>
+                                <div class="mb-20">
+                                    <label for="metaDescription" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Description</label>
+                                    <textarea class="form-control radius-8" id="metaDescription" name="metaDescription" rows="3" placeholder="Enter Meta Description for SEO"></textarea>
+                                </div> -->
+                                
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="page-publish-box">
+                        <h4 class="publish-heading">Publish</h4>
+                        <div class="status-dropdown">
+                            <label for="">Status:</label>
+                            <select name="" id="">
+                                <option value="0">Draft</option>
+                                <option value="1">Publish</option>
+                            </select>
+                        </div>
+                        <div class="d-flex publish-btns">
+                            <a href="/page-master/web-page-master"
+                                class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                Cancel
+                            </a>
+                            <button type="submit"
+                                class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                                Next
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
-<% script=` <script>
+<% script=` 
+<script>
     $(document).ready(function() {
-    // Validate page name input - only letters and spaces, max 20 characters
-    /* $('#name').on('input', function() {
-        let value = $(this).val();
-        // Remove any numbers and special characters except spaces
-        value = value.replace(/[^A-Za-z\s]/g, '');
-        // Limit to 20 characters
-        if (value.length > 20) {
-        value = value.substring(0, 20);
+    // Template descriptions and images
+    const templateData = {
+        home: {
+            description: 'This template includes:<br>• Hero section (heading + subheading)<br>• 3 Callout Cards (heading, paragraph, button text, button link)',
+            image: '/images/templates/home-template-preview.svg'
+        },
+        about: {
+            description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
+            image: '/images/templates/about-template-preview.svg'
+        },
+        legislation: {
+            description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
+            image: '/images/templates/legislation-template-preview.svg'
+        },
+        membership: {
+            description: 'This template includes:<br>• Hero section (heading + subheading)',
+            image: '/images/templates/membership-template-preview.svg'
         }
-        $(this).val(value);
+    };
 
-        // Auto-generate path from page name
-        const slug = value.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-        const path = slug === 'home' ? '/' : '/' + slug;
-        $('#path').val(path);
-    }); */
+    // Handle template selection
+    $('#template').on('change', function() {
+        const selectedTemplate = $(this).val();
+        const $preview = $('#templatePreview');
+        const $description = $('#templateDescription');
+        const $image = $('#templateImage');
+        
+        if (selectedTemplate && templateData[selectedTemplate]) {
+            $description.html(templateData[selectedTemplate].description);
+            $image.attr('src', templateData[selectedTemplate].image);
+            $image.show();
+            $preview.show();
+        } else {
+            $image.hide();
+            $preview.hide();
+        }
+    });
     $('#name').on('input', function() {
         let value = $(this).val();
 
@@ -137,6 +199,7 @@
             name: $('#name').val(),
             path: $('#path').val() || undefined,
             status: $('#status').val(),
+            template: $('#template').val(),
             metaTitle: $('#metaTitle').val(),
             metaDescription: $('#metaDescription').val()
         };
@@ -148,10 +211,19 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 if (response.success) {
-                    showToast('Page created successfully!', 'success');
-                    setTimeout(function() {
-                        window.location.href = '/page-master/web-page-master';
-                    }, 1000);
+                    const template = $('#template').val();
+                    if (template) {
+                        showToast('Page created successfully with template! Redirecting to content editor...', 'success');
+                        setTimeout(function() {
+                          window.location.href = '/cms/edit-content-management/' + response.data._id;
+
+                        }, 1500);
+                    } else {
+                        showToast('Page created successfully!', 'success');
+                        setTimeout(function() {
+                            window.location.href = '/page-master/web-page-master';
+                        }, 1000);
+                    }
                 } else {
                     showToast('Error: ' + response.message, 'error');
                 }
@@ -177,4 +249,4 @@
     });
     });
     </script>
-    ` %>
+      ` %>

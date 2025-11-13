@@ -1,18 +1,16 @@
+// Template-based CMS - sections are now managed through templates
+// This file is deprecated as sections are no longer dynamically added
 (function ($) {
-    $(sectionsContainer).on('click', '.add-column-btn', function() {
-        var container = $(this).siblings('.column-container');
-        var columnCount = container.find('.column-item').length + 1;
-        var columnHtml = `
-        <div class="column-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="fw-semibold text-sm">Card ${columnCount}</span>
-            <button type="button" class="btn btn-sm btn-danger-600 remove-column-btn">
-                <iconify-icon icon="mdi:delete"></iconify-icon>
-            </button>
-            </div>
-            <!-- Add your input fields for title, description, etc. here -->
-        </div>
-        `;
-        container.append(columnHtml);
-    });
+    // Check if sectionsContainer exists before binding events
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    if (sectionsContainer) {
+        $(sectionsContainer).on('click', '.add-column-btn', function() {
+            // This functionality is now disabled for template-based pages
+            if (typeof showToast === 'function') {
+                showToast('Buttons are managed through page templates. Edit the template in Page Master to modify structure.', 'warning');
+            } else {
+                alert('Buttons are managed through page templates. Edit the template in Page Master to modify structure.');
+            }
+        });
+    }
 })(jQuery);

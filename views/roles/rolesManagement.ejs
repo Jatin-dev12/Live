@@ -59,8 +59,8 @@
                                         <%= user.role ? user.role.name : 'No Role' %>
                                     </span>
                                 </td>
-                                <td class="text-center">
-                                    <% if (user.isActive) { %>
+                                <td class="text-center d-flex justify-content-center">
+                                    <!-- <% if (user.isActive) { %>
                                         <span class="badge bg-success-100 text-success-600  rounded-pill">
                                             <i class="ri-check-line me-1"></i> Active
                                         </span>
@@ -68,21 +68,32 @@
                                         <span class="badge bg-danger-100 text-danger-600  rounded-pill">
                                             <i class="ri-close-line me-1"></i> Inactive
                                         </span>
-                                    <% } %>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <button type="button" class="toggle-status-btn <%= user.isActive ? 'bg-warning-focus bg-hover-warning-200 text-warning-600' : 'bg-success-focus bg-hover-success-200 text-success-600' %> fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                    <% } %> -->
+                                    <button type="button" class="toggle-status-btn <%= user.isActive ? 'bg-success-focus bg-hover-success-200 text-success-600' : 'bg-warning-focus bg-hover-warning-200 text-warning-600' %> fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                                 data-user-id="<%= user._id %>"
                                                 data-user-name="<%= user.fullName %>"
                                                 data-current-status="<%= user.isActive %>"
                                                 title="<%= user.isActive ? 'Deactivate User' : 'Activate User' %>">
                                             <% if (user.isActive) { %>
-                                                <iconify-icon icon="mdi:toggle-switch" class="icon text-xl"></iconify-icon>
+                                                <iconify-icon icon="mdi:toggle-switch" class="icon fs-2"></iconify-icon>
                                             <% } else { %>
                                                 <iconify-icon icon="mdi:toggle-switch-off" class="icon text-xl"></iconify-icon>
                                             <% } %>
                                         </button>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <!-- <button type="button" class="toggle-status-btn <%= user.isActive ? 'bg-success-focus bg-hover-success-200 text-success-600' : 'bg-warning-focus bg-hover-warning-200 text-warning-600' %> fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                                data-user-id="<%= user._id %>"
+                                                data-user-name="<%= user.fullName %>"
+                                                data-current-status="<%= user.isActive %>"
+                                                title="<%= user.isActive ? 'Deactivate User' : 'Activate User' %>">
+                                            <% if (user.isActive) { %>
+                                                <iconify-icon icon="mdi:toggle-switch" class="icon fs-2"></iconify-icon>
+                                            <% } else { %>
+                                                <iconify-icon icon="mdi:toggle-switch-off" class="icon text-xl"></iconify-icon>
+                                            <% } %>
+                                        </button> -->
                                         <button type="button" class="edit-user-btn bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" data-user-id="<%= user._id %>" title="Edit User">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </button>

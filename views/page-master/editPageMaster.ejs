@@ -1,10 +1,11 @@
 <div class="card h-100 p-0 radius-12">
     <div class="card-body p-24">
+         <form id="editPageForm">
         <div class="row justify-content-center">
-            <div class="col-xxl-6 col-xl-8 col-lg-10">
+            <div class="col-lg-8">
                 <div class="card border">
                     <div class="card-body">
-                        <form id="editPageForm">
+                       
                             <input type="hidden" id="pageId" value="<%= page._id %>">
 
                             <div class="mb-20">
@@ -16,12 +17,39 @@
                                 <input type="text" class="form-control radius-8" id="path" name="path" value="<%= page.path %>" placeholder="e.g., /about or /services" required readonly>
                             </div>
                             <div class="mb-20">
+                                <label for="template" class="form-label fw-semibold text-primary-light text-sm mb-8">Page Template</label>
+                                <select class="form-control radius-8" id="template" name="template">
+                                    <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option>
+                                    <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
+                                    <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
+                                    <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
+                                    <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option>
+                                </select>
+                                <small class="text-muted">Changing template will replace all existing sections</small>
+                            </div>
+                            <div class="mb-20" id="templatePreview" style="display: none;">
+                                <div class="alert alert-warning">
+                                    <h6 class="mb-2">⚠️ Template Change Warning:</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div id="templateDescription"></div>
+                                            <p class="mb-0 mt-2"><strong>This will replace all existing page content!</strong></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="templateImageContainer" class="text-center">
+                                                <img id="templateImage" src="" alt="Template Preview" class="img-fluid rounded border" style="max-height: 200px; display: none;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="mb-20">
                                 <label for="status" class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
                                 <select class="form-control radius-8" id="status" name="status">
                                     <option value="active" <%= page.status === 'active' ? 'selected' : '' %>>Active</option>
                                     <option value="inactive" <%= page.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
                                 </select>
-                            </div>
+                            </div> -->
                             <!-- <div class="mb-20">
                                 <label for="metaTitle" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Title</label>
                                 <input type="text" class="form-control radius-8" id="metaTitle" name="metaTitle" value="<%= page.metaTitle || '' %>" placeholder="Enter Meta Title for SEO">
@@ -30,25 +58,87 @@
                                 <label for="metaDescription" class="form-label fw-semibold text-primary-light text-sm mb-8">Meta Description</label>
                                 <textarea class="form-control radius-8" id="metaDescription" name="metaDescription" rows="3" placeholder="Enter Meta Description for SEO"><%= page.metaDescription || '' %></textarea>
                             </div> -->
-                            <div class="d-flex align-items-center justify-content-center gap-3">
-                                <a href="/page-master/web-page-master" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Update
-                                </button>
-                            </div>
-                        </form>
+                            
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="page-publish-box">
+                    <h4 class="publish-heading">Publish</h4>
+                    <div class="status-dropdown">
+                        <label for="status" class="form-label fw-semibold text-primary-light text-sm mb-8">Status</label>
+                                <select class="form-controlradius-8" id="status" name="status">
+                                    <option value="active" <%= page.status === 'active' ? 'selected' : '' %>>Active</option>
+                                    <option value="inactive" <%= page.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                                </select>
+                    </div>
+                    <div class="d-flex publish-btns">
+                        <a href="/page-master/web-page-master"
+                            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                            Cancel
+                        </a>
+                        <a href="/cms/edit-content-management/<%= page._id %>"
+                            class="border border-success-600 bg-hover-success-200 text-success-600 text-md px-56 py-11 radius-8">
+                            Edit Content
+                        </a>
+                        <button type="submit"
+                            class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8 submit-form-page">
+                            Update
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
     </div>
 </div>
 
 <% script = `
 <script>
     $(document).ready(function() {
+        // Template descriptions and images
+        const templateData = {
+            home: {
+                description: 'This template includes:<br>• Hero section (heading + subheading)<br>• 3 Callout Cards (heading, paragraph, button text, button link)',
+                image: '/images/templates/home-template-preview.svg'
+            },
+            about: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
+                image: '/images/templates/about-template-preview.svg'
+            },
+            legislation: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
+                image: '/images/templates/legislation-template-preview.svg'
+            },
+            membership: {
+                description: 'This template includes:<br>• Hero section (heading + subheading)',
+                image: '/images/templates/membership-template-preview.svg'
+            }
+        };
+
+        const originalTemplate = $('#template').val();
+
+        // Handle template selection
+        $('#template').on('change', function() {
+            const selectedTemplate = $(this).val();
+            const $preview = $('#templatePreview');
+            const $description = $('#templateDescription');
+            const $image = $('#templateImage');
+            
+            if (selectedTemplate && selectedTemplate !== originalTemplate && templateData[selectedTemplate]) {
+                $description.html(templateData[selectedTemplate].description);
+                $image.attr('src', templateData[selectedTemplate].image);
+                $(".submit-form-page").text("Next");
+                $image.show();
+                $preview.show();
+            } else {
+                $(".submit-form-page").text("Update");
+                $image.hide();
+                $preview.hide();
+            }
+        });
+
         $('#name').on('input', function() {
             let value = $(this).val();
 
@@ -79,6 +169,7 @@
                 name: $('#name').val(),
                 path: $('#path').val(),
                 status: $('#status').val(),
+                template: $('#template').val(),
                 metaTitle: $('#metaTitle').val(),
                 metaDescription: $('#metaDescription').val()
             };
@@ -90,10 +181,19 @@
                 data: JSON.stringify(formData),
                 success: function(response) {
                     if (response.success) {
-                        showToast('Page updated successfully!', 'success');
-                        setTimeout(function() {
-                            window.location.href = '/page-master/web-page-master';
-                        }, 1000);
+                        const template = $('#template').val();
+                        if (template && template !== originalTemplate) {
+                            showToast('Page template updated successfully! Redirecting to content editor...', 'success');
+                            setTimeout(function() {
+                                
+                                window.location.href = '/cms/edit-content-management/' + pageId;
+                            }, 1500);
+                        } else {
+                            showToast('Page updated successfully!', 'success');
+                            setTimeout(function() {
+                                window.location.href = '/page-master/web-page-master';
+                            }, 1000);
+                        }
                     } else {
                         showToast('Error: ' + response.message, 'error');
                     }

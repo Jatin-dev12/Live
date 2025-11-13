@@ -127,6 +127,23 @@ const contentSchema = new mongoose.Schema({
             }
         }]
     },
+    // Tabs section
+    tabsSection: {
+        tabs: [{
+            title: {
+                type: String,
+                trim: true
+            },
+            heading: {
+                type: String,
+                trim: true
+            },
+            paragraph: {
+                type: String,
+                trim: true
+            }
+        }]
+    },
     customFields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed

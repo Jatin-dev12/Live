@@ -5,7 +5,7 @@
                 <h5 class="card-title mb-0">Add SEO Content</h5>
             </div>
             <div class="card-body p-24">
-                <form id="addSeoForm">
+                <form id="addSeoForm" onsubmit="return false;">
                     <div class="row gy-3">
                         <!-- Page Selection -->
                         <div class="col-md-6">
@@ -14,7 +14,7 @@
                                 <option value="">-- Select a Page --</option>
                                 <% if (pages && pages.length > 0) { %>
                                     <% pages.forEach(function(page) { %>
-                                        <option value="<%= page._id %>"><%= page.name %></option>
+                                        <option value="<%= page._id %>" <% if (locals.selectedPageId && locals.selectedPageId === page._id.toString()) { %>selected<% } %>><%= page.name %></option>
                                     <% }); %>
                                 <% } else { %>
                                     <option value="" disabled>No pages available</option>
@@ -121,6 +121,11 @@
                                     <span id="btnText">Create</span>
                                     <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
                                 </button>
+<!--                                 <% if (locals.fromContent) { %>
+                                    <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">Back to Content</a>
+                                <% } %> -->
+                                <!-- Hidden data for JavaScript -->
+                                <input type="hidden" id="fromContentFlag" value="<%= locals.fromContent ? 'true' : 'false' %>">
                                 <a href="/seo/seo-management" class="btn btn-secondary px-4">Cancel</a>
                             </div>
                         </div>
@@ -133,6 +138,9 @@
 
 <% script = `
 <script>
+$(document).ready(function() {
+    console.log('SEO form JavaScript loaded');
+    
     // Character counters
     $('#metaTitle').on('input', function() {
         $('#metaTitleCount').text($(this).val().length);
@@ -226,6 +234,7 @@
 
     // Form submission
     $('#addSeoForm').on('submit', async function(e) {
+        console.log('Form submission intercepted');
         e.preventDefault();
 
         const submitBtn = $('#submitBtn');
@@ -304,7 +313,13 @@
             if (result.success) {
                 showToast('SEO record created successfully!', 'success');
                 setTimeout(() => {
-                    window.location.href = '/seo/seo-management';
+                    // Check if we came from content management
+                    const fromContent = $('#fromContentFlag').val() === 'true';
+                    if (fromContent) {
+                        window.location.href = '/cms/content-management';
+                    } else {
+                        window.location.href = '/seo/seo-management';
+                    }
                 }, 1500);
             } else {
                 showToast(result.message || 'Failed to create SEO record', 'error');
@@ -320,5 +335,6 @@
             btnSpinner.addClass('d-none');
         }
     });
+});
 </script>
 ` %>
