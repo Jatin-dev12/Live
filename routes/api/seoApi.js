@@ -133,8 +133,7 @@ router.post('/seo', isAuthenticated, async (req, res) => {
             metaDescription,
             metaKeywords,
             canonicalUrl,
-            ogTitle,
-            ogDescription,
+            ogMetaTags,
             ogImage,
             ogImagePath,
             robots,
@@ -165,8 +164,7 @@ router.post('/seo', isAuthenticated, async (req, res) => {
             metaDescription,
             metaKeywords,
             canonicalUrl,
-            ogTitle: ogTitle || metaTitle,
-            ogDescription: ogDescription || metaDescription,
+            ogMetaTags,
             ogImage,
             ogImagePath,
             robots: robots || 'index, follow',
@@ -202,8 +200,7 @@ router.put('/seo/:id', isAuthenticated, async (req, res) => {
             metaDescription,
             metaKeywords,
             canonicalUrl,
-            ogTitle,
-            ogDescription,
+            ogMetaTags,
             ogImage,
             ogImagePath,
             robots,
@@ -244,8 +241,7 @@ router.put('/seo/:id', isAuthenticated, async (req, res) => {
         if (metaDescription) seo.metaDescription = metaDescription;
         if (metaKeywords !== undefined) seo.metaKeywords = metaKeywords;
         if (canonicalUrl !== undefined) seo.canonicalUrl = canonicalUrl;
-        if (ogTitle !== undefined) seo.ogTitle = ogTitle;
-        if (ogDescription !== undefined) seo.ogDescription = ogDescription;
+        if (ogMetaTags !== undefined) seo.ogMetaTags = ogMetaTags;
         if (ogImage !== undefined) seo.ogImage = ogImage;
         if (ogImagePath !== undefined) seo.ogImagePath = ogImagePath;
         if (robots) seo.robots = robots;

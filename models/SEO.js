@@ -27,15 +27,9 @@ const seoSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    ogTitle: {
+    ogMetaTags: {
         type: String,
-        trim: true,
-        maxlength: 60
-    },
-    ogDescription: {
-        type: String,
-        trim: true,
-        maxlength: 160
+        trim: true
     },
     ogImage: {
         type: String,

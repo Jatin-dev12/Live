@@ -325,7 +325,7 @@
                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
                         Add Call Out Card
                     </button>
-                    <small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small>
+                    <small class="text-muted d-block mt-1">Max: 10 cards allowed</small>
                 </div>
             </div>
         </div>
@@ -364,6 +364,38 @@
             $section.find('.three-column-fields').show();
         } else if (sectionType === 'call-out-cards') {
             $section.find('.call-out-cards-fields').show();
+            // Auto-create 3 default cards if none exist
+            const $calloutContainer = $section.find('.callout-container');
+            if ($calloutContainer.find('.callout-item').length === 0) {
+                for (let i = 1; i <= 3; i++) {
+                    const calloutHtml = `
+                    <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-semibold text-sm">Card #${i}</span>
+                                <span class="badge bg-secondary">Template Card</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                <iconify-icon icon="mdi:delete"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card ${i}" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-sm">Paragraph:</label>
+                            <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="5" placeholder="Enter description here"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label text-sm">Link:</label>
+                            <input type="text" class="form-control border border-neutral-200 radius-8 callout-link" placeholder="e.g., /more">
+                        </div>
+                    </div>
+                    `;
+                    $calloutContainer.append(calloutHtml);
+                }
+            }
         }
     });
     // Dynamic list items for Image with List
@@ -577,13 +609,12 @@
 
     // Add Call Out Card
     $(document).off('click', '.add-callout-btn').on('click', '.add-callout-btn', function() {
-    console.log("Add Call Out Card");
         const $container = $(this).siblings('.callout-container');
         const calloutCount = $container.find('.callout-item').length;
 
         // Max 6 cards
-        if (calloutCount >= 6) {
-            showToast('Maximum 6 Call Out Section allowed', 'warning');
+        if (calloutCount >= 10) {
+            showToast('Maximum 10 Call Out Section allowed', 'warning');
             return;
         }
 
@@ -591,18 +622,21 @@
         const calloutHtml = \`
         <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
+                    <span class="badge bg-secondary">Template Card</span>
+                </div>
                 <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
                     <iconify-icon icon="mdi:delete"></iconify-icon>
                 </button>
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
-                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="e.g., Call Out #\${cardNumber}" required>
+                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}" required>
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Paragraph:</label>
-                <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="2" placeholder="Enter Paragraph"></textarea>
+                <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="5" placeholder="Enter description here"></textarea>
             </div>
             <div>
                 <label class="form-label text-sm">Link:</label>
@@ -666,13 +700,13 @@
         const $container = $(this).closest('.callout-container');
         const calloutCount = $container.find('.callout-item').length;
 
-        // Min 1 card
-        if (calloutCount <= 1) {
-            showToast('Minimum 1 call out card required', 'warning');
-            return;
-        }
-
+        // No minimum - allow deletion of all cards
         $(this).closest('.callout-item').remove();
+        
+        // Renumber remaining cards
+        $container.find('.callout-item').each(function(index) {
+            $(this).find('.fw-semibold').text('Card #' + (index + 1));
+        });
     });
 
     // Form Submission
@@ -763,9 +797,8 @@
                 $section.find('.cta-item').each(function() {
                     const text = $(this).find('.cta-text').val();
                     const link = $(this).find('.cta-link').val();
-                    const style = $(this).find('.cta-style').val();
                     if (text && link) {
-                        ctas.push({ text, link, style });
+                        ctas.push({ text, link });
                     }
                 });
 
@@ -829,7 +862,7 @@
         }
 
         if (cards.length > 6) {
-            showToast('Maximum 6 Call Out Section allowed', 'warning');
+            showToast('Maximum 10 Call Out Section allowed', 'warning');
             return false;
         }
 

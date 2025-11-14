@@ -67,18 +67,15 @@
                             <h6 class="mb-3">Open Graph (Social Media)</h6>
                         </div>
 
-                        <!-- OG Title -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">OG Title</label>
-                            <input type="text" class="form-control" id="ogTitle" name="ogTitle" value="<%= seo.ogTitle || '' %>" placeholder="Open Graph Title (Max 60 characters)" maxlength="60">
-                            <small class="text-muted">Leave empty to use Meta Title</small>
-                        </div>
-
-                        <!-- OG Description -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">OG Description</label>
-                            <input type="text" class="form-control" id="ogDescription" name="ogDescription" value="<%= seo.ogDescription || '' %>" placeholder="Open Graph Description (Max 160 characters)" maxlength="160">
-                            <small class="text-muted">Leave empty to use Meta Description</small>
+                        <!-- OG Meta Tags Editor -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Open Graph Meta Tags</label>
+                            <div id="ogMetaTagsEditorWrapper">
+                                <div id="ogMetaTagsEditor" style="height: 120px;"></div>
+                            </div>
+                            <input type="hidden" id="ogMetaTags" name="ogMetaTags" value="">
+                            <input type="hidden" id="ogMetaTagsInitial" value="<%- JSON.stringify(seo.ogMetaTags || '').replace(/"/g, '&quot;') %>">
+                            <small class="text-muted">Add custom Open Graph meta tags (og:title, og:description, og:type, etc.). You can use HTML format.</small>
                         </div>
 
                         <!-- OG Image Upload -->
@@ -140,7 +137,31 @@
 </div>
 
 <% script = `
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
+    // Initialize Quill Editor for OG Meta Tags (without toolbar)
+    var ogMetaTagsQuill = new Quill('#ogMetaTagsEditor', {
+        theme: 'snow',
+        placeholder: 'Add Open Graph meta tags here (e.g., og:title, og:description, og:type, etc.)',
+        modules: {
+            toolbar: false  // Disable toolbar
+        }
+    });
+    
+    console.log('Quill editor initialized:', ogMetaTagsQuill);
+
+    // Load initial content
+    try {
+        const initialContent = JSON.parse($('#ogMetaTagsInitial').val());
+        if (initialContent) {
+            ogMetaTagsQuill.root.innerHTML = initialContent;
+            console.log('Loaded initial content:', initialContent);
+        }
+    } catch (e) {
+        console.error('Error loading initial OG meta tags content:', e);
+    }
+
     // Character counters
     $('#metaTitle').on('input', function() {
         $('#metaTitleCount').text($(this).val().length);
@@ -264,6 +285,9 @@
             }
         }
 
+        // Get OG Meta Tags content from Quill
+        const ogMetaTagsContent = ogMetaTagsQuill.root.innerHTML;
+
         // Get form data
         const formData = {
             page: $('#pageId').val(),
@@ -271,8 +295,7 @@
             metaDescription: $('#metaDescription').val().trim(),
             metaKeywords: $('#metaKeywords').val().trim(),
             canonicalUrl: $('#canonicalUrl').val().trim(),
-            ogTitle: $('#ogTitle').val().trim(),
-            ogDescription: $('#ogDescription').val().trim(),
+            ogMetaTags: ogMetaTagsContent,
             ogImage: $('#ogImage').val().trim(),
             ogImagePath: uploadedImagePath,
             robots: $('#robots').val()
@@ -300,7 +323,7 @@
         btnSpinner.removeClass('d-none');
 
         try {
-            const response = await fetch(\`/api/seo/\${seoId}\`, {
+            const response = await fetch('/api/seo/' + seoId, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
