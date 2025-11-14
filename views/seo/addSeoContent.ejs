@@ -69,18 +69,14 @@
                             <h6 class="mb-3">Open Graph (Social Media)</h6>
                         </div>
 
-                        <!-- OG Title -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">OG Title</label>
-                            <input type="text" class="form-control" id="ogTitle" name="ogTitle" placeholder="Open Graph Title (Max 60 characters)" maxlength="60">
-                            <small class="text-muted">Leave empty to use Meta Title</small>
-                        </div>
-
-                        <!-- OG Description -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">OG Description</label>
-                            <input type="text" class="form-control" id="ogDescription" name="ogDescription" placeholder="Open Graph Description (Max 160 characters)" maxlength="160">
-                            <small class="text-muted">Leave empty to use Meta Description</small>
+                        <!-- OG Meta Tags Editor -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Open Graph Meta Tags</label>
+                            <div id="ogMetaTagsEditorWrapper">
+                                <div id="ogMetaTagsEditor" style="height: 120px;"></div>
+                            </div>
+                            <input type="hidden" id="ogMetaTags" name="ogMetaTags" value="">
+                            <small class="text-muted">Add custom Open Graph meta tags (og:title, og:description, og:type, etc.). You can use HTML format.</small>
                         </div>
 
                         <!-- OG Image Upload -->
@@ -137,10 +133,23 @@
 </div>
 
 <% script = `
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
 $(document).ready(function() {
     console.log('SEO form JavaScript loaded');
     
+    // Initialize Quill Editor for OG Meta Tags (without toolbar)
+    var ogMetaTagsQuill = new Quill('#ogMetaTagsEditor', {
+        theme: 'snow',
+        placeholder: 'Add Open Graph meta tags here (e.g., og:title, og:description, og:type, etc.)',
+        modules: {
+            toolbar: false  // Disable toolbar
+        }
+    });
+    
+    console.log('Quill editor initialized:', ogMetaTagsQuill);
+
     // Character counters
     $('#metaTitle').on('input', function() {
         $('#metaTitleCount').text($(this).val().length);
@@ -264,6 +273,9 @@ $(document).ready(function() {
             }
         }
 
+        // Get OG Meta Tags content from Quill
+        const ogMetaTagsContent = ogMetaTagsQuill.root.innerHTML;
+
         // Get form data
         const formData = {
             page: $('#pageId').val(),
@@ -271,8 +283,7 @@ $(document).ready(function() {
             metaDescription: $('#metaDescription').val().trim(),
             metaKeywords: $('#metaKeywords').val().trim(),
             canonicalUrl: $('#canonicalUrl').val().trim(),
-            ogTitle: $('#ogTitle').val().trim(),
-            ogDescription: $('#ogDescription').val().trim(),
+            ogMetaTags: ogMetaTagsContent,
             ogImage: $('#ogImage').val().trim(),
             ogImagePath: uploadedImagePath,
             robots: $('#robots').val()

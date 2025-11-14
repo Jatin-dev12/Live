@@ -629,3 +629,14 @@ button.swal2-confirm.swal2-styled {
     font-weight: 500 !important;
     background: #ce1126 !important;
 }
+
+
+.form-control:disabled {
+    background-color: rgb(247 188 175 / 32%);
+    opacity: 1;
+    font-weight: 600;
+}
+
+.dkUNmA {
+    display: none;
+}

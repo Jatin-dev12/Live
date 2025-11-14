@@ -14,17 +14,16 @@
                             <% allSections.forEach(function(section, index) { %>
                                 <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-4"
                                     data-id="<%= section._id %>">
-                                    <!-- <h6 class="text-lg mb-3">Section <%= index + 1 %>
-                                    </h6> -->
+                                  
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="text-lg mb-0">Section <%= index + 1 %></h6>
+                                        
                                         <span class="badge bg-primary-600">Template Section</span>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" class="original-section-type"
                                             value="<%= section.sectionType %>">
-                                        <label class="form-label">Section Type: <span
-                                                class="text-danger-600">*</span></label>
+                                        <!-- <label class="form-label">Section Type: <span -->
+                                                <!-- class="text-danger-600">*</span></label> -->
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
                                             disabled>
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
@@ -132,6 +131,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Call To Action Buttons:</label>
+                                                    <!-- Debug CTAs: <%= JSON.stringify(section.heroSection?.ctas) %> -->
                                                     <div class="cta-container">
                                                         <% if (section.heroSection?.ctas && section.heroSection.ctas.length > 0) { %>
                                                             <% section.heroSection.ctas.forEach(function(cta, index) { %>
@@ -296,8 +296,13 @@
                                                         cards.forEach(function(card, idx){ %>
                                                             <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                    <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
-                                                                    <span class="badge bg-secondary">Template Card</span>
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
+                                                                        <span class="badge bg-secondary">Template Card</span>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                                                        <iconify-icon icon="mdi:delete"></iconify-icon>
+                                                                    </button>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
@@ -317,7 +322,10 @@
                                                             </div>
                                                         <% }) %>
                                                     </div>
-                                                    <small class="text-muted">Cards are defined by the page template</small>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
+                                                        Add Call Out Card
+                                                    </button>
+                                                    <small class="text-muted d-block mt-1">Max: 6 cards</small>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='tabs-section' ) { %>
@@ -401,7 +409,7 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="page-status-widget">
-                                <div>
+                                <!-- <div>
                                     <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
                                     <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required disabled>
                                         <option value="">-- Select a Page --</option>
@@ -413,7 +421,7 @@
                                                 <% }) %>
                                                     <% } %>
                                     </select>
-                                </div>
+                                </div> -->
 
                                 <div>
                                     <label class="form-label">Status: </label>
@@ -809,9 +817,8 @@
                     $section.find(".cta-item").each(function () {
                         const text = $(this).find(".cta-text").val();
                         const link = $(this).find(".cta-link").val();
-                        const style = $(this).find(".cta-style").val();
                         if (text && link) {
-                            ctas.push({ text, link, style });
+                            ctas.push({ text, link });
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
@@ -859,11 +866,7 @@
                         };
                     }).get();
 
-                    if (cards.length === 0) {
-                        showToast('Please add at least one call out card', 'warning');
-                        isValid = false;
-                        return false;
-                    }
+                    // Allow 0 cards - no minimum requirement
 
                     if (cards.length > 6) {
                         showToast('Maximum 6 Call Out Section allowed', 'warning');
@@ -871,15 +874,17 @@
                         return false;
                     }
 
-                    // Check if all cards have headings
-                    const invalidCard = cards.find(card => !card.heading);
-                    if (invalidCard) {
-                        showToast('All Call Out Section must have a heading', 'warning');
-                        isValid = false;
-                        return false;
+                    // Check if all cards have headings (only if cards exist)
+                    if (cards.length > 0) {
+                        const invalidCard = cards.find(card => !card.heading);
+                        if (invalidCard) {
+                            showToast('All Call Out Section must have a heading', 'warning');
+                            isValid = false;
+                            return false;
+                        }
                     }
 
-                    sectionData.title = cards[0].heading || "Call Out Section";
+                    sectionData.title = cards.length > 0 ? (cards[0].heading || "Call Out Section") : "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
                     const tabs = $section.find(".tab-item").map(function () {
@@ -976,9 +981,8 @@
                     $section.find(".cta-item").each(function () {
                         const text = $(this).find(".cta-text").val();
                         const link = $(this).find(".cta-link").val();
-                        const style = $(this).find(".cta-style").val();
                         if (text && link) {
-                            ctas.push({ text, link, style });
+                            ctas.push({ text, link });
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
@@ -1008,20 +1012,19 @@
                         };
                     }).get();
 
-                    if (cards.length === 0) {
-                        showToast('Please add at least one call out card', 'warning');
-                        isValid = false;
-                        return false;
+                    // Allow 0 cards - no minimum requirement
+
+                    // Check if all cards have headings (only if cards exist)
+                    if (cards.length > 0) {
+                        const invalidCard = cards.find(card => !card.heading);
+                        if (invalidCard) {
+                            showToast('All Call Out Section must have a heading', 'warning');
+                            isValid = false;
+                            return false;
+                        }
                     }
 
-                    const invalidCard = cards.find(card => !card.heading);
-                    if (invalidCard) {
-                        showToast('All Call Out Section must have a heading', 'warning');
-                        isValid = false;
-                        return false;
-                    }
-
-                    sectionData.title = cards[0].heading || "Call Out Section";
+                    sectionData.title = cards.length > 0 ? (cards[0].heading || "Call Out Section") : "Call Out Section";
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
                     const tabs = $section.find(".tab-item").map(function () {
@@ -1184,6 +1187,59 @@
     function updateCtaNumbers($container) {
         $container.find('.cta-item').each(function(index) {
             $(this).find('.fw-semibold').text(\`CTA Button #\${index + 1}\`);
+        });
+    }
+
+    // Call Out Card Handlers
+    $(document).on('click', '.add-callout-btn', function() {
+        const $container = $(this).siblings('.callout-container');
+        const calloutCount = $container.find('.callout-item').length;
+
+        // Max 6 cards
+        if (calloutCount >= 6) {
+            showToast('Maximum 6 Call Out Cards allowed', 'warning');
+            return;
+        }
+
+        const cardNumber = calloutCount + 1;
+        const calloutHtml = \`
+        <div class="callout-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
+                    <span class="badge bg-secondary">Template Card</span>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                    <iconify-icon icon="mdi:delete"></iconify-icon>
+                </button>
+            </div>
+            <div class="mb-2">
+                <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}" required>
+            </div>
+            <div class="mb-2">
+                <label class="form-label text-sm">Paragraph:</label>
+                <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="5" placeholder="Enter description here"></textarea>
+            </div>
+            <div>
+                <label class="form-label text-sm">Link:</label>
+                <input type="text" class="form-control border border-neutral-200 radius-8 callout-link" placeholder="e.g., /more">
+            </div>
+        </div>
+        \`;
+        $container.append(calloutHtml);
+        updateCalloutNumbers($container);
+    });
+
+    $(document).on('click', '.remove-callout-btn', function() {
+        const $container = $(this).closest('.callout-container');
+        $(this).closest('.callout-item').remove();
+        updateCalloutNumbers($container);
+    });
+
+    function updateCalloutNumbers($container) {
+        $container.find('.callout-item').each(function(index) {
+            $(this).find('.fw-semibold').text(\`Card #\${index + 1}\`);
         });
     }
     </script>

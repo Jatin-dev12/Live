@@ -5,13 +5,22 @@
     border-radius: inherit !important;
 }
 
+/* Hide toolbar only for SEO OG Meta Tags editor */
+#ogMetaTagsEditor + .ql-toolbar.ql-snow,
+#ogMetaTagsEditor ~ .ql-toolbar.ql-snow {
+    display: none !important;
+}
+
 .ql-container.ql-snow {
     border: 0 !important; 
     border-radius: inherit !important;
 }
 .ql-editor {
     border-radius: 12px;
-    min-height: 600px;
+
+}
+.dkUNmA {
+    display: none;
 }
 
 .ql-picker-label, .ql-formats {
