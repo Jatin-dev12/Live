@@ -18,22 +18,24 @@
                             </div>
                             <div class="mb-20">
                                 <label for="template" class="form-label fw-semibold text-primary-light text-sm mb-8">Page Template</label>
+                                <input type="hidden" name="originalPageTemplate" id="originalPageTemplate" value="<%= page.template %>">
                                 <select class="form-control radius-8" id="template" name="template">
                                     <!-- <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option> -->
                                     <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
-                                    <!-- <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
+                                    <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
-                                    <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option> -->
+                                    <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
+                                    <!-- <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option> -->
                                 </select>
                                 <small class="text-muted">Changing template will replace all existing sections</small>
                             </div>
                             <div class="mb-20" id="templatePreview" style="display: none;">
                                 <div class="alert alert-warning">
-                                    <h6 class="mb-2">⚠️ Template Change Warning:</h6>
+                                    <!-- <h6 class="mb-2">⚠️ Template Change Warning:</h6> -->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div id="templateDescription"></div>
-                                            <p class="mb-0 mt-2"><strong>This will replace all existing page content!</strong></p>
+                                            <!-- <p class="mb-0 mt-2"><strong>This will replace all existing page content!</strong></p> -->
                                         </div>
                                         <div class="col-md-6">
                                             <div id="templateImageContainer" class="text-center">
@@ -103,14 +105,18 @@
                 description: 'This template includes:<br>• Hero section (heading + subheading)<br>• 3 Callout Cards (heading, paragraph, button text, button link)',
                 image: '/images/templates/home-template-preview.svg'
             },
-            // about: {
-            //     description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
-            //     image: '/images/templates/about-template-preview.svg'
-            // },
-            // legislation: {
-            //     description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
-            //     image: '/images/templates/legislation-template-preview.svg'
-            // },
+            about: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
+                image: '/images/templates/about-template-preview.svg'
+            },
+            legislation: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
+                image: '/images/templates/legislation-template-preview.svg'
+            },
+            query: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + 3 CTA buttons: text + link + style)',
+                image: '/images/templates/query-template-preview.svg'
+            },
             // membership: {
             //     description: 'This template includes:<br>• Hero section (heading + subheading)',
             //     image: '/images/templates/membership-template-preview.svg'
@@ -119,12 +125,23 @@
         const $defaultPreview = $('#templatePreview');
         const $defaultDescription = $('#templateDescription');
         const $defaultImage = $('#templateImage');
-        $defaultDescription.html(templateData["home"].description);
-        $defaultImage.attr('src', templateData["home"].image);
-        $defaultImage.show();
-        $defaultPreview.show();
-
+        
+        // Store original template value
         const originalTemplate = $('#template').val();
+        
+        // Show current template preview on page load
+        function showCurrentTemplatePreview() {
+            const currentTemplate = $('#originalPageTemplate').val();
+            if (currentTemplate && templateData[currentTemplate]) {
+                $defaultDescription.html(templateData[currentTemplate].description);
+                $defaultImage.attr('src', templateData[currentTemplate].image);
+                $defaultImage.show();
+                $defaultPreview.show();
+            }
+        }
+        
+        // Initialize preview on page load
+        showCurrentTemplatePreview();
 
         // Handle template selection
         $('#template').on('change', function() {

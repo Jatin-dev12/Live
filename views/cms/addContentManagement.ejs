@@ -325,7 +325,7 @@
                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
                         Add Call Out Card
                     </button>
-                    <small class="text-muted d-block mt-1">Max: 10 cards allowed</small>
+                    <small class="text-muted d-block mt-1">Max: 8 cards allowed</small>
                 </div>
             </div>
         </div>
@@ -613,8 +613,8 @@
         const calloutCount = $container.find('.callout-item').length;
 
         // Max 6 cards
-        if (calloutCount >= 10) {
-            showToast('Maximum 10 Call Out Section allowed', 'warning');
+        if (calloutCount >= 8) {
+            showToast('Maximum 8 Call Out Section allowed', 'warning');
             return;
         }
 

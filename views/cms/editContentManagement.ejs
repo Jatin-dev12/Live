@@ -2,7 +2,8 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header border-bottom">
-                <h6 class="text-xl mb-0">Edit Content Section > <%= page.name %></h6>
+                <h6 class="text-xl mb-0">Manage Content > <%= page.name %></h6>
+                <input type="hidden" name="pageTemplate" id="pageTemplate" value="<%= page.template %>">
             </div>
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
@@ -300,9 +301,11 @@
                                                                         <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
                                                                         <span class="badge bg-secondary">Template Card</span>
                                                                     </div>
+                                                                    <% if(page.template != 'legislation'){ %>
                                                                     <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
                                                                         <iconify-icon icon="mdi:delete"></iconify-icon>
                                                                     </button>
+                                                                    <% } %>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
@@ -322,10 +325,13 @@
                                                             </div>
                                                         <% }) %>
                                                     </div>
+                                                    <% if(page.template != 'legislation'){ %>
+                                                    
                                                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
                                                         Add Call Out Card
                                                     </button>
                                                     <small class="text-muted d-block mt-1">Max: 6 cards</small>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='tabs-section' ) { %>
@@ -336,12 +342,13 @@
                                                         <%
                                                         const tabs = section.tabsSection?.tabs || [];
                                                         if (tabs.length === 0) { %>
-                                                            <p class="text-muted">No tabs found. Default 8 tabs will be created.</p>
+                                                            <p class="text-muted">No tabs found. Click "Add Tab" to create one.</p>
                                                         <% }
                                                         tabs.forEach(function(tab, idx){ %>
                                                             <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                                     <span class="fw-semibold text-sm">Tab #<%= idx + 1 %></span>
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn">Remove</button>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Title:</label>
@@ -361,6 +368,8 @@
                                                             </div>
                                                         <% }) %>
                                                     </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-tab-btn">Add Tab</button>
+                                                    <small class="text-muted d-block mt-1">You can add or remove tabs as needed</small>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>""
@@ -422,6 +431,7 @@
                                                     <% } %>
                                     </select>
                                 </div> -->
+                                <input type="hidden" name="pageId" id="pageId" value="<%= page._id %>">
 
                                 <div>
                                     <label class="form-label">Status: </label>
@@ -1190,13 +1200,88 @@
         });
     }
 
+    // Tab Handlers
+    $(document).on('click', '.add-tab-btn', function() {
+        const $container = $(this).siblings('.tabs-container');
+        const tabCount = $container.find('.tab-item').length;
+        
+        if (tabCount >= 8) {
+            $(this).attr("disabled", true);
+            showToast('Maximum 8 tabs allowed', 'warning');
+            return;
+        }
+        
+        const tabHtml = \`
+            <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold text-sm">Tab #\${tabCount + 1}</span>
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn">Remove</button>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-sm">Title:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 tab-title"
+                        placeholder="Tab Title">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-sm">Heading:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 tab-heading"
+                        placeholder="Tab Heading">
+                </div>
+                <div>
+                    <label class="form-label text-sm">Paragraph:</label>
+                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3"
+                        placeholder="Tab content"></textarea>
+                </div>
+            </div>
+        \`;
+        
+        $container.append(tabHtml);
+        updateTabNumbers($container);
+        
+        // Hide "No tabs found" message if it exists
+        $container.find('.text-muted').hide();
+    });
+
+    $(document).on('click', '.remove-tab-btn', function() {
+        const $container = $(this).closest('.tabs-container');
+        const $tabItem = $(this).closest('.tab-item');
+        
+        // Don't allow removing if it's the last tab
+        if ($container.find('.tab-item').length <= 1) {
+            showToast('At least one tab is required', 'warning');
+            return;
+        }
+        
+        $tabItem.remove();
+        updateTabNumbers($container);
+        
+        // Show "No tabs found" message if no tabs left
+        if ($container.find('.tab-item').length === 0) {
+            $container.append('<p class="text-muted">No tabs found. Click "Add Tab" to create one.</p>');
+        }
+    });
+
+    function updateTabNumbers($container) {
+        $container.find('.tab-item').each(function(index) {
+            $(this).find('.fw-semibold').text(\`Tab #\${index + 1}\`);
+        });
+    }
+    var pageTemplate = $("#pageTemplate").val();
+    if(pageTemplate == 'legislation'){
+        $(".add-callout-btn").hide();
+    }
     // Call Out Card Handlers
     $(document).on('click', '.add-callout-btn', function() {
         const $container = $(this).siblings('.callout-container');
         const calloutCount = $container.find('.callout-item').length;
 
+        if(pageTemplate == 'legislation'){
+            $(this).attr("disabled", true);
+            return;
+        }
         // Max 6 cards
         if (calloutCount >= 6) {
+            $(this).attr("disabled", true);
             showToast('Maximum 6 Call Out Cards allowed', 'warning');
             return;
         }
