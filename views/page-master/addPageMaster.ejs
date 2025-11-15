@@ -46,9 +46,10 @@
                                     <select class="form-control radius-8" id="template" name="template">
                                         <!-- <option value="">-- No Template (Empty Page) --</option> -->
                                         <option value="home">Home Template - Hero + 3 Callout Cards</option>
-                                        <!-- <option value="about">About Template - Hero with Button + Tabs Section</option>
+                                        <option value="about">About Template - Hero with Button + Tabs Section</option>
                                         <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
-                                        <option value="membership">Membership Template - Hero Section Only</option> -->
+                                        <option value="query">Query Template - Hero with 3 CTA Buttons</option>
+                                        <!-- <option value="membership">Membership Template - Hero Section Only</option> -->
                                     </select>
                                     <small class="text-muted">Select a template to auto-create page sections</small>
                                 </div>
@@ -125,12 +126,16 @@
             image: '/images/templates/home-template-preview.svg'
         },
         about: {
-            description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (8 tabs, each with title, heading, paragraph)',
+            description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
             image: '/images/templates/about-template-preview.svg'
         },
         legislation: {
             description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
             image: '/images/templates/legislation-template-preview.svg'
+        },
+        query: {
+            description: 'This template includes:<br>• Hero section (heading + subheading + 3 CTA buttons: text + link + style)',
+            image: '/images/templates/query-template-preview.svg'
         },
         membership: {
             description: 'This template includes:<br>• Hero section (heading + subheading)',
@@ -141,10 +146,20 @@
     const $defaultPreview = $('#templatePreview');
     const $defaultDescription = $('#templateDescription');
     const $defaultImage = $('#templateImage');
-    $defaultDescription.html(templateData["home"].description);
-    $defaultImage.attr('src', templateData["home"].image);
-    $defaultImage.show();
-    $defaultPreview.show();
+    
+    // Show default template preview (home template)
+    function showDefaultTemplatePreview() {
+        const defaultTemplate = 'home'; // Default to home template for new pages
+        if (templateData[defaultTemplate]) {
+            $defaultDescription.html(templateData[defaultTemplate].description);
+            $defaultImage.attr('src', templateData[defaultTemplate].image);
+            $defaultImage.show();
+            $defaultPreview.show();
+        }
+    }
+    
+    // Initialize default preview
+    showDefaultTemplatePreview();
     // Handle template selection
     $('#template').on('change', function() {
         const selectedTemplate = $(this).val();

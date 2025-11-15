@@ -1,0 +1,47 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  
+  <!-- Hero Section -->
+  <rect x="10" y="10" width="380" height="180" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  
+  <!-- Hero Content Centered -->
+  <rect x="100" y="30" width="200" height="15" fill="#343a40" rx="2"/>
+  <text x="200" y="42" font-family="Arial, sans-serif" font-size="12" fill="#343a40" font-weight="bold" text-anchor="middle">Have a Query?</text>
+  
+  <rect x="80" y="55" width="240" height="8" fill="#6c757d" rx="1"/>
+  <rect x="90" y="68" width="220" height="8" fill="#6c757d" rx="1"/>
+  <text x="200" y="85" font-family="Arial, sans-serif" font-size="9" fill="#6c757d" text-anchor="middle">Get in touch with us for any questions</text>
+  <text x="200" y="98" font-family="Arial, sans-serif" font-size="9" fill="#6c757d" text-anchor="middle">or support you need</text>
+  
+  <!-- CTA Buttons - 3 buttons in a row -->
+  <rect x="80" y="120" width="70" height="25" fill="#dc3545" rx="4"/>
+  <text x="115" y="135" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">Contact Us</text>
+  
+  <rect x="165" y="120" width="70" height="25" fill="#6c757d" rx="4"/>
+  <text x="200" y="135" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">Submit Query</text>
+  
+  <rect x="250" y="120" width="70" height="25" fill="transparent" stroke="#dc3545" stroke-width="2" rx="4"/>
+  <text x="285" y="135" font-family="Arial, sans-serif" font-size="9" fill="#dc3545" text-anchor="middle" font-weight="bold">Call Now</text>
+  
+  <!-- CTA Labels -->
+  <text x="115" y="158" font-family="Arial, sans-serif" font-size="7" fill="#28a745" text-anchor="middle">Primary</text>
+  <text x="200" y="158" font-family="Arial, sans-serif" font-size="7" fill="#28a745" text-anchor="middle">Secondary</text>
+  <text x="285" y="158" font-family="Arial, sans-serif" font-size="7" fill="#28a745" text-anchor="middle">Outline</text>
+  
+  <!-- Features List -->
+  <text x="20" y="220" font-family="Arial, sans-serif" font-size="10" fill="#343a40" font-weight="bold">Template Features:</text>
+  
+  <circle cx="30" cy="235" r="2" fill="#28a745"/>
+  <text x="40" y="238" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">Hero section with heading and subheading</text>
+  
+  <circle cx="30" cy="250" r="2" fill="#28a745"/>
+  <text x="40" y="253" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">3 customizable CTA buttons with different styles</text>
+  
+  <circle cx="30" cy="265" r="2" fill="#28a745"/>
+  <text x="40" y="268" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">Perfect for contact and query pages</text>
+  
+  <!-- Template Label -->
+  <rect x="310" y="10" width="80" height="20" fill="#6f42c1" rx="3"/>
+  <text x="350" y="22" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle" font-weight="bold">QUERY TEMPLATE</text>
+</svg>

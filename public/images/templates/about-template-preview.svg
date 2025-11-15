@@ -1,27 +1,64 @@
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="400" height="300" fill="url(#bg)" stroke="#ddd" stroke-width="2"/>
-  <text x="200" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">About Template</text>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  
   <!-- Hero Section -->
-  <rect x="20" y="50" width="360" height="90" fill="#4f46e5" rx="8"/>
-  <text x="200" y="75" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">About Us Hero</text>
-  <text x="200" y="95" text-anchor="middle" font-family="Arial" font-size="10" fill="white" opacity="0.9">Learn more about our organization</text>
-  <rect x="170" y="105" width="60" height="20" fill="white" rx="4"/>
-  <text x="200" y="118" text-anchor="middle" font-family="Arial" font-size="9" fill="#4f46e5">Learn More</text>
+  <rect x="10" y="10" width="380" height="100" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  
+  <!-- Hero Content Left Side -->
+  <rect x="20" y="25" width="120" height="12" fill="#343a40" rx="2"/>
+  <text x="22" y="35" font-family="Arial, sans-serif" font-size="10" fill="#343a40" font-weight="bold">About Us</text>
+  
+  <rect x="20" y="45" width="160" height="6" fill="#6c757d" rx="1"/>
+  <rect x="20" y="55" width="140" height="6" fill="#6c757d" rx="1"/>
+  <text x="22" y="63" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">About description text</text>
+  
+  <!-- CTA Button -->
+  <rect x="20" y="75" width="60" height="20" fill="#dc3545" rx="3"/>
+  <text x="50" y="87" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Learn More</text>
+  
+  <!-- Hero Image Right Side -->
+  <rect x="220" y="25" width="150" height="70" fill="#e9ecef" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  <circle cx="295" cy="45" r="12" fill="#adb5bd"/>
+  <rect x="270" y="65" width="50" height="4" fill="#adb5bd" rx="2"/>
+  <rect x="280" y="75" width="30" height="4" fill="#adb5bd" rx="2"/>
+  <text x="295" y="90" font-family="Arial, sans-serif" font-size="8" fill="#6c757d" text-anchor="middle">Image</text>
+  
   <!-- Tabs Section -->
-  <rect x="20" y="160" width="360" height="100" fill="white" stroke="#e5e7eb" rx="4"/>
-  <rect x="30" y="170" width="40" height="20" fill="#4f46e5" rx="3"/>
-  <text x="50" y="183" text-anchor="middle" font-family="Arial" font-size="8" fill="white">Tab 1</text>
-  <rect x="80" y="170" width="40" height="20" fill="#f3f4f6" rx="3"/>
-  <text x="100" y="183" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Tab 2</text>
-  <rect x="130" y="170" width="40" height="20" fill="#f3f4f6" rx="3"/>
-  <text x="150" y="183" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Tab 3</text>
-  <rect x="180" y="170" width="40" height="20" fill="#f3f4f6" rx="3"/>
-  <text x="200" y="183" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Tab 4</text>
-  <text x="200" y="210" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Tab content area with 8 tabs total</text>
+  <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#343a40" font-weight="bold">Tabs Section</text>
+  
+  <!-- Tab Navigation -->
+  <rect x="10" y="145" width="380" height="30" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  
+  <!-- Tab 1 (Active) -->
+  <rect x="20" y="150" width="60" height="20" fill="#dc3545" rx="2"/>
+  <text x="50" y="162" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Tab 1</text>
+  
+  <!-- Tab 2 -->
+  <rect x="90" y="150" width="60" height="20" fill="transparent" stroke="#dee2e6" stroke-width="1" rx="2"/>
+  <text x="120" y="162" font-family="Arial, sans-serif" font-size="8" fill="#6c757d" text-anchor="middle">Tab 2</text>
+  
+  <!-- Tab 3 -->
+  <rect x="160" y="150" width="60" height="20" fill="transparent" stroke="#dee2e6" stroke-width="1" rx="2"/>
+  <text x="190" y="162" font-family="Arial, sans-serif" font-size="8" fill="#6c757d" text-anchor="middle">Tab 3</text>
+  
+  <!-- Add/Remove indicator -->
+  <text x="240" y="162" font-family="Arial, sans-serif" font-size="7" fill="#28a745">+ Add/Remove</text>
+  
+  <!-- Tab Content Area -->
+  <rect x="10" y="180" width="380" height="100" fill="#ffffff" stroke="#dee2e6" stroke-width="1" rx="4"/>
+  
+  <!-- Tab Content -->
+  <rect x="20" y="195" width="100" height="8" fill="#343a40" rx="1"/>
+  <text x="22" y="203" font-family="Arial, sans-serif" font-size="8" fill="#343a40" font-weight="bold">Tab Heading</text>
+  
+  <rect x="20" y="210" width="300" height="4" fill="#6c757d" rx="1"/>
+  <rect x="20" y="218" width="280" height="4" fill="#6c757d" rx="1"/>
+  <rect x="20" y="226" width="320" height="4" fill="#6c757d" rx="1"/>
+  <rect x="20" y="234" width="250" height="4" fill="#6c757d" rx="1"/>
+  <text x="22" y="250" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">Tab content paragraph text...</text>
+  
+  <!-- Template Label -->
+  <rect x="310" y="10" width="80" height="20" fill="#17a2b8" rx="3"/>
+  <text x="350" y="22" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle" font-weight="bold">ABOUT TEMPLATE</text>
 </svg>

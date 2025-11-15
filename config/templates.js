@@ -46,14 +46,16 @@ const templates = {
         type: 'tabs-section',
         fields: {
           tabs: [
+            { title: '', heading: '', paragraph: '' },
+            { title: '', heading: '', paragraph: '' },
+            { title: '', heading: '', paragraph: '' }
+          ]
+        },
+        placeholders: {
+          tabs: [
             { title: 'Tab 1', heading: 'First Tab', paragraph: 'Content for the first tab' },
             { title: 'Tab 2', heading: 'Second Tab', paragraph: 'Content for the second tab' },
-            { title: 'Tab 3', heading: 'Third Tab', paragraph: 'Content for the third tab' },
-            { title: 'Tab 4', heading: 'Fourth Tab', paragraph: 'Content for the fourth tab' },
-            { title: 'Tab 5', heading: 'Fifth Tab', paragraph: 'Content for the fifth tab' },
-            { title: 'Tab 6', heading: 'Sixth Tab', paragraph: 'Content for the sixth tab' },
-            { title: 'Tab 7', heading: 'Seventh Tab', paragraph: 'Content for the seventh tab' },
-            { title: 'Tab 8', heading: 'Eighth Tab', paragraph: 'Content for the eighth tab' }
+            { title: 'Tab 3', heading: 'Third Tab', paragraph: 'Content for the third tab' }
           ]
         }
       }
@@ -99,6 +101,35 @@ const templates = {
           ctas: [],
           rightImage: ''
         } 
+      }
+    ]
+  },
+  query: {
+    name: 'Query Template',
+    description: 'Hero section with heading, subheading and multiple CTAs',
+    previewImage: '/images/templates/query-template-preview.svg',
+    sections: [
+      { 
+        type: 'hero-section', 
+        fields: { 
+          heading: '', 
+          paragraph: '',
+          ctas: [
+            { text: '', link: '', style: 'primary' },
+            { text: '', link: '', style: 'secondary' },
+            { text: '', link: '', style: 'outline' }
+          ],
+          rightImage: ''
+        },
+        placeholders: {
+          heading: 'Have a Query?',
+          paragraph: 'Get in touch with us for any questions or support you need',
+          ctas: [
+            { text: 'Contact Us', link: '/contact' },
+            { text: 'Submit Query', link: '/query' },
+            { text: 'Call Now', link: 'tel:+1234567890' }
+          ]
+        }
       }
     ]
   }

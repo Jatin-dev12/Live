@@ -39,7 +39,7 @@ const pageSchema = new mongoose.Schema({
     template: {
         type: String,
         trim: true,
-        enum: ['', 'home', 'about', 'legislation', 'membership'],
+        enum: ['', 'home', 'about', 'legislation', 'membership', 'query'],
         default: ''
     },
     createdBy: {

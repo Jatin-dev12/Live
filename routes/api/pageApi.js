@@ -258,11 +258,33 @@ router.get('/:id/sections', async (req, res) => {
         
         // Get all sections for this page
         const sections = await Content.find(query)
-            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards createdAt updatedAt')
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards tabsSection createdAt updatedAt')
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email');
         
+        // Get template data if page has a template
+        /* let templateData = null;
+        if (page.template) {
+            const { templates } = require('../../config/templates');
+            const templateConfig = templates[page.template];
+            if (templateConfig) {
+                templateData = {
+                    name: page.template,
+                    displayName: templateConfig.name,
+                    description: templateConfig.description,
+                    previewImage: templateConfig.previewImage,
+                    sectionsCount: templateConfig.sections.length,
+                    sections: templateConfig.sections.map((section, index) => ({
+                        order: index + 1,
+                        type: section.type,
+                        placeholders: section.placeholders || null,
+                        hasFields: section.fields ? Object.keys(section.fields).length > 0 : false
+                    }))
+                };
+            }
+        } */
+
         res.json({
             success: true,
             data: {
@@ -270,8 +292,10 @@ router.get('/:id/sections', async (req, res) => {
                     _id: page._id,
                     name: page.name,
                     slug: page.slug,
-                    path: page.path
+                    path: page.path,
+                    template: page.template || null
                 },
+                // template: templateData,
                 sections: sections,
                 total: sections.length
             }
