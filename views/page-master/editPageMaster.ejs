@@ -19,7 +19,7 @@
                             <div class="mb-20">
                                 <label for="template" class="form-label fw-semibold text-primary-light text-sm mb-8">Page Template</label>
                                 <input type="hidden" name="originalPageTemplate" id="originalPageTemplate" value="<%= page.template %>">
-                                <select class="form-control radius-8" id="template" name="template">
+                                <select class="form-control radius-8" id="template" name="template" disabled style="cursor: not-allowed; opacity: 0.6;">
                                     <!-- <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option> -->
                                     <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
                                     <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
@@ -27,7 +27,10 @@
                                     <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
                                     <!-- <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option> -->
                                 </select>
-                                <small class="text-muted">Changing template will replace all existing sections</small>
+                                <small class="text-muted">
+                                    <i class="fas fa-lock me-1"></i>
+                                    Template cannot be changed after page creation to preserve existing content
+                                </small>
                             </div>
                             <div class="mb-20" id="templatePreview" style="display: none;">
                                 <div class="alert alert-warning">
@@ -127,7 +130,7 @@
         const $defaultImage = $('#templateImage');
         
         // Store original template value
-        const originalTemplate = $('#template').val();
+        const originalTemplate = $('#originalPageTemplate').val();
         
         // Show current template preview on page load
         function showCurrentTemplatePreview() {
@@ -144,7 +147,7 @@
         showCurrentTemplatePreview();
 
         // Handle template selection
-        $('#template').on('change', function() {
+        /* $('#template').on('change', function() {
             const selectedTemplate = $(this).val();
             const $preview = $('#templatePreview');
             const $description = $('#templateDescription');
@@ -161,7 +164,7 @@
                 $image.hide();
                 $preview.hide();
             }
-        });
+        }); */
 
         $('#name').on('input', function() {
             let value = $(this).val();
@@ -186,6 +189,9 @@
         });
         // Handle form submission
         $('#editPageForm').on('submit', function(e) {
+            const saveBtn = $('#editPageForm button[type="submit"]')[0];
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
             e.preventDefault();
 
             const pageId = $('#pageId').val();
