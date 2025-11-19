@@ -118,7 +118,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             console.log('❌ Invalid password');
             return res.status(401).json({
                 success: false,
-                message: 'No user found with the provided details'
+                message: 'Incorrect password. Please check your password and try again.'
             });
         }
 

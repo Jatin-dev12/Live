@@ -85,7 +85,7 @@
                                                                     class="form-control border border-neutral-200 radius-8 iwl-item-input"
                                                                     value="<%= it %>">
                                                                 <button type="button"
-                                                                    class="btn btn-sm btn-danger-600 remove-iwl-item">Remove</button>
+                                                                    class="btn btn-sm btn-danger-600 remove-iwl-item"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
                                                             </div>
                                                             <% }) %>
                                                     </div>
@@ -139,7 +139,7 @@
                                                                 <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                                                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                                                         <span class="fw-semibold text-sm">CTA Button #<%= index + 1 %></span>
-                                                                        <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">Remove</button>
+                                                                        <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
                                                                     </div>
                                                                     <div class="mb-2">
                                                                         <label class="form-label text-sm">Button Text:</label>
@@ -303,7 +303,7 @@
                                                                     </div>
                                                                     <% if(page.template != 'legislation'){ %>
                                                                     <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
-                                                                        <iconify-icon icon="mdi:delete"></iconify-icon>
+                                                                        <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                                                     </button>
                                                                     <% } %>
                                                                 </div>
@@ -348,7 +348,7 @@
                                                             <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                                     <span class="fw-semibold text-sm">Tab #<%= idx + 1 %></span>
-                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn">Remove</button>
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Title:</label>
@@ -444,7 +444,7 @@
                             <div class="d-flex publish-btns">
                                 <a href="/page-master/edit-page/<%= page._id %>"
                                     class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-                                    Cancel
+                                    Back
                                 </a>
                                 <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
                                     Save & Manage SEO
@@ -769,6 +769,9 @@
 
         // Form submission logic
         $("#editContentForm").on("submit", function (e) {
+            const saveBtn = $('#editContentForm button[type="submit"]')[0];
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
             e.preventDefault();
 
             const contentId = $("#contentId").val();
@@ -1169,7 +1172,7 @@
             <div class="cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold text-sm">CTA Button #\${ctaCount + 1}</span>
-                    <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn">Remove</button>
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-cta-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
                 </div>
                 <div class="mb-2">
                     <label class="form-label text-sm">Button Text:</label>
@@ -1215,7 +1218,7 @@
             <div class="tab-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold text-sm">Tab #\${tabCount + 1}</span>
-                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn">Remove</button>
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-tab-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
                 </div>
                 <div class="mb-2">
                     <label class="form-label text-sm">Title:</label>
@@ -1295,7 +1298,7 @@
                     <span class="badge bg-secondary">Template Card</span>
                 </div>
                 <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
-                    <iconify-icon icon="mdi:delete"></iconify-icon>
+                    <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                 </button>
             </div>
             <div class="mb-2">
