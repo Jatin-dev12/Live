@@ -1,7 +1,7 @@
 {
-  "name": "wowdash",
+  "name": "ACRM",
   "version": "1.0.0",
-  "description": "WowDash - Symfony - Multipurpose Admin Dashboard Template",
+  "description": "ACRM",
   "created": "December 2024",
   "main": "app.js",
   "scripts": {

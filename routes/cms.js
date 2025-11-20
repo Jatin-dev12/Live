@@ -95,7 +95,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 heading: section.heroSection?.heading || '',
                 paragraph: section.heroSection?.paragraph || '',
                 ctas: section.heroSection?.ctas || [],
-                rightImage: section.heroSection?.rightImage || ''
+                image: section.heroSection?.image || ''
             },
             threeColumnInfo: {
                 heading: section.threeColumnInfo?.heading || section.customFields?.heading || '',
@@ -124,7 +124,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 heading: '',
                 paragraph: '',
                 ctas: [],
-                rightImage: ''
+                image: ''
             },
             threeColumnInfo: {
                 columns: []
@@ -154,7 +154,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     heading: section.heroSection?.heading || '',
                     paragraph: section.heroSection?.paragraph || '',
                     ctas: section.heroSection?.ctas || [],
-                    rightImage: section.heroSection?.rightImage || ''
+                    image: section.heroSection?.image || ''
                 },
                 threeColumnInfo: {
                     ...section.threeColumnInfo,

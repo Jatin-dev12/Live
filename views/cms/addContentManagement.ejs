@@ -84,6 +84,7 @@
                 <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
                 <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
                     <option value="">-- Please Select Section --</option>
+                    <option value="hero-section">Hero Section</option>
                     <option value="three-column-info">Header Section</option>
                     <option value="call-out-cards">Call Out Section</option>
                 </select>
@@ -488,14 +489,6 @@
                 <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
                     placeholder="e.g., /about-us">
             </div>
-            <div>
-                <label class="form-label text-sm">Button Style:</label>
-                <select class="form-control border border-neutral-200 radius-8 cta-style">
-                    <option value="primary">Primary (Red)</option>
-                    <option value="secondary">Secondary (Dark)</option>
-                    <option value="outline">Outline</option>
-                </select>
-            </div>
         </div>
         \`;
         $container.append(ctaHtml);
@@ -797,8 +790,9 @@
                 $section.find('.cta-item').each(function() {
                     const text = $(this).find('.cta-text').val();
                     const link = $(this).find('.cta-link').val();
+                    const style = $(this).find('.cta-style').val() || 'primary';
                     if (text && link) {
-                        ctas.push({ text, link });
+                        ctas.push({ text, link, style });
                     }
                 });
 
@@ -811,7 +805,7 @@
                     heading: heading,
                     paragraph: $section.find('.hero-paragraph').val(),
                     ctas: ctas,
-                    rightImage: imageSrc
+                    image: imageSrc
                 };
             } else if (sectionType === 'three-column-info') {
                 const heading = $section.find('.tci-heading').val();

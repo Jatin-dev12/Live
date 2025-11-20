@@ -151,30 +151,40 @@
                                                                         <input type="text" class="form-control border border-neutral-200 radius-8 cta-link"
                                                                             value="<%= cta.link || '' %>" placeholder="e.g., /about">
                                                                     </div>
-                                                                    <!-- <div>
-                                                                        <label class="form-label text-sm">Button Style:</label>
-                                                                        <select class="form-control border border-neutral-200 radius-8 cta-style">
-                                                                            <option value="primary" <%= cta.style === 'primary' ? 'selected' : '' %>>Primary</option>
-                                                                            <option value="secondary" <%= cta.style === 'secondary' ? 'selected' : '' %>>Secondary</option>
-                                                                            <option value="outline" <%= cta.style === 'outline' ? 'selected' : '' %>>Outline</option>
-                                                                        </select>
-                                                                    </div> -->
+                                                                  
                                                                 </div>
                                                             <% }) %>
                                                         <% } %>
                                                     </div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button>
                                                 </div>
-                                                <% if (section.heroSection?.rightImage) { %>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Current Image:</label>
-                                                        <div class="existing-image">
-                                                            <img src="<%= section.heroSection.rightImage %>"
-                                                                class="img-thumbnail"
-                                                                style="max-height: 200px;">
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold text-neutral-900">Hero Image</label>
+                                                    <% if (section.heroSection?.image) { %>
+                                                        <div class="mb-2">
+                                                            <label class="form-label text-sm">Current Image:</label>
+                                                            <div class="existing-image mb-2">
+                                                                <img src="<%= section.heroSection.image %>"
+                                                                    class="img-thumbnail"
+                                                                    style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                     <% } %>
+                                                    <div class="upload-image-wrapper">
+                                                        <div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                                                            <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                                                <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                            </button>
+                                                            <img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                                                        </div>
+                                                        <label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1 cursor-pointer">
+                                                            <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                                                            <span class="fw-semibold text-secondary-light">Upload New Hero Image</span>
+                                                            <input type="file" class="upload-file-hero-input" hidden accept="image/*" data-existing-image="<%= section.heroSection?.image || '' %>">
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
                                             <!-- <pre><%= JSON.stringify(section) %></pre> -->
@@ -715,6 +725,58 @@
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
+        // Hero Section image handler with proper show/hide logic
+        $(document).on("change", ".upload-file-hero-input", function (e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const $section = $(this).closest(".section-block");
+                const $wrapper = $(this).closest(".upload-image-wrapper");
+                const $input = $(this);
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    $wrapper.find(".uploaded-img-hero__preview").attr("src", event.target.result);
+                    $wrapper.find(".uploaded-img-hero").removeClass("d-none");
+                    $wrapper.find(".upload-file-hero").hide();
+                };
+                reader.readAsDataURL(file);
+
+                // Upload to server
+                const formData = new FormData();
+                formData.append("folder", "hero");
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/api/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            $input.data("server-url", response.url);
+                            showToast("Hero image uploaded successfully", "success");
+                        } else {
+                            showToast(response.message || "Image upload failed", "error");
+                        }
+                    },
+                    error: function (xhr) {
+                        showToast(xhr.responseJSON?.message || "An error occurred", "error");
+                    }
+                });
+            }
+        });
+
+        // Hero Section image remove handler
+        $(document).on("click", ".uploaded-img-hero__remove", function () {
+            const $wrapper = $(this).closest(".upload-image-wrapper");
+            $wrapper.find(".uploaded-img-hero__preview").attr("src", "");
+            $wrapper.find(".uploaded-img-hero").addClass("d-none");
+            $wrapper.find(".upload-file-hero").show();
+            $wrapper.find(".upload-file-hero-input").val("").data("server-url", "");
+        });
+
         // Three Column Info image handler with proper show/hide logic
         $(document).on("change", ".upload-file-tci-input", function (e) {
             if (e.target.files && e.target.files[0]) {
@@ -830,13 +892,14 @@
                     $section.find(".cta-item").each(function () {
                         const text = $(this).find(".cta-text").val();
                         const link = $(this).find(".cta-link").val();
+                        const style = $(this).find(".cta-style").val() || 'primary';
                         if (text && link) {
-                            ctas.push({ text, link });
+                            ctas.push({ text, link, style });
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
                     sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
-                    sectionData.heroSection.rightImage = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "left-heading-image-right-text") {
                     // Left heading + image on left, right text
@@ -994,13 +1057,14 @@
                     $section.find(".cta-item").each(function () {
                         const text = $(this).find(".cta-text").val();
                         const link = $(this).find(".cta-link").val();
+                        const style = $(this).find(".cta-style").val() || 'primary';
                         if (text && link) {
-                            ctas.push({ text, link });
+                            ctas.push({ text, link, style });
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
                     sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
-                    sectionData.heroSection.rightImage = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "three-column-info") {
                     const heading = $section.find(".tci-heading").val();
