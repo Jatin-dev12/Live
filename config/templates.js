@@ -90,17 +90,41 @@ const templates = {
   },
   membership: {
     name: 'Membership Template',
-    description: 'Simple hero section only',
+    description: 'Hero section with buttons and community groups',
     previewImage: '/images/templates/membership-template-preview.svg',
     sections: [
       { 
         type: 'hero-section', 
         fields: { 
-          heading: 'Membership', 
-          paragraph: 'Join our community and become part of something greater',
-          ctas: [],
-          image: ''
-        } 
+          heading: '', 
+          paragraph: '',
+          ctas: [
+            { text: '', link: '', style: 'primary' },
+            { text: '', link: '', style: 'secondary' }
+          ],
+          rightImage: ''
+        },
+        placeholders: {
+          heading: 'Join Our Community',
+          paragraph: 'Become a member and connect with like-minded individuals in our community',
+          ctas: [
+            { text: 'Join Now', link: '/membership/join' },
+            { text: 'Learn More', link: '/membership/about' }
+          ]
+        }
+      },
+      {
+        type: 'community-groups',
+        fields: {
+          heading: '',
+          subheading: '',
+          category: 'community',
+          displayOrder: 'manual'
+        },
+        placeholders: {
+          heading: 'Community Groups',
+          subheading: 'Explore our various community groups and find your perfect fit'
+        }
       }
     ]
   },

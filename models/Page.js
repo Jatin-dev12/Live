@@ -42,6 +42,12 @@ const pageSchema = new mongoose.Schema({
         enum: ['', 'home', 'about', 'legislation', 'membership', 'query'],
         default: ''
     },
+    category: {
+        type: String,
+        trim: true,
+        enum: ['', 'community', 'news', 'events', 'resources'],
+        default: ''
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -144,6 +144,37 @@ const contentSchema = new mongoose.Schema({
             }
         }]
     },
+    // Community groups section
+    communityGroups: {
+        heading: {
+            type: String,
+            trim: true
+        },
+        subheading: {
+            type: String,
+            trim: true
+        },
+        category: {
+            type: String,
+            trim: true,
+            default: 'community'
+        },
+        displayOrder: {
+            type: String,
+            enum: ['manual', 'alphabetical', 'date'],
+            default: 'manual'
+        },
+        selectedPages: [{
+            page: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Page'
+            },
+            order: {
+                type: Number,
+                default: 0
+            }
+        }]
+    },
     customFields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed

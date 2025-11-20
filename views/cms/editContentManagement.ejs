@@ -33,6 +33,7 @@
                                             <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Header Section</option>
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
                                             <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
+                                            <option value="community-groups" <%= section.sectionType === 'community-groups' ? 'selected' : '' %>>Community Groups</option>
                                         </select>
                                     </div>
 
@@ -382,7 +383,56 @@
                                                     <small class="text-muted d-block mt-1">You can add or remove tabs as needed</small>
                                                 </div>
                                             </div>
-                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>""
+                                        <% } else if (section.sectionType==='community-groups' ) { %>
+                                            <div class="community-groups-fields active">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Section Heading:</label>
+                                                    <input type="text" class="form-control border border-neutral-200 radius-8 cg-heading"
+                                                        value="<%= section.communityGroups?.heading || '' %>" placeholder="Community Groups">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Section Subheading:</label>
+                                                    <input type="text" class="form-control border border-neutral-200 radius-8 cg-subheading"
+                                                        value="<%= section.communityGroups?.subheading || '' %>" placeholder="Explore our community groups">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Display Order:</label>
+                                                    <select class="form-control border border-neutral-200 radius-8 cg-display-order">
+                                                        <option value="manual" <%= (section.communityGroups?.displayOrder || 'manual') === 'manual' ? 'selected' : '' %>>Manual Order</option>
+                                                        <option value="alphabetical" <%= section.communityGroups?.displayOrder === 'alphabetical' ? 'selected' : '' %>>Alphabetical</option>
+                                                        <option value="date" <%= section.communityGroups?.displayOrder === 'date' ? 'selected' : '' %>>Date Created</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Selected Pages:</label>
+                                                    <div class="community-pages-container">
+                                                        <div id="available-pages" class="mb-3">
+                                                            <label class="form-label text-sm">Available Pages:</label>
+                                                            <div class="available-pages-list border border-neutral-200 radius-8 p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
+                                                                <p class="text-muted text-sm">Loading pages...</p>
+                                                            </div>
+                                                        </div>
+                                                        <div id="selected-pages" class="mb-3">
+                                                            <label class="form-label text-sm">Selected Pages (drag to reorder):</label>
+                                                            <div class="selected-pages-list border border-neutral-200 radius-8 p-3 sortable-container" style="min-height: 100px;
+                                                                <% if (section.communityGroups?.selectedPages && section.communityGroups.selectedPages.length > 0) { %>
+                                                                    <% section.communityGroups.selectedPages.forEach(function(selectedPage, idx) { %>
+                                                                        <div class="selected-page-item border border-neutral-300 radius-4 p-2 mb-2 bg-white d-flex justify-content-between align-items-center" data-page-id="<%= selectedPage.page._id %>" data-order="<%= selectedPage.order %>">
+                                                                            <span class="page-name"><%= selectedPage.page.name %></span>
+                                                                            <button type="button" class="btn btn-sm btn-danger remove-page-btn">Remove</button>
+                                                                        </div>
+                                                                    <% }) %>
+                                                                <% } else { %>
+                                                                    <p class="text-muted text-sm">No pages selected. Click on available pages to add them.</p>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">Select pages to display in this community groups section</small>
+                                                </div>
+                                            </div>
+                                        <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
                                                     <label class="form-label">Left Heading:</label>
@@ -576,6 +626,52 @@
     </div>
 </div>
 </div>
+
+<style>
+/* Community Groups Sortable Styles */
+.sortable-container .selected-page-item {
+    cursor: move;
+    transition: all 0.2s ease;
+}
+
+.sortable-container .selected-page-item:hover {
+    background-color: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #e9ecef !important;
+}
+
+.sortable-chosen {
+    background-color: #e3f2fd !important;
+    border-color: #2196f3 !important;
+}
+
+.sortable-drag {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: rotate(5deg);
+}
+
+.selected-page-item::before {
+    content: "⋮⋮";
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.selected-page-item {
+    position: relative;
+    padding-left: 25px !important;
+}
+</style>
 
 <% script=` <script>
 
@@ -973,6 +1069,33 @@
 
                     sectionData.title = "Tabs Section";
                     sectionData.tabsSection = { tabs: tabs };
+                } else if (sectionType === "community-groups") {
+                    const heading = $section.find(".cg-heading").val();
+                    const subheading = $section.find(".cg-subheading").val();
+                    const category = "community"; // Default to community category
+                    const displayOrder = $section.find(".cg-display-order").val();
+                    
+                    // Get selected pages
+                    const selectedPages = [];
+                    $section.find(".selected-page-item").each(function(index) {
+                        const pageId = $(this).data("page-id");
+                        const order = $(this).data("order") || index;
+                        if (pageId) {
+                            selectedPages.push({
+                                page: pageId,
+                                order: order
+                            });
+                        }
+                    });
+                    
+                    sectionData.title = heading || "Community Groups";
+                    sectionData.communityGroups = {
+                        heading: heading,
+                        subheading: subheading,
+                        category: category,
+                        displayOrder: displayOrder,
+                        selectedPages: selectedPages
+                    };
                 }
 
                 sectionsData.push(sectionData);
@@ -1331,6 +1454,129 @@
     function updateTabNumbers($container) {
         $container.find('.tab-item').each(function(index) {
             $(this).find('.fw-semibold').text(\`Tab #\${index + 1}\`);
+        });
+    }
+
+    // Community Groups Handlers - Category filter removed, defaulting to community
+
+    function loadAvailablePages(category, $section) {
+        const $availableList = $section.find('.available-pages-list');
+        $availableList.html('<p class="text-muted text-sm">Loading pages...</p>');
+        
+        $.ajax({
+            url: '/api/pages/by-category/' + category,
+            type: 'GET',
+            success: function(response) {
+                if (response.success && response.data.length > 0) {
+                    let html = '';
+                    response.data.forEach(page => {
+                        html += \`
+                            <div class="available-page-item border border-neutral-300 radius-4 p-2 mb-2 bg-white d-flex justify-content-between align-items-center cursor-pointer" data-page-id="\${page._id}">
+                                <span class="page-name">\${page.name}</span>
+                                <button type="button" class="btn btn-sm btn-primary add-page-btn">Add</button>
+                            </div>
+                        \`;
+                    });
+                    $availableList.html(html);
+                } else {
+                    $availableList.html('<p class="text-muted text-sm">No pages found with this category. Create pages with "' + category + '" category first.</p>');
+                }
+            },
+            error: function() {
+                $availableList.html('<p class="text-danger text-sm">Error loading pages. Please try again.</p>');
+            }
+        });
+    }
+
+    $(document).on('click', '.add-page-btn', function() {
+        const $pageItem = $(this).closest('.available-page-item');
+        const pageId = $pageItem.data('page-id');
+        const pageName = $pageItem.find('.page-name').text();
+        const $section = $(this).closest('.community-groups-fields');
+        const $selectedList = $section.find('.selected-pages-list');
+        
+        // Check if page is already selected
+        if ($selectedList.find(\`[data-page-id="\${pageId}"]\`).length > 0) {
+            showToast('Page is already selected', 'warning');
+            return;
+        }
+        
+        // Add to selected list
+        const selectedHtml = \`
+            <div class="selected-page-item border border-neutral-300 radius-4 p-2 mb-2 bg-white d-flex justify-content-between align-items-center" data-page-id="\${pageId}" data-order="0">
+                <span class="page-name">\${pageName}</span>
+                <button type="button" class="btn btn-sm btn-danger remove-page-btn">Remove</button>
+            </div>
+        \`;
+        
+        // Remove "No pages selected" message if it exists
+        $selectedList.find('.text-muted').remove();
+        $selectedList.append(selectedHtml);
+        
+        // Hide the page from available list
+        $pageItem.hide();
+        
+        updatePageOrders($selectedList);
+        
+        // Reinitialize sortable after adding new item
+        initializeCommunityGroupsSortable();
+    });
+
+    $(document).on('click', '.remove-page-btn', function() {
+        const $pageItem = $(this).closest('.selected-page-item');
+        const pageId = $pageItem.data('page-id');
+        const $section = $(this).closest('.community-groups-fields');
+        
+        // Show the page back in available list
+        $section.find(\`.available-page-item[data-page-id="\${pageId}"]\`).show();
+        
+        // Remove from selected list
+        $pageItem.remove();
+        
+        const $selectedList = $section.find('.selected-pages-list');
+        if ($selectedList.find('.selected-page-item').length === 0) {
+            $selectedList.html('<p class="text-muted text-sm">No pages selected. Click on available pages to add them.</p>');
+        }
+        
+        updatePageOrders($selectedList);
+        
+        // Reinitialize sortable after removing item
+        initializeCommunityGroupsSortable();
+    });
+
+    function updatePageOrders($selectedList) {
+        $selectedList.find('.selected-page-item').each(function(index) {
+            $(this).attr('data-order', index);
+        });
+    }
+
+    // Initialize community groups on page load
+    $(document).ready(function() {
+        $('.community-groups-fields').each(function() {
+            // Default to community category since filter is removed
+            loadAvailablePages('community', $(this));
+        });
+        
+        // Initialize sortable for community groups
+        initializeCommunityGroupsSortable();
+    });
+    
+    // Initialize sortable functionality for community groups
+    function initializeCommunityGroupsSortable() {
+        $('.selected-pages-list').each(function() {
+            if (this.sortable) {
+                this.sortable.destroy();
+            }
+            
+            this.sortable = new Sortable(this, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function(evt) {
+                    updatePageOrders($(evt.to));
+                }
+            });
         });
     }
     var pageTemplate = $("#pageTemplate").val();
