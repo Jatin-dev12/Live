@@ -67,7 +67,7 @@ const contentSchema = new mongoose.Schema({
                 default: 'primary'
             }
         }],
-        rightImage: {
+        image: {
             type: String,
             trim: true
         }

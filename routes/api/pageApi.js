@@ -41,7 +41,7 @@ router.get('/public/all', async (req, res) => {
                     page: page._id, 
                     status: 'active' 
                 })
-                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
+                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields createdAt updatedAt')
                 .sort({ order: 1, createdAt: -1 });
                 
                 return {
@@ -65,6 +65,7 @@ router.get('/public/all', async (req, res) => {
                         order: content.order,
                         heroSection: content.heroSection,
                         threeColumnInfo: content.threeColumnInfo,
+                        callOutCards: content.callOutCards,
                         customFields: content.customFields,
                         createdAt: content.createdAt,
                         updatedAt: content.updatedAt
@@ -113,7 +114,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             page: page._id, 
             status: 'active' 
         })
-        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo customFields createdAt updatedAt')
+        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields createdAt updatedAt')
         .sort({ order: 1, createdAt: -1 });
         
         // Set proper content type and send JSON without escaping HTML
@@ -141,6 +142,7 @@ router.get('/public/slug/:slug', async (req, res) => {
                     order: content.order,
                     heroSection: content.heroSection,
                     threeColumnInfo: content.threeColumnInfo,
+                    callOutCards: content.callOutCards,
                     customFields: content.customFields,
                     createdAt: content.createdAt,
                     updatedAt: content.updatedAt
@@ -376,7 +378,7 @@ router.post('/', isAuthenticated, async (req, res) => {
                             heading: section.fields.heading || '',
                             paragraph: section.fields.paragraph || '',
                             ctas: validCtas,
-                            rightImage: section.fields.rightImage || ''
+                            image: section.fields.image || ''
                         };
                     } else if (section.type === 'call-out-cards') {
                         // Only include cards that have a heading
@@ -492,7 +494,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                                 heading: section.fields.heading || '',
                                 paragraph: section.fields.paragraph || '',
                                 ctas: validCtas,
-                                rightImage: section.fields.rightImage || ''
+                                image: section.fields.image || ''
                             };
                         } else if (section.type === 'call-out-cards') {
                             const validCards = (section.fields.cards || []).filter(card => card.heading && card.heading.trim());

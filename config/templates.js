@@ -13,7 +13,7 @@ const templates = {
             { text: 'Get Started', link: '', style: 'primary' },
             { text: 'Learn More', link: '', style: 'secondary' }
           ],
-          rightImage: ''
+          image: ''
         } 
       },
       {
@@ -39,7 +39,7 @@ const templates = {
           heading: 'About Us', 
           paragraph: 'Learn more about our organization and mission',
           ctas: [{ text: 'Learn More', link: '', style: 'primary' }],
-          rightImage: ''
+          image: ''
         } 
       },
       {
@@ -75,7 +75,7 @@ const templates = {
             { text: 'View Legislation', link: '', style: 'primary' },
             { text: 'Policy Documents', link: '', style: 'secondary' }
           ],
-          rightImage: ''
+          image: ''
         }
       },
       {
@@ -99,7 +99,7 @@ const templates = {
           heading: 'Membership', 
           paragraph: 'Join our community and become part of something greater',
           ctas: [],
-          rightImage: ''
+          image: ''
         } 
       }
     ]
@@ -119,7 +119,7 @@ const templates = {
             { text: '', link: '', style: 'secondary' },
             { text: '', link: '', style: 'outline' }
           ],
-          rightImage: ''
+          image: ''
         },
         placeholders: {
           heading: 'Have a Query?',
