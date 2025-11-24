@@ -31,8 +31,35 @@ router.get('/all-pages/search', async (req, res) => {
 router.get('/public/all', async (req, res) => {
     try {
         const pages = await Page.find({ status: 'active' })
-            .select('name slug path metaTitle metaDescription metaKeywords createdAt updatedAt')
+            .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt')
             .sort({ createdAt: -1 });
+        
+        // Get community pages data once for all membership template pages
+        const communityPages = await Page.find({
+            category: 'community',
+            status: 'active'
+        })
+        .select('name slug path')
+        .sort({ name: 1 });
+        
+        const communityGroupsData = await Promise.all(
+            communityPages.map(async (communityPage) => {
+                const heroContent = await Content.findOne({
+                    page: communityPage._id,
+                    sectionType: 'hero-section',
+                    status: 'active'
+                })
+                .select('heroSection');
+                
+                return {
+                    _id: communityPage._id,
+                    name: communityPage.name,
+                    slug: communityPage.slug,
+                    path: communityPage.path,
+                    heroImage: heroContent?.heroSection?.image || null
+                };
+            })
+        );
         
         // Get content for each page
         const pagesWithContent = await Promise.all(
@@ -41,14 +68,15 @@ router.get('/public/all', async (req, res) => {
                     page: page._id, 
                     status: 'active' 
                 })
-                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields createdAt updatedAt')
+                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards communityGroups customFields createdAt updatedAt')
                 .sort({ order: 1, createdAt: -1 });
                 
-                return {
+                const pageData = {
                     _id: page._id,
                     name: page.name,
                     slug: page.slug,
                     path: page.path,
+                    template: page.template,
                     metaTitle: page.metaTitle,
                     metaDescription: page.metaDescription,
                     metaKeywords: page.metaKeywords,
@@ -66,11 +94,19 @@ router.get('/public/all', async (req, res) => {
                         heroSection: content.heroSection,
                         threeColumnInfo: content.threeColumnInfo,
                         callOutCards: content.callOutCards,
+                        communityGroups: content.communityGroups,
                         customFields: content.customFields,
                         createdAt: content.createdAt,
                         updatedAt: content.updatedAt
                     }))
                 };
+                
+                // Add community groups data if this is a membership template page
+                if (page.template === 'membership') {
+                    pageData.communityGroups = communityGroupsData;
+                }
+                
+                return pageData;
             })
         );
         
@@ -100,7 +136,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             slug: req.params.slug, 
             status: 'active' 
         })
-        .select('name slug path metaTitle metaDescription metaKeywords createdAt updatedAt');
+        .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt');
         
         if (!page) {
             return res.status(404).json({
@@ -114,8 +150,43 @@ router.get('/public/slug/:slug', async (req, res) => {
             page: page._id, 
             status: 'active' 
         })
-        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields createdAt updatedAt')
+        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields communityGroups createdAt updatedAt')
         .sort({ order: 1, createdAt: -1 });
+        
+        // If this is a membership template page, get community groups data
+        let communityGroups = null;
+        if (page.template === 'membership') {
+            // Get all active pages with community category
+            const communityPages = await Page.find({
+                category: 'community',
+                status: 'active'
+            })
+            .select('name slug path')
+            .sort({ name: 1 });
+            
+            // For each community page, get its hero section image
+            const communityGroupsData = await Promise.all(
+                communityPages.map(async (communityPage) => {
+                    // Get hero section content for this page
+                    const heroContent = await Content.findOne({
+                        page: communityPage._id,
+                        sectionType: 'hero-section',
+                        status: 'active'
+                    })
+                    .select('heroSection');
+                    
+                    return {
+                        _id: communityPage._id,
+                        name: communityPage.name,
+                        slug: communityPage.slug,
+                        path: communityPage.path,
+                        heroImage: heroContent?.heroSection?.image || null
+                    };
+                })
+            );
+            
+            communityGroups = communityGroupsData;
+        }
         
         // Set proper content type and send JSON without escaping HTML
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -126,6 +197,7 @@ router.get('/public/slug/:slug', async (req, res) => {
                 name: page.name,
                 slug: page.slug,
                 path: page.path,
+                template: page.template,
                 metaTitle: page.metaTitle,
                 metaDescription: page.metaDescription,
                 metaKeywords: page.metaKeywords,
@@ -143,10 +215,12 @@ router.get('/public/slug/:slug', async (req, res) => {
                     heroSection: content.heroSection,
                     threeColumnInfo: content.threeColumnInfo,
                     callOutCards: content.callOutCards,
+                    communityGroups: content.communityGroups,
                     customFields: content.customFields,
                     createdAt: content.createdAt,
                     updatedAt: content.updatedAt
-                }))
+                })),
+                ...(communityGroups && { communityGroups: communityGroups })
             },
             timestamp: new Date().toISOString()
         };
@@ -315,7 +389,7 @@ router.get('/:id/sections', async (req, res) => {
 // Create new page
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
         
         // Validate required fields
         if (!name) {
@@ -345,6 +419,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             metaDescription,
             metaKeywords,
             template: template || '',
+            category: category || '',
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
         });
@@ -421,7 +496,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update page
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
         
         // Get the old page data before update
         const oldPage = await Page.findById(req.params.id);
@@ -458,6 +533,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 metaDescription,
                 metaKeywords,
                 template: template || '',
+                category: category || '',
                 updatedBy: req.user ? req.user._id : null
             },
             { new: true, runValidators: true }
@@ -623,6 +699,79 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error deleting page',
+            error: error.message
+        });
+    }
+});
+
+// Get pages by category
+router.get('/by-category/:category', isAuthenticated, async (req, res) => {
+    try {
+        const { category } = req.params;
+        
+        const pages = await Page.find({ 
+            category: category,
+            status: 'active'
+        })
+        .select('_id name slug path category')
+        .sort({ name: 1 });
+        
+        res.json({
+            success: true,
+            data: pages
+        });
+    } catch (error) {
+        console.error('Error fetching pages by category:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pages',
+            error: error.message
+        });
+    }
+});
+
+// Test endpoint to get community groups data
+router.get('/test/community-groups', async (req, res) => {
+    try {
+        // Get all active pages with community category
+        const communityPages = await Page.find({
+            category: 'community',
+            status: 'active'
+        })
+        .select('name slug path')
+        .sort({ name: 1 });
+        
+        // For each community page, get its hero section image
+        const communityGroupsData = await Promise.all(
+            communityPages.map(async (communityPage) => {
+                // Get hero section content for this page
+                const heroContent = await Content.findOne({
+                    page: communityPage._id,
+                    sectionType: 'hero-section',
+                    status: 'active'
+                })
+                .select('heroSection');
+                
+                return {
+                    _id: communityPage._id,
+                    name: communityPage.name,
+                    slug: communityPage.slug,
+                    path: communityPage.path,
+                    heroImage: heroContent?.heroSection?.image || null
+                };
+            })
+        );
+        
+        res.json({
+            success: true,
+            data: communityGroupsData,
+            total: communityGroupsData.length
+        });
+    } catch (error) {
+        console.error('Error fetching community groups:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching community groups',
             error: error.message
         });
     }

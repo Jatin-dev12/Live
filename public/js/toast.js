@@ -4,11 +4,10 @@
  */
 
 function showToast(message, type = 'info') {
-    // Remove any existing toasts first
-    const existingToast = document.querySelector('.custom-toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
+    console.log("showtoast called js");
+    // Remove ALL existing toasts first
+    const existingToasts = document.querySelectorAll('.custom-toast');
+    existingToasts.forEach(toast => toast.remove());
 
     // Create toast element
     const toast = document.createElement('div');

@@ -213,6 +213,11 @@
             }
 
             function showToast(type, message) {
+                console.log("showtoast called layout");
+                // Remove all existing toasts first
+                const existingToasts = document.querySelectorAll('.toast');
+                existingToasts.forEach(toast => toast.remove());
+                
                 // Create toast element
                 const toastHtml = `
                     <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" aria-live="assertive" aria-atomic="true">

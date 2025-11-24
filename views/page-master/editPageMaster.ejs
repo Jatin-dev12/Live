@@ -1,4 +1,4 @@
-<div class="card h-100 p-0 radius-12">
+<div class="card p-0 radius-12">
     <div class="card-body p-24">
          <form id="editPageForm">
         <div class="row justify-content-center">
@@ -25,13 +25,14 @@
                                     <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                     <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
-                                    <!-- <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero Section Only</option> -->
+                                    <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero with Buttons + Community Groups</option>
                                 </select>
                                 <small class="text-muted">
                                     <i class="fas fa-lock me-1"></i>
                                     Template cannot be changed after page creation to preserve existing content
                                 </small>
                             </div>
+
                             <div class="mb-20" id="templatePreview" style="display: none;">
                                 <div class="alert alert-warning">
                                     <!-- <h6 class="mb-2">⚠️ Template Change Warning:</h6> -->
@@ -93,6 +94,58 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- Categories Section -->
+                <div class="page-categories-box mt-3">
+                    <h4 class="categories-heading">Categories</h4>
+                    <div class="categories-checkboxes">
+                        <div class="category-checkbox-item mb-3">
+                            <input type="checkbox" value="community" id="category-community" name="categories" class="category-checkbox-input" <%= page.category === 'community' ? 'checked' : '' %>>
+                            <label class="category-checkbox-label" for="category-community">
+                                <div class="category-checkbox-content">
+                                    <div class="category-checkbox-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span class="category-checkbox-text">Community</span>
+                                </div>
+                            </label>
+                        </div>
+                        <!-- <div class="category-checkbox-item mb-3">
+                            <input type="checkbox" value="news" id="category-news" name="categories" class="category-checkbox-input" <%= page.category === 'news' ? 'checked' : '' %>>
+                            <label class="category-checkbox-label" for="category-news">
+                                <div class="category-checkbox-content">
+                                    <div class="category-checkbox-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span class="category-checkbox-text">News</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="category-checkbox-item mb-3">
+                            <input type="checkbox" value="events" id="category-events" name="categories" class="category-checkbox-input" <%= page.category === 'events' ? 'checked' : '' %>>
+                            <label class="category-checkbox-label" for="category-events">
+                                <div class="category-checkbox-content">
+                                    <div class="category-checkbox-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span class="category-checkbox-text">Events</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="category-checkbox-item mb-3">
+                            <input type="checkbox" value="resources" id="category-resources" name="categories" class="category-checkbox-input" <%= page.category === 'resources' ? 'checked' : '' %>>
+                            <label class="category-checkbox-label" for="category-resources">
+                                <div class="category-checkbox-content">
+                                    <div class="category-checkbox-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span class="category-checkbox-text">Resources</span>
+                                </div>
+                            </label>
+                        </div> -->
+                    </div>
+                    <small class="text-muted">Select categories to group related pages (required for community groups display)</small>
+                </div>
             </div>
         </div>
         </form>
@@ -119,6 +172,10 @@
             query: {
                 description: 'This template includes:<br>• Hero section (heading + subheading + 3 CTA buttons: text + link + style)',
                 image: '/images/templates/query-template-preview.svg'
+            },
+            membership: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + 2 CTA buttons)<br>• Community Groups section (displays pages with community category)',
+                image: '/images/templates/membership-template-preview.svg'
             },
             // membership: {
             //     description: 'This template includes:<br>• Hero section (heading + subheading)',
@@ -195,11 +252,18 @@
             e.preventDefault();
 
             const pageId = $('#pageId').val();
+            // Get selected categories
+            const selectedCategories = [];
+            $('input[name="categories"]:checked').each(function() {
+                selectedCategories.push($(this).val());
+            });
+
             const formData = {
                 name: $('#name').val(),
                 path: $('#path').val(),
                 status: $('#status').val(),
                 template: $('#template').val(),
+                category: selectedCategories.length > 0 ? selectedCategories[0] : '', // For now, take first selected category
                 metaTitle: $('#metaTitle').val(),
                 metaDescription: $('#metaDescription').val()
             };
