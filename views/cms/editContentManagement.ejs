@@ -127,7 +127,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Paragraph:</label>
                                                     <textarea
-                                                        class="form-control border border-neutral-200 radius-8 hero-paragraph"
+                                                        class="form-control border border-neutral-200 radius-8 hero-paragraph ckeditor-paragraph"
                                                         rows="4"
                                                         placeholder="Paragraph"><%= section.heroSection?.paragraph || '' %></textarea>
                                                 </div>
@@ -671,9 +671,106 @@
     position: relative;
     padding-left: 25px !important;
 }
+
+/* CKEditor 5 List Styles Fix */
+.ck-content ol {
+    list-style-type: decimal !important;
+    padding-left: 40px !important;
+    margin-left: 0 !important;
+}
+
+.ck-content ul {
+    list-style-type: disc !important;
+    padding-left: 40px !important;
+    margin-left: 0 !important;
+}
+
+.ck-content ol li,
+.ck-content ul li {
+    display: list-item !important;
+    margin-left: 0 !important;
+}
+
+.ck-content ol li::marker {
+    display: inline-block !important;
+}
+
+.ck-content ul li::marker {
+    display: inline-block !important;
+}
 </style>
 
+<script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
+
 <% script=` <script>
+    // CKEditor 5 instances storage
+    let editorInstances = {};
+    
+    // Initialize CKEditor 5
+    function initCKEditor() {
+        const { ClassicEditor, Essentials, Bold, Italic, Underline, Paragraph, List, Link, Heading } = window.CKEDITOR;
+        
+        // Find all textareas with ckeditor-paragraph class
+        document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
+            // Generate unique ID if not exists
+            if (!textarea.id) {
+                textarea.id = 'editor_' + Math.random().toString(36).substr(2, 9);
+            }
+            
+            // Check if already initialized
+            if (editorInstances[textarea.id]) {
+                return;
+            }
+            
+            // Initialize CKEditor 5
+            ClassicEditor
+                .create(textarea, {
+                    plugins: [ Essentials, Bold, Italic, Underline, Paragraph, List, Link, Heading ],
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold', 'italic', 'underline',
+                            '|',
+                            'bulletedList', 'numberedList',
+                            '|',
+                            'link',
+                            '|',
+                            'undo', 'redo'
+                        ]
+                    },
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                        ]
+                    },
+                    list: {
+                        properties: {
+                            styles: true,
+                            startIndex: true,
+                            reversed: true
+                        }
+                    }
+                })
+                .then(editor => {
+                    editorInstances[textarea.id] = editor;
+                })
+                .catch(error => {
+                    console.error('CKEditor initialization error:', error);
+                });
+        });
+    }
+    
+    // Wait for page to load
+    window.addEventListener('load', function() {
+        if (typeof window.CKEDITOR !== 'undefined') {
+            setTimeout(initCKEditor, 500);
+        }
+    });
 
     // Centralized function to toggle the visibility of section fields
     function toggleSectionFields($section) {
@@ -703,6 +800,8 @@
             $section.find('.right-heading-image-left-text-fields').show();
         } else if (sectionType === 'hero-section') {
             $section.find('.hero-section-fields').show();
+            // Reinitialize CKEditor for this section after it becomes visible
+            setTimeout(initCKEditor, 300);
         } else if (sectionType === 'three-column-info') {
             $section.find('.three-column-fields').show();
         } else if (sectionType === 'call-out-cards') {
@@ -805,6 +904,9 @@
         $("#sectionsContainer .section-block").each(function () {
             toggleSectionFields($(this));
         });
+        
+        // Initialize CKEditor after sections are visible
+        setTimeout(initCKEditor, 1000);
 
         // Template sections are read-only - prevent structure changes
         $("#sectionsContainer").on("change", ".section-type-select", function () {
@@ -994,7 +1096,10 @@
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
-                    sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
+                    // Get CKEditor 5 content
+                    const paragraphEditor = $section.find(".hero-paragraph");
+                    const editorId = paragraphEditor.attr('id');
+                    sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
                     sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "left-heading-image-right-text") {
@@ -1186,7 +1291,10 @@
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
-                    sectionData.heroSection.paragraph = $section.find(".hero-paragraph").val();
+                    // Get CKEditor 5 content
+                    const paragraphEditor2 = $section.find(".hero-paragraph");
+                    const editorId2 = paragraphEditor2.attr('id');
+                    sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
                     sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "three-column-info") {
