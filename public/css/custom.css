@@ -755,3 +755,7 @@ button.swal2-confirm.swal2-styled {
 .dkUNmA {
     display: none;
 }
+
+.ck.ck-dropdown.ck-color-ui-dropdown , .ck.ck-dropdown.ck-font-size-dropdown , .ck.ck-dropdown.ck-heading-dropdown{
+    display: none;
+}
