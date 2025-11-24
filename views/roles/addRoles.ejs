@@ -715,7 +715,7 @@
         });
 
         // Enhanced toast notification function
-        function showToast(message, type = 'info') {
+        function showToast(message, type = 'info') {            
             // Remove any existing toasts first
             const existingToasts = document.querySelectorAll('.custom-toast');
             existingToasts.forEach(toast => toast.remove());
@@ -789,6 +789,7 @@
 
         // Global toast notification function
         function showToast(message, type = 'info') {
+            console.log("showtoast called");
             // Remove any existing toasts first
             const existingToasts = document.querySelectorAll('.custom-toast');
             existingToasts.forEach(toast => toast.remove());
