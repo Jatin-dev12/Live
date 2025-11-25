@@ -385,6 +385,42 @@ router.get('/:id/sections', async (req, res) => {
             .populate('updatedBy', 'name email')
             .populate('communityGroups.selectedPages.page', 'name _id slug');
         
+        // Add hero images to community groups selected pages
+        const sectionsWithHeroImages = await Promise.all(
+            sections.map(async (section) => {
+                if (section.sectionType === 'community-groups' && section.communityGroups?.selectedPages) {
+                    // Get hero images for each selected page
+                    const selectedPagesWithHeroImages = await Promise.all(
+                        section.communityGroups.selectedPages.map(async (selectedPage) => {
+                            if (selectedPage.page) {
+                                // Find hero section content for this page
+                                const heroContent = await Content.findOne({
+                                    page: selectedPage.page._id,
+                                    sectionType: 'hero-section',
+                                    status: 'active'
+                                }).select('heroSection');
+                                
+                                return {
+                                    ...selectedPage.toObject(),
+                                    page: {
+                                        ...selectedPage.page.toObject(),
+                                        heroImage: process.env.APP_URL+heroContent?.heroSection?.image || null
+                                    }
+                                };
+                            }
+                            return selectedPage;
+                        })
+                    );
+                    
+                    // Update the section with hero images
+                    const sectionObj = section.toObject();
+                    sectionObj.communityGroups.selectedPages = selectedPagesWithHeroImages;
+                    return sectionObj;
+                }
+                return section.toObject();
+            })
+        );
+        
         // Get template data if page has a template
         /* let templateData = null;
         if (page.template) {
@@ -418,8 +454,8 @@ router.get('/:id/sections', async (req, res) => {
                     template: page.template || null
                 },
                 // template: templateData,
-                sections: sections,
-                total: sections.length
+                sections: sectionsWithHeroImages,
+                total: sectionsWithHeroImages.length
             }
         });
     } catch (error) {
