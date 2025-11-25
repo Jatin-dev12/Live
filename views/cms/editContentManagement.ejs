@@ -325,7 +325,7 @@
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Paragraph:</label>
-                                                                    <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="5"
+                                                                    <textarea class="form-control border border-neutral-200 radius-8 callout-subheading ckeditor-paragraph" rows="5"
                                                                         placeholder="Enter subheading"><%= card.subheading || '' %></textarea>
                                                                 </div>
                                                                 <div>
@@ -699,6 +699,31 @@
     display: inline-block !important;
 }
 
+/* CKEditor 5 Text Formatting Styles */
+.ck-content em,
+.ck-content i {
+    font-style: italic !important;
+}
+
+.ck-content u {
+    text-decoration: underline !important;
+}
+
+.ck-content strong,
+.ck-content b {
+    font-weight: bold !important;
+}
+
+.ck-content a {
+    color: #0066cc !important;
+    text-decoration: underline !important;
+}
+
+.ck-content a:hover {
+    color: #004499 !important;
+    text-decoration: underline !important;
+}
+
 /* CKEditor 5 Image Styles Fix */
 .ck-content img {
     max-width: 100% !important;
@@ -751,6 +776,22 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
 
+<!-- Alternative CKEditor build with more plugins -->
+<script>
+// Fallback to CKEditor 4 if CKEditor 5 plugins are not available
+window.ckEditorFallback = function() {
+    console.log('Loading CKEditor 4 as fallback...');
+    const script = document.createElement('script');
+    script.src = 'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js';
+    document.head.appendChild(script);
+    
+    script.onload = function() {
+        console.log('CKEditor 4 loaded as fallback');
+        initCKEditor4();
+    };
+};
+</script>
+
 <% script=` <script>
     // CKEditor 5 instances storage
     let editorInstances = {};
@@ -763,46 +804,76 @@
 
         upload() {
             return this.loader.file.then(file => new Promise((resolve, reject) => {
+                console.log('Starting file upload:', file.name);
+                
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('folder', 'content');
 
                 $.ajax({
-                    url: '/api/upload',
+                    url: '/api/upload-basic',
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
+                    xhr: function() {
+                        const xhr = new window.XMLHttpRequest();
+                        // Upload progress
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                const percentComplete = evt.loaded / evt.total;
+                                console.log('Upload progress:', Math.round(percentComplete * 100) + '%');
+                            }
+                        }, false);
+                        return xhr;
+                    },
                     success: function(result) {
-                        console.log('Upload success:', result);
-                        if (result.success) {
-                            // Make sure the URL is correct
+                        console.log('Upload success response:', result);
+                        if (result.success && result.url) {
                             let imageUrl = result.url;
                             
-                            // If URL doesn't start with /, add it
+                            // Ensure URL starts with / for absolute path
                             if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
                                 imageUrl = '/' + imageUrl;
                             }
                             
-                            console.log('Final image URL:', imageUrl);
+                            // Construct full URL for CKEditor
+                            const fullUrl = window.location.origin + imageUrl;
+                            console.log('Using full image URL:', fullUrl);
                             
-                            resolve({
-                                default: imageUrl
-                            });
+                            // Test if image is accessible
+                            const testImg = new Image();
+                            testImg.onload = function() {
+                                console.log('Image loaded successfully, returning full URL:', fullUrl);
+                                resolve({
+                                    default: fullUrl
+                                });
+                            };
+                            testImg.onerror = function() {
+                                console.error('Image failed to load:', fullUrl);
+                                reject('Uploaded image is not accessible at: ' + fullUrl);
+                            };
+                            testImg.src = fullUrl;
+                            
                         } else {
-                            reject(result.message || 'Upload failed');
+                            console.error('Upload failed:', result);
+                            reject(result.message || 'Upload failed - no URL returned');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Upload error:', error);
-                        reject(error);
+                        console.error('Upload AJAX error:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error
+                        });
+                        reject('Upload failed: ' + error);
                     }
                 });
             }));
         }
 
         abort() {
-            // Handle abort
+            console.log('Upload aborted');
         }
     }
 
@@ -814,15 +885,27 @@
 
     // Initialize CKEditor 5
     function initCKEditor() {
-        const { 
-            ClassicEditor, 
-            Essentials, 
-            Bold, 
-            Italic, 
-            Underline, 
-            Paragraph, 
-            List, 
-            Link, 
+        if (typeof window.CKEDITOR === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        // Try to get all plugins, but handle missing ones gracefully
+        const CKEDITOR = window.CKEDITOR;
+        if (!CKEDITOR) {
+            console.error('CKEditor not available');
+            return;
+        }
+        
+        const {
+            ClassicEditor,
+            Essentials,
+            Bold,
+            Italic,
+            Underline,
+            Paragraph,
+            List,
+            Link,
             Heading,
             Image,
             ImageCaption,
@@ -831,7 +914,24 @@
             ImageToolbar,
             ImageUpload,
             FileRepository
-        } = window.CKEDITOR;
+        } = CKEDITOR;
+        
+        // Check which plugins are actually available
+        const availablePlugins = {
+            ClassicEditor: !!ClassicEditor,
+            Essentials: !!Essentials,
+            Bold: !!Bold,
+            Italic: !!Italic,
+            Underline: !!Underline,
+            Paragraph: !!Paragraph,
+            List: !!List,
+            Link: !!Link,
+            Heading: !!Heading,
+            Image: !!Image,
+            ImageUpload: !!ImageUpload
+        };
+        
+        console.log('Available CKEditor plugins:', availablePlugins);
         
         // Find all textareas with ckeditor-paragraph class
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
@@ -845,40 +945,60 @@
                 return;
             }
             
-            // Initialize CKEditor 5
-            ClassicEditor
-                .create(textarea, {
-                    plugins: [ 
-                        Essentials, 
-                        Bold, 
-                        Italic, 
-                        Underline, 
-                        Paragraph, 
-                        List, 
-                        Link, 
-                        Heading,
-                        Image,
-                        ImageCaption,
-                        ImageResize,
-                        ImageStyle,
-                        ImageToolbar,
-                        ImageUpload,
-                        FileRepository
-                    ],
-                    extraPlugins: [MyCustomUploadAdapterPlugin],
-                    toolbar: {
-                        items: [
-                            'heading',
-                            '|',
-                            'bold', 'italic', 'underline',
-                            '|',
-                            'bulletedList', 'numberedList',
-                            '|',
-                            'link', 'uploadImage',
-                            '|',
-                            'undo', 'redo'
-                        ]
-                    },
+            // Build dynamic configuration based on available plugins
+            const plugins = [Essentials, Paragraph];
+            const toolbarItems = [];
+            
+            // Add plugins and toolbar items only if available
+            if (Heading) {
+                plugins.push(Heading);
+                toolbarItems.push('heading', '|');
+            }
+            
+            if (Bold) {
+                plugins.push(Bold);
+                toolbarItems.push('bold');
+            }
+            
+            if (Italic) {
+                plugins.push(Italic);
+                toolbarItems.push('italic');
+            }
+            
+            if (Underline) {
+                plugins.push(Underline);
+                toolbarItems.push('underline');
+            }
+            
+            if (Bold || Italic || Underline) {
+                toolbarItems.push('|');
+            }
+            
+            if (List) {
+                plugins.push(List);
+                toolbarItems.push('bulletedList', 'numberedList', '|');
+            }
+            
+            if (Link) {
+                plugins.push(Link);
+                toolbarItems.push('link');
+            }
+            
+            if (Image && ImageUpload && FileRepository) {
+                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, ImageUpload, FileRepository);
+                toolbarItems.push('uploadImage');
+            }
+            
+            toolbarItems.push('|', 'undo', 'redo');
+            
+            console.log('Using plugins:', plugins.map(p => p.pluginName || p.name || 'Unknown'));
+            console.log('Using toolbar items:', toolbarItems);
+            
+            const editorConfig = {
+                plugins: plugins,
+                toolbar: {
+                    items: toolbarItems
+                },
                     heading: {
                         options: [
                             { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
@@ -928,20 +1048,93 @@
                             }
                         ]
                     }
-                })
+            };
+            
+            // Add upload adapter only if image upload is available
+            if (Image && ImageUpload && FileRepository) {
+                editorConfig.extraPlugins = [MyCustomUploadAdapterPlugin];
+            }
+            
+            // Initialize CKEditor 5
+            ClassicEditor
+                .create(textarea, editorConfig)
                 .then(editor => {
+                    console.log('CKEditor initialized successfully for:', textarea.id);
+                    console.log('Available commands:', Object.keys(editor.commands._commands));
                     editorInstances[textarea.id] = editor;
                 })
                 .catch(error => {
                     console.error('CKEditor initialization error:', error);
+                    console.error('Error details:', error.message);
+                    
+                    // Try with minimal configuration if full config fails
+                    console.log('Retrying with minimal configuration...');
+                    ClassicEditor
+                        .create(textarea, {
+                            plugins: [Essentials, Paragraph].concat(Bold ? [Bold] : []),
+                            toolbar: {
+                                items: Bold ? ['bold'] : []
+                            }
+                        })
+                        .then(editor => {
+                            console.log('Minimal CKEditor initialized for:', textarea.id);
+                            editorInstances[textarea.id] = editor;
+                        })
+                        .catch(minimalError => {
+                            console.error('Even minimal CKEditor failed:', minimalError);
+                            // Fall back to CKEditor 4
+                            initCKEditor4ForTextarea(textarea);
+                        });
                 });
         });
     }
     
+    // CKEditor 4 fallback functions
+    function initCKEditor4ForTextarea(textarea) {
+        console.log('Initializing CKEditor 4 for:', textarea.id);
+        
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.replace) {
+            const editor = CKEDITOR.replace(textarea.id, {
+                toolbar: [
+                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+                    { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+                    { name: 'links', items: ['Link', 'Unlink'] },
+                    { name: 'insert', items: ['Image'] }
+                ],
+                height: 150,
+                removeButtons: '',
+                allowedContent: true
+            });
+            
+            editorInstances[textarea.id] = {
+                getData: () => editor.getData(),
+                setData: (data) => editor.setData(data),
+                destroy: () => editor.destroy()
+            };
+            
+            console.log('CKEditor 4 initialized successfully for:', textarea.id);
+        } else {
+            console.error('CKEditor 4 not available');
+        }
+    }
+    
+    function initCKEditor4() {
+        console.log('Initializing all CKEditor 4 instances...');
+        document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
+            if (!textarea.id) {
+                textarea.id = 'editor_' + Math.random().toString(36).substr(2, 9);
+            }
+            initCKEditor4ForTextarea(textarea);
+        });
+    }
+
     // Wait for page to load
     window.addEventListener('load', function() {
         if (typeof window.CKEDITOR !== 'undefined') {
             setTimeout(initCKEditor, 500);
+        } else {
+            console.log('CKEditor 5 not available, trying CKEditor 4...');
+            window.ckEditorFallback();
         }
     });
 
@@ -979,6 +1172,7 @@
             $section.find('.three-column-fields').show();
         } else if (sectionType === 'call-out-cards') {
             $section.find('.call-out-cards-fields').show();
+            setTimeout(initCKEditor, 300);
         } else if (sectionType === 'tabs-section') {
             $section.find('.tabs-section-fields').show();
             // Auto-create 8 tabs if none exist
@@ -1309,9 +1503,18 @@
                     }).get();
                 } else if (sectionType === "call-out-cards") {
                     const cards = $section.find(".callout-item").map(function () {
+                        const $subheadingTextarea = $(this).find(".callout-subheading");
+                        let subheadingContent = $subheadingTextarea.val();
+                        
+                        // Get CKEditor content if editor exists
+                        const editorId = $subheadingTextarea.attr('id');
+                        if (editorId && editorInstances[editorId]) {
+                            subheadingContent = editorInstances[editorId].getData();
+                        }
+                        
                         return {
                             heading: $(this).find(".callout-heading").val(),
-                            subheading: $(this).find(".callout-subheading").val(),
+                            subheading: subheadingContent,
                             link: $(this).find(".callout-link").val()
                         };
                     }).get();
@@ -1486,9 +1689,18 @@
                     }).get();
                 } else if (sectionType === "call-out-cards") {
                     const cards = $section.find(".callout-item").map(function () {
+                        const $subheadingTextarea = $(this).find(".callout-subheading");
+                        let subheadingContent = $subheadingTextarea.val();
+                        
+                        // Get CKEditor content if editor exists
+                        const editorId = $subheadingTextarea.attr('id');
+                        if (editorId && editorInstances[editorId]) {
+                            subheadingContent = editorInstances[editorId].getData();
+                        }
+                        
                         return {
                             heading: $(this).find(".callout-heading").val(),
-                            subheading: $(this).find(".callout-subheading").val(),
+                            subheading: subheadingContent,
                             link: $(this).find(".callout-link").val()
                         };
                     }).get();
@@ -1898,7 +2110,7 @@
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Paragraph:</label>
-                <textarea class="form-control border border-neutral-200 radius-8 callout-subheading" rows="5" placeholder="Enter description here"></textarea>
+                <textarea class="form-control border border-neutral-200 radius-8 callout-subheading ckeditor-paragraph" rows="5" placeholder="Enter description here"></textarea>
             </div>
             <div>
                 <label class="form-label text-sm">Link:</label>
@@ -1908,11 +2120,28 @@
         \`;
         $container.append(calloutHtml);
         updateCalloutNumbers($container);
+        
+        // Initialize CKEditor for the new textarea
+        setTimeout(initCKEditor, 300);
     });
 
     $(document).on('click', '.remove-callout-btn', function() {
         const $container = $(this).closest('.callout-container');
-        $(this).closest('.callout-item').remove();
+        const $item = $(this).closest('.callout-item');
+        
+        // Destroy CKEditor instance if it exists
+        const $textarea = $item.find('.callout-subheading');
+        const editorId = $textarea.attr('id');
+        if (editorId && editorInstances[editorId]) {
+            editorInstances[editorId].destroy().then(() => {
+                delete editorInstances[editorId];
+            }).catch(error => {
+                console.error('Error destroying CKEditor:', error);
+                delete editorInstances[editorId];
+            });
+        }
+        
+        $item.remove();
         updateCalloutNumbers($container);
     });
 

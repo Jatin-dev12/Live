@@ -11,7 +11,8 @@ router.get('/web-page-master', isAuthenticated, async (req, res) => {
         res.render('page-master/websitePageMaster', {
             title: "Website Page Master",
             subTitle: "Website Page Master",
-            pages: pages
+            pages: pages,
+            frontendUrl: process.env.FRONTEND_URL
         });
     } catch (error) {
         console.error('Error fetching pages:', error);
