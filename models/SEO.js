@@ -65,4 +65,4 @@ const seoSchema = new mongoose.Schema({
 seoSchema.index({ page: 1 });
 seoSchema.index({ status: 1 });
 
-module.exports = mongoose.model('SEO', seoSchema);
+module.exports = mongoose.models.SEO || mongoose.model('SEO', seoSchema);

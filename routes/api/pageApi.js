@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Page = require('../../models/Page');
 const Content = require('../../models/Content');
+const SEO = require('../../models/SEO');
 const { isAuthenticated } = require('../../middleware/auth');
 
 
@@ -106,6 +107,29 @@ router.get('/public/all', async (req, res) => {
                     pageData.communityGroups = communityGroupsData;
                 }
                 
+                // Get SEO data for this page
+                const seoData = await SEO.findOne({
+                    page: page._id,
+                    status: 'active'
+                })
+                .select('metaTitle metaDescription metaKeywords canonicalUrl ogMetaTags ogImage ogImagePath robots createdAt updatedAt');
+                
+                // Add SEO data if available
+                if (seoData) {
+                    pageData.seo = {
+                        metaTitle: seoData.metaTitle,
+                        metaDescription: seoData.metaDescription,
+                        metaKeywords: seoData.metaKeywords,
+                        canonicalUrl: seoData.canonicalUrl,
+                        ogMetaTags: seoData.ogMetaTags,
+                        ogImage: seoData.ogImage,
+                        ogImagePath: seoData.ogImagePath,
+                        robots: seoData.robots,
+                        createdAt: seoData.createdAt,
+                        updatedAt: seoData.updatedAt
+                    };
+                }
+                
                 return pageData;
             })
         );
@@ -188,6 +212,13 @@ router.get('/public/slug/:slug', async (req, res) => {
             communityGroups = communityGroupsData;
         }
         
+        // Get SEO data for this page
+        const seoData = await SEO.findOne({
+            page: page._id,
+            status: 'active'
+        })
+        .select('metaTitle metaDescription metaKeywords canonicalUrl ogMetaTags ogImage ogImagePath robots createdAt updatedAt');
+        
         // Set proper content type and send JSON without escaping HTML
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         const response = {
@@ -220,7 +251,21 @@ router.get('/public/slug/:slug', async (req, res) => {
                     createdAt: content.createdAt,
                     updatedAt: content.updatedAt
                 })),
-                ...(communityGroups && { communityGroups: communityGroups })
+                ...(communityGroups && { communityGroups: communityGroups }),
+                ...(seoData && { 
+                    seo: {
+                        metaTitle: seoData.metaTitle,
+                        metaDescription: seoData.metaDescription,
+                        metaKeywords: seoData.metaKeywords,
+                        canonicalUrl: seoData.canonicalUrl,
+                        ogMetaTags: seoData.ogMetaTags,
+                        ogImage: seoData.ogImage,
+                        ogImagePath: seoData.ogImagePath,
+                        robots: seoData.robots,
+                        createdAt: seoData.createdAt,
+                        updatedAt: seoData.updatedAt
+                    }
+                })
             },
             timestamp: new Date().toISOString()
         };
@@ -334,10 +379,11 @@ router.get('/:id/sections', async (req, res) => {
         
         // Get all sections for this page
         const sections = await Content.find(query)
-            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards tabsSection createdAt updatedAt')
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards tabsSection communityGroups createdAt updatedAt')
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
-            .populate('updatedBy', 'name email');
+            .populate('updatedBy', 'name email')
+            .populate('communityGroups.selectedPages.page', 'name _id slug');
         
         // Get template data if page has a template
         /* let templateData = null;

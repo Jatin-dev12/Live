@@ -23,6 +23,7 @@
                                     <!-- <option value="" <%= !page.template ? 'selected' : '' %>>-- No Template (Custom Page) --</option> -->
                                     <option value="home" <%= page.template === 'home' ? 'selected' : '' %>>Home Template - Hero + 3 Callout Cards</option>
                                     <option value="about" <%= page.template === 'about' ? 'selected' : '' %>>About Template - Hero with Button + Tabs Section</option>
+                                    <option value="newsletter" <%= page.template === 'newsletter' ? 'selected' : '' %>>Newsletter Template - Hero with Button + Tabs Section</option>
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                     <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
                                     <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero with Buttons + Community Groups</option>
@@ -165,6 +166,10 @@
                 description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
                 image: '/images/templates/about-template-preview.svg'
             },
+            newsletter: {
+                description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
+                image: '/images/templates/newsletter-template-preview.jpeg'
+            },
             legislation: {
                 description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
                 image: '/images/templates/legislation-template-preview.svg'
@@ -285,7 +290,8 @@
                         } else {
                             showToast('Page updated successfully!', 'success');
                             setTimeout(function() {
-                                window.location.href = '/page-master/web-page-master';
+                                // window.location.href = '/page-master/web-page-master';
+                                window.location.reload();
                             }, 1000);
                         }
                     } else {

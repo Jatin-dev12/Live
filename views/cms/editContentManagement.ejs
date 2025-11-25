@@ -373,7 +373,7 @@
                                                                 </div>
                                                                 <div>
                                                                     <label class="form-label text-sm">Paragraph:</label>
-                                                                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3"
+                                                                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph ckeditor-paragraph" rows="3"
                                                                         placeholder="Tab content"><%= tab.paragraph || '' %></textarea>
                                                                 </div>
                                                             </div>
@@ -415,7 +415,7 @@
                                                         </div>
                                                         <div id="selected-pages" class="mb-3">
                                                             <label class="form-label text-sm">Selected Pages (drag to reorder):</label>
-                                                            <div class="selected-pages-list border border-neutral-200 radius-8 p-3 sortable-container" style="min-height: 100px;
+                                                            <div class="selected-pages-list border border-neutral-200 radius-8 p-3 sortable-container" style="min-height: 100px;">
                                                                 <% if (section.communityGroups?.selectedPages && section.communityGroups.selectedPages.length > 0) { %>
                                                                     <% section.communityGroups.selectedPages.forEach(function(selectedPage, idx) { %>
                                                                         <div class="selected-page-item border border-neutral-300 radius-4 p-2 mb-2 bg-white d-flex justify-content-between align-items-center" data-page-id="<%= selectedPage.page._id %>" data-order="<%= selectedPage.order %>">
@@ -1194,12 +1194,14 @@ window.ckEditorFallback = function() {
                             </div>
                             <div>
                                 <label class="form-label text-sm">Paragraph:</label>
-                                <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3" placeholder="Tab content"></textarea>
+                                <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph ckeditor-paragraph" rows="3" placeholder="Tab content"></textarea>
                             </div>
                         </div>\`;
                     $tabsContainer.append(tabHtml);
                 }
             }
+            // Initialize CKEditor for tab textareas (both existing and newly created)
+            setTimeout(initCKEditor, 300);
         }
     }
 
@@ -1541,10 +1543,24 @@ window.ckEditorFallback = function() {
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
                     const tabs = $section.find(".tab-item").map(function () {
+                        const $paragraphTextarea = $(this).find(".tab-paragraph");
+                        let paragraphContent = $paragraphTextarea.val();
+                        
+                        // Get CKEditor content if editor exists
+                        const editorId = $paragraphTextarea.attr('id');
+                        if (editorId && editorInstances[editorId]) {
+                            try {
+                                paragraphContent = editorInstances[editorId].getData();
+                            } catch (error) {
+                                console.error('Error getting CKEditor content for tab:', error);
+                                paragraphContent = $paragraphTextarea.val();
+                            }
+                        }
+                        
                         return {
                             title: $(this).find(".tab-title").val(),
                             heading: $(this).find(".tab-heading").val(),
-                            paragraph: $(this).find(".tab-paragraph").val()
+                            paragraph: paragraphContent
                         };
                     }).get();
 
@@ -1569,6 +1585,13 @@ window.ckEditorFallback = function() {
                         }
                     });
                     
+                    console.log('Community Groups Data (Main Form):', {
+                        heading: heading,
+                        subheading: subheading,
+                        displayOrder: displayOrder,
+                        selectedPages: selectedPages
+                    });
+                    
                     sectionData.title = heading || "Community Groups";
                     sectionData.communityGroups = {
                         heading: heading,
@@ -1590,6 +1613,8 @@ window.ckEditorFallback = function() {
                 status: status,
                 sections: sectionsData
             };
+            
+            console.log('Complete payload being sent:', payload);
 
             // Single AJAX call to update everything
             $.ajax({
@@ -1602,7 +1627,8 @@ window.ckEditorFallback = function() {
                         showToast("Content updated successfully!", "success");
                         // Redirect after a short delay
                         setTimeout(() => {
-                            window.location.href = "/page-master/web-page-master";
+                            // window.location.href = "/page-master/web-page-master";
+                            window.location.reload();
                         }, 1000);
                     } else {
                         showToast(response.message || "An error occurred.", "error");
@@ -1721,15 +1747,56 @@ window.ckEditorFallback = function() {
                     sectionData.callOutCards = { cards: cards };
                 } else if (sectionType === "tabs-section") {
                     const tabs = $section.find(".tab-item").map(function () {
+                        const $paragraphTextarea = $(this).find(".tab-paragraph");
+                        let paragraphContent = $paragraphTextarea.val();
+                        
+                        // Get CKEditor content if editor exists
+                        const editorId = $paragraphTextarea.attr('id');
+                        if (editorId && editorInstances[editorId]) {
+                            try {
+                                paragraphContent = editorInstances[editorId].getData();
+                            } catch (error) {
+                                console.error('Error getting CKEditor content for tab:', error);
+                                paragraphContent = $paragraphTextarea.val();
+                            }
+                        }
+                        
                         return {
                             title: $(this).find(".tab-title").val(),
                             heading: $(this).find(".tab-heading").val(),
-                            paragraph: $(this).find(".tab-paragraph").val()
+                            paragraph: paragraphContent
                         };
                     }).get();
 
                     sectionData.title = "Tabs Section";
                     sectionData.tabsSection = { tabs: tabs };
+                } else if (sectionType === "community-groups") {
+                    const heading = $section.find(".cg-heading").val();
+                    const subheading = $section.find(".cg-subheading").val();
+                    const category = "community"; // Default to community category
+                    const displayOrder = $section.find(".cg-display-order").val();
+                    
+                    // Get selected pages
+                    const selectedPages = [];
+                    $section.find(".selected-page-item").each(function(index) {
+                        const pageId = $(this).data("page-id");
+                        const order = $(this).data("order") || index;
+                        if (pageId) {
+                            selectedPages.push({
+                                page: pageId,
+                                order: order
+                            });
+                        }
+                    });
+                    
+                    sectionData.title = heading || "Community Groups";
+                    sectionData.communityGroups = {
+                        heading: heading,
+                        subheading: subheading,
+                        category: category,
+                        displayOrder: displayOrder,
+                        selectedPages: selectedPages
+                    };
                 }
 
                 sectionsData.push(sectionData);
@@ -1912,7 +1979,7 @@ window.ckEditorFallback = function() {
                 </div>
                 <div>
                     <label class="form-label text-sm">Paragraph:</label>
-                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph" rows="3"
+                    <textarea class="form-control border border-neutral-200 radius-8 tab-paragraph ckeditor-paragraph" rows="3"
                         placeholder="Tab content"></textarea>
                 </div>
             </div>
@@ -1923,6 +1990,9 @@ window.ckEditorFallback = function() {
         
         // Hide "No tabs found" message if it exists
         $container.find('.text-muted').hide();
+        
+        // Initialize CKEditor for the new textarea
+        setTimeout(initCKEditor, 300);
     });
 
     $(document).on('click', '.remove-tab-btn', function() {
@@ -1933,6 +2003,18 @@ window.ckEditorFallback = function() {
         if ($container.find('.tab-item').length <= 1) {
             showToast('At least one tab is required', 'warning');
             return;
+        }
+        
+        // Destroy CKEditor instance if it exists
+        const $textarea = $tabItem.find('.tab-paragraph');
+        const editorId = $textarea.attr('id');
+        if (editorId && editorInstances[editorId]) {
+            editorInstances[editorId].destroy().then(() => {
+                delete editorInstances[editorId];
+            }).catch(error => {
+                console.error('Error destroying CKEditor:', error);
+                delete editorInstances[editorId];
+            });
         }
         
         $tabItem.remove();

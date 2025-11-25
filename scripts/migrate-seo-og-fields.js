@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/acrm', {
     useUnifiedTopology: true
 });
 
-const SEO = require('../models/Seo');
+const SEO = require('../models/SEO');
 
 async function migrateSEOFields() {
     try {
