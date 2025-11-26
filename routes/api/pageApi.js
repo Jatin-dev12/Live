@@ -589,6 +589,14 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Prevent status change for home page
+        if (oldPage.path === '/' && status && status !== 'active') {
+            return res.status(403).json({
+                success: false,
+                message: 'Home page status cannot be changed to draft'
+            });
+        }
+        
         // Check if another page has the same name or path
         const existingPage = await Page.findOne({
             _id: { $ne: req.params.id },
@@ -732,6 +740,14 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Page not found'
+            });
+        }
+        
+        // Prevent deletion of home page
+        if (page.path === '/') {
+            return res.status(403).json({
+                success: false,
+                message: 'Home page cannot be deleted'
             });
         }
         

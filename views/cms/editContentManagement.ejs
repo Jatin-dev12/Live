@@ -495,10 +495,16 @@
 
                                 <div>
                                     <label class="form-label">Status: </label>
-                                    <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
-                                        <option value="inactive" <%=page.status=='inactive' ? 'selected' : '' %>>Draft</option>
-                                        <option value="active" <%=page.status=='active' ? 'selected' : '' %>>Publish</option>
-                                    </select>
+                                    <% if (page.path === '/') { %>
+                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status" disabled title="Home page must remain published">
+                                            <option value="active" selected>Publish</option>
+                                        </select>
+                                    <% } else { %>
+                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                                            <option value="inactive" <%=page.status=='inactive' ? 'selected' : '' %>>Draft</option>
+                                            <option value="active" <%=page.status=='active' ? 'selected' : '' %>>Publish</option>
+                                        </select>
+                                    <% } %>
                                 </div>
                             </div>
                             <div class="d-flex publish-btns">
@@ -506,11 +512,11 @@
                                     class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
                                     Back
                                 </a>
-                                <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Save & Manage SEO
-                                </button>
                                 <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
                                     Save Changes
+                                </button>
+                                <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                                    Manage SEO Details
                                 </button>
                             </div>
                         </div>
@@ -792,7 +798,7 @@ window.ckEditorFallback = function() {
 };
 </script>
 
-<% script=` <script>
+<% script=`<script>
     // CKEditor 5 instances storage
     let editorInstances = {};
     
@@ -1469,7 +1475,19 @@ window.ckEditorFallback = function() {
                     const paragraphEditor = $section.find(".hero-paragraph");
                     const editorId = paragraphEditor.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
-                    sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    const heroImageUrl = $section.find(".upload-file-hero-input").data("server-url");
+                    // Only save image if an actual image was uploaded (not the default placeholder)
+                    if (heroImageUrl && heroImageUrl !== '/images/user.png') {
+                        // Ensure we save full URL for hero image
+                        if (!heroImageUrl.startsWith('http') && !heroImageUrl.startsWith('data:')) {
+                            sectionData.heroSection.image = window.location.origin + heroImageUrl;
+                        } else {
+                            sectionData.heroSection.image = heroImageUrl;
+                        }
+                    } else {
+                        // No image uploaded or default placeholder - save as empty/null
+                        sectionData.heroSection.image = null;
+                    }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "left-heading-image-right-text") {
                     // Left heading + image on left, right text
@@ -1697,7 +1715,19 @@ window.ckEditorFallback = function() {
                     const paragraphEditor2 = $section.find(".hero-paragraph");
                     const editorId2 = paragraphEditor2.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
-                    sectionData.heroSection.image = $section.find(".upload-file-hero-input").data("server-url") || $section.find(".uploaded-img-hero__preview").attr("src");
+                    const heroImageUrl2 = $section.find(".upload-file-hero-input").data("server-url");
+                    // Only save image if an actual image was uploaded (not the default placeholder)
+                    if (heroImageUrl2 && heroImageUrl2 !== '/images/user.png') {
+                        // Ensure we save full URL for hero image
+                        if (!heroImageUrl2.startsWith('http') && !heroImageUrl2.startsWith('data:')) {
+                            sectionData.heroSection.image = window.location.origin + heroImageUrl2;
+                        } else {
+                            sectionData.heroSection.image = heroImageUrl2;
+                        }
+                    } else {
+                        // No image uploaded or default placeholder - save as empty/null
+                        sectionData.heroSection.image = null;
+                    }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "three-column-info") {
                     const heading = $section.find(".tci-heading").val();
@@ -2232,5 +2262,168 @@ window.ckEditorFallback = function() {
             $(this).find('.fw-semibold').text(\`Card #\${index + 1}\`);
         });
     }
+
+    // Template placeholder logic
+    $(document).ready(function() {
+        const pageTemplate = $('#pageTemplate').val();
+        
+        // Template configurations
+        const templateDefaults = {
+            home: {
+                heroSection: {
+                    heading: 'Welcome to Our Website',
+                    paragraph: 'Enter hero section description here',
+                    ctas: [
+                        { text: 'Get Started', link: '' },
+                        { text: 'Learn More', link: '' }
+                    ]
+                },
+                callOutCards: {
+                    cards: [
+                        { heading: 'Call Out Card 1', subheading: 'Enter description here', link: '' },
+                        { heading: 'Call Out Card 2', subheading: 'Enter description here', link: '' },
+                        { heading: 'Call Out Card 3', subheading: 'Enter description here', link: '' }
+                    ]
+                }
+            },
+            about: {
+                heroSection: {
+                    heading: 'About Us',
+                    paragraph: 'Learn more about our organization and mission',
+                    ctas: [{ text: 'Learn More', link: '' }]
+                },
+                tabsSection: {
+                    tabs: [
+                        { title: 'Tab 1', heading: 'First Tab', paragraph: 'Content for the first tab' },
+                        { title: 'Tab 2', heading: 'Second Tab', paragraph: 'Content for the second tab' },
+                        { title: 'Tab 3', heading: 'Third Tab', paragraph: 'Content for the third tab' }
+                    ]
+                }
+            },
+            legislation: {
+                heroSection: {
+                    heading: 'Legislation & Policy',
+                    paragraph: 'Stay informed about our legislative initiatives and policy positions',
+                    ctas: [
+                        { text: 'View Legislation', link: '' },
+                        { text: 'Policy Documents', link: '' }
+                    ]
+                },
+                callOutCards: {
+                    cards: [
+                        { heading: 'Call Out Card', subheading: 'Enter description here', link: '' }
+                    ]
+                }
+            },
+            newsletter: {
+                heroSection: {
+                    heading: 'Newsletter',
+                    paragraph: 'Stay updated with our latest news and updates',
+                    ctas: [{ text: 'Subscribe Now', link: '' }]
+                },
+                tabsSection: {
+                    tabs: [
+                        { title: 'Tab 1', heading: 'First Tab', paragraph: 'Content for the first tab' },
+                        { title: 'Tab 2', heading: 'Second Tab', paragraph: 'Content for the second tab' },
+                        { title: 'Tab 3', heading: 'Third Tab', paragraph: 'Content for the third tab' }
+                    ]
+                }
+            }
+        };
+
+        // Apply template placeholders
+        if (pageTemplate && templateDefaults[pageTemplate]) {
+            const template = templateDefaults[pageTemplate];
+            
+            // Process each section
+            $('.section-block').each(function() {
+                const $section = $(this);
+                const sectionType = $section.find('.original-section-type').val();
+                
+                if (sectionType === 'hero-section' && template.heroSection) {
+                    // Hero heading
+                    const $heading = $section.find('.hero-heading');
+                    if ($heading.val() === template.heroSection.heading || $heading.val() === '') {
+                        $heading.val('').attr('placeholder', template.heroSection.heading);
+                    }
+                    
+                    // Hero paragraph
+                    const $paragraph = $section.find('.hero-paragraph');
+                    if ($paragraph.val() === template.heroSection.paragraph || $paragraph.val() === '') {
+                        $paragraph.val('').attr('placeholder', template.heroSection.paragraph);
+                    }
+                    
+                    // CTA buttons
+                    $section.find('.cta-item').each(function(index) {
+                        const $cta = $(this);
+                        if (template.heroSection.ctas && template.heroSection.ctas[index]) {
+                            const templateCta = template.heroSection.ctas[index];
+                            
+                            const $ctaText = $cta.find('.cta-text');
+                            if ($ctaText.val() === templateCta.text || $ctaText.val() === '') {
+                                $ctaText.val('').attr('placeholder', templateCta.text);
+                            }
+                        }
+                    });
+                }
+                
+                // Call-out-cards section
+                if (sectionType === 'call-out-cards' && template.callOutCards) {
+                    $section.find('.callout-item').each(function(index) {
+                        const $card = $(this);
+                        if (template.callOutCards.cards && template.callOutCards.cards[index]) {
+                            const templateCard = template.callOutCards.cards[index];
+                            
+                            // Card heading
+                            const $heading = $card.find('.callout-heading');
+                            if ($heading.val() === templateCard.heading || $heading.val() === '') {
+                                $heading.val('').attr('placeholder', templateCard.heading);
+                            }
+                            
+                            // Card subheading/paragraph
+                            const $subheading = $card.find('.callout-subheading');
+                            if ($subheading.val() === templateCard.subheading || $subheading.val() === '') {
+                                $subheading.val('').attr('placeholder', templateCard.subheading);
+                            }
+                            
+                            // Card link
+                            const $link = $card.find('.callout-link');
+                            if ($link.val() === templateCard.link || $link.val() === '') {
+                                $link.val('').attr('placeholder', templateCard.link || 'e.g., /more');
+                            }
+                        }
+                    });
+                }
+                
+                // Tabs section
+                if (sectionType === 'tabs-section' && template.tabsSection) {
+                    $section.find('.tab-item').each(function(index) {
+                        const $tab = $(this);
+                        if (template.tabsSection.tabs && template.tabsSection.tabs[index]) {
+                            const templateTab = template.tabsSection.tabs[index];
+                            
+                            // Tab title
+                            const $title = $tab.find('.tab-title');
+                            if ($title.val() === templateTab.title || $title.val() === '') {
+                                $title.val('').attr('placeholder', templateTab.title);
+                            }
+                            
+                            // Tab heading
+                            const $heading = $tab.find('.tab-heading');
+                            if ($heading.val() === templateTab.heading || $heading.val() === '') {
+                                $heading.val('').attr('placeholder', templateTab.heading);
+                            }
+                            
+                            // Tab paragraph
+                            const $paragraph = $tab.find('.tab-paragraph');
+                            if ($paragraph.val() === templateTab.paragraph || $paragraph.val() === '') {
+                                $paragraph.val('').attr('placeholder', templateTab.paragraph);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
     </script>
     ` %>

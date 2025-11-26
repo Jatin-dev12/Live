@@ -300,6 +300,22 @@ div#menuStructurePanel .d-flex.align-items-center.justify-content-between.px-3 {
     padding: 8px 13px !important;
     line-height: normal !important;
 }
+.publish-btns a.disabled , .publish-btns button.disabled {
+    cursor: not-allowed;
+}
+a.custom-btn-color, button.custom-btn-color {
+    background: #ce1126 !important;
+    color: #fff !important;
+    font-size: 15px !important;
+    border-radius: 5px !important;
+    border: 1px solid #ce1126 !important;
+    padding: 8px 13px !important;
+}
+ 
+a.custom-btn-color:hover,button.custom-btn-color:hover  {
+    background: #343434 !important;
+    border-color: #343434 !important;
+}
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;
@@ -647,6 +663,12 @@ td.title-table {
 }
 .form-select {
     background-position: 98% !important;
+}
+@media (max-width:1366px){
+    .publish-btns a, .publish-btns button {
+        padding: 8px 10px !important;
+        font-size: 13px !important;
+    }
 }
 @media (max-width:991px){
     .page-publish-box {
