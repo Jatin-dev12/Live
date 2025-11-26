@@ -47,6 +47,7 @@
                                         <!-- <option value="">-- No Template (Empty Page) --</option> -->
                                         <option value="home">Home Template - Hero + 3 Callout Cards</option>
                                         <option value="about">About Template - Hero with Button + Tabs Section</option>
+                                        <option value="newsletter">Newsletter Template - Hero with Button + Tabs Section</option>
                                         <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                         <option value="query">Query Template - Hero with 3 CTA Buttons</option>
                                         <option value="membership">Membership Template - Hero with Buttons + Community Groups</option>
@@ -176,27 +177,27 @@
     const templateData = {
         home: {
             description: 'This template includes:<br>• Hero section (heading + subheading)<br>• 3 Callout Cards (heading, paragraph, button text, button link)',
-            image: '/images/templates/home-template-preview.svg'
+            image: '/images/templates/home-template-preview.jpg'
         },
         about: {
             description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
-            image: '/images/templates/about-template-preview.svg'
+            image: '/images/templates/about-template-preview.jpg'
+        },
+        newsletter: {
+            description: 'This template includes:<br>• Hero section (heading + subheading + button text + button link)<br>• Tabs section (3 default tabs, add/remove as needed)',
+            image: '/images/templates/newsletter-template-preview.jpg'
         },
         legislation: {
             description: 'This template includes:<br>• Hero section (heading + subheading + 2 buttons: text + link)<br>• 1 Callout Card (heading, paragraph, button text, button link)',
-            image: '/images/templates/legislation-template-preview.svg'
+            image: '/images/templates/legislation-template-preview.jpg'
         },
         query: {
             description: 'This template includes:<br>• Hero section (heading + subheading + 3 CTA buttons: text + link + style)',
-            image: '/images/templates/query-template-preview.svg'
+            image: '/images/templates/query-template-preview.jpg'
         },
         membership: {
             description: 'This template includes:<br>• Hero section (heading + subheading + 2 CTA buttons)<br>• Community Groups section (displays pages with community category)',
-            image: '/images/templates/membership-template-preview.svg'
-        },
-        membership: {
-            description: 'This template includes:<br>• Hero section (heading + subheading)',
-            image: '/images/templates/membership-template-preview.svg'
+            image: '/images/templates/membership-template-preview.jpg'
         }
     };
     //default template selection preview
@@ -272,7 +273,42 @@
 
     // Handle form submission
     $('#addPageForm').on('submit', function(e) {
+        const nameVal = $('#name').val().trim();  // Trim spaces
+
+        if (nameVal.length === 0) {
+            e.preventDefault();
+
+            // Disable Save button
+            const saveBtn = $('#addPageForm button[type="submit"]')[0];
+            saveBtn.disabled = true;
+            // saveBtn.innerHTML = 'Name cannot be blank or spaces only';
+            
+            // Re-enable after short delay
+            setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save';
+            }, 2000);
+
+            showToast('Page Name cannot be empty or spaces only!', 'error');
+            return; // Stop submission
+        }
+
         const saveBtn = $('#addPageForm button[type="submit"]')[0];
+        const publishBtns = $('#addPageForm .publish-btns a');
+            // Disable all anchor tags
+            publishBtns.each(function () {
+                // Add disabled class for styling
+                $(this).addClass('disabled');
+                $(this).css('cursor', 'not-allowed');
+                $(this).attr('disabled',true);
+
+                // Remove click functionality
+                $(this).on('click.disabled', function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                });
+
+            });
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
         e.preventDefault();
@@ -302,7 +338,7 @@
                 if (response.success) {
                     const template = $('#template').val();
                     if (template) {
-                        showToast('Page created successfully with template! Redirecting to content editor...', 'success');
+                        showToast('Page created successfully! Redirecting to content editor...', 'success');
                         setTimeout(function() {
                           window.location.href = '/cms/edit-content-management/' + response.data._id;
 

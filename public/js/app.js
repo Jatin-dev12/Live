@@ -32,7 +32,7 @@
   });
 
   //to keep the current page active
-  $(function () {
+  /* $(function () {
     for (
       var nk = window.location,
         o = $("ul#sidebar-menu a")
@@ -48,6 +48,63 @@
       // li
       if (!o.is("li")) break;
       o = o.parent().addClass("show").parent().addClass("open");
+    }
+  }); */
+  $(function () {
+    var currentUrl = window.location.pathname;
+    var currentFullUrl = window.location.href;
+    
+    // Remove any existing active classes
+    $("ul#sidebar-menu li").removeClass("active-pagee");
+    $("ul#sidebar-menu a").removeClass("active-page");
+    
+    // Special case: CMS edit content management should activate Page Master
+    if (currentUrl.startsWith('/cms/edit-content-management/')) {
+      $("ul#sidebar-menu a").filter(function () {
+        return this.pathname && this.pathname.startsWith('/page-master');
+      }).addClass("active-page").parent().addClass("active-pagee");
+      return;
+    }
+    
+    // First try exact URL match
+    var exactMatch = $("ul#sidebar-menu a").filter(function () {
+      return this.href === currentFullUrl || this.pathname === currentUrl;
+    });
+    
+    if (exactMatch.length > 0) {
+      exactMatch.addClass("active-page").parent().addClass("active-pagee");
+      return;
+    }
+    
+    // If no exact match, try path-based matching for modules
+    var pathMatches = {
+      '/index': '/index',
+      '/roles': '/roles',
+      '/page-master': '/page-master',
+      '/cms': '/cms',
+      '/menu-management': '/menu-management',
+      '/media': '/media',
+      '/seo': '/seo',
+      '/ads': '/ads',
+      '/leads': '/leads',
+      '/url-redirect': '/url-redirect',
+      '/settings': '/settings'
+    };
+    
+    // Check if current path starts with any module path
+    for (var modulePath in pathMatches) {
+      if (currentUrl.startsWith(modulePath)) {
+        var matchedAnchor = $("ul#sidebar-menu a").filter(function () {
+          return this.pathname && this.pathname.startsWith(modulePath);
+        });
+        matchedAnchor.addClass("active-page").parent().addClass("active-pagee");
+        break;
+      }
+    }
+    
+    // Special handling for root/dashboard
+    if (currentUrl === '/' || currentUrl === '/index' || currentUrl.startsWith('/index')) {
+      $("ul#sidebar-menu a[href='/index']").addClass("active-page").parent().addClass("active-pagee");
     }
   });
 

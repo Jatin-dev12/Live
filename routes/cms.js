@@ -67,6 +67,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
 
         // Get all sections for this page
         const allSections = await Content.find({ page: pageId })
+            .populate('communityGroups.selectedPages.page', 'name _id')
             .sort({ order: 1, createdAt: 1 })
             .lean();
             
@@ -109,6 +110,13 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             },
             tabsSection: {
                 tabs: section.tabsSection?.tabs || []
+            },
+            communityGroups: {
+                heading: section.communityGroups?.heading || '',
+                subheading: section.communityGroups?.subheading || '',
+                category: section.communityGroups?.category || 'community',
+                displayOrder: section.communityGroups?.displayOrder || 'manual',
+                selectedPages: section.communityGroups?.selectedPages || []
             }
         }));
 
@@ -169,11 +177,18 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 },
                 tabsSection: {
                     tabs: section.tabsSection?.tabs || []
+                },
+                communityGroups: {
+                    heading: section.communityGroups?.heading || '',
+                    subheading: section.communityGroups?.subheading || '',
+                    category: section.communityGroups?.category || 'community',
+                    displayOrder: section.communityGroups?.displayOrder || 'manual',
+                    selectedPages: section.communityGroups?.selectedPages || []
                 }
             })),
             pages: allPages
         };
-        console.log('---------------------page',page);
+        // console.log('---------------------page',page);
         
         
         return res.render('cms/editContentManagement', responseData);

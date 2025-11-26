@@ -128,6 +128,39 @@ const templates = {
       }
     ]
   },
+  newsletter: {
+    name: 'Newsletter Template',
+    description: 'Hero section with button and tabs section',
+    previewImage: '/images/templates/newsletter-template-preview.svg',
+    sections: [
+      { 
+        type: 'hero-section', 
+        fields: { 
+          heading: 'Newsletter', 
+          paragraph: 'Stay updated with our latest news and updates',
+          ctas: [{ text: 'Subscribe Now', link: '', style: 'primary' }],
+          image: ''
+        } 
+      },
+      {
+        type: 'tabs-section',
+        fields: {
+          tabs: [
+            { title: '', heading: '', paragraph: '' },
+            { title: '', heading: '', paragraph: '' },
+            { title: '', heading: '', paragraph: '' }
+          ]
+        },
+        placeholders: {
+          tabs: [
+            { title: 'Tab 1', heading: 'First Tab', paragraph: 'Content for the first tab' },
+            { title: 'Tab 2', heading: 'Second Tab', paragraph: 'Content for the second tab' },
+            { title: 'Tab 3', heading: 'Third Tab', paragraph: 'Content for the third tab' }
+          ]
+        }
+      }
+    ]
+  },
   query: {
     name: 'Query Template',
     description: 'Hero section with heading, subheading and multiple CTAs',

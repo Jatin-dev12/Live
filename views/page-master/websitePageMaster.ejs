@@ -42,12 +42,36 @@
                                         <!-- <a href="<%= page.path %>" target="_blank" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a> -->
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <% 
+                                                var pageStatus = page.status;
+                                                var pageUrl = frontendUrl + '/' + page.slug;
+
+                                                // If status is active → add ?draft=true
+                                                if (pageStatus === 'inactive') {
+                                                    pageUrl += '?draft=true';
+                                                }
+                                            %>
+
+                                            <a href="<%= pageUrl %>" target="_blank" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
+                                                <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                            </a>
+                                            <!-- <a href="<%= frontendUrl %>/<%= page.slug %>" target="_blank" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
+                                                <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                            </a> -->
+                                        </div>
                                         <a href="/page-master/edit-page/<%= page._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
-                                        <button type="button" class="delete-page-btn btn btn-sm btn-outline-danger remove-item-btn" data-page-id="<%= page._id %>">
-                                            <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
-                                        </button>
+                                        <% if (page.path === '/') { %>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary remove-item-btn" disabled title="Home page cannot be deleted">
+                                                <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
+                                            </button>
+                                        <% } else { %>
+                                            <button type="button" class="delete-page-btn btn btn-sm btn-outline-danger remove-item-btn" data-page-id="<%= page._id %>">
+                                                <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
+                                            </button>
+                                        <% } %>
                                     </div>
                                 </td>
                             </tr>
@@ -116,6 +140,13 @@
     $(document).on('click', '.delete-page-btn', async function () {
         const pageId = $(this).data('page-id');
         const row = $(this).closest('tr');
+        const pagePath = row.find('td:eq(1)').text(); // Get the path from the second column
+        
+        // Prevent deletion of home page
+        if (pagePath === '/') {
+            showToast('Home page cannot be deleted!', 'error');
+            return;
+        }
 
         const result = await Swal.fire({
             title: 'Delete Page?',
