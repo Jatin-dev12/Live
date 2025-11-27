@@ -613,10 +613,19 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         // Check if template is changing
         const templateChanged = template !== undefined && template !== oldPage.template;
         
+        // Generate slug from name if name is being updated
+        let slug = oldPage.slug;
+        if (name && name !== oldPage.name) {
+            slug = name.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+        
         const page = await Page.findByIdAndUpdate(
             req.params.id,
             {
                 name,
+                slug,
                 path,
                 status,
                 metaTitle,

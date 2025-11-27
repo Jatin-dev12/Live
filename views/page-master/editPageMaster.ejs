@@ -254,6 +254,22 @@
                     $(this).val(value);
                 }
             }
+            
+            // 3. GENERATE SLUG IN REAL-TIME
+            // Generate slug from the page name
+            let slug = value.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')  // Replace non-alphanumeric with hyphens
+                .replace(/^-+|-+$/g, '');      // Remove leading/trailing hyphens
+            
+            // Update the path field with the generated slug
+            // Add leading slash if not home page
+            if (slug && slug !== 'home') {
+                $('#path').val('/' + slug);
+            } else if (slug === 'home') {
+                $('#path').val('/');
+            } else {
+                $('#path').val('');
+            }
         });
         // Handle form submission
         $('#editPageForm').on('submit', function(e) {
