@@ -13,12 +13,12 @@
                             <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
-                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-4"
+                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3"
                                     data-id="<%= section._id %>">
                                   
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         
-                                        <span class="badge bg-primary-600">Template Section</span>
+                                        <span class="badge custom-badge badge-primary">Template Section</span>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" class="original-section-type"
@@ -157,7 +157,7 @@
                                                             <% }) %>
                                                         <% } %>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-2 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 
                                                 <div class="mb-3">
@@ -172,7 +172,7 @@
                                                             </div>
                                                         </div>
                                                     <% } %>
-                                                    <div class="upload-image-wrapper">
+                                                    <div class="upload-image-wrapper mt-5">
                                                         <div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
                                                             <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
                                                                 <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
@@ -310,10 +310,10 @@
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                                     <div class="d-flex align-items-center gap-2">
                                                                         <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
-                                                                        <span class="badge bg-secondary">Template Card</span>
+                                                                        <span class="badge custom-badge bg-secondary">Template Card</span>
                                                                     </div>
                                                                     <% if(page.template != 'legislation'){ %>
-                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                                                    <button type="button" class="btn btn-sm btn-outline-danger remove-callout-btn">
                                                                         <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                                                     </button>
                                                                     <% } %>
@@ -338,10 +338,10 @@
                                                     </div>
                                                     <% if(page.template != 'legislation'){ %>
                                                     
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
+                                                                                           <button type="button" class="btn btn-sm btn-primary  mt-3 add-callout-btn">
                                                         Add Call Out Card
                                                     </button>
-                                                    <small class="text-muted d-block mt-1">Max: 6 cards</small>
+                                                    <small class="text-muted d-block mt-3">Max: 6 cards</small>
                                                     <% } %>
                                                 </div>
                                             </div>
@@ -380,7 +380,7 @@
                                                         <% }) %>
                                                     </div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-tab-btn">Add Tab</button>
-                                                    <small class="text-muted d-block mt-1">You can add or remove tabs as needed</small>
+                                                    <small class="text-muted d-block mt-3">You can add or remove tabs as needed</small>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='community-groups' ) { %>
@@ -443,7 +443,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
-                                                    <div class="upload-image-wrapper">
+                                                    <div class="upload-image-wrapper mt-5">
                                                         <div
                                                             class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-30 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
                                                             <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover"
@@ -496,28 +496,29 @@
                                 <div>
                                     <label class="form-label">Status: </label>
                                     <% if (page.path === '/') { %>
-                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status" disabled title="Home page must remain published">
+                                          <select class="form-select form-select-sm" id="status" name="status" disabled title="Home page must remain published">
                                             <option value="active" selected>Publish</option>
                                         </select>
                                     <% } else { %>
-                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                                        <select class="form-select form-select-sm" id="status" name="status">
                                             <option value="inactive" <%=page.status=='inactive' ? 'selected' : '' %>>Draft</option>
                                             <option value="active" <%=page.status=='active' ? 'selected' : '' %>>Publish</option>
                                         </select>
                                     <% } %>
                                 </div>
                             </div>
-                            <div class="d-flex publish-btns">
+                            <div class="d-flex publish-btns mt-3">
                                 <a href="/page-master/edit-page/<%= page._id %>"
-                                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                    class="btn btn-sm btn-outline-secondary">
                                     Back
                                 </a>
-                                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Save Changes
-                                </button>
-                                <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                               <button type="button" id="updateAndSeoBtn" class="btn btn-sm btn-outline-primary">
                                     Manage SEO Details
                                 </button>
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    Save Changes
+                                </button>
+                               
                             </div>
                         </div>
 
@@ -570,18 +571,18 @@
                                         <option value="tabs-section">Tabs Section</option>
                                     </select>
                                 </div>
-                                <div class="image-with-text-fields" style="display: none;">
+                               <div class="image-with-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" placeholder="Heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading" placeholder="Subheading"></div>
                                     <div class="mb-3"><label class="form-label">Text:</label><textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea></div>
                                     <div class="form-check mb-3"><input class="form-check-input iwt-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="image-with-list-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading"></div>
                                     <div class="form-check mb-3"><input class="form-check-input iwl-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
                                     <div class="mb-3"><label class="form-label">List Items:</label><div class="iwl-items"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-iwl-item-btn">Add Item</button></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="heading-subheading-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-heading" placeholder="Heading"></div>
@@ -590,19 +591,19 @@
                                 </div>
                                 <div class="left-heading-image-right-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Left Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 lhrt-heading" placeholder="Heading"></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Right Text:</label><textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text" rows="4" placeholder="Text"></textarea></div>
                                 </div>
                                 <div class="right-heading-image-left-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Right Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 rhlt-heading" placeholder="Heading"></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Left Text:</label><textarea class="form-control border border-neutral-200 radius-8 rhlt-left-text" rows="4" placeholder="Text"></textarea></div>
                                 </div>
                                 <div class="hero-section-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
-                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-2 add-cta-btn">Add CTA Button</button></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="three-column-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Section Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 tci-heading" placeholder="Main Heading"></div>
@@ -616,10 +617,10 @@
                                     </div>
                                 </div>
                                 <div class="call-out-cards-fields" style="display: none;">
-                                    <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
+                                    <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-primary  mt-3 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-3">Min: 1 card, Max: 6 cards</small></div>
                                 </div>
                                 <div class="tabs-section-fields" style="display: none;">
-                                    <div class="mb-3"><label class="form-label">Tabs:</label><div class="tabs-container"></div><small class="text-muted d-block mt-1">8 tabs will be created automatically</small></div>
+                                    <div class="mb-3"><label class="form-label">Tabs:</label><div class="tabs-container"></div><small class="text-muted d-block mt-3">8 tabs will be created automatically</small></div>
                                 </div>
                             </div>
                         </div>
@@ -2250,9 +2251,9 @@ window.ckEditorFallback = function() {
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="d-flex align-items-center gap-2">
                     <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
-                    <span class="badge bg-secondary">Template Card</span>
+                    <span class="badge custom-badge bg-secondary">Template Card</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-callout-btn">
                     <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                 </button>
             </div>

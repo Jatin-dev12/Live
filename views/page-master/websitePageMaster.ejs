@@ -6,7 +6,11 @@
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
         </div>
-        <a href="/page-master/add-page" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+        <!-- <a href="/page-master/add-page" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+            Add New Page
+        </a> -->
+        <a href="/page-master/add-page" class="btn btn-sm btn-primary d-flex align-items-center gap-1">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
             Add New Page
         </a>
@@ -32,9 +36,9 @@
                                 <td><%= new Date(page.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
                                 <td class="text-center">
                                     <% if (page.status === 'active') { %>
-                                        <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Published</span>
+                                        <span class="badge custom-badge badge-outline-success">Published</span>
                                     <% } else { %>
-                                        <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Draft</span>
+                                        <span class="badge custom-badge badge-outline-secondary">Draft</span>
                                     <% } %>
                                 </td>
                                 <td class="text-center">
@@ -53,15 +57,16 @@
                                                 }
                                             %>
 
-                                            <a href="<%= pageUrl %>" target="_blank" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
-                                                <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                            <a href="<%= pageUrl %>" target="_blank" class="btn btn-sm btn-outline-success">
+                                                <iconify-icon icon="majesticons:eye-line" class="icon "></iconify-icon>
                                             </a>
                                             <!-- <a href="<%= frontendUrl %>/<%= page.slug %>" target="_blank" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
                                                 <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                             </a> -->
                                         </div>
-                                        <a href="/page-master/edit-page/<%= page._id %>" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center">
-                                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                                        <a href="/page-master/edit-page/<%= page._id %>" class="btn btn-sm btn-outline-secondary">
+                                            <!-- <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon> -->
+                                            <iconify-icon icon="material-symbols:edit-outline"></iconify-icon>
                                         </a>
                                         <% if (page.path === '/') { %>
                                             <button type="button" class="btn btn-sm btn-outline-secondary remove-item-btn" disabled title="Home page cannot be deleted">

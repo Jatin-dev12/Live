@@ -290,8 +290,10 @@ div#menuStructurePanel .d-flex.align-items-center.justify-content-between.px-3 {
 }
 .publish-btns {
     align-items: center;
-    justify-content: space-between;
-    padding-top: 20px;
+    /* justify-content: space-between; */
+    justify-content: end;
+    /* padding-top: 20px; */
+    padding-top: 10px;
     flex-wrap: wrap;
     gap: 5px;
 }
@@ -316,6 +318,75 @@ a.custom-btn-color:hover,button.custom-btn-color:hover  {
     background: #343434 !important;
     border-color: #343434 !important;
 }
+/* 27 nov  */
+.swal2-styled {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem !important;
+}
+.sidebar-menu li a {
+    border-radius: 0.25rem;
+}
+
+.custom-badge {
+    font-weight: 500;
+    border-radius: 0.25rem;
+    font-size: 13px;
+}
+.badge-outline-success {
+    color: #45B369;
+    border: 1px solid #45B369;
+}
+.badge-success {
+    background: #45B369;
+    color: #fff;
+}
+.badge-outline-secondary {
+    color: #6c757d;
+    border: 1px solid #6c757d;
+}
+.badge-secondary {
+    background: #6c757d;
+    color: #ffffff;
+}
+.badge-outline-primary {
+    color: #CE1126;
+    border: 1px solid #CE1126;
+}
+.badge-primary {
+    background: #CE1126;
+    color: #fff;
+}
+.badge-outline-warning {
+    border: 1px solid #FFC107;
+    color: #FFC107;
+}
+.badge-warning {
+    color: #000000;
+    background: #FFC107;
+}
+.badge-outline-dark {
+    border: 1px solid #212529;
+    color: #212529;
+}
+.badge-dark {
+    background: #212529;
+    color: #fff;
+}
+.btn-outline-danger {
+    color: #ce1126;
+}
+.form-label {
+    color: #111827;
+}
+/* td, th {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827 !important;
+}
+td strong {
+    font-weight: 600;
+} */
+
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;
