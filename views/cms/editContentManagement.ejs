@@ -1345,6 +1345,7 @@ window.ckEditorFallback = function() {
                     processData: false,
                     contentType: false,
                     success: function (response) {
+                        console.log('Upload response:', response);
                         if (response.success) {
                             $input.data("server-url", response.url);
                             showToast("Hero image uploaded successfully", "success");
@@ -1352,8 +1353,29 @@ window.ckEditorFallback = function() {
                             showToast(response.message || "Image upload failed", "error");
                         }
                     },
-                    error: function (xhr) {
-                        showToast(xhr.responseJSON?.message || "An error occurred", "error");
+                    error: function (xhr, status, error) {
+                        console.error('Upload error:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error
+                        });
+                        
+                        // Check if it's actually a success but parsed as error
+                        if (xhr.status === 200 && xhr.responseText) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    $input.data("server-url", response.url);
+                                    showToast("Hero image uploaded successfully", "success");
+                                    return;
+                                }
+                            } catch (e) {
+                                console.error('Failed to parse response:', e);
+                            }
+                        }
+                        
+                        showToast(xhr.responseJSON?.message || "An error occurred during upload", "error");
                     }
                 });
             }

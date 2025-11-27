@@ -10,9 +10,9 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Body parser middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Body parser middleware with increased limits for file uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Trust proxy for Railway deployment
 app.set('trust proxy', 1);
