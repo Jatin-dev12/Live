@@ -46,7 +46,7 @@
                                 ">👁️</button>
                             </div>
                             <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number &
-                                special character (@$!%*?&)</small>
+                                special character @$!%*?&</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
@@ -565,7 +565,7 @@
                     errors.push('Password must contain at least one number');
                 }
                 if (!hasSpecialChar) {
-                    errors.push('Password must contain at least one special character (@$!%*?&)');
+                    errors.push('Password must contain at least one special character @$!%*?&');
                 }
             }
 
@@ -864,7 +864,7 @@
                 }
 
                 if (!/[@$!%*?&]/.test(password)) {
-                    errors.push('Password must contain at least one special character (@$!%*?&)');
+                    errors.push('Password must contain at least one special character @$!%*?&');
                 }
 
                 if (errors.length > 0) {
