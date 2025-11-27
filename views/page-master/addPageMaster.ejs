@@ -243,9 +243,8 @@
     $('#name').on('input', function() {
         let value = $(this).val();
 
-        // 1. FILTER INPUT: Allow ONLY letters, numbers, and standard spaces.
-        // The previous fix ensures we allow standard spaces:
-        const cleanedValue = value.replace(/[^A-Za-z0-9\s ]/g, '');
+        // 1. FILTER INPUT: Allow ONLY letters and standard spaces (NO NUMBERS).
+        const cleanedValue = value.replace(/[^A-Za-z\s ]/g, '');
 
         // Update the input field only if cleaning occurred
         if (value !== cleanedValue) {

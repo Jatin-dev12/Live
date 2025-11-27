@@ -146,7 +146,8 @@
                 </div>
 
                 <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
+                    <!-- <table class="table bordered-table sm-table mb-0"> -->
+                    <table class="table custom-table">
                         <thead>
                             <tr>
                                 <th scope="col">Date</th>
@@ -166,20 +167,24 @@
                                                 year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
+                                         <!-- <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1">
-                                                    <span class="text-md mb-0 fw-normal text-secondary-light">
+                                                    <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                         <%= lead.fullName || 'N/A' %>
-                                                    </span>
+                                                    <!-- </span>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </td>
-                                        <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                        <td>
+                                            <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.email || 'N/A' %>
-                                            </span></td>
-                                        <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                            <!-- </span> -->
+                                        </td>
+                                        <td>
+                                            <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.phone || 'N/A' %>
-                                            </span></td>
+                                            <!-- </span> -->
+                                        </td>
                                         <td>
                                             <%= lead.interestedIn || 'N/A' %>
                                         </td>

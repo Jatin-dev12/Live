@@ -387,6 +387,44 @@ td strong {
     font-weight: 600;
 } */
 
+
+table.custom-table th {
+    font-size: 16px;
+    background: #F5F6FA;
+    color: #ce1126;
+    font-weight: 600;
+}
+ 
+table.custom-table thead {
+    background: red;
+}
+ 
+table.custom-table tr:nth-child(odd) {
+    background: #f9f9f9;
+}
+ 
+table.custom-table tr:nth-child(even) {
+    background: #fff !important;
+}
+ 
+table.custom-table tbody td {
+    background: none;
+    font-size: 15px;
+        color: #111827;
+    font-weight: 400;
+}
+ 
+table.custom-table td, table.custom-table th {
+    padding: 10px;
+}
+ 
+table.custom-table {
+    border: 1px solid #e1e1e1;
+}
+.bold-mail {
+    font-weight: 500;
+}
+ 
 @media (max-width:1649px){
     .sidebar-menu li  a i {
     padding-right: 0px;

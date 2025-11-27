@@ -20,7 +20,8 @@
         </div>
 
         <div class="table-responsive scroll-sm">
-            <table class="table bordered-table sm-table mb-0" id="redirectsTable">
+            <!-- <table class="table bordered-table sm-table mb-0" id="redirectsTable"> -->
+            <table class="table custom-table" id="redirectsTable">
                 <thead>
                     <tr>
                         <th>
@@ -48,10 +49,14 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-primary-600"><code><%= redirect.oldUrl %></code></span>
+                                    <!-- <span class="text-primary-600"><code> -->
+                                        <%= redirect.oldUrl %>
+                                    <!-- </code></span> -->
                                 </td>
                                 <td>
-                                    <code><%= redirect.newUrl %></code>
+                                    <!-- <code> -->
+                                        <%= redirect.newUrl %>
+                                    <!-- </code> -->
                                 </td>
                                 <td>
                                     <span

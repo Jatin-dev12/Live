@@ -21,7 +21,8 @@
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
-            <table id="dataTable" class="table bordered-table sm-table mb-0">
+            <!-- <table id="dataTable" class="table bordered-table sm-table mb-0"> -->
+            <table id="dataTable" class="table custom-table">
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
@@ -41,21 +42,25 @@
                                     <%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', {
                                         year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
                                 </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
+                            <td>
+                                    <!-- <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <span class="text-md mb-0 fw-normal text-secondary-light">
+                                            <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.fullName || 'N/A' %>
-                                            </span>
+                                            <!-- </span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                <td>
+                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                         <%= lead.email || 'N/A' %>
-                                    </span></td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                    <!-- </span> -->
+                                </td>
+                                <td>
+                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                         <%= lead.phone || 'N/A' %>
-                                    </span></td>
+                                    <!-- </span> -->
+                                </td>
                                 <!-- <td>
                                     <span class="text-md mb-0 fw-normal text-secondary-light">
                                         <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
