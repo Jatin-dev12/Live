@@ -106,9 +106,14 @@
                                 class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
                                 Cancel
                             </a>
+                           
                             <button type="submit"
                                 class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
                                 Next
+                            </button>
+                             <button type="button" id="saveDraftBtn"
+                                class="btn btn-primary border border-secondary-600 text-md px-40 py-12 radius-8">
+                                Save 
                             </button>
                         </div>
                     </div>
@@ -269,6 +274,104 @@
         const path = slug === '' ? '' : (slug === 'home' ? '/' : '/' + slug);
 
         $('#path').val(path);
+    });
+
+    // Handle Save Draft button
+    $('#saveDraftBtn').on('click', function(e) {
+        e.preventDefault();
+        
+        const nameVal = $('#name').val().trim();
+        
+        if (nameVal.length === 0) {
+            showToast('Page Name cannot be empty or spaces only!', 'error');
+            return;
+        }
+        
+        const saveDraftBtn = $(this);
+        const originalText = saveDraftBtn.html();
+        const publishBtns = $('#addPageForm .publish-btns a, #addPageForm button[type="submit"]');
+        
+        // Disable all buttons
+        publishBtns.each(function() {
+            $(this).prop('disabled', true);
+            if ($(this).is('a')) {
+                $(this).addClass('disabled');
+                $(this).css('cursor', 'not-allowed');
+            }
+        });
+        
+        saveDraftBtn.prop('disabled', true);
+        saveDraftBtn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...');
+        
+        // Get selected categories
+        const selectedCategories = [];
+        $('input[name="categories"]:checked').each(function() {
+            selectedCategories.push($(this).val());
+        });
+        
+        const formData = {
+            name: $('#name').val(),
+            path: $('#path').val() || undefined,
+            status: 'inactive', // Always save as draft
+            template: $('#template').val(),
+            category: selectedCategories.length > 0 ? selectedCategories[0] : '',
+            metaTitle: $('#metaTitle').val(),
+            metaDescription: $('#metaDescription').val()
+        };
+        
+        $.ajax({
+            url: '/api/pages',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Draft saved successfully!', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/page-master/web-page-master';
+                    }, 1500);
+                } else {
+                    showToast('Error: ' + response.message, 'error');
+                    // Re-enable buttons
+                    saveDraftBtn.prop('disabled', false);
+                    saveDraftBtn.html(originalText);
+                    publishBtns.each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).is('a')) {
+                            $(this).removeClass('disabled');
+                            $(this).css('cursor', 'pointer');
+                        }
+                    });
+                }
+            },
+            error: function(xhr) {
+                console.error('Full error:', xhr);
+                let errorMessage = 'Unknown error';
+                
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.message || xhr.responseJSON.error || 'Unknown error';
+                } else if (xhr.responseText) {
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        errorMessage = errorData.message || errorData.error || 'Unknown error';
+                    } catch (e) {
+                        errorMessage = xhr.responseText;
+                    }
+                }
+                
+                showToast('Error saving draft: ' + errorMessage, 'error');
+                // Re-enable buttons
+                saveDraftBtn.prop('disabled', false);
+                saveDraftBtn.html(originalText);
+                publishBtns.each(function() {
+                    $(this).prop('disabled', false);
+                    if ($(this).is('a')) {
+                        $(this).removeClass('disabled');
+                        $(this).css('cursor', 'pointer');
+                    }
+                });
+            }
+        });
     });
 
     // Handle form submission

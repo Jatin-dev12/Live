@@ -97,7 +97,7 @@
                         </a>
                         <button type="submit"
                             class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8 submit-form-page">
-                            Update
+                            Save
                         </button>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                 $image.show();
                 $preview.show();
             } else {
-                $(".submit-form-page").text("Update");
+                $(".submit-form-page").text("Save");
                 $image.hide();
                 $preview.hide();
             }
@@ -241,7 +241,7 @@
             // The previous fix ensures we allow standard spaces:
             const cleanedValue = value.replace(/[^A-Za-z0-9\s ]/g, '');
 
-            // Update the input field only if cleaning occurred
+            // Save the input field only if cleaning occurred
             if (value !== cleanedValue) {
                 $(this).val(cleanedValue);
                 value = cleanedValue; 
@@ -303,13 +303,13 @@
                     if (response.success) {
                         const template = $('#template').val();
                         if (template && template !== originalTemplate) {
-                            showToast('Page updated successfully! Redirecting to content editor...', 'success');
+                            showToast('Page Saved successfully! Redirecting to content editor...', 'success');
                             setTimeout(function() {
                                 
                                 window.location.href = '/cms/edit-content-management/' + pageId;
                             }, 1500);
                         } else {
-                            showToast('Page updated successfully!', 'success');
+                            showToast('Page Saved successfully!', 'success');
                             setTimeout(function() {
                                 // window.location.href = '/page-master/web-page-master';
                                 window.location.reload();
