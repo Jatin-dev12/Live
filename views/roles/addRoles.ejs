@@ -10,9 +10,9 @@
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Full Name <span
                                     class="text-danger-600">*</span></label>
-                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name"
-                                required autocomplete="off" maxlength="15">
-                            <small class="text-muted d-block">Maximum 15 characters</small>
+                            <input type="text" name="fullName" id="fullNameInput" class="form-control" placeholder="Enter Full Name"
+                                required autocomplete="off" maxlength="15" pattern="[A-Za-z0-9\s]+" title="Only letters and spaces allowed">
+                            <small class="text-muted d-block">Maximum 15 characters (letters only)</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
@@ -605,6 +605,34 @@
 
             if (addUserForm) {
                 console.log('User form found, attaching submit handler');
+
+                // Block numbers in Full Name field
+                const fullNameInput = document.getElementById('fullNameInput');
+                if (fullNameInput) {
+                    // Block on keypress
+                    fullNameInput.addEventListener('keypress', function(e) {
+                        if (/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                    // Remove numbers on input (paste, autocomplete, etc.)
+                    fullNameInput.addEventListener('input', function(e) {
+                        const cursorPos = this.selectionStart;
+                        const oldValue = this.value;
+                        this.value = this.value.replace(/[0-9]/g, '');
+                        if (oldValue !== this.value) {
+                            this.setSelectionRange(cursorPos - 1, cursorPos - 1);
+                        }
+                    });
+                    // Block paste of numbers
+                    fullNameInput.addEventListener('paste', function(e) {
+                        e.preventDefault();
+                        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                        const cleanedText = pastedText.replace(/[0-9]/g, '');
+                        document.execCommand('insertText', false, cleanedText);
+                    });
+                }
 
                 // Remove any existing event listeners
                 addUserForm.onsubmit = null;
