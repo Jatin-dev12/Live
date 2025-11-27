@@ -597,22 +597,6 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
-        // Check if another page has the same name or path
-        const existingPage = await Page.findOne({
-            _id: { $ne: req.params.id },
-            $or: [{ name }, { path }]
-        });
-        
-        if (existingPage) {
-            return res.status(400).json({
-                success: false,
-                message: 'Another page with this name or path already exists'
-            });
-        }
-        
-        // Check if template is changing
-        const templateChanged = template !== undefined && template !== oldPage.template;
-        
         // Generate slug from name if name is being updated
         let slug = oldPage.slug;
         if (name && name !== oldPage.name) {
@@ -620,6 +604,42 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '');
         }
+        
+        // Check if another page has the same name, slug, or path
+        const existingPage = await Page.findOne({
+            _id: { $ne: req.params.id },
+            $or: [
+                { name }, 
+                { slug },
+                { path }
+            ]
+        });
+        
+        if (existingPage) {
+            let conflictField = 'name or path';
+            if (existingPage.slug === slug) {
+                conflictField = `slug "${slug}"`;
+            } else if (existingPage.name === name) {
+                conflictField = `name "${name}"`;
+            } else if (existingPage.path === path) {
+                conflictField = `path "${path}"`;
+            }
+            
+            return res.status(400).json({
+                success: false,
+                message: `Another page with this ${conflictField} already exists`,
+                existingPage: {
+                    name: existingPage.name,
+                    slug: existingPage.slug,
+                    path: existingPage.path,
+                    status: existingPage.status,
+                    id: existingPage._id
+                }
+            });
+        }
+        
+        // Check if template is changing
+        const templateChanged = template !== undefined && template !== oldPage.template;
         
         const page = await Page.findByIdAndUpdate(
             req.params.id,
