@@ -1298,6 +1298,24 @@ window.ckEditorFallback = function() {
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
+        // Initialize existing hero images on page load
+        $(".upload-file-hero-input").each(function() {
+            const existingImage = $(this).data("existing-image");
+            if (existingImage && existingImage !== '' && existingImage !== '/images/user.png') {
+                const $wrapper = $(this).closest(".upload-image-wrapper");
+                const $section = $(this).closest(".hero-section-fields");
+                
+                // Hide the "Current Image" label and static image
+                $section.find(".existing-image").closest(".mb-2").hide();
+                
+                // Show the image in the upload preview area
+                $wrapper.find(".uploaded-img-hero__preview").attr("src", existingImage);
+                $wrapper.find(".uploaded-img-hero").removeClass("d-none");
+                $wrapper.find(".upload-file-hero").hide();
+                $(this).data("server-url", existingImage);
+            }
+        });
+
         // Hero Section image handler with proper show/hide logic
         $(document).on("change", ".upload-file-hero-input", function (e) {
             if (e.target.files && e.target.files[0]) {
