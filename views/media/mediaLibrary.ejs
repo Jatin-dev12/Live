@@ -1,10 +1,11 @@
 <div class="custom-library-widget">
    <nav class="navbar navbar-light bg-light border-bottom sticky-top mb-3">
       <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Media Library</span>
+        <!-- <span class="navbar-brand mb-0 h1">Media Library</span> -->
+        <span class="navbar-brand mb-0 h1"></span>
         <div class="d-flex align-items-center gap-2">
-          <a href="/media/add-file" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> Add Media File
+          <a href="/media/add-file" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon> Add Media File
           </a>
         </div>
       </div>
@@ -45,7 +46,7 @@
           <button id="btnBulkDelete" class="btn btn-primary btn-sm d-none">Delete permanently</button>
           <div class="input-group input-group-sm media-search">
             <!-- <span class="input-group-text bg-white"><i class="bi bi-search"></i></span> -->
-            <input id="searchInput" type="search" class="form-control" placeholder="Search media">
+            <input id="searchInput" type="search" class="form-control form-control-sm" placeholder="Search media">
           </div>
         </div>
       </div>

@@ -137,15 +137,17 @@
             <div class="card-body p-24">
                 <div class="d-flex flex-wrap align-items-center gap-1 justify-content-between mb-16">
                     <h6 class="text-lg mb-0">Recent Leads </h6>
-                    <a href="/leads/leads-management"
+                    <!-- <a href="/leads/leads-management"
                         class="text-primary-600 hover-text-primary d-flex align-items-center gap-1">
                         View All
                         <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
-                    </a>
+                    </a> -->
+                    <a href="/leads/leads-management" class="btn btn-sm btn-primary d-flex align-items-center gap-1"> View All <iconify-icon icon="iconoir:nav-arrow-right" width="1.2em" height="1.2em"></iconify-icon></a>
                 </div>
 
                 <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
+                    <!-- <table class="table bordered-table sm-table mb-0"> -->
+                    <table class="table custom-table">
                         <thead>
                             <tr>
                                 <th scope="col">Date</th>
@@ -165,31 +167,35 @@
                                                 year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
+                                         <!-- <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1">
-                                                    <span class="text-md mb-0 fw-normal text-secondary-light">
+                                                    <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                         <%= lead.fullName || 'N/A' %>
-                                                    </span>
+                                                    <!-- </span>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </td>
-                                        <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                        <td>
+                                            <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.email || 'N/A' %>
-                                            </span></td>
-                                        <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                            <!-- </span> -->
+                                        </td>
+                                        <td>
+                                            <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.phone || 'N/A' %>
-                                            </span></td>
+                                            <!-- </span> -->
+                                        </td>
                                         <td>
                                             <%= lead.interestedIn || 'N/A' %>
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <button type="button"
-                                                    class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn"
+                                                    class="btn btn-sm btn-outline-success view-lead-btn"
                                                     data-lead-id="<%= lead._id %>"
                                                     data-lead-data='<%= JSON.stringify(lead) %>'>
                                                     <iconify-icon icon="majesticons:eye-line"
-                                                        class="icon text-xl"></iconify-icon>
+                                                        class="icon"></iconify-icon>
                                                 </button>
                                             </div>
                                         </td>
@@ -215,11 +221,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger-600 text-white">
-                <h4 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0"
+                <h6 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0"
                     id="leadDetailsModalLabel">
                     <iconify-icon icon="mdi:account-details" class="icon" style="font-size: 32px;"></iconify-icon>
                     Lead Details
-                </h4>
+                </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>

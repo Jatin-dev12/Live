@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 2 * 1024 * 1024 // 2MB max file size
+        fileSize: 50 * 1024 * 1024 // 50MB max file size
     },
     fileFilter: fileFilter
 });
@@ -92,7 +92,7 @@ const dynamicFileFilter = (req, file, cb) => {
 const dynamicUpload = multer({
     storage: dynamicStorage,
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB max file size
+        fileSize: 50 * 1024 * 1024 // 50MB max file size
     },
     fileFilter: dynamicFileFilter
 });
@@ -373,7 +373,7 @@ router.post('/upload-basic', (req, res) => {
     const basicUpload = multer({
         dest: path.join(__dirname, '../../public/uploads/content'),
         limits: {
-            fileSize: 10 * 1024 * 1024 // 10MB
+            fileSize: 50 * 1024 * 1024 // 50MB
         }
     });
     

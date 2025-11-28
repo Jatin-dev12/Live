@@ -18,7 +18,7 @@
                 <input type="text" id="searchInput" class="bg-base h-40-px w-auto" name="search" placeholder="Search by title...">
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
-            <select id="statusFilter" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+            <select id="statusFilter" class="form-select form-select-sm w-auto">
                 <option value="">All Status</option>
                 <option value="active">Active</option>
                 <option value="paused">Paused</option>
@@ -26,7 +26,7 @@
                 <option value="pending">Pending</option>
                 <option value="rejected">Rejected</option>
             </select>
-            <select id="adTypeFilter" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+            <select id="adTypeFilter" class="form-select form-select-sm w-auto">
                 <option value="">All Types</option>
                 <option value="banner">Banner</option>
                 <option value="video">Video</option>
@@ -34,17 +34,18 @@
                 <option value="popup">Popup</option>
             </select>
         </div>
-        <a href="/ads/add-ad" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+        <a href="/ads/add-ad" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
             Add Ad
         </a>
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
-            <table class="table bordered-table sm-table mb-0">
+            <!-- <table class="table bordered-table sm-table mb-0"> -->
+            <table class="table custom-table">
                 <thead>
                     <tr>
-                        <th scope="col">id</th>
+                        <th scope="col">Id</th>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
                         <th scope="col">Media URL</th>
@@ -80,26 +81,27 @@
                                 </td>
                                 <td>
                                     <% if (ad.status === 'active') { %>
-                                        <span class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
+                                        <span class="badge custom-badge badge-outline-success">Active</span>
                                     <% } else if (ad.status === 'paused') { %>
-                                        <span class="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">Paused</span>
+                                        <span class="badge custom-badge badge-outline-secondary">Paused</span>
                                     <% } else if (ad.status === 'expired') { %>
-                                        <span class="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">Expired</span>
+                                        <span class="badge custom-badge badge-outline-primary">Expired</span>
                                     <% } else if (ad.status === 'pending') { %>
-                                        <span class="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">Pending</span>
+                                        <span class="badge custom-badge badge-outline-warning">Pending</span>
                                     <% } else if (ad.status === 'rejected') { %>
-                                        <span class="bg-danger-200 text-danger-600 border border-danger-400 px-24 py-4 radius-4 fw-medium text-sm">Rejected</span>
+                                        <span class="badge custom-badge badge-outline-dark">Rejected</span>
                                     <% } %>
                                 </td>
                                 <td class=""><%= new Date(ad.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
                                 <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <button type="button" class="delete-ad-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                        <button type="button" class="delete-ad-btn btn btn-sm btn-outline-danger"
                                                 data-ad-id="<%= ad._id %>"
                                                 data-ad-title="<%= ad.title %>"
                                                 title="Delete Ad">
-                                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                                            <!-- <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon> -->
+                                             <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                         </button>
                                     </div>
                                 </td>

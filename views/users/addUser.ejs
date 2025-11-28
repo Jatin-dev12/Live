@@ -25,7 +25,8 @@
                         <form id="addUserForm">
                             <div class="mb-20">
                                 <label for="fullName" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" placeholder="Enter Full Name" required>
+                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" placeholder="Enter Full Name" pattern="[A-Za-z0-9\s]+" title="Only letters and spaces are allowed" maxlength="50" required>
+                                <small class="text-muted">Only letters and spaces allowed (max 50 characters)</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-20">
@@ -152,6 +153,20 @@
 <% script = `
     <script src='/js/user-management.js'></script>
     <script>
+        // Full Name validation - Only letters and spaces
+        const fullNameInput = document.getElementById('fullName');
+        
+        fullNameInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Remove any characters that are not letters or spaces
+            value = value.replace(/[^A-Za-z\s]/g, '');
+            // Limit to 50 characters
+            if (value.length > 50) {
+                value = value.substring(0, 50);
+            }
+            e.target.value = value;
+        });
+        
         // Phone number validation - Clean and simple
         const phoneInput = document.getElementById('phone');
         

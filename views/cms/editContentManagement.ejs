@@ -13,12 +13,12 @@
                             <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
-                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-4"
+                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3"
                                     data-id="<%= section._id %>">
                                   
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         
-                                        <span class="badge bg-primary-600">Template Section</span>
+                                        <span class="badge custom-badge badge-primary">Template Section</span>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" class="original-section-type"
@@ -157,7 +157,7 @@
                                                             <% }) %>
                                                         <% } %>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-2 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 
                                                 <div class="mb-3">
@@ -172,16 +172,29 @@
                                                             </div>
                                                         </div>
                                                     <% } %>
-                                                    <div class="upload-image-wrapper">
-                                                        <div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
-                                                            <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
-                                                                <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                    <div class="upload-image-wrapper mt-5">
+                                                        <div class="uploaded-img-hero d-none position-relative w-100 border radius-8 overflow-hidden bg-white shadow-sm" style="min-height: 300px; max-height: 400px;">
+                                                            <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-3 m-3 d-flex bg-danger-600 w-36-px h-36-px justify-content-center align-items-center rounded-circle shadow-lg border-0 transition-all" style="transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                                                <iconify-icon icon="radix-icons:cross-2" class="text-xl text-white"></iconify-icon>
                                                             </button>
-                                                            <img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image">
+                                                            <img class="uploaded-img-hero__preview w-100 h-100" src="/images/user.png" alt="Hero Image" style="object-fit: contain; background: #f8f9fa;">
+                                                            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center gap-2" style="backdrop-filter: blur(4px);">
+                                                                <label class="btn btn-sm btn-light d-flex align-items-center gap-2 mb-0 cursor-pointer" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                                                    <iconify-icon icon="solar:camera-outline" class="text-lg"></iconify-icon>
+                                                                    <span class="fw-semibold">Change Image</span>
+                                                                    <input type="file" class="upload-file-hero-input-change" hidden accept="image/*">
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                        <label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1 cursor-pointer">
-                                                            <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
-                                                            <span class="fw-semibold text-secondary-light">Upload New Hero Image</span>
+                                                        <label class="upload-file-hero w-100 border radius-8 overflow-hidden border-dashed bg-neutral-50 d-flex align-items-center flex-column justify-content-center gap-3 cursor-pointer transition-all" style="min-height: 300px; border: 2px dashed #cbd5e1; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#eff6ff'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#f9fafb'">
+                                                            <div class="d-flex flex-column align-items-center gap-2">
+                                                                <div class="bg-primary bg-opacity-10 rounded-circle p-4">
+                                                                    <iconify-icon icon="solar:camera-outline" class="text-4xl text-primary"></iconify-icon>
+                                                                </div>
+                                                                <span class="fw-semibold text-neutral-900 fs-5">Upload New Hero Image</span>
+                                                                <span class="text-secondary-light text-sm">Click to browse or drag and drop</span>
+                                                                <!-- <span class="text-muted text-xs">Recommended: 1920x600px (JPG, PNG, WebP)</span> -->
+                                                            </div>
                                                             <input type="file" class="upload-file-hero-input" hidden accept="image/*" data-existing-image="<%= section.heroSection?.image || '' %>">
                                                         </label>
                                                     </div>
@@ -310,10 +323,10 @@
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                                     <div class="d-flex align-items-center gap-2">
                                                                         <span class="fw-semibold text-sm">Card #<%= idx + 1 %></span>
-                                                                        <span class="badge bg-secondary">Template Card</span>
+                                                                        <span class="badge custom-badge bg-secondary">Template Card</span>
                                                                     </div>
                                                                     <% if(page.template != 'legislation'){ %>
-                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                                                                    <button type="button" class="btn btn-sm btn-outline-danger remove-callout-btn">
                                                                         <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                                                     </button>
                                                                     <% } %>
@@ -338,10 +351,10 @@
                                                     </div>
                                                     <% if(page.template != 'legislation'){ %>
                                                     
-                                                    <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">
+                                                                                           <button type="button" class="btn btn-sm btn-primary  mt-3 add-callout-btn">
                                                         Add Call Out Card
                                                     </button>
-                                                    <small class="text-muted d-block mt-1">Max: 6 cards</small>
+                                                    <small class="text-muted d-block mt-3">Max: 6 cards</small>
                                                     <% } %>
                                                 </div>
                                             </div>
@@ -380,7 +393,7 @@
                                                         <% }) %>
                                                     </div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-tab-btn">Add Tab</button>
-                                                    <small class="text-muted d-block mt-1">You can add or remove tabs as needed</small>
+                                                    <small class="text-muted d-block mt-3">You can add or remove tabs as needed</small>
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='community-groups' ) { %>
@@ -443,7 +456,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold text-neutral-900">Upload Left Image</label>
-                                                    <div class="upload-image-wrapper">
+                                                    <div class="upload-image-wrapper mt-5">
                                                         <div
                                                             class="uploaded-img-lhrt <%= section.customFields?.image ? '' : 'd-none' %> position-relative w-30 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
                                                             <img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover"
@@ -496,28 +509,29 @@
                                 <div>
                                     <label class="form-label">Status: </label>
                                     <% if (page.path === '/') { %>
-                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status" disabled title="Home page must remain published">
+                                          <select class="form-select form-select-sm" id="status" name="status" disabled title="Home page must remain published">
                                             <option value="active" selected>Publish</option>
                                         </select>
                                     <% } else { %>
-                                        <select class="form-control border border-neutral-200 radius-8" id="status" name="status">
+                                        <select class="form-select form-select-sm" id="status" name="status">
                                             <option value="inactive" <%=page.status=='inactive' ? 'selected' : '' %>>Draft</option>
                                             <option value="active" <%=page.status=='active' ? 'selected' : '' %>>Publish</option>
                                         </select>
                                     <% } %>
                                 </div>
                             </div>
-                            <div class="d-flex publish-btns">
+                            <div class="d-flex publish-btns mt-3">
                                 <a href="/page-master/edit-page/<%= page._id %>"
-                                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                    class="btn btn-sm btn-outline-secondary">
                                     Back
                                 </a>
-                                <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Save Changes
+                               <button type="button" id="updateAndSeoBtn" class="btn btn-sm btn-outline-primary">
+                                    Edit SEO Details
                                 </button>
-                                <button type="button" id="updateAndSeoBtn" class="btn btn-outline-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                                    Manage SEO Details
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    Save 
                                 </button>
+                               
                             </div>
                         </div>
 
@@ -570,18 +584,18 @@
                                         <option value="tabs-section">Tabs Section</option>
                                     </select>
                                 </div>
-                                <div class="image-with-text-fields" style="display: none;">
+                               <div class="image-with-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-heading" placeholder="Heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwt-subheading" placeholder="Subheading"></div>
                                     <div class="mb-3"><label class="form-label">Text:</label><textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea></div>
                                     <div class="form-check mb-3"><input class="form-check-input iwt-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="image-with-list-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading"></div>
                                     <div class="form-check mb-3"><input class="form-check-input iwl-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
                                     <div class="mb-3"><label class="form-label">List Items:</label><div class="iwl-items"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-iwl-item-btn">Add Item</button></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-iwl d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwl__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwl__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwl h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwl-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="heading-subheading-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 hs-heading" placeholder="Heading"></div>
@@ -590,19 +604,19 @@
                                 </div>
                                 <div class="left-heading-image-right-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Left Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 lhrt-heading" placeholder="Heading"></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Left Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-lhrt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-lhrt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-lhrt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-lhrt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-lhrt-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Right Text:</label><textarea class="form-control border border-neutral-200 radius-8 lhrt-right-text" rows="4" placeholder="Text"></textarea></div>
                                 </div>
                                 <div class="right-heading-image-left-text-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Right Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 rhlt-heading" placeholder="Heading"></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-rhlt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-rhlt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-rhlt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-rhlt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-rhlt-input" hidden accept="image/*"></label></div></div>
                                     <div class="mb-3"><label class="form-label">Left Text:</label><textarea class="form-control border border-neutral-200 radius-8 rhlt-left-text" rows="4" placeholder="Text"></textarea></div>
                                 </div>
                                 <div class="hero-section-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
-                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-cta-btn">Add CTA Button</button></div>
-                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
+                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-2 add-cta-btn">Add CTA Button</button></div>
+                                    <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="three-column-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Section Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 tci-heading" placeholder="Main Heading"></div>
@@ -616,10 +630,10 @@
                                     </div>
                                 </div>
                                 <div class="call-out-cards-fields" style="display: none;">
-                                    <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-outline-primary-600 radius-8 mt-2 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-1">Min: 1 card, Max: 6 cards</small></div>
+                                    <div class="mb-3"><label class="form-label">Call Out Section:</label><div class="callout-container"></div><button type="button" class="btn btn-sm btn-primary  mt-3 add-callout-btn">Add Call Out Card</button><small class="text-muted d-block mt-3">Min: 1 card, Max: 6 cards</small></div>
                                 </div>
                                 <div class="tabs-section-fields" style="display: none;">
-                                    <div class="mb-3"><label class="form-label">Tabs:</label><div class="tabs-container"></div><small class="text-muted d-block mt-1">8 tabs will be created automatically</small></div>
+                                    <div class="mb-3"><label class="form-label">Tabs:</label><div class="tabs-container"></div><small class="text-muted d-block mt-3">8 tabs will be created automatically</small></div>
                                 </div>
                             </div>
                         </div>
@@ -1250,7 +1264,7 @@ window.ckEditorFallback = function() {
                             $input.data("server-url", response.url);
                             console.log("server-url", response);
 
-                            showToast("Image uploaded successfully", "success");
+                            // showToast("Image uploaded successfully", "success");
                         } else {
                             showToast(response.message || "Image upload failed", "error");
                         }
@@ -1298,6 +1312,24 @@ window.ckEditorFallback = function() {
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
+        // Initialize existing hero images on page load
+        $(".upload-file-hero-input").each(function() {
+            const existingImage = $(this).data("existing-image");
+            if (existingImage && existingImage !== '' && existingImage !== '/images/user.png') {
+                const $wrapper = $(this).closest(".upload-image-wrapper");
+                const $section = $(this).closest(".hero-section-fields");
+                
+                // Hide the "Current Image" label and static image
+                $section.find(".existing-image").closest(".mb-2").hide();
+                
+                // Show the image in the upload preview area
+                $wrapper.find(".uploaded-img-hero__preview").attr("src", existingImage);
+                $wrapper.find(".uploaded-img-hero").removeClass("d-none");
+                $wrapper.find(".upload-file-hero").addClass("d-none");
+                $(this).data("server-url", existingImage);
+            }
+        });
+
         // Hero Section image handler with proper show/hide logic
         $(document).on("change", ".upload-file-hero-input", function (e) {
             if (e.target.files && e.target.files[0]) {
@@ -1311,7 +1343,7 @@ window.ckEditorFallback = function() {
                 reader.onload = function (event) {
                     $wrapper.find(".uploaded-img-hero__preview").attr("src", event.target.result);
                     $wrapper.find(".uploaded-img-hero").removeClass("d-none");
-                    $wrapper.find(".upload-file-hero").hide();
+                    $wrapper.find(".upload-file-hero").addClass("d-none");
                 };
                 reader.readAsDataURL(file);
 
@@ -1327,6 +1359,7 @@ window.ckEditorFallback = function() {
                     processData: false,
                     contentType: false,
                     success: function (response) {
+                        console.log('Upload response:', response);
                         if (response.success) {
                             $input.data("server-url", response.url);
                             showToast("Hero image uploaded successfully", "success");
@@ -1334,8 +1367,66 @@ window.ckEditorFallback = function() {
                             showToast(response.message || "Image upload failed", "error");
                         }
                     },
+                    error: function (xhr, status, error) {
+                        console.error('Upload error:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error
+                        });
+                        
+                        // Check if it's actually a success but parsed as error
+                        if (xhr.status === 200 && xhr.responseText) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    $input.data("server-url", response.url);
+                                    showToast("Hero image uploaded successfully", "success");
+                                    return;
+                                }
+                            } catch (e) {
+                                console.error('Failed to parse response:', e);
+                            }
+                        }
+                        
+                        showToast(xhr.responseJSON?.message || "An error occurred during upload", "error");
+                    }
+                });
+            }
+        });
+
+        // Hero Section image change handler
+        $(document).on("change", ".upload-file-hero-input-change", function (e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const $wrapper = $(this).closest(".upload-image-wrapper");
+                const $input = $(this);
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    $wrapper.find(".uploaded-img-hero__preview").attr("src", event.target.result);
+                };
+                reader.readAsDataURL(file);
+
+                // Upload to server
+                const formData = new FormData();
+                formData.append("image", file);
+
+                $.ajax({
+                    url: "/api/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            $wrapper.find(".upload-file-hero-input").data("server-url", response.url);
+                            showToast("Hero image updated successfully", "success");
+                        }
+                    },
                     error: function (xhr) {
-                        showToast(xhr.responseJSON?.message || "An error occurred", "error");
+                        showToast(xhr.responseJSON?.message || "An error occurred during upload", "error");
                     }
                 });
             }
@@ -1346,8 +1437,9 @@ window.ckEditorFallback = function() {
             const $wrapper = $(this).closest(".upload-image-wrapper");
             $wrapper.find(".uploaded-img-hero__preview").attr("src", "");
             $wrapper.find(".uploaded-img-hero").addClass("d-none");
-            $wrapper.find(".upload-file-hero").show();
+            $wrapper.find(".upload-file-hero").removeClass("d-none");
             $wrapper.find(".upload-file-hero-input").val("").data("server-url", "");
+            $wrapper.find(".upload-file-hero-input-change").val("");
         });
 
         // Three Column Info image handler with proper show/hide logic
@@ -2210,9 +2302,9 @@ window.ckEditorFallback = function() {
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="d-flex align-items-center gap-2">
                     <span class="fw-semibold text-sm">Card #\${cardNumber}</span>
-                    <span class="badge bg-secondary">Template Card</span>
+                    <span class="badge custom-badge bg-secondary">Template Card</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-danger-600 remove-callout-btn">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-callout-btn">
                     <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                 </button>
             </div>

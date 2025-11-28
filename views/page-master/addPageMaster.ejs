@@ -103,12 +103,17 @@
                         </div>
                         <div class="d-flex publish-btns">
                             <a href="/page-master/web-page-master"
-                                class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
+                                class="btn btn-sm  btn-outline-secondary">
                                 Cancel
                             </a>
+                           
                             <button type="submit"
-                                class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                                class="btn btn-sm btn-secondary d-flex align-items-center gap-1">
                                 Next
+                            </button>
+                             <button type="button" id="saveDraftBtn"
+                                class="btn btn-sm btn-primary d-flex align-items-center gap-1">
+                                Save 
                             </button>
                         </div>
                     </div>
@@ -238,9 +243,8 @@
     $('#name').on('input', function() {
         let value = $(this).val();
 
-        // 1. FILTER INPUT: Allow ONLY letters, numbers, and standard spaces.
-        // The previous fix ensures we allow standard spaces:
-        const cleanedValue = value.replace(/[^A-Za-z0-9\s ]/g, '');
+        // 1. FILTER INPUT: Allow ONLY letters and standard spaces (NO NUMBERS).
+        const cleanedValue = value.replace(/[^A-Za-z\s ]/g, '');
 
         // Update the input field only if cleaning occurred
         if (value !== cleanedValue) {
@@ -269,6 +273,104 @@
         const path = slug === '' ? '' : (slug === 'home' ? '/' : '/' + slug);
 
         $('#path').val(path);
+    });
+
+    // Handle Save Draft button
+    $('#saveDraftBtn').on('click', function(e) {
+        e.preventDefault();
+        
+        const nameVal = $('#name').val().trim();
+        
+        if (nameVal.length === 0) {
+            showToast('Page Name cannot be empty or spaces only!', 'error');
+            return;
+        }
+        
+        const saveDraftBtn = $(this);
+        const originalText = saveDraftBtn.html();
+        const publishBtns = $('#addPageForm .publish-btns a, #addPageForm button[type="submit"]');
+        
+        // Disable all buttons
+        publishBtns.each(function() {
+            $(this).prop('disabled', true);
+            if ($(this).is('a')) {
+                $(this).addClass('disabled');
+                $(this).css('cursor', 'not-allowed');
+            }
+        });
+        
+        saveDraftBtn.prop('disabled', true);
+        saveDraftBtn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...');
+        
+        // Get selected categories
+        const selectedCategories = [];
+        $('input[name="categories"]:checked').each(function() {
+            selectedCategories.push($(this).val());
+        });
+        
+        const formData = {
+            name: $('#name').val(),
+            path: $('#path').val() || undefined,
+            status: 'inactive', // Always save as draft
+            template: $('#template').val(),
+            category: selectedCategories.length > 0 ? selectedCategories[0] : '',
+            metaTitle: $('#metaTitle').val(),
+            metaDescription: $('#metaDescription').val()
+        };
+        
+        $.ajax({
+            url: '/api/pages',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Draft saved successfully!', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/page-master/web-page-master';
+                    }, 1500);
+                } else {
+                    showToast('Error: ' + response.message, 'error');
+                    // Re-enable buttons
+                    saveDraftBtn.prop('disabled', false);
+                    saveDraftBtn.html(originalText);
+                    publishBtns.each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).is('a')) {
+                            $(this).removeClass('disabled');
+                            $(this).css('cursor', 'pointer');
+                        }
+                    });
+                }
+            },
+            error: function(xhr) {
+                console.error('Full error:', xhr);
+                let errorMessage = 'Unknown error';
+                
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.message || xhr.responseJSON.error || 'Unknown error';
+                } else if (xhr.responseText) {
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        errorMessage = errorData.message || errorData.error || 'Unknown error';
+                    } catch (e) {
+                        errorMessage = xhr.responseText;
+                    }
+                }
+                
+                showToast('Error saving draft: ' + errorMessage, 'error');
+                // Re-enable buttons
+                saveDraftBtn.prop('disabled', false);
+                saveDraftBtn.html(originalText);
+                publishBtns.each(function() {
+                    $(this).prop('disabled', false);
+                    if ($(this).is('a')) {
+                        $(this).removeClass('disabled');
+                        $(this).css('cursor', 'pointer');
+                    }
+                });
+            }
+        });
     });
 
     // Handle form submission

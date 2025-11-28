@@ -597,16 +597,44 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
-        // Check if another page has the same name or path
+        // Generate slug from name if name is being updated
+        let slug = oldPage.slug;
+        if (name && name !== oldPage.name) {
+            slug = name.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+        
+        // Check if another page has the same name, slug, or path
         const existingPage = await Page.findOne({
             _id: { $ne: req.params.id },
-            $or: [{ name }, { path }]
+            $or: [
+                { name }, 
+                { slug },
+                { path }
+            ]
         });
         
         if (existingPage) {
+            let conflictField = 'name or path';
+            if (existingPage.slug === slug) {
+                conflictField = `slug "${slug}"`;
+            } else if (existingPage.name === name) {
+                conflictField = `name "${name}"`;
+            } else if (existingPage.path === path) {
+                conflictField = `path "${path}"`;
+            }
+            
             return res.status(400).json({
                 success: false,
-                message: 'Another page with this name or path already exists'
+                message: `Another page with this ${conflictField} already exists`,
+                existingPage: {
+                    name: existingPage.name,
+                    slug: existingPage.slug,
+                    path: existingPage.path,
+                    status: existingPage.status,
+                    id: existingPage._id
+                }
             });
         }
         
@@ -617,6 +645,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             req.params.id,
             {
                 name,
+                slug,
                 path,
                 status,
                 metaTitle,

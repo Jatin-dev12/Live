@@ -112,7 +112,8 @@ exports.validateCreateUser = [
     body('fullName')
         .trim()
         .notEmpty().withMessage('Full name is required')
-        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
+        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters')
+        .matches(/^[A-Za-z\s]+$/).withMessage('Full name can only contain letters and spaces'),
 
     body('email')
         .trim()
@@ -225,7 +226,8 @@ exports.validateUpdateUser = [
     body('fullName')
         .optional()
         .trim()
-        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
+        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters')
+        .matches(/^[A-Za-z\s]+$/).withMessage('Full name can only contain letters and spaces'),
 
     body('email')
         .optional()
@@ -305,12 +307,12 @@ exports.validateChangePassword = [
                 throw new Error('Password must contain at least one number');
             }
             if (!hasSpecialChar) {
-                throw new Error('Password must contain at least one special character (@$!%*?&)');
+                throw new Error('Password must contain at least one special character @$!%*?&');
             }
 
             // Only allow alphanumeric and the specified special characters
             if (!/^[A-Za-z\d@$!%*?&]+$/.test(value)) {
-                throw new Error('Password can only contain letters, numbers, and special characters (@$!%*?&)');
+                throw new Error('Password can only contain letters, numbers, and special characters @$!%*?&');
             }
 
             return true;

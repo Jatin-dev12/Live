@@ -8,8 +8,8 @@
                 <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
             </form>
         </div>
-        <a href="/url-redirect/add-redirect" class="btn btn-primary-600 radius-8 px-20 py-11">
-            <i class="ri-add-line me-1"></i> Add New Redirect
+        <a href="/url-redirect/add-redirect" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon> Add New Redirect
         </a>
     </div>
     <div class="card-body p-24">
@@ -20,7 +20,8 @@
         </div>
 
         <div class="table-responsive scroll-sm">
-            <table class="table bordered-table sm-table mb-0" id="redirectsTable">
+            <!-- <table class="table bordered-table sm-table mb-0" id="redirectsTable"> -->
+            <table class="table custom-table" id="redirectsTable">
                 <thead>
                     <tr>
                         <th>
@@ -48,22 +49,26 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-primary-600"><code><%= redirect.oldUrl %></code></span>
+                                    <!-- <span class="text-primary-600"><code> -->
+                                        <%= redirect.oldUrl %>
+                                    <!-- </code></span> -->
                                 </td>
                                 <td>
-                                    <code><%= redirect.newUrl %></code>
+                                    <!-- <code> -->
+                                        <%= redirect.newUrl %>
+                                    <!-- </code> -->
                                 </td>
                                 <td>
                                     <span
-                                        class="badge text-sm fw-semibold text-info-600 bg-info-100 px-20 py-9 radius-4 text-white">301</span>
+                                        class="badge custom-badge badge-secondary">301</span>
                                 </td>
                                 <td>
                                     <% if (redirect.isActive) { %>
                                         <span
-                                            class="badge text-sm fw-semibold text-success-600 bg-success-100 px-20 py-9 radius-4 text-white">Active</span>
+                                            class="badge custom-badge badge-outline-success">Active</span>
                                         <% } else { %>
                                             <span
-                                                class="badge text-sm fw-semibold text-neutral-600 bg-neutral-100 px-20 py-9 radius-4">Inactive</span>
+                                                class="badge custom-badge badge-outline-secondary">Inactive</span>
                                             <% } %>
                                 </td>
                                 <!-- <td><%= redirect.hitCount || 0 %></td>
@@ -77,14 +82,15 @@
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
                                         <a href="/url-redirect/edit-redirect/<%= redirect._id %>"
-                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
-                                            <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                                            class="btn btn-sm btn-outline-secondary">
+                                            <!-- <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon> -->
+                                             <iconify-icon icon="material-symbols:edit-outline"></iconify-icon>
                                         </a>
                                         <button type="button"
-                                            class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                            class="remove-item-btn btn btn-sm btn-outline-danger"
                                             onclick="deleteRedirect('<%= redirect._id %>')">
-                                            <iconify-icon icon="fluent:delete-24-regular"
-                                                class="menu-icon"></iconify-icon>
+                                            <!-- <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon> -->
+                                             <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                         </button>
                                     </div>
                                 </td>

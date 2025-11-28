@@ -15,8 +15,8 @@
                         <div class="col-md-6">
                             <div class="mb-20">
                                 <label for="fullName" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label>
-                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" value="<%= user.fullName %>" placeholder="Enter Full Name" required autocomplete="off" maxlength="15">
-                                <small class="text-muted d-block">Maximum 15 characters</small>
+                                <input type="text" class="form-control radius-8" id="fullName" name="fullName" value="<%= user.fullName %>" placeholder="Enter Full Name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required autocomplete="off" maxlength="100">
+                                 <small class="text-muted d-block">Maximum 15 characters</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                                         <i class="ri-eye-line" id="newPassword-icon"></i>
                                     </span>
                                 </div>
-                                <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character (@$!%*?&)</small>
+                                <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number & special character @$!%*?&</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                     <i class="ri-checkbox-multiple-line me-1"></i> Select All
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions()">
-                                    <i class="ri-checkbox-blank-line me-1"></i> Deselect All
+                                    <i class="ri-checkbox-multiple-blank-line  me-1"></i> Deselect All
                                 </button>
                             </div>
                         </div>
@@ -326,12 +326,12 @@
 
                     <div class="d-flex align-items-center justify-content-end gap-3 mt-4 pt-3 border-top">
                         <a href="/roles/roles-management" class="btn btn-sm btn-outline-secondary">
-                            <!-- <i class="ri-close-line me-1"></i>  -->
+                            <i class="ri-close-line me-1"></i> 
                             Cancel
                         </a>
-                        <button type="button" class="btn btn-sm btn-primary-600 " onclick="updateUser()">
+                        <button type="button" class="btn btn-sm btn-primary " onclick="updateUser()">
                             <span class="btn-text">
-                                <!-- <i class="ri-save-line me-1"></i>  -->
+                                <i class="ri-user-add-line me-1"></i>
                                 Update User
                             </span>
                             <span class="btn-spinner d-none">
@@ -643,7 +643,7 @@ function validateForm(formData, isPasswordChange) {
                 errors.push('Password must contain at least one number');
             }
             if (!hasSpecialChar) {
-                errors.push('Password must contain at least one special character (@$!%*?&)');
+                errors.push('Password must contain at least one special character @$!%*?&');
             }
         }
 
@@ -771,6 +771,20 @@ async function updateUser() {
     }
 }
 
+// Full Name validation - Only letters and spaces
+const fullNameInput = document.getElementById('fullName');
+
+fullNameInput.addEventListener('input', function(e) {
+    let value = e.target.value;
+    // Remove any characters that are not letters or spaces
+    value = value.replace(/[^A-Za-z\s]/g, '');
+    // Limit to 100 characters
+    if (value.length > 100) {
+        value = value.substring(0, 100);
+    }
+    e.target.value = value;
+});
+
 // Phone number validation - Only digits allowed
 const phoneInput = document.getElementById('phone');
 
@@ -812,7 +826,7 @@ function validatePasswordRealtime(password) {
         }
 
         if (!/[@$!%*?&]/.test(password)) {
-            errors.push('Password must contain at least one special character (@$!%*?&)');
+            errors.push('Password must contain at least one special character @$!%*?&');
         }
 
         if (errors.length > 0) {

@@ -9,7 +9,7 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <button id="exportCsvBtn"
-                class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                class="btn btn-sm btn-primary d-flex align-items-center gap-1">
                 <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
                 Export CSV
             </button>
@@ -21,7 +21,8 @@
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
-            <table id="dataTable" class="table bordered-table sm-table mb-0">
+            <!-- <table id="dataTable" class="table bordered-table sm-table mb-0"> -->
+            <table id="dataTable" class="table custom-table">
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
@@ -41,21 +42,25 @@
                                     <%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', {
                                         year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
                                 </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
+                            <td>
+                                    <!-- <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <span class="text-md mb-0 fw-normal text-secondary-light">
+                                            <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                                 <%= lead.fullName || 'N/A' %>
-                                            </span>
+                                            <!-- </span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                <td>
+                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                         <%= lead.email || 'N/A' %>
-                                    </span></td>
-                                <td><span class="text-md mb-0 fw-normal text-secondary-light">
+                                    <!-- </span> -->
+                                </td>
+                                <td>
+                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
                                         <%= lead.phone || 'N/A' %>
-                                    </span></td>
+                                    <!-- </span> -->
+                                </td>
                                 <!-- <td>
                                     <span class="text-md mb-0 fw-normal text-secondary-light">
                                         <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
@@ -67,10 +72,11 @@
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <button type="button"
-                                            class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0 view-lead-btn"
+                                            class="btn btn-sm btn-outline-success view-lead-btn"
                                             data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
-                                            <iconify-icon icon="majesticons:eye-line"
-                                                class="icon text-xl"></iconify-icon>
+                                            <!-- <iconify-icon icon="majesticons:eye-line"
+                                                class="icon text-xl"></iconify-icon> -->
+                                                 <iconify-icon icon="majesticons:eye-line" class="icon "></iconify-icon>
                                         </button>
                                     </div>
                                 </td>
@@ -132,11 +138,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger-600 text-white">
-                <h4 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0"
+                <h6 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0"
                     id="leadDetailsModalLabel">
                     <iconify-icon icon="mdi:account-details" class="icon" style="font-size: 32px;"></iconify-icon>
                     Lead Details
-                </h4>
+                </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
