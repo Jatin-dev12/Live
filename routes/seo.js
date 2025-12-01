@@ -86,12 +86,17 @@ router.get('/edit-seo-content/:id', isAuthenticated, async (req, res) => {
             !pageIdsWithSEO.includes(page._id.toString())
         );
         
+        // Check if coming from content management with a specific page
+        const { pageId, from } = req.query;
+        const isPageLocked = pageId && pageId === seo.page._id.toString();
+        
         res.render('seo/editSeoContent', {
             title: "Edit SEO Content",
             subTitle: "Edit SEO Content",
             seo,
             pages: availablePages,
-            fromContent: req.query.from === 'content'
+            fromContent: from === 'content',
+            isPageLocked: isPageLocked
         });
     } catch (error) {
         console.error('Error fetching SEO record:', error);

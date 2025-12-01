@@ -11,8 +11,8 @@
                             <label class="form-label fw-semibold">Full Name <span
                                     class="text-danger-600">*</span></label>
                             <input type="text" name="fullName" id="fullNameInput" class="form-control" placeholder="Enter Full Name"
-                                required autocomplete="off" maxlength="15" pattern="[A-Za-z0-9\s]+" title="Only letters and spaces allowed">
-                            <small class="text-muted d-block">Maximum 15 characters (letters only)</small>
+                                required autocomplete="off" maxlength="50" pattern="[A-Za-z0-9\s]+" title="Only letters and spaces allowed">
+                            <small class="text-muted d-block">Maximum 50 characters (letters only)</small>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col-md-6">
@@ -516,8 +516,8 @@
             const fullName = formData.get('fullName');
             if (!fullName || fullName.trim().length < 2) {
                 errors.push('Full name must be at least 2 characters long');
-            } else if (fullName.trim().length > 15) {
-                errors.push('Full name must not exceed 15 characters');
+            } else if (fullName.trim().length > 50) {
+                errors.push('Full name must not exceed 50 characters');
             }
 
             // Validate email
@@ -534,7 +534,7 @@
             console.log('Password length:', password?.length);
             if (password) {
                 console.log('Password chars:', password.split('').map(function (c, i) {
-                    return '[' + i + ']=\'' + c + '\' (' + c.charCodeAt(0) + ')';
+                    return '[' + i + "]=\'" + c + "\' (" + c.charCodeAt(0) + ")";
                 }));
             }
 
@@ -609,28 +609,52 @@
                 // Block numbers in Full Name field
                 const fullNameInput = document.getElementById('fullNameInput');
                 if (fullNameInput) {
-                    // Block on keypress
+
+                    // Allow only letters + space on keypress
                     fullNameInput.addEventListener('keypress', function(e) {
-                        if (/[0-9]/.test(e.key)) {
-                            e.preventDefault();
-                            return false;
+                        const char = e.key;
+
+                        // Allow letters
+                        if (/^[A-Za-z]$/.test(char)) return;
+
+                        // Allow single space (but not at start or double space)
+                        if (char === ' ') {
+                            if (this.value === '' || this.value.endsWith(' ')) {
+                                e.preventDefault();
+                            }
+                            return;
                         }
+
+                        e.preventDefault(); // block everything else
                     });
-                    // Remove numbers on input (paste, autocomplete, etc.)
-                    fullNameInput.addEventListener('input', function(e) {
-                        const cursorPos = this.selectionStart;
-                        const oldValue = this.value;
-                        this.value = this.value.replace(/[0-9]/g, '');
-                        if (oldValue !== this.value) {
-                            this.setSelectionRange(cursorPos - 1, cursorPos - 1);
-                        }
+
+                    // Clean input on paste/input
+                    fullNameInput.addEventListener('input', function() {
+                        let value = this.value;
+
+                        // Remove everything except letters & spaces
+                        value = value.replace(/[^A-Za-z ]+/g, '');
+
+                        // Replace multiple spaces with a single space
+                        value = value.replace(/\s+/g, ' ');
+
+                        // Trim leading & trailing spaces
+                        value = value.trimStart();
+
+                        this.value = value;
                     });
-                    // Block paste of numbers
+
+                    // Block paste of invalid characters
                     fullNameInput.addEventListener('paste', function(e) {
                         e.preventDefault();
-                        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                        const cleanedText = pastedText.replace(/[0-9]/g, '');
-                        document.execCommand('insertText', false, cleanedText);
+                        let text = (e.clipboardData || window.clipboardData).getData('text');
+
+                        text = text
+                            .replace(/[^A-Za-z ]+/g, '') // remove invalid chars
+                            .replace(/\s+/g, ' ')        // collapse spaces
+                            .trim();                     // trim ends
+
+                        document.execCommand('insertText', false, text);
                     });
                 }
 
@@ -937,8 +961,8 @@
                 return;
             }
 
-            if (fullName.trim().length > 15) {
-                showToast('Full name must not exceed 15 characters', 'error');
+            if (fullName.trim().length > 50) {
+                showToast('Full name must not exceed 50 characters', 'error');
                 return;
             }
 

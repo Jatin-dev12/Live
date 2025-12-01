@@ -9,13 +9,14 @@
                             <h4 class="mb-12">Sign In to your Account</h4>
                             <!-- <p class="mb-32 text-secondary-light text-lg">Welcome ! please enter your detail</p> -->
                         </div>
-                        <form id="loginForm" autocomplete="off">
+                        <form id="loginForm" novalidate>
                             <div id="errorMessage" class="alert alert-danger d-none mb-16" role="alert"></div>
                             <div class="icon-field mb-16">
                                 <span class="icon top-50 translate-middle-y">
                                     <iconify-icon icon="mage:email"></iconify-icon>
                                 </span>
-                                <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Email" required data-form-type="other">
+                                <!-- <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Email" required data-form-type="other"> -->
+                                <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Email" required autocapitalize="off" autocomplete="email" spellcheck="false" data-form-type="other">
                             </div>
                             <div class="position-relative mb-20">
                                 <div class="icon-field">
@@ -69,21 +70,22 @@
     // ========================= Password Show Hide Js End ===========================
 
     // ================== Emoji and Special Character Validation Start ==========
-    function containsEmojisOrSpecialUnicode(str) {
-        // Regex to detect emojis and special Unicode characters
-        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F018}-\u{1F270}\u{238C}-\u{2454}\u{20D0}-\u{20FF}]/u;
+    /* function containsEmojisOrSpecialUnicode(str) {
+        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/u;
         return emojiRegex.test(str);
     }
 
-    function validateInput(input) {
-        const value = input.value;
-        if (containsEmojisOrSpecialUnicode(value)) {
-            // Remove emojis and special characters
-            input.value = value.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F018}-\u{1F270}\u{238C}-\u{2454}\u{20D0}-\u{20FF}]/gu, '');
-            showToast('Please enter characters, numbers, or standard special characters only. Emojis are not allowed.', 'error');
-        }
+    function removeEmojis(str) {
+        return str.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, '');
     }
 
+    function validateInput(input) {
+        const cleaned = removeEmojis(input.value);
+        if (cleaned !== input.value) {
+            input.value = cleaned;
+            showToast('Emojis are not allowed.', 'error');
+        }
+    } */
     // Prevent autofill by removing readonly on focus
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('your-password');
@@ -137,9 +139,9 @@
         validateInput(this);
     });
 
-    passwordInput.addEventListener('input', function() {
-        validateInput(this);
-    });
+    // passwordInput.addEventListener('input', function() {
+        // validateInput(this);
+    // });
 
     // Handle Remember Me checkbox change
     rememberCheckbox.addEventListener('change', function() {
@@ -150,6 +152,11 @@
             localStorage.removeItem('rememberMe');
         }
     });
+    function isValidEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
 
     // Toast notification function
     function showToast(message, type = 'info') {
@@ -212,8 +219,23 @@
         const btnText = loginBtn.querySelector('.btn-text');
         const btnSpinner = loginBtn.querySelector('.btn-spinner');
 
-        // Hide error message
-        errorMessage.classList.add('d-none');
+        if (email.trim() === "") {
+            errorMessage.textContent = "Email cannot be blank.";
+            errorMessage.classList.remove('d-none');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            errorMessage.textContent = "Please enter a valid email address.";
+            errorMessage.classList.remove('d-none');
+            return;
+        }
+
+        if (password.trim() === "") {
+            errorMessage.textContent = "Password cannot be blank.";
+            errorMessage.classList.remove('d-none');
+            return;
+        }
 
         // Show loading state
         loginBtn.disabled = true;
@@ -223,37 +245,30 @@
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
 
             const result = await response.json();
 
             if (response.ok && result.success) {
-                // Handle Remember Me functionality
                 const rememberMe = document.getElementById('remeber').checked;
+
                 if (rememberMe) {
-                    // Save credentials to localStorage
                     localStorage.setItem('rememberedEmail', email);
                     localStorage.setItem('rememberedPassword', password);
                     localStorage.setItem('rememberMe', 'true');
                 } else {
-                    // Clear saved credentials
                     localStorage.removeItem('rememberedEmail');
                     localStorage.removeItem('rememberedPassword');
                     localStorage.removeItem('rememberMe');
                 }
 
-                // Redirect to dashboard or specified URL
                 window.location.href = result.data.redirectUrl || '/index';
             } else {
-                // Show error message
                 errorMessage.textContent = result.message || 'Login failed. Please check your credentials.';
                 errorMessage.classList.remove('d-none');
 
-                // Reset button state
                 loginBtn.disabled = false;
                 btnText.classList.remove('d-none');
                 btnSpinner.classList.add('d-none');
@@ -263,7 +278,6 @@
             errorMessage.textContent = 'An error occurred. Please try again.';
             errorMessage.classList.remove('d-none');
 
-            // Reset button state
             loginBtn.disabled = false;
             btnText.classList.remove('d-none');
             btnSpinner.classList.add('d-none');

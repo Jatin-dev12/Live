@@ -204,8 +204,11 @@ function toggleSelected(id, isSelected){
   render();
 }
 
-function openPreview(id){
+/* function openPreview(id){
   const item = MEDIA_ITEMS.find(i => i.id === id);
+  console.log("item",item);
+  console.log("item.dimensions",item.dimensions);
+  
   if (!item) return;
   
   document.getElementById('previewTitle').textContent = 'Attachment details';
@@ -227,7 +230,9 @@ function openPreview(id){
   document.getElementById('metaFilename').textContent = item.name;
   document.getElementById('metaType').textContent = item.mimeType;
   document.getElementById('metaSize').textContent = formatBytes(item.size);
-  document.getElementById('metaDims').textContent = item.dimensions && item.dimensions.width ? 
+  //document.getElementById('metaDims').textContent = item.dimensions && item.dimensions.width ? 
+    //`${item.dimensions.width} × ${item.dimensions.height}` : '—';
+  document.getElementById('metaDims').textContent = item.dimensions?.width && item.dimensions?.height ? 
     `${item.dimensions.width} × ${item.dimensions.height}` : '—';
   document.getElementById('metaUploaded').textContent = `Uploaded on: ${formatDate(item.date)}`;
   document.getElementById('metaUploadedBy').textContent = item.uploadedBy ? 
@@ -236,8 +241,8 @@ function openPreview(id){
   // Fields
   document.getElementById('fieldTitle').value = item.title;
   document.getElementById('fieldAlt').value = item.alt;
-  document.getElementById('fieldCaption').value = item.caption;
-  document.getElementById('fieldDesc').value = item.description;
+  // document.getElementById('fieldCaption').value = item.caption;
+  // document.getElementById('fieldDesc').value = item.description;
   
   const fileUrl = window.location.origin + item.src;
   document.getElementById('fieldUrl').value = fileUrl;
@@ -273,6 +278,102 @@ function openPreview(id){
   
   const modal = new bootstrap.Modal(document.getElementById('previewModal'));
   modal.show();
+} */
+function openPreview(id) {
+  const item = MEDIA_ITEMS.find(i => i.id === id);
+  if (!item) return;
+
+  document.getElementById('previewTitle').textContent = 'Attachment details';
+  const canvas = document.getElementById('attachmentPreview');
+
+  // Preview by type
+  switch(item.type) {
+    case 'image':
+      canvas.innerHTML = `<img src="${item.src}" alt="${item.name}" style="max-width:100%;height:auto">`;
+      break;
+    case 'video':
+      canvas.innerHTML = `<video controls style="max-width:100%" src="${item.src}"></video>`;
+      break;
+    case 'audio':
+      canvas.innerHTML = `<audio controls style="width:100%" src="${item.src}"></audio>`;
+      break;
+    case 'pdf':
+      canvas.innerHTML = `<embed src="${item.src}" type="application/pdf" width="100%" height="500px">`;
+      break;
+    default:
+      canvas.innerHTML = `<div class="text-center py-5">
+                            <i class="bi bi-file-earmark fs-1"></i>
+                            <p class="mt-3">Preview not available</p>
+                          </div>`;
+  }
+
+  // Sidebar metadata
+  document.getElementById('metaFilename').textContent = item.name || '—';
+  document.getElementById('metaType').textContent = item.mimeType || '—';
+  document.getElementById('metaSize').textContent = formatBytes(item.size);
+  document.getElementById('metaUploaded').textContent = `Uploaded on: ${formatDate(item.date)}`;
+  document.getElementById('metaUploadedBy').textContent =
+    item.uploadedBy?.name || item.uploadedBy?.email
+      ? `Uploaded by: ${item.uploadedBy.name || item.uploadedBy.email}`
+      : 'Uploaded by: —';
+
+  // Handle dimensions
+  const dimsEl = document.getElementById('metaDims');
+  if (item.dimensions?.width && item.dimensions?.height) {
+    dimsEl.textContent = `${item.dimensions.width} × ${item.dimensions.height}`;
+  } else if (item.type === 'image') {
+    // Auto-calculate image dimensions
+    const img = new Image();
+    img.src = item.src;
+    img.onload = () => {
+      dimsEl.textContent = `${img.width} × ${img.height}`;
+    };
+    img.onerror = () => {
+      dimsEl.textContent = '—';
+    };
+  } else {
+    dimsEl.textContent = '—';
+  }
+
+  // Fields
+  document.getElementById('fieldTitle').value = item.title || '';
+  document.getElementById('fieldAlt').value = item.alt || '';
+  const fileUrl = window.location.origin + item.src;
+  document.getElementById('fieldUrl').value = fileUrl;
+
+  // Links
+  const view = document.getElementById('linkViewFile');
+  view.href = item.src;
+  view.target = '_blank';
+
+  const dl = document.getElementById('linkDownload');
+  dl.href = item.src;
+  dl.download = item.name;
+
+  // Save metadata button
+  const saveBtn = document.querySelector('#previewModal .btn-primary');
+  saveBtn.textContent = 'Save Changes';
+  saveBtn.onclick = () => saveMetadata(item.id);
+
+  // Copy URL
+  document.getElementById('btnCopyUrl').onclick = () => {
+    navigator.clipboard.writeText(fileUrl);
+    const btn = document.getElementById('btnCopyUrl');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => (btn.textContent = original), 1200);
+  };
+
+  // Delete button
+  const deleteLink = document.querySelector('#previewModal .text-danger');
+  deleteLink.onclick = (e) => {
+    e.preventDefault();
+    deleteSingleMedia(item.id);
+  };
+
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+  modal.show();
 }
 
 async function saveMetadata(id) {
@@ -280,8 +381,8 @@ async function saveMetadata(id) {
     const data = {
       title: document.getElementById('fieldTitle').value,
       alt: document.getElementById('fieldAlt').value,
-      caption: document.getElementById('fieldCaption').value,
-      description: document.getElementById('fieldDesc').value
+      // caption: document.getElementById('fieldCaption').value,
+      // description: document.getElementById('fieldDesc').value
     };
     
     const response = await fetch(`/api/media/${id}`, {
@@ -302,8 +403,8 @@ async function saveMetadata(id) {
       if (item) {
         item.title = data.title;
         item.alt = data.alt;
-        item.caption = data.caption;
-        item.description = data.description;
+        // item.caption = data.caption;
+        // item.description = data.description;
       }
       
       render();

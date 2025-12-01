@@ -31,7 +31,8 @@ router.get('/url-redirects', isAuthenticated, async (req, res) => {
 router.get('/add-redirect', isAuthenticated, (req, res) => {
     res.render('url-redirect/addRedirect', {
         title: "Add URL Redirect",
-        subTitle: "Create New Redirect"
+        subTitle: "Create New Redirect",
+        frontendUrl: process.env.FRONTEND_URL
     });
 });
 

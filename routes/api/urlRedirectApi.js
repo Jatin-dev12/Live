@@ -4,17 +4,16 @@ const UrlRedirect = require('../../models/UrlRedirect');
 const { isAuthenticated } = require('../../middleware/auth');
 
 // Get all redirects
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const redirects = await UrlRedirect.find()
-            .populate('createdBy', 'fullName email')
-            .populate('updatedBy', 'fullName email')
-            .sort({ createdAt: -1 });
-        
-        res.json({
-            success: true,
-            data: redirects
-        });
+        const redirects = await UrlRedirect.find({ isActive: true }).sort({ createdAt: -1 });
+
+        const formatted = redirects.map(r => ({
+            from: r.oldUrl,
+            to: r.newUrl
+        }));
+
+        res.json(formatted);
     } catch (error) {
         console.error('Error fetching redirects:', error);
         res.status(500).json({

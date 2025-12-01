@@ -8,16 +8,15 @@
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
                     <input type="hidden" id="contentId" value="<%= content._id %>">
+                    <input type="hidden" name="frontendUrl" id="frontendUrl" value="<%= frontendUrl %>">
                     <div class="row">
                         <div class="col-lg-8">
                             <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
-                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3"
-                                    data-id="<%= section._id %>">
+                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3" data-id="<%= section._id %>">
                                   
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        
                                         <span class="badge custom-badge badge-primary">Template Section</span>
                                     </div>
                                     <div class="mb-3">
@@ -41,7 +40,7 @@
 
                                     <!-- Dynamic fields based on section type -->
                                     <div class="section-fields asdf">
-                                        <!-- <pre><%= JSON.stringify(section, null, 2) %></pre> -->
+                                        <!-- <pre><%# JSON.stringify(section, null, 2) %></pre> -->
                                         <% if (section.sectionType==='image-with-text' ) { %>
                                             <div class="image-with-text-fields active">
                                                 <div class="mb-3">
@@ -157,52 +156,28 @@
                                                             <% }) %>
                                                         <% } %>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-primary mt-2 add-cta-btn">Add CTA Button</button>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-3 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold text-neutral-900">Hero Image</label>
-                                                    <% if (section.heroSection?.image) { %>
-                                                        <div class="mb-2">
-                                                            <label class="form-label text-sm">Current Image:</label>
-                                                            <div class="existing-image mb-2">
-                                                                <img src="<%= section.heroSection.image %>"
-                                                                    class="img-thumbnail"
-                                                                    style="max-height: 200px; max-width: 100%; object-fit: cover;">
-                                                            </div>
-                                                        </div>
-                                                    <% } %>
-                                                    <div class="upload-image-wrapper mt-5">
-                                                        <div class="uploaded-img-hero d-none position-relative w-100 border radius-8 overflow-hidden bg-white shadow-sm" style="min-height: 300px; max-height: 400px;">
-                                                            <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-3 m-3 d-flex bg-danger-600 w-36-px h-36-px justify-content-center align-items-center rounded-circle shadow-lg border-0 transition-all" style="transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                                                <iconify-icon icon="radix-icons:cross-2" class="text-xl text-white"></iconify-icon>
-                                                            </button>
-                                                            <img class="uploaded-img-hero__preview w-100 h-100" src="/images/user.png" alt="Hero Image" style="object-fit: contain; background: #f8f9fa;">
-                                                            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center gap-2" style="backdrop-filter: blur(4px);">
-                                                                <label class="btn btn-sm btn-light d-flex align-items-center gap-2 mb-0 cursor-pointer" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                                                                    <iconify-icon icon="solar:camera-outline" class="text-lg"></iconify-icon>
-                                                                    <span class="fw-semibold">Change Image</span>
-                                                                    <input type="file" class="upload-file-hero-input-change" hidden accept="image/*">
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <label class="upload-file-hero w-100 border radius-8 overflow-hidden border-dashed bg-neutral-50 d-flex align-items-center flex-column justify-content-center gap-3 cursor-pointer transition-all" style="min-height: 300px; border: 2px dashed #cbd5e1; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#eff6ff'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#f9fafb'">
-                                                            <div class="d-flex flex-column align-items-center gap-2">
-                                                                <div class="bg-primary bg-opacity-10 rounded-circle p-4">
-                                                                    <iconify-icon icon="solar:camera-outline" class="text-4xl text-primary"></iconify-icon>
-                                                                </div>
-                                                                <span class="fw-semibold text-neutral-900 fs-5">Upload New Hero Image</span>
-                                                                <span class="text-secondary-light text-sm">Click to browse or drag and drop</span>
-                                                                <!-- <span class="text-muted text-xs">Recommended: 1920x600px (JPG, PNG, WebP)</span> -->
-                                                            </div>
-                                                            <input type="file" class="upload-file-hero-input" hidden accept="image/*" data-existing-image="<%= section.heroSection?.image || '' %>">
-                                                        </label>
-                                                    </div>
+                                                    <p class="text-muted small mb-3">Choose from your media library or upload a new image</p>
+                                                    
+                                                    <!-- WordPress-style Media Picker -->
+                                                    <input type="hidden" 
+                                                           class="hero-image-input" 
+                                                           name="heroImage" 
+                                                           value="<%= section.heroSection?.image || '' %>"
+                                                           data-media-picker="true"
+                                                           data-media-picker-types="image"
+                                                           data-media-picker-title="Select Hero Image"
+                                                           data-media-picker-button="Select Image">
+                                                    <!-- </div> -->
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
-                                            <!-- <pre><%= JSON.stringify(section) %></pre> -->
-                                            <!-- <pre><%= JSON.stringify(section.threeColumnInfo.heading) %></pre> -->
+                                            <!-- <pre><%# JSON.stringify(section) %></pre> -->
+                                            <!-- <pre><%# JSON.stringify(section.threeColumnInfo.heading) %></pre> -->
                                             <div class="three-column-info-fields active">
                                                 <div class="mb-3">
                                                     <label class="form-label">Section Heading:</label>
@@ -538,7 +513,7 @@
 
                     </div>
 
-                    <hr class="my-3">
+                    <!-- <hr class="my-3"> -->
 
                     <!-- Sections Container -->
 
@@ -549,11 +524,11 @@
 
 
                     <!-- Template-based sections only - no manual section addition -->
-                    <div class="alert alert-info text-center">
+                    <!-- <div class="alert alert-info text-center">
                         <small><strong>Note:</strong> This page uses a predefined template. To change the section structure, edit the page template in <a href="/page-master/web-page-master">Page Master</a>.</small>
-                    </div>
+                    </div> -->
 
-                    <hr class="my-3">
+                    <!-- <hr class="my-3"> -->
 
                     <!-- Hidden: Section Block Template -->
                      <!--
@@ -615,7 +590,7 @@
                                 <div class="hero-section-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
-                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-2 add-cta-btn">Add CTA Button</button></div>
+                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-3 add-cta-btn">Add CTA Button</button></div>
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="three-column-fields" style="display: none;">
@@ -793,7 +768,7 @@
 }
 </style>
 
-<script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/ckeditor.js"></script>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
 
 <!-- Alternative CKEditor build with more plugins -->
@@ -1114,16 +1089,24 @@ window.ckEditorFallback = function() {
         console.log('Initializing CKEditor 4 for:', textarea.id);
         
         if (typeof CKEDITOR !== 'undefined' && CKEDITOR.replace) {
+            // Suppress the version warning
+            CKEDITOR.config.versionCheck = false;
+            
             const editor = CKEDITOR.replace(textarea.id, {
                 toolbar: [
+                    { name: 'styles', items: ['Format', 'FontSize'] },
                     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
                     { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
                     { name: 'links', items: ['Link', 'Unlink'] },
                     { name: 'insert', items: ['Image'] }
                 ],
+                format_tags: 'p;h1;h2;h3;h4;h5;h6',
+                fontSize_sizes: '8/8px;9/9px;10/10px;11/11px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;36/36px;48/48px;72/72px',
+                fontSize_defaultLabel: '14px',
                 height: 150,
                 removeButtons: '',
-                allowedContent: true
+                allowedContent: true,
+                versionCheck: false
             });
             
             editorInstances[textarea.id] = {
@@ -1150,7 +1133,11 @@ window.ckEditorFallback = function() {
 
     // Wait for page to load
     window.addEventListener('load', function() {
+        console.log('Page loaded, checking CKEditor availability...');
+        console.log('window.CKEDITOR available:', typeof window.CKEDITOR !== 'undefined');
+        
         if (typeof window.CKEDITOR !== 'undefined') {
+            console.log('CKEditor 5 UMD build detected, initializing...');
             setTimeout(initCKEditor, 500);
         } else {
             console.log('CKEditor 5 not available, trying CKEditor 4...');
@@ -1567,17 +1554,19 @@ window.ckEditorFallback = function() {
                     const paragraphEditor = $section.find(".hero-paragraph");
                     const editorId = paragraphEditor.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
-                    const heroImageUrl = $section.find(".upload-file-hero-input").data("server-url");
-                    // Only save image if an actual image was uploaded (not the default placeholder)
-                    if (heroImageUrl && heroImageUrl !== '/images/user.png') {
-                        // Ensure we save full URL for hero image
+                    // Get hero image from media picker
+                    const heroImageInput = $section.find(".hero-image-input");
+                    const heroImageUrl = heroImageInput.val();
+                    
+                    // Save the image URL from media picker as full URL
+                    if (heroImageUrl && heroImageUrl.trim() !== '') {
+                        // Convert relative URL to full URL if needed
                         if (!heroImageUrl.startsWith('http') && !heroImageUrl.startsWith('data:')) {
                             sectionData.heroSection.image = window.location.origin + heroImageUrl;
                         } else {
                             sectionData.heroSection.image = heroImageUrl;
                         }
                     } else {
-                        // No image uploaded or default placeholder - save as empty/null
                         sectionData.heroSection.image = null;
                     }
                     sectionData.heroSection.ctas = ctas;
@@ -1807,17 +1796,19 @@ window.ckEditorFallback = function() {
                     const paragraphEditor2 = $section.find(".hero-paragraph");
                     const editorId2 = paragraphEditor2.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
-                    const heroImageUrl2 = $section.find(".upload-file-hero-input").data("server-url");
-                    // Only save image if an actual image was uploaded (not the default placeholder)
-                    if (heroImageUrl2 && heroImageUrl2 !== '/images/user.png') {
-                        // Ensure we save full URL for hero image
+                    // Get hero image from media picker
+                    const heroImageInput2 = $section.find(".hero-image-input");
+                    const heroImageUrl2 = heroImageInput2.val();
+                    
+                    // Save the image URL from media picker as full URL
+                    if (heroImageUrl2 && heroImageUrl2.trim() !== '') {
+                        // Convert relative URL to full URL if needed
                         if (!heroImageUrl2.startsWith('http') && !heroImageUrl2.startsWith('data:')) {
                             sectionData.heroSection.image = window.location.origin + heroImageUrl2;
                         } else {
                             sectionData.heroSection.image = heroImageUrl2;
                         }
                     } else {
-                        // No image uploaded or default placeholder - save as empty/null
                         sectionData.heroSection.image = null;
                     }
                     sectionData.heroSection.ctas = ctas;
@@ -2000,7 +1991,8 @@ window.ckEditorFallback = function() {
                     $\{page.name} <small class="text-muted">($\{page.slug})</small>
                 </div>
                 \`);
-                const baseUrl = window.location.origin;
+                // const baseUrl = window.location.origin;
+                const baseUrl = $("#frontendUrl").val();
 
                 $item.on('click', function() {
                 $input.val(page.slug);
@@ -2517,5 +2509,99 @@ window.ckEditorFallback = function() {
             });
         }
     });
+    // Initialize media picker for hero image
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize media picker for hero image input
+        const heroImageInputs = document.querySelectorAll('.hero-image-input');
+        
+        heroImageInputs.forEach(input => {
+            const sectionBlock = input.closest('.section-block');
+            const sectionId = sectionBlock ? sectionBlock.dataset.id : 'hero';
+            
+            window.initMediaPicker(\`input[name="heroImage"]\`, {
+                allowedTypes: ['image'],
+                title: 'Select Hero Image',
+                buttonText: 'Select Image',
+                onSelect: function(selectedMedia, inputElement) {
+                    console.log('Hero image selected:', selectedMedia);
+                    
+                    // Update any existing preview elements
+                    const existingImage = sectionBlock.querySelector('.existing-image img');
+                    if (existingImage) {
+                        existingImage.src = selectedMedia.src;
+                    }
+                    
+                    // Show success message
+                    if (window.showToast) {
+                        window.showToast('Hero image selected successfully!', 'success');
+                    }
+                },
+                onClear: function(inputElement) {
+                    console.log('Hero image cleared');
+                    
+                    // Clear any existing preview elements
+                    const existingImage = sectionBlock.querySelector('.existing-image img');
+                    if (existingImage) {
+                        existingImage.src = '/images/placeholder.jpg';
+                    }
+                    
+                    if (window.showToast) {
+                        window.showToast('Hero image removed', 'info');
+                    }
+                }
+            });
+        });
+    });
     </script>
     ` %>
+
+<!-- WordPress-style Media Picker -->
+<link rel="stylesheet" href="/css/media-picker.css">
+<script src="/js/media-picker.js"></script>
+<script src="/js/media-picker-integration.js"></script>
+
+<script>
+// Initialize media picker for hero image
+/* document.addEventListener('DOMContentLoaded', function() {
+    // Initialize media picker for hero image input
+    const heroImageInputs = document.querySelectorAll('.hero-image-input');
+    
+    heroImageInputs.forEach(input => {
+        const sectionBlock = input.closest('.section-block');
+        const sectionId = sectionBlock ? sectionBlock.dataset.id : 'hero';
+        
+        window.initMediaPicker(`input[name="heroImage"]`, {
+            allowedTypes: ['image'],
+            title: 'Select Hero Image',
+            buttonText: 'Select Image',
+            onSelect: function(selectedMedia, inputElement) {
+                console.log('Hero image selected:', selectedMedia);
+                
+                // Update any existing preview elements
+                const existingImage = sectionBlock.querySelector('.existing-image img');
+                if (existingImage) {
+                    existingImage.src = selectedMedia.src;
+                }
+                
+                // Show success message
+                if (window.showToast) {
+                    window.showToast('Hero image selected successfully!', 'success');
+                }
+            },
+            onClear: function(inputElement) {
+                console.log('Hero image cleared');
+                
+                // Clear any existing preview elements
+                const existingImage = sectionBlock.querySelector('.existing-image img');
+                if (existingImage) {
+                    existingImage.src = '/images/placeholder.jpg';
+                }
+                
+                if (window.showToast) {
+                    window.showToast('Hero image removed', 'info');
+                }
+            }
+        });
+    });
+}); */
+</script>

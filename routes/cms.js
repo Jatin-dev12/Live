@@ -186,7 +186,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     selectedPages: section.communityGroups?.selectedPages || []
                 }
             })),
-            pages: allPages
+            pages: allPages,
+            frontendUrl: process.env.FRONTEND_URL
         };
         // console.log('---------------------page',page);
         

@@ -216,6 +216,15 @@ router.put('/seo/:id', isAuthenticated, async (req, res) => {
             });
         }
 
+        // Check if page change is being attempted when it should be locked
+        const { pageId, from } = req.query;
+        if (pageId && from === 'content' && page && page !== seo.page.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Page cannot be changed when accessed from content management'
+            });
+        }
+
         // If page is being changed, check if new page exists and doesn't have SEO
         if (page && page !== seo.page.toString()) {
             const pageExists = await Page.findById(page);
