@@ -29,7 +29,7 @@
                                     class="text-danger-600">*</span></label>
                             <div class="position-relative">
                                 <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Enter password" required minlength="8" autocomplete="new-password">
+                                    placeholder="Enter password" required minlength="8" maxlength="24" autocomplete="new-password">
                                 <button type="button"
                                     class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
                                     style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;"
@@ -45,7 +45,7 @@
                                     }
                                 ">👁️</button>
                             </div>
-                            <small class="text-muted d-block">Min 8 characters with uppercase, lowercase, number &
+                            <small class="text-muted d-block">8-24 characters with uppercase, lowercase, number &
                                 special character @$!%*?&</small>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -54,7 +54,7 @@
                                     class="text-danger-600">*</span></label>
                             <div class="position-relative">
                                 <input type="password" name="confirmPassword" id="confirmPassword" class="form-control"
-                                    placeholder="Confirm password" required minlength="8" autocomplete="new-password">
+                                    placeholder="Confirm password" required minlength="8" maxlength="24" autocomplete="new-password">
                                 <button type="button"
                                     class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
                                     style="background: none; border: 1px solid #ddd; z-index: 10; padding: 2px 6px;"
@@ -416,12 +416,11 @@
             // Get form data
             const formData = new FormData(addUserForm);
 
-            // Validate form
+            // Validate form - show only first error for better UX
             const validationErrors = validateForm(formData);
             if (validationErrors.length > 0) {
-                validationErrors.forEach(error => {
-                    showToast(error, 'error');
-                });
+                // Show only the first error to match form field order
+                showToast(validationErrors[0], 'error');
                 return;
             }
 
@@ -508,83 +507,78 @@
             }
         }
 
-        // Validate form fields
+        // Validate form fields in the order they appear in the form
         function validateForm(formData) {
             const errors = [];
 
-            // Validate full name
+            // 1. Validate full name (first field)
             const fullName = formData.get('fullName');
             if (!fullName || fullName.trim().length < 2) {
                 errors.push('Full name must be at least 2 characters long');
+                return errors; // Return immediately to show first error
             } else if (fullName.trim().length > 50) {
                 errors.push('Full name must not exceed 50 characters');
+                return errors;
             }
 
-            // Validate email
+            // 2. Validate email (second field)
             const email = formData.get('email');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
+            const trimmedEmail = email ? email.trim() : '';
+            // Simple email validation - just check for @ and . with reasonable length
+            const isValidEmail = trimmedEmail && trimmedEmail.includes('@') && trimmedEmail.includes('.') && trimmedEmail.length > 5;
+            if (!isValidEmail) {
                 errors.push('Please enter a valid email address');
+                return errors;
             }
 
-            // Validate password
+            // 3. Validate password (third field)
             const password = formData.get('password');
-            console.log('Validating password:', password);
-            console.log('Password type:', typeof password);
-            console.log('Password length:', password?.length);
-            if (password) {
-                console.log('Password chars:', password.split('').map(function (c, i) {
-                    return '[' + i + "]=\'" + c + "\' (" + c.charCodeAt(0) + ")";
-                }));
-            }
-
             if (!password || password.length < 8) {
                 errors.push('Password must be at least 8 characters long');
+                return errors;
             } else {
                 const hasLowercase = /[a-z]/.test(password);
                 const hasUppercase = /[A-Z]/.test(password);
                 const hasNumber = /\d/.test(password);
                 const hasSpecialChar = /[@$!%*?&]/.test(password);
 
-                console.log('Testing number regex on password:', /\d/.test(password));
-                console.log('Testing number regex on "123":', /\d/.test('123'));
-                console.log('Password checks:', {
-                    hasLowercase,
-                    hasUppercase,
-                    hasNumber,
-                    hasSpecialChar
-                });
-
                 if (!hasLowercase) {
                     errors.push('Password must contain at least one lowercase letter');
+                    return errors;
                 }
                 if (!hasUppercase) {
                     errors.push('Password must contain at least one uppercase letter');
+                    return errors;
                 }
                 if (!hasNumber) {
                     errors.push('Password must contain at least one number');
+                    return errors;
                 }
                 if (!hasSpecialChar) {
                     errors.push('Password must contain at least one special character @$!%*?&');
+                    return errors;
                 }
             }
 
-            // Validate confirm password
+            // 4. Validate confirm password (fourth field)
             const confirmPassword = formData.get('confirmPassword');
             if (password !== confirmPassword) {
                 errors.push('Passwords do not match');
+                return errors;
             }
 
-            // Validate role selection
+            // 5. Validate role selection (fifth field)
             if (!formData.get('role')) {
                 errors.push('Please select a role');
+                return errors;
             }
 
-            // Validate phone number
+            // 6. Validate phone number (sixth field)
             const phone = formData.get('phone');
             const phoneRegex = /^[0-9]{6,15}$/;
             if (!phone) {
                 errors.push('Phone number is required');
+                return errors;
             } else if (!phoneRegex.test(phone)) {
                 if (phone.length < 6) {
                     errors.push('Phone number must be at least 6 digits');
@@ -593,6 +587,7 @@
                 } else {
                     errors.push('Phone number must contain only digits');
                 }
+                return errors;
             }
 
             return errors;
@@ -668,12 +663,11 @@
                     // Get form data
                     const formData = new FormData(addUserForm);
 
-                    // Validate form
+                    // Validate form - show only first error for better UX
                     const validationErrors = validateForm(formData);
                     if (validationErrors.length > 0) {
-                        validationErrors.forEach(error => {
-                            showToast(error, 'error');
-                        });
+                        // Show only the first error to match form field order
+                        showToast(validationErrors[0], 'error');
                         return;
                     }
 
@@ -948,7 +942,7 @@
             // Get form data
             const formData = new FormData(addUserForm);
 
-            // Basic validation
+            // Validation in form field order
             const fullName = formData.get('fullName');
             const email = formData.get('email');
             const password = formData.get('password');
@@ -956,6 +950,7 @@
             const role = formData.get('role');
             const phone = formData.get('phone');
 
+            // 1. Full name validation (first field)
             if (!fullName || fullName.trim().length < 2) {
                 showToast('Full name must be at least 2 characters long', 'error');
                 return;
@@ -966,27 +961,57 @@
                 return;
             }
 
-            if (!email || !email.includes('@')) {
-                showToast('Please enter a valid email address', 'error');
+            // 2. Email validation (second field)
+            const trimmedEmail = email ? email.trim() : '';
+            // Simple email validation - just check for @ and . with reasonable length
+            const isValidEmail = trimmedEmail && trimmedEmail.includes('@') && trimmedEmail.includes('.') && trimmedEmail.length > 5;
+            if (!isValidEmail) {
+                showErrorAndFocus('Please enter a valid email address', 'email');
                 return;
             }
 
+            // 3. Password validation (third field)
             if (!password || password.length < 8) {
                 showToast('Password must be at least 8 characters long', 'error');
                 return;
             }
 
+            // Additional password complexity checks
+            const hasLowercase = /[a-z]/.test(password);
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+            if (!hasLowercase) {
+                showToast('Password must contain at least one lowercase letter', 'error');
+                return;
+            }
+            if (!hasUppercase) {
+                showToast('Password must contain at least one uppercase letter', 'error');
+                return;
+            }
+            if (!hasNumber) {
+                showToast('Password must contain at least one number', 'error');
+                return;
+            }
+            if (!hasSpecialChar) {
+                showToast('Password must contain at least one special character @$!%*?&', 'error');
+                return;
+            }
+
+            // 4. Confirm password validation (fourth field)
             if (password !== confirmPassword) {
                 showToast('Passwords do not match', 'error');
                 return;
             }
 
+            // 5. Role validation (fifth field)
             if (!role) {
                 showToast('Please select a role', 'error');
                 return;
             }
 
-            // Validate phone number
+            // 6. Phone number validation (sixth field)
             const phoneRegex = /^[0-9]{6,15}$/;
             if (!phone) {
                 showToast('Phone number is required', 'error');

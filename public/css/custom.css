@@ -507,6 +507,9 @@ table.custom-table {
 .media-input-wrapper:hover {
     border-color: #ce1126 !important;
 }
+.dropdown-menu.to-top.dropdown-menu-sm{
+    z-index: 9999;
+}
 @media (min-width:992px){
 .pagemaster-media-popup  .media-picker-grid .col {
     flex: 0 0 20%;

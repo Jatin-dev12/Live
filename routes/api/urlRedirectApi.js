@@ -36,8 +36,27 @@ router.post('/', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Normalize URLs for comparison
+        let normalizedOldUrl = oldUrl.trim();
+        let normalizedNewUrl = newUrl.trim();
+        
+        if (!normalizedOldUrl.startsWith('/') && !normalizedOldUrl.startsWith('http')) {
+            normalizedOldUrl = '/' + normalizedOldUrl;
+        }
+        if (!normalizedNewUrl.startsWith('/') && !normalizedNewUrl.startsWith('http')) {
+            normalizedNewUrl = '/' + normalizedNewUrl;
+        }
+        
+        // Check if old and new URLs are the same
+        if (normalizedOldUrl === normalizedNewUrl) {
+            return res.status(400).json({
+                success: false,
+                message: 'Old URL and New URL cannot be the same'
+            });
+        }
+        
         // Check if old URL already exists
-        const existing = await UrlRedirect.findOne({ oldUrl });
+        const existing = await UrlRedirect.findOne({ oldUrl: normalizedOldUrl });
         if (existing) {
             return res.status(400).json({
                 success: false,
@@ -46,8 +65,8 @@ router.post('/', isAuthenticated, async (req, res) => {
         }
         
         const redirect = new UrlRedirect({
-            oldUrl,
-            newUrl,
+            oldUrl: normalizedOldUrl,
+            newUrl: normalizedNewUrl,
             redirectType: redirectType || 301,
             description,
             isActive: isActive !== undefined ? isActive : true,
@@ -84,9 +103,28 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Normalize URLs for comparison
+        let normalizedOldUrl = oldUrl ? oldUrl.trim() : redirect.oldUrl;
+        let normalizedNewUrl = newUrl ? newUrl.trim() : redirect.newUrl;
+        
+        if (!normalizedOldUrl.startsWith('/') && !normalizedOldUrl.startsWith('http')) {
+            normalizedOldUrl = '/' + normalizedOldUrl;
+        }
+        if (!normalizedNewUrl.startsWith('/') && !normalizedNewUrl.startsWith('http')) {
+            normalizedNewUrl = '/' + normalizedNewUrl;
+        }
+        
+        // Check if old and new URLs are the same
+        if (normalizedOldUrl === normalizedNewUrl) {
+            return res.status(400).json({
+                success: false,
+                message: 'Old URL and New URL cannot be the same'
+            });
+        }
+        
         // Check if old URL is being changed and if it conflicts with existing
-        if (oldUrl && oldUrl !== redirect.oldUrl) {
-            const existing = await UrlRedirect.findOne({ oldUrl, _id: { $ne: req.params.id } });
+        if (oldUrl && normalizedOldUrl !== redirect.oldUrl) {
+            const existing = await UrlRedirect.findOne({ oldUrl: normalizedOldUrl, _id: { $ne: req.params.id } });
             if (existing) {
                 return res.status(400).json({
                     success: false,
@@ -96,8 +134,8 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         }
         
         // Update fields
-        if (oldUrl) redirect.oldUrl = oldUrl;
-        if (newUrl) redirect.newUrl = newUrl;
+        if (oldUrl) redirect.oldUrl = normalizedOldUrl;
+        if (newUrl) redirect.newUrl = normalizedNewUrl;
         if (redirectType) redirect.redirectType = redirectType;
         if (description !== undefined) redirect.description = description;
         if (isActive !== undefined) redirect.isActive = isActive;
