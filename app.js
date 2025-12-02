@@ -11,8 +11,9 @@ const app = express();
 connectDB();
 
 // Body parser middleware with increased limits for file uploads
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+const requestSizeLimit = process.env.REQUEST_SIZE_LIMIT || '10mb';
+app.use(express.json({ limit: requestSizeLimit }));
+app.use(express.urlencoded({ extended: true, limit: requestSizeLimit }));
 
 // Trust proxy for Railway deployment
 app.set('trust proxy', 1);

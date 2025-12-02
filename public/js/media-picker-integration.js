@@ -20,6 +20,13 @@ class MediaPickerIntegration {
             return;
         }
         
+        // Check if already initialized
+        const existingPicker = this.pickers.get(inputSelector);
+        if (existingPicker) {
+            console.log('Media picker already initialized for:', inputSelector);
+            return existingPicker;
+        }
+        
         const config = {
             multiple: false,
             allowedTypes: ['image'],
@@ -34,6 +41,9 @@ class MediaPickerIntegration {
         let wrapper = input.closest('.media-picker-wrapper');
         if (!wrapper) {
             wrapper = this.createWrapper(input, config);
+        } else {
+            // Clean up existing events if wrapper exists
+            this.cleanupEvents(wrapper);
         }
         
         // Create media picker instance
@@ -121,69 +131,42 @@ class MediaPickerIntegration {
     }
     
     bindEvents(wrapper, picker, input, config) {
+        // Check if events are already bound to prevent duplicates
+        if (wrapper.dataset.eventsBound === 'true') {
+            return;
+        }
+        
         const ui = wrapper.querySelector('.media-picker-ui');
         const emptyState = ui.querySelector('.empty-state');
         const previewState = ui.querySelector('.media-preview');
         
-        // Click to open picker
-        emptyState.addEventListener('click', () => {
+        // Define event handlers as named functions so they can be removed if needed
+        const emptyStateClickHandler = () => {
             console.log("emptyState clicked");
             picker.open();
-        });
-        /* let empty = ui.querySelector('.empty-state');
-
-        // Reset old listeners
-        const newEmpty = empty.cloneNode(true);
-        empty.parentNode.replaceChild(newEmpty, empty);
-
-        // Fresh listener
-        newEmpty.addEventListener('click', () => {
-            console.log("emptyState clicked");
-            picker.open();
-        }); */
+        };
         
-        ui.querySelector('.change-media').addEventListener('click', () => {
+        const changeMediaClickHandler = () => {
             console.log("change-media clicked");            
             picker.open();
-        });
-        /* const changeBtn = ui.querySelector('.change-media');
-        changeBtn.replaceWith(changeBtn.cloneNode(true));
-        const newChangeBtn = ui.querySelector('.change-media');
-        // Add fresh listener
-        newChangeBtn.addEventListener('click', () => {
-            console.log("change-media clicked");
-            picker.open();
-        }); */
+        };
         
-        // Remove media
-        ui.querySelector('.remove-media').addEventListener('click', () => {
+        const removeMediaClickHandler = () => {
             console.log("remove-media clicked");
             this.clearMedia(wrapper, input, config);
-        });
-        /* let removeBtn = ui.querySelector('.remove-media');
-        // Reset all old listeners
-        const clonedRemoveBtn = removeBtn.cloneNode(true);
-        removeBtn.parentNode.replaceChild(clonedRemoveBtn, removeBtn);
-        // Now add event listener to the new clone
-        clonedRemoveBtn.addEventListener('click', () => {
-            console.log("remove-media clicked");
-            this.clearMedia(wrapper, input, config);
-        }); */
+        };
         
-        // Drag and drop support
-        const inputWrapper = ui.querySelector('.media-input-wrapper');
-        
-        inputWrapper.addEventListener('dragover', (e) => {
+        const dragOverHandler = (e) => {
             e.preventDefault();
             inputWrapper.classList.add('dragover');
-        });
+        };
         
-        inputWrapper.addEventListener('dragleave', (e) => {
+        const dragLeaveHandler = (e) => {
             e.preventDefault();
             inputWrapper.classList.remove('dragover');
-        });
+        };
         
-        inputWrapper.addEventListener('drop', (e) => {
+        const dropHandler = (e) => {
             e.preventDefault();
             inputWrapper.classList.remove('dragover');
             
@@ -193,7 +176,36 @@ class MediaPickerIntegration {
                 picker.open();
                 // TODO: Auto-upload dropped files
             }
-        });
+        };
+        
+        // Click to open picker
+        emptyState.addEventListener('click', emptyStateClickHandler);
+        
+        // Change media
+        ui.querySelector('.change-media').addEventListener('click', changeMediaClickHandler);
+        
+        // Remove media
+        ui.querySelector('.remove-media').addEventListener('click', removeMediaClickHandler);
+        
+        // Drag and drop support
+        const inputWrapper = ui.querySelector('.media-input-wrapper');
+        
+        inputWrapper.addEventListener('dragover', dragOverHandler);
+        inputWrapper.addEventListener('dragleave', dragLeaveHandler);
+        inputWrapper.addEventListener('drop', dropHandler);
+        
+        // Store event handlers for potential cleanup
+        wrapper._eventHandlers = {
+            emptyStateClickHandler,
+            changeMediaClickHandler,
+            removeMediaClickHandler,
+            dragOverHandler,
+            dragLeaveHandler,
+            dropHandler
+        };
+        
+        // Mark as bound to prevent duplicate binding
+        wrapper.dataset.eventsBound = 'true';
     }
     
     handleMediaSelection(input, selectedMedia, config) {
@@ -303,6 +315,30 @@ class MediaPickerIntegration {
     }
     
     /**
+     * Clean up event listeners for a wrapper
+     */
+    cleanupEvents(wrapper) {
+        if (wrapper._eventHandlers) {
+            const ui = wrapper.querySelector('.media-picker-ui');
+            const emptyState = ui.querySelector('.empty-state');
+            const inputWrapper = ui.querySelector('.media-input-wrapper');
+            
+            // Remove event listeners
+            emptyState.removeEventListener('click', wrapper._eventHandlers.emptyStateClickHandler);
+            ui.querySelector('.change-media').removeEventListener('click', wrapper._eventHandlers.changeMediaClickHandler);
+            ui.querySelector('.remove-media').removeEventListener('click', wrapper._eventHandlers.removeMediaClickHandler);
+            
+            inputWrapper.removeEventListener('dragover', wrapper._eventHandlers.dragOverHandler);
+            inputWrapper.removeEventListener('dragleave', wrapper._eventHandlers.dragLeaveHandler);
+            inputWrapper.removeEventListener('drop', wrapper._eventHandlers.dropHandler);
+            
+            // Clear stored handlers
+            delete wrapper._eventHandlers;
+            delete wrapper.dataset.eventsBound;
+        }
+    }
+
+    /**
      * Destroy picker instance
      */
     destroy(inputSelector) {
@@ -316,6 +352,9 @@ class MediaPickerIntegration {
         if (input) {
             const wrapper = input.closest('.media-picker-wrapper');
             if (wrapper) {
+                // Clean up event listeners first
+                this.cleanupEvents(wrapper);
+                
                 // Restore original input
                 input.style.display = '';
                 wrapper.parentNode.insertBefore(input, wrapper);

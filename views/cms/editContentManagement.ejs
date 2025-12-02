@@ -309,7 +309,7 @@
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
                                                                     <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading"
-                                                                        value="<%= card.heading %>" placeholder="e.g., Call Out 1" required>
+                                                                        value="<%= card.heading %>" placeholder="e.g., Call Out 1">
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Paragraph:</label>
@@ -468,7 +468,7 @@
                             <div class="page-status-widget">
                                 <!-- <div>
                                     <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
-                                    <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required disabled>
+                                    <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" disabled>
                                         <option value="">-- Select a Page --</option>
                                         <% if (typeof pages !=='undefined' && pages.length> 0) { %>
                                             <% pages.forEach(page=> { %>
@@ -1481,6 +1481,29 @@ window.ckEditorFallback = function() {
             $wrapper.find(".upload-file-tci-input").val("").data("server-url", "");
         });
 
+        // Helper function to focus on field with proper scroll behavior
+        function focusFieldWithScroll($field, message) {
+            if (message) {
+                showToast(message, 'warning');
+            }
+            if ($field && $field.length) {
+                // Reset button state
+                const saveBtn = $('#editContentForm button[type="submit"]')[0];
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = 'Save Changes';
+                }
+                
+                setTimeout(() => {
+                    $field[0].scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    $field.focus();
+                }, 100);
+            }
+        }
+
         // Form submission logic
         $("#editContentForm").on("submit", function (e) {
             const saveBtn = $('#editContentForm button[type="submit"]')[0];
@@ -1550,6 +1573,15 @@ window.ckEditorFallback = function() {
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    
+                    // Validate hero section heading
+                    if (!sectionData.heroSection.heading || !sectionData.heroSection.heading.trim()) {
+                        const $heroHeadingField = $section.find(".hero-heading");
+                        focusFieldWithScroll($heroHeadingField, 'Hero Section heading is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
                     // Get CKEditor 5 content
                     const paragraphEditor = $section.find(".hero-paragraph");
                     const editorId = paragraphEditor.attr('id');
@@ -1632,7 +1664,11 @@ window.ckEditorFallback = function() {
                     if (cards.length > 0) {
                         const invalidCard = cards.find(card => !card.heading);
                         if (invalidCard) {
-                            showToast('All Call Out Section must have a heading', 'warning');
+                            // Find the first empty heading field and focus on it with proper scroll
+                            const $emptyHeadingField = $section.find(".callout-heading").filter(function() {
+                                return !$(this).val().trim();
+                            }).first();
+                            focusFieldWithScroll($emptyHeadingField, 'All Call Out Section must have a heading');
                             isValid = false;
                             return false;
                         }
@@ -1792,6 +1828,15 @@ window.ckEditorFallback = function() {
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    
+                    // Validate hero section heading
+                    if (!sectionData.heroSection.heading || !sectionData.heroSection.heading.trim()) {
+                        const $heroHeadingField = $section.find(".hero-heading");
+                        focusFieldWithScroll($heroHeadingField, 'Hero Section heading is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
                     // Get CKEditor 5 content
                     const paragraphEditor2 = $section.find(".hero-paragraph");
                     const editorId2 = paragraphEditor2.attr('id');
@@ -1850,7 +1895,11 @@ window.ckEditorFallback = function() {
                     if (cards.length > 0) {
                         const invalidCard = cards.find(card => !card.heading);
                         if (invalidCard) {
-                            showToast('All Call Out Section must have a heading', 'warning');
+                            // Find the first empty heading field and focus on it with proper scroll
+                            const $emptyHeadingField = $section.find(".callout-heading").filter(function() {
+                                return !$(this).val().trim();
+                            }).first();
+                            focusFieldWithScroll($emptyHeadingField, 'All Call Out Section must have a heading');
                             isValid = false;
                             return false;
                         }
@@ -2302,7 +2351,7 @@ window.ckEditorFallback = function() {
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
-                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}" required>
+                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}">
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Paragraph:</label>

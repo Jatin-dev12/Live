@@ -34,11 +34,7 @@ const fileFilter = (req, file, cb) => {
     // Allowed MIME types
     const allowedMimeTypes = [
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-        'video/mp4', 'video/avi', 'video/quicktime',
-        'application/pdf',
-        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'audio/mpeg', 'audio/wav', 'audio/mp3'
+        'video/mp4', 'video/avi', 'video/quicktime'
     ];
     
     const mimetypeAllowed = allowedMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/');
@@ -53,7 +49,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 50 * 1024 * 1024 // 50MB limit
+        fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 // 10MB limit
     },
     fileFilter: fileFilter
 });

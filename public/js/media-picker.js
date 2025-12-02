@@ -130,11 +130,11 @@ class MediaPicker {
                                             <i class="bi bi-cloud-upload text-primary" style="font-size: 3rem;"></i>
                                         </div>
                                         <h5 class="mb-2">Drop files here or click to browse</h5>
-                                        <p class="text-muted mb-3">Maximum file size: 50MB</p>
+                                        <p class="text-muted mb-3">Maximum file size: 10MB</p>
                                         <button type="button" class="btn btn-primary" id="browseBtn_${modalId}">
                                             <i class="bi bi-folder2-open me-2"></i>Browse Files
                                         </button>
-                                        <input type="file" class="d-none" id="fileInput_${modalId}" multiple accept="image/*">
+                                        <input type="file" class="d-none" id="fileInput_${modalId}" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx">
                                     </div>
                                     
                                     <!-- Upload Progress -->
@@ -467,6 +467,13 @@ class MediaPicker {
         const progressContainer = document.getElementById(`uploadProgress_${modalId}`);
         const filesList = progressContainer.querySelector('.upload-files-list');
         
+        // Validate files before upload
+        const validationErrors = this.validateFiles(files);
+        if (validationErrors.length > 0) {
+            this.showError(validationErrors.join('\n'));
+            return;
+        }
+        
         progressContainer.classList.remove('d-none');
         filesList.innerHTML = '';
         
@@ -504,24 +511,46 @@ class MediaPicker {
             });
             
             xhr.addEventListener('load', () => {
-                if (xhr.status === 200) {
-                    const result = JSON.parse(xhr.responseText);
-                    if (result.success) {
-                        this.showSuccess(`${files.length} file(s) uploaded successfully`);
-                        
-                        // Switch to library tab and refresh
-                        document.getElementById('library-tab').click();
-                        this.loadMediaLibrary();
-                        
-                        // Call upload callback
-                        if (this.options.onUpload) {
-                            this.options.onUpload(result.data);
+                try {
+                    if (xhr.status === 200) {
+                        const result = JSON.parse(xhr.responseText);
+                        if (result.success) {
+                            this.showSuccess(`${files.length} file(s) uploaded successfully`);
+                            
+                            // Switch to library tab and refresh
+                            document.getElementById('library-tab').click();
+                            this.loadMediaLibrary();
+                            
+                            // Call upload callback
+                            if (this.options.onUpload) {
+                                this.options.onUpload(result.data);
+                            }
+                        } else {
+                            this.showError(result.message || 'Upload failed');
                         }
                     } else {
-                        this.showError(result.message || 'Upload failed');
+                        // Handle HTTP error responses
+                        let errorMessage = 'Upload failed';
+                        try {
+                            const errorResult = JSON.parse(xhr.responseText);
+                            if (errorResult.message) {
+                                errorMessage = errorResult.message;
+                            }
+                        } catch (parseError) {
+                            // If response is not JSON, use status-based message
+                            if (xhr.status === 413) {
+                                errorMessage = 'File too large. Maximum size is 10MB.';
+                            } else if (xhr.status === 415) {
+                                errorMessage = 'Invalid file type. Only images, videos, documents, and audio files are allowed.';
+                            } else {
+                                errorMessage = `Upload failed (Error ${xhr.status})`;
+                            }
+                        }
+                        this.showError(errorMessage);
                     }
-                } else {
-                    this.showError('Upload failed');
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    this.showError('Upload failed - Invalid server response');
                 }
                 
                 progressContainer.classList.add('d-none');
@@ -542,6 +571,43 @@ class MediaPicker {
         }
     }
     
+    validateFiles(files) {
+        const errors = [];
+        const maxFileSize = 10 * 1024 * 1024; // 10MB
+        const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|avi|mov|pdf|doc|docx|xls|xlsx|mp3|wav)$/i;
+        const allowedMimeTypes = [
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+            'video/mp4', 'video/avi', 'video/quicktime', 'application/pdf',
+            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'audio/mpeg', 'audio/wav', 'audio/mp3'
+        ];
+        
+        files.forEach((file, index) => {
+            // Check file size
+            if (file.size > maxFileSize) {
+                errors.push(`File "${file.name}" is too large (${this.formatFileSize(file.size)}). Maximum size is 10MB.`);
+            }
+            
+            // Check file extension
+            if (!allowedExtensions.test(file.name)) {
+                errors.push(`File "${file.name}" has an invalid extension. Only images, videos, documents, and audio files are allowed.`);
+            }
+            
+            // Check MIME type
+            const mimetypeAllowed = allowedMimeTypes.includes(file.type) || 
+                                  file.type.startsWith('image/') || 
+                                  file.type.startsWith('video/') || 
+                                  file.type.startsWith('audio/');
+            
+            if (!mimetypeAllowed) {
+                errors.push(`File "${file.name}" has an invalid type (${file.type}). Only images, videos, documents, and audio files are allowed.`);
+            }
+        });
+        
+        return errors;
+    }
+
     handleSelection() {
         const selectedItems = Array.from(this.selectedItems).map(id => 
             this.mediaItems.find(item => item.id === id)
@@ -580,10 +646,13 @@ class MediaPicker {
     }
     
     showError(message) {
+        // Handle multiple error messages
+        const displayMessage = Array.isArray(message) ? message.join('\n') : message;
+        
         if (window.showToast) {
-            window.showToast(message, 'error');
+            window.showToast(displayMessage, 'error');
         } else {
-            alert(message);
+            alert(displayMessage);
         }
     }
     

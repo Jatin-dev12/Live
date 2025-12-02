@@ -986,3 +986,36 @@ button.swal2-confirm.swal2-styled {
 .ck.ck-dropdown.ck-color-ui-dropdown , .ck.ck-dropdown.ck-font-size-dropdown , .ck.ck-dropdown.ck-heading-dropdown{
     display: none;
 }
+.sidebar.active:hover .sidebar-menu li a span {
+    display: none !important;
+}
+.sidebar.active:hover {
+    width: 86px;
+}
+.sidebar.active:hover .sidebar-logo img.light-logo {
+    display: none;
+}
+.sidebar.active:hover .sidebar-logo img.logo-icon {
+    display: inline-block;
+}
+.media-input-bg .form-check-input {
+    background: white;
+}
+
+/* Fix for form validation focus behavior on mobile */
+.form-control:focus,
+.form-select:focus,
+textarea:focus,
+input:focus {
+    scroll-margin-top: 100px;
+}
+
+/* Additional scroll margin for section blocks to ensure proper visibility */
+.section-block {
+    scroll-margin-top: 80px;
+}
+
+/* Ensure smooth scrolling behavior */
+html {
+    scroll-behavior: smooth;
+}
