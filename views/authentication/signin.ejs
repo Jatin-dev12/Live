@@ -70,22 +70,30 @@
     // ========================= Password Show Hide Js End ===========================
 
     // ================== Emoji and Special Character Validation Start ==========
-    /* function containsEmojisOrSpecialUnicode(str) {
+    function containsEmojisOrSpecialUnicode(str) {
         const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/u;
         return emojiRegex.test(str);
     }
 
     function removeEmojis(str) {
         return str.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, '');
-    }
-
+    } 
     function validateInput(input) {
+        const value = input.value;
+        if (containsEmojisOrSpecialUnicode(value)) {
+            // Remove emojis and special characters
+            input.value = value.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F018}-\u{1F270}\u{238C}-\u{2454}\u{20D0}-\u{20FF}]/gu, '');
+            showToast('Please enter characters, numbers, or standard special characters only. Emojis are not allowed.', 'error');
+        }
+    }
+    /* function validateInput(input) {
         const cleaned = removeEmojis(input.value);
         if (cleaned !== input.value) {
             input.value = cleaned;
             showToast('Emojis are not allowed.', 'error');
         }
     } */
+
     // Prevent autofill by removing readonly on focus
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('your-password');
@@ -153,8 +161,43 @@
         }
     });
     function isValidEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
+        // Simple and reliable email validation
+        const trimmedEmail = email.trim();
+        
+        // Basic checks
+        if (!trimmedEmail) return false;
+        if (trimmedEmail.length < 5) return false; // Minimum: a@b.c
+        if (!trimmedEmail.includes('@')) return false;
+        if (!trimmedEmail.includes('.')) return false;
+        
+        // Split by @ - should have exactly 2 parts
+        const parts = trimmedEmail.split('@');
+        if (parts.length !== 2) return false;
+        
+        const [localPart, domainPart] = parts;
+        
+        // Local part validation
+        if (!localPart || localPart.length === 0) return false;
+        
+        // Domain part validation
+        if (!domainPart || domainPart.length === 0) return false;
+        if (!domainPart.includes('.')) return false;
+        
+        // Domain should not start or end with dot
+        if (domainPart.startsWith('.') || domainPart.endsWith('.')) return false;
+        
+        // Should not have consecutive dots
+        if (domainPart.includes('..')) return false;
+        
+        // Domain extension should be at least 2 characters
+        const domainParts = domainPart.split('.');
+        const extension = domainParts[domainParts.length - 1];
+        if (!extension || extension.length < 2) return false;
+        
+        // Extension should only contain letters
+        if (!/^[a-zA-Z]+$/.test(extension)) return false;
+        
+        return true;
     }
 
 
@@ -212,8 +255,15 @@
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('your-password').value;
+        // Ensure readonly is removed before getting values
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('your-password');
+        
+        emailInput.removeAttribute('readonly');
+        passwordInput.removeAttribute('readonly');
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
         const errorMessage = document.getElementById('errorMessage');
         const loginBtn = document.getElementById('loginBtn');
         const btnText = loginBtn.querySelector('.btn-text');

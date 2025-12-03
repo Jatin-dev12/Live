@@ -51,6 +51,7 @@
                                         <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                         <option value="query">Query Template - Hero with 3 CTA Buttons</option>
                                         <option value="membership">Membership Template - Hero with Buttons + Community Groups</option>
+                                        <option value="contact">Contact Template - Contact blocks + Helpful Links</option>
                                     </select>
                                     <small class="text-muted">Select a template to auto-create page sections</small>
                                 </div>
@@ -204,6 +205,11 @@
             description: 'This template includes:<br>• Hero section (heading + subheading + 2 CTA buttons)<br>• Community Groups section (displays pages with community category)',
             image: '/images/templates/membership-template-preview.jpg'
         }
+        ,
+        contact: {
+            description: 'This template includes:<br>• Contact section (email, call, general contact form)<br>• Helpful links list (dynamic)',
+            image: '/images/templates/contact-template-preview.jpg'
+        }
     };
     //default template selection preview
     const $defaultPreview = $('#templatePreview');
@@ -310,7 +316,7 @@
         
         const formData = {
             name: $('#name').val(),
-            path: $('#path').val() || undefined,
+            path: $('#path').val().trim() || undefined,
             status: 'inactive', // Always save as draft
             template: $('#template').val(),
             category: selectedCategories.length > 0 ? selectedCategories[0] : '',
@@ -423,7 +429,7 @@
 
         const formData = {
             name: $('#name').val(),
-            path: $('#path').val() || undefined,
+            path: $('#path').val().trim() || undefined,
             status: $('#status').val(),
             template: $('#template').val(),
             category: selectedCategories.length > 0 ? selectedCategories[0] : '', // For now, take first selected category

@@ -47,44 +47,123 @@
 </div>
 
 <% script=` <script>
+    function validateUrl(url, fieldName) {
+        if (!url || typeof url !== 'string') {
+            return \`\${fieldName} is required\`;
+        }
+        
+        const trimmed = url.trim();
+        
+        // Check for empty or whitespace-only URLs
+        if (!trimmed) {
+            return \`\${fieldName} cannot be empty\`;
+        }
+        
+        // Check for malformed URLs like //, ///, etc.
+        /* if (trimmed.match(/^\/+$/)) {
+            return \`\${fieldName} cannot be just slashes (e.g., //, ///)\`;
+        } */
+        
+        // Check for protocol-relative URLs that could be dangerous
+        if (trimmed.startsWith('//')) {
+            return \`\${fieldName} cannot start with // (protocol-relative URLs not allowed)\`;
+        }
+        
+        // For relative URLs, ensure they start with / and have content after
+        if (!trimmed.startsWith('http') && !trimmed.startsWith('/')) {
+            return \`\${fieldName} must start with / for relative URLs or http/https for absolute URLs\`;
+        }
+        
+        // For relative URLs starting with /, ensure there's content after the slash
+        if (trimmed.startsWith('/') && !trimmed.startsWith('http')) {
+            if (trimmed.length === 1) {
+                return \`\${fieldName} cannot be just a single slash\`;
+            }
+            // Check for multiple consecutive slashes
+            if (trimmed.includes('//')) {
+                return \`\${fieldName} cannot contain consecutive slashes\`;
+            }
+        }
+        
+        // Basic URL format validation for absolute URLs
+        if (trimmed.startsWith('http')) {
+            try {
+                new URL(trimmed);
+            } catch (e) {
+                return \`\${fieldName} is not a valid URL format\`;
+            }
+        }
+        
+        return null; // Valid
+    }
+
     function validateUrlsMatch() {
         const oldUrl = document.getElementById('oldUrl').value.trim();
         const newUrl = document.getElementById('newUrl').value.trim();
         const submitBtn = document.getElementById('submitBtn');
-        
-        // Normalize URLs for comparison
-        let normalizedOldUrl = oldUrl;
-        let normalizedNewUrl = newUrl;
-        
-        if (!normalizedOldUrl.startsWith('/') && !normalizedOldUrl.startsWith('http')) {
-            normalizedOldUrl = '/' + normalizedOldUrl;
-        }
-        if (!normalizedNewUrl.startsWith('/') && !normalizedNewUrl.startsWith('http')) {
-            normalizedNewUrl = '/' + normalizedNewUrl;
-        }
         
         // Remove existing validation messages
         document.querySelectorAll('.url-validation-error').forEach(el => el.remove());
         document.getElementById('oldUrl').classList.remove('is-invalid');
         document.getElementById('newUrl').classList.remove('is-invalid');
         
-        if (normalizedOldUrl === normalizedNewUrl && oldUrl && newUrl) {
-            // Add error styling
-            document.getElementById('oldUrl').classList.add('is-invalid');
-            document.getElementById('newUrl').classList.add('is-invalid');
-            
-            // Add error message
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'invalid-feedback url-validation-error';
-            errorMsg.textContent = 'Old URL and New URL cannot be the same';
-            document.getElementById('newUrl').parentNode.appendChild(errorMsg);
-            
-            submitBtn.disabled = true;
-            return false;
-        } else {
-            submitBtn.disabled = false;
-            return true;
+        let hasErrors = false;
+        
+        // Validate old URL format
+        if (oldUrl) {
+            const oldUrlError = validateUrl(oldUrl, 'Old URL');
+            if (oldUrlError) {
+                document.getElementById('oldUrl').classList.add('is-invalid');
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'invalid-feedback url-validation-error';
+                errorMsg.textContent = oldUrlError;
+                document.getElementById('oldUrl').parentNode.appendChild(errorMsg);
+                hasErrors = true;
+            }
         }
+        
+        // Validate new URL format
+        if (newUrl) {
+            const newUrlError = validateUrl(newUrl, 'New URL');
+            if (newUrlError) {
+                document.getElementById('newUrl').classList.add('is-invalid');
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'invalid-feedback url-validation-error';
+                errorMsg.textContent = newUrlError;
+                document.getElementById('newUrl').parentNode.appendChild(errorMsg);
+                hasErrors = true;
+            }
+        }
+        
+        // Check if URLs are the same (only if both are valid)
+        if (!hasErrors && oldUrl && newUrl) {
+            // Normalize URLs for comparison
+            let normalizedOldUrl = oldUrl;
+            let normalizedNewUrl = newUrl;
+            
+            if (!normalizedOldUrl.startsWith('/') && !normalizedOldUrl.startsWith('http')) {
+                normalizedOldUrl = '/' + normalizedOldUrl;
+            }
+            if (!normalizedNewUrl.startsWith('/') && !normalizedNewUrl.startsWith('http')) {
+                normalizedNewUrl = '/' + normalizedNewUrl;
+            }
+            
+            if (normalizedOldUrl === normalizedNewUrl) {
+                // Add error styling
+                document.getElementById('oldUrl').classList.add('is-invalid');
+                document.getElementById('newUrl').classList.add('is-invalid');
+                
+                // Add error message
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'invalid-feedback url-validation-error';
+                errorMsg.textContent = 'Old URL and New URL cannot be the same';
+                document.getElementById('newUrl').parentNode.appendChild(errorMsg);
+                hasErrors = true;
+            }
+        }
+        
+        submitBtn.disabled = hasErrors;
+        return !hasErrors;
     }
 
     $(document).on('input', '#addRedirectForm #oldUrl,#addRedirectForm #newUrl', function() {

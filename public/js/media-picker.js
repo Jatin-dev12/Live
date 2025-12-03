@@ -134,7 +134,7 @@ class MediaPicker {
                                         <button type="button" class="btn btn-primary" id="browseBtn_${modalId}">
                                             <i class="bi bi-folder2-open me-2"></i>Browse Files
                                         </button>
-                                        <input type="file" class="d-none" id="fileInput_${modalId}" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx">
+                                        <input type="file" class="d-none" id="fileInput_${modalId}" multiple accept="image/*,video/*">
                                     </div>
                                     
                                     <!-- Upload Progress -->
@@ -470,7 +470,8 @@ class MediaPicker {
         // Validate files before upload
         const validationErrors = this.validateFiles(files);
         if (validationErrors.length > 0) {
-            this.showError(validationErrors.join('\n'));
+            // this.showError(validationErrors.join('\n'));
+            this.showToast(validationErrors.join('\n'), 'error');
             return;
         }
         
@@ -577,14 +578,16 @@ class MediaPicker {
         const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|avi|mov|pdf|doc|docx|xls|xlsx|mp3|wav)$/i;
         const allowedMimeTypes = [
             'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-            'video/mp4', 'video/avi', 'video/quicktime', 'application/pdf',
-            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'audio/mpeg', 'audio/wav', 'audio/mp3'
+            'video/mp4', 'video/avi', 'video/quicktime'
         ];
         
         files.forEach((file, index) => {
             // Check file size
+
+            if (!(file.type.startsWith("image/") || file.type.startsWith("video/"))) {
+                errors.push(`"${file.name}" is not allowed. Only images and videos can be uploaded.`);
+                return;
+            }
             if (file.size > maxFileSize) {
                 errors.push(`File "${file.name}" is too large (${this.formatFileSize(file.size)}). Maximum size is 10MB.`);
             }
@@ -667,6 +670,53 @@ class MediaPicker {
     cleanup() {
         this.selectedItems.clear();
         this.mediaItems = [];
+    }
+    showToast(message, type) {
+        // Remove any existing toasts first
+        var existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(function (toast) { toast.remove(); });
+
+        // Create toast element
+        var toast = document.createElement('div');
+        var alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+        toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+        toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+        // Set border color based on type
+        if (type === 'success') {
+            toast.style.borderColor = '#28a745';
+            toast.style.backgroundColor = '#d4edda';
+            toast.style.color = '#155724';
+        } else if (type === 'error') {
+            toast.style.borderColor = '#dc3545';
+            toast.style.backgroundColor = '#f8d7da';
+            toast.style.color = '#721c24';
+        }
+
+        var iconEmoji = type === 'error' ? '' : type === 'success' ? '✅' : 'ℹ️';
+        toast.innerHTML = '<div class="d-flex align-items-center">' +
+            '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+            '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+            '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+            '</div>';
+
+        document.body.appendChild(toast);
+
+        // Add entrance animation
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'transform 0.3s ease-out';
+        setTimeout(function () {
+            toast.style.transform = 'translateX(0)';
+        }, 10);
+
+        // Auto remove after duration based on type
+        var duration = type === 'success' ? 4000 : 6000;
+        setTimeout(function () {
+            if (toast.parentElement) {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(function () { toast.remove(); }, 300);
+            }
+        }, duration);
     }
 }
 

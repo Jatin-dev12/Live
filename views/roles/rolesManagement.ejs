@@ -43,7 +43,7 @@
                     <!-- Debug: Users count = <%= typeof users !== 'undefined' && users ? users.length : 'undefined' %> -->
                     <% if (typeof users !== 'undefined' && users && users.length > 0) { %>
                         <% users.forEach((user, index) => { %>
-                            <tr class="<%= user.isActive ? '' : 'table-danger' %>" data-role="<%= user.role ? user.role.name : 'No Role' %>">
+                            <tr class="<%= user.isActive ? '' : '' %>" data-role="<%= user.role ? user.role.name : 'No Role' %>">
                                 <td><%= String(index + 1).padStart(2, '0') %></td>
                                 <td class="title-table">
                                     <!-- <div>

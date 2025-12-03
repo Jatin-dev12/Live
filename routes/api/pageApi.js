@@ -69,7 +69,7 @@ router.get('/public/all', async (req, res) => {
                     page: page._id, 
                     status: 'active' 
                 })
-                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards communityGroups customFields createdAt updatedAt')
+                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards communityGroups contactSection customFields createdAt updatedAt')
                 .sort({ order: 1, createdAt: -1 });
                 
                 const pageData = {
@@ -95,6 +95,7 @@ router.get('/public/all', async (req, res) => {
                         heroSection: content.heroSection,
                         threeColumnInfo: content.threeColumnInfo,
                         callOutCards: content.callOutCards,
+                        contactSection: content.contactSection,
                         communityGroups: content.communityGroups,
                         customFields: content.customFields,
                         createdAt: content.createdAt,
@@ -174,7 +175,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             page: page._id, 
             status: 'active' 
         })
-        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields communityGroups createdAt updatedAt')
+        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards contactSection customFields communityGroups createdAt updatedAt')
         .sort({ order: 1, createdAt: -1 });
         
         // If this is a membership template page, get community groups data
@@ -246,6 +247,7 @@ router.get('/public/slug/:slug', async (req, res) => {
                     heroSection: content.heroSection,
                     threeColumnInfo: content.threeColumnInfo,
                     callOutCards: content.callOutCards,
+                    contactSection: content.contactSection,
                     communityGroups: content.communityGroups,
                     customFields: content.customFields,
                     createdAt: content.createdAt,
@@ -379,7 +381,7 @@ router.get('/:id/sections', async (req, res) => {
         
         // Get all sections for this page
         const sections = await Content.find(query)
-            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards tabsSection communityGroups createdAt updatedAt')
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo contactSection customFields callOutCards tabsSection communityGroups createdAt updatedAt')
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email')
@@ -468,6 +470,99 @@ router.get('/:id/sections', async (req, res) => {
     }
 });
 
+// Bulk create/update sections for a page
+router.post('/:id/sections', isAuthenticated, async (req, res) => {
+    try {
+        const pageId = req.params.id;
+        const { sections, status } = req.body;
+
+        if (!Array.isArray(sections)) {
+            return res.status(400).json({ success: false, message: 'sections array is required' });
+        }
+
+        // verify page exists
+        const page = await Page.findById(pageId);
+        if (!page) return res.status(404).json({ success: false, message: 'Page not found' });
+
+        const existing = await Content.find({ page: pageId }).lean();
+        const existingIds = existing.map(s => s._id.toString());
+
+        const providedExistingIds = [];
+        const updatePromises = [];
+        const createPromises = [];
+
+        sections.forEach(s => {
+            const orderVal = Number(s.order) || 0;
+            const sectionStatus = s.status || status || 'active';
+
+            if (s.id && require('mongoose').Types.ObjectId.isValid(s.id)) {
+                providedExistingIds.push(s.id);
+                const updateFields = {
+                    ...(s.sectionType !== undefined && { sectionType: s.sectionType }),
+                    ...(s.title !== undefined && { title: s.title }),
+                    ...(s.thumbnail !== undefined && { thumbnail: s.thumbnail }),
+                    status: sectionStatus,
+                    order: orderVal,
+                    ...(s.customFields !== undefined && { customFields: s.customFields }),
+                    ...(s.heroSection !== undefined && { heroSection: s.heroSection }),
+                    ...(s.threeColumnInfo !== undefined && { threeColumnInfo: s.threeColumnInfo }),
+                    ...(s.callOutCards !== undefined && { callOutCards: s.callOutCards }),
+                    ...(s.tabsSection !== undefined && { tabsSection: s.tabsSection }),
+                    ...(s.communityGroups !== undefined && { communityGroups: s.communityGroups }),
+                    ...(s.contactSection !== undefined && { contactSection: s.contactSection }),
+                    updatedBy: req.user ? req.user._id : null
+                };
+
+                updatePromises.push(Content.findByIdAndUpdate(s.id, updateFields, { new: true, runValidators: true }));
+            } else {
+                const newContent = new Content({
+                    page: pageId,
+                    title: s.title || (s.customFields && (s.customFields.heading || s.customFields.leftHeading || s.customFields.rightHeading)) || 'Section',
+                    status: sectionStatus,
+                    order: orderVal,
+                    sectionType: s.sectionType || 'default',
+                    customFields: s.customFields || undefined,
+                    heroSection: s.heroSection || undefined,
+                    threeColumnInfo: s.threeColumnInfo || undefined,
+                    callOutCards: s.callOutCards || undefined,
+                    tabsSection: s.tabsSection || undefined,
+                    communityGroups: s.communityGroups || undefined,
+                    contactSection: s.contactSection || undefined,
+                    thumbnail: s.thumbnail || undefined,
+                    createdBy: req.user ? req.user._id : null,
+                    updatedBy: req.user ? req.user._id : null
+                });
+
+                createPromises.push(newContent.save());
+            }
+        });
+
+        const updatedResults = await Promise.all(updatePromises.map(p => p.catch(e => ({ error: e.message }))));
+        const createdResults = await Promise.all(createPromises.map(p => p.catch(e => ({ error: e.message }))));
+
+        const toDelete = existingIds.filter(id => !providedExistingIds.includes(id));
+        let deleteResult = { deletedCount: 0 };
+        if (toDelete.length > 0) {
+            deleteResult = await Content.deleteMany({ _id: { $in: toDelete } });
+        }
+
+        return res.json({
+            success: true,
+            message: 'Sections synchronized successfully',
+            data: {
+                updated: updatedResults.length,
+                created: createdResults.length,
+                deleted: deleteResult.deletedCount || 0,
+                updatedResults,
+                createdResults
+            }
+        });
+    } catch (error) {
+        console.error('Error syncing sections for page:', error);
+        res.status(500).json({ success: false, message: 'Error syncing sections', error: error.message });
+    }
+});
+
 // Create new page
 router.post('/', isAuthenticated, async (req, res) => {
     try {
@@ -495,7 +590,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         
         const page = new Page({
             name,
-            path: path || undefined, // Let the model auto-generate if not provided
+            ...(path && { path }), // Only include path if it's provided and not empty
             status: status || 'active',
             metaTitle,
             metaDescription,
@@ -518,8 +613,9 @@ router.post('/', isAuthenticated, async (req, res) => {
                     const sectionData = {
                         page: page._id,
                         title: section.type === 'hero-section' ? 'Hero Section' : 
-                               section.type === 'call-out-cards' ? 'Call Out Cards' :
-                               section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                                       section.type === 'call-out-cards' ? 'Call Out Cards' :
+                                       section.type === 'tabs-section' ? 'Tabs Section' :
+                                       section.type === 'contact-section' ? 'Contact Section' : 'Section',
                         status: 'active',
                         order: index + 1,
                         sectionType: section.type,
@@ -548,6 +644,16 @@ router.post('/', isAuthenticated, async (req, res) => {
                     } else if (section.type === 'tabs-section') {
                         sectionData.tabsSection = {
                             tabs: section.fields.tabs || []
+                        };
+                    } else if (section.type === 'contact-section') {
+                        // Map contact template fields
+                        sectionData.contactSection = {
+                            heading: section.fields.heading || '',
+                            subheading: section.fields.subheading || '',
+                            email: section.fields.email || undefined,
+                            call: section.fields.call || undefined,
+                            generalContactForm: section.fields.generalContactForm || undefined,
+                            helpfulLinks: section.fields.helpfulLinks || []
                         };
                     }
                     
@@ -673,8 +779,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         const sectionData = {
                             page: page._id,
                             title: section.type === 'hero-section' ? 'Hero Section' : 
-                                   section.type === 'call-out-cards' ? 'Call Out Cards' :
-                                   section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                                       section.type === 'call-out-cards' ? 'Call Out Cards' :
+                                       section.type === 'tabs-section' ? 'Tabs Section' :
+                                       section.type === 'contact-section' ? 'Contact Section' : 'Section',
                             status: 'active',
                             order: index + 1,
                             sectionType: section.type,
@@ -701,6 +808,15 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         } else if (section.type === 'tabs-section') {
                             sectionData.tabsSection = {
                                 tabs: section.fields.tabs || []
+                            };
+                        } else if (section.type === 'contact-section') {
+                            sectionData.contactSection = {
+                                heading: section.fields.heading || '',
+                                subheading: section.fields.subheading || '',
+                                email: section.fields.email || undefined,
+                                call: section.fields.call || undefined,
+                                generalContactForm: section.fields.generalContactForm || undefined,
+                                helpfulLinks: section.fields.helpfulLinks || []
                             };
                         }
                         

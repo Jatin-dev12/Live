@@ -175,6 +175,70 @@ const contentSchema = new mongoose.Schema({
             }
         }]
     },
+    // Contact section
+    contactSection: {
+        heading: {
+            type: String,
+            trim: true
+        },
+        subheading: {
+            type: String,
+            trim: true
+        },
+        email: {
+            heading: {
+                type: String,
+                trim: true
+            },
+            subheading: {
+                type: String,
+                trim: true
+            },
+            address: {
+                type: String,
+                trim: true,
+                validate: {
+                    validator: function(v) {
+                        if (!v) return true; // allow empty
+                        // simple email regex
+                        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+                    },
+                    message: props => `${props.value} is not a valid email address!`
+                }
+            }
+        },
+        call: {
+            heading: {
+                type: String,
+                trim: true
+            },
+            subheading: {
+                type: String,
+                trim: true
+            },
+            phone: {
+                type: String,
+                trim: true,
+                validate: {
+                    validator: function(v) {
+                        if (!v) return true;
+                        // allow digits, spaces, plus and parentheses only
+                        return /^[0-9+\s()]+$/.test(v);
+                    },
+                    message: props => `${props.value} is not a valid phone number! Only digits, spaces, "+" and parentheses are allowed.`
+                }
+            }
+        },
+        generalContactForm: {
+            heading: { type: String, trim: true },
+            subheading: { type: String, trim: true },
+            openFormLink: { type: String, trim: true }
+        },
+        helpfulLinks: [{
+            text: { type: String, trim: true },
+            link: { type: String, trim: true }
+        }]
+    },
     customFields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed

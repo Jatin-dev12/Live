@@ -23,16 +23,102 @@ router.get('/', async (req, res) => {
     }
 });
 
+// URL Redirect Management Page
+router.get('/url-redirects', isAuthenticated, async (req, res) => {
+    try {
+        const UrlRedirect = require('../models/UrlRedirect');
+        const redirects = await UrlRedirect.find()
+            .populate('createdBy', 'fullName email')
+            .populate('updatedBy', 'fullName email')
+            .sort({ createdAt: -1 })
+            .lean();
+        
+        res.render('url-redirect/urlRedirects', {
+            title: "URL Redirect Management",
+            subTitle: "Manage URL Redirects",
+            redirects: redirects
+        });
+    } catch (error) {
+        console.error('Error loading URL redirects:', error);
+        res.render('url-redirect/urlRedirects', {
+            title: "URL Redirect Management",
+            subTitle: "Manage URL Redirects",
+            redirects: []
+        });
+    }
+});
+
+
+// Helper function to validate URL format
+function validateUrl(url, fieldName) {
+    if (!url || typeof url !== 'string') {
+        return `${fieldName} is required`;
+    }
+    
+    const trimmed = url.trim();
+    
+    // Check for empty or whitespace-only URLs
+    if (!trimmed) {
+        return `${fieldName} cannot be empty`;
+    }
+    
+    // Check for malformed URLs like //, ///, etc.
+    if (trimmed.match(/^\/+$/)) {
+        return `${fieldName} cannot be just slashes (e.g., //, ///)`;
+    }
+    
+    // Check for protocol-relative URLs that could be dangerous
+    if (trimmed.startsWith('//')) {
+        return `${fieldName} cannot start with // (protocol-relative URLs not allowed)`;
+    }
+    
+    // For relative URLs, ensure they start with / and have content after
+    if (!trimmed.startsWith('http') && !trimmed.startsWith('/')) {
+        return `${fieldName} must start with / for relative URLs or http/https for absolute URLs`;
+    }
+    
+    // For relative URLs starting with /, ensure there's content after the slash
+    if (trimmed.startsWith('/') && !trimmed.startsWith('http')) {
+        if (trimmed.length === 1) {
+            return `${fieldName} cannot be just a single slash`;
+        }
+        // Check for multiple consecutive slashes
+        if (trimmed.includes('//')) {
+            return `${fieldName} cannot contain consecutive slashes`;
+        }
+    }
+    
+    // Basic URL format validation for absolute URLs
+    if (trimmed.startsWith('http')) {
+        try {
+            new URL(trimmed);
+        } catch (e) {
+            return `${fieldName} is not a valid URL format`;
+        }
+    }
+    
+    return null; // Valid
+}
+
 // Create new redirect
 router.post('/', isAuthenticated, async (req, res) => {
     try {
         const { oldUrl, newUrl, redirectType, description, isActive } = req.body;
         
-        // Validation
-        if (!oldUrl || !newUrl) {
+        // Validate URLs
+        const oldUrlError = validateUrl(oldUrl, 'Old URL');
+        if (oldUrlError) {
             return res.status(400).json({
                 success: false,
-                message: 'Old URL and New URL are required'
+                message: oldUrlError
+            });
+        }
+        
+        const newUrlError = validateUrl(newUrl, 'New URL');
+        if (newUrlError) {
+            return res.status(400).json({
+                success: false,
+                message: newUrlError
             });
         }
         
@@ -101,6 +187,27 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 success: false,
                 message: 'Redirect not found'
             });
+        }
+        
+        // Validate URLs if they are being updated
+        if (oldUrl) {
+            const oldUrlError = validateUrl(oldUrl, 'Old URL');
+            if (oldUrlError) {
+                return res.status(400).json({
+                    success: false,
+                    message: oldUrlError
+                });
+            }
+        }
+        
+        if (newUrl) {
+            const newUrlError = validateUrl(newUrl, 'New URL');
+            if (newUrlError) {
+                return res.status(400).json({
+                    success: false,
+                    message: newUrlError
+                });
+            }
         }
         
         // Normalize URLs for comparison

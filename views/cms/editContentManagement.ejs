@@ -33,6 +33,7 @@
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
                                             <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
                                             <option value="community-groups" <%= section.sectionType === 'community-groups' ? 'selected' : '' %>>Community Groups</option>
+                                            <option value="contact-section" <%= section.sectionType === 'contact-section' ? 'selected' : '' %>>Contact Section</option>
                                         </select>
                                     </div>
 
@@ -420,6 +421,81 @@
                                                     <small class="text-muted">Select pages to display in this community groups section</small>
                                                 </div>
                                             </div>
+                                            <% } else if (section.sectionType==='contact-section' ) { %>
+                                                <div class="contact-section-fields active">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Section Heading:</label>
+                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cs-heading"
+                                                            value="<%= section.contactSection?.heading || '' %>" placeholder="Heading">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Section Subheading:</label>
+                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cs-subheading"
+                                                            value="<%= section.contactSection?.subheading || '' %>" placeholder="Subheading">
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Email Block</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-email-heading"
+                                                                value="<%= section.contactSection?.email?.heading || '' %>" placeholder="Email Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-email-subheading"
+                                                                value="<%= section.contactSection?.email?.subheading || '' %>" placeholder="Email Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="email" class="form-control border border-neutral-200 radius-8 cs-email-address"
+                                                                value="<%= section.contactSection?.email?.address || '' %>" placeholder="address@domain.org">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Call Block</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-heading"
+                                                                value="<%= section.contactSection?.call?.heading || '' %>" placeholder="Call Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-subheading"
+                                                                value="<%= section.contactSection?.call?.subheading || '' %>" placeholder="Call Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-phone"
+                                                                value="<%= section.contactSection?.call?.phone || '' %>" placeholder="+1 (555) 123-4567">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">General Contact Form</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-heading"
+                                                                value="<%= section.contactSection?.generalContactForm?.heading || '' %>" placeholder="Form Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-subheading"
+                                                                value="<%= section.contactSection?.generalContactForm?.subheading || '' %>" placeholder="Form Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-link"
+                                                                value="<%= section.contactSection?.generalContactForm?.openFormLink || '' %>" placeholder="/forms/contact">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Helpful Links</label>
+                                                        <div class="cs-helpful-links-list">
+                                                            <% (section.contactSection?.helpfulLinks || []).forEach(function(link, idx){ %>
+                                                                <div class="d-flex align-items-center gap-2 mb-2 cs-helpful-item">
+                                                                    <input type="text" class="form-control cs-helpful-text" value="<%= link.text %>" placeholder="Button text">
+                                                                    <input type="text" class="form-control cs-helpful-link" value="<%= link.link %>" placeholder="/path or https://...">
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-helpful-link"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                                                                </div>
+                                                            <% }) %>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-primary mt-2 add-helpful-link-btn">Add Helpful Link</button>
+                                                    </div>
+                                                </div>
                                         <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
@@ -557,6 +633,7 @@
                                         <option value="three-column-info">Header Section</option>
                                         <option value="call-out-cards">Call Out Section</option>
                                         <option value="tabs-section">Tabs Section</option>
+                                        <option value="contact-section">Contact Section</option>
                                     </select>
                                 </div>
                                <div class="image-with-text-fields" style="display: none;">
@@ -1299,6 +1376,23 @@ window.ckEditorFallback = function() {
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
 
+        // Helpful links add/remove handlers (for contact-section)
+        $(document).on('click', '.add-helpful-link-btn', function() {
+            const $section = $(this).closest('.section-block');
+            const $list = $section.find('.cs-helpful-links-list');
+            const itemHtml = \`
+                <div class="d-flex align-items-center gap-2 mb-2 cs-helpful-item">
+                    <input type="text" class="form-control cs-helpful-text" value="" placeholder="Button text">
+                    <input type="text" class="form-control cs-helpful-link" value="" placeholder="/path or https://...">
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-helpful-link"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                </div>\`;
+            $list.append(itemHtml);
+        });
+
+        $(document).on('click', '.remove-helpful-link', function() {
+            $(this).closest('.cs-helpful-item').remove();
+        });
+
         // Initialize existing hero images on page load
         $(".upload-file-hero-input").each(function() {
             const existingImage = $(this).data("existing-image");
@@ -1735,6 +1829,56 @@ window.ckEditorFallback = function() {
                         displayOrder: displayOrder,
                         selectedPages: selectedPages
                     };
+                } else if (sectionType === "contact-section") {
+                    // Collect contact section fields
+                    const cs = {};
+                    cs.heading = $section.find('.cs-heading').val();
+                    cs.subheading = $section.find('.cs-subheading').val();
+
+                    cs.email = {
+                        heading: $section.find('.cs-email-heading').val(),
+                        subheading: $section.find('.cs-email-subheading').val(),
+                        address: $section.find('.cs-email-address').val()
+                    };
+
+                    cs.call = {
+                        heading: $section.find('.cs-call-heading').val(),
+                        subheading: $section.find('.cs-call-subheading').val(),
+                        phone: $section.find('.cs-call-phone').val()
+                    };
+
+                    cs.generalContactForm = {
+                        heading: $section.find('.cs-form-heading').val(),
+                        subheading: $section.find('.cs-form-subheading').val(),
+                        openFormLink: $section.find('.cs-form-link').val()
+                    };
+
+                    // helpful links
+                    cs.helpfulLinks = $section.find('.cs-helpful-item').map(function() {
+                        return {
+                            text: $(this).find('.cs-helpful-text').val(),
+                            link: $(this).find('.cs-helpful-link').val()
+                        };
+                    }).get();
+
+                    // Validate email if present
+                    const emailVal = cs.email.address || '';
+                    if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                        focusFieldWithScroll($section.find('.cs-email-address'), 'Please enter a valid email address');
+                        isValid = false;
+                        return false;
+                    }
+
+                    // Validate phone - allow digits, spaces, + and parentheses only
+                    const phoneVal = cs.call.phone || '';
+                    if (phoneVal && !/^[0-9+\s()]+$/.test(phoneVal)) {
+                        focusFieldWithScroll($section.find('.cs-call-phone'), 'Phone number contains invalid characters');
+                        isValid = false;
+                        return false;
+                    }
+
+                    sectionData.title = cs.heading || 'Contact Section';
+                    sectionData.contactSection = cs;
                 }
 
                 sectionsData.push(sectionData);
@@ -1959,6 +2103,53 @@ window.ckEditorFallback = function() {
                         displayOrder: displayOrder,
                         selectedPages: selectedPages
                     };
+                } else if (sectionType === "contact-section") {
+                    // Collect contact section fields for SEO update flow
+                    const cs = {};
+                    cs.heading = $section.find('.cs-heading').val();
+                    cs.subheading = $section.find('.cs-subheading').val();
+
+                    cs.email = {
+                        heading: $section.find('.cs-email-heading').val(),
+                        subheading: $section.find('.cs-email-subheading').val(),
+                        address: $section.find('.cs-email-address').val()
+                    };
+
+                    cs.call = {
+                        heading: $section.find('.cs-call-heading').val(),
+                        subheading: $section.find('.cs-call-subheading').val(),
+                        phone: $section.find('.cs-call-phone').val()
+                    };
+
+                    cs.generalContactForm = {
+                        heading: $section.find('.cs-form-heading').val(),
+                        subheading: $section.find('.cs-form-subheading').val(),
+                        openFormLink: $section.find('.cs-form-link').val()
+                    };
+
+                    cs.helpfulLinks = $section.find('.cs-helpful-item').map(function() {
+                        return {
+                            text: $(this).find('.cs-helpful-text').val(),
+                            link: $(this).find('.cs-helpful-link').val()
+                        };
+                    }).get();
+
+                    // Validation as above
+                    const emailVal = cs.email.address || '';
+                    if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                        focusFieldWithScroll($section.find('.cs-email-address'), 'Please enter a valid email address');
+                        isValid = false;
+                        return false;
+                    }
+                    const phoneVal = cs.call.phone || '';
+                    if (phoneVal && !/^[0-9+\s()]+$/.test(phoneVal)) {
+                        focusFieldWithScroll($section.find('.cs-call-phone'), 'Phone number contains invalid characters');
+                        isValid = false;
+                        return false;
+                    }
+
+                    sectionData.title = cs.heading || 'Contact Section';
+                    sectionData.contactSection = cs;
                 }
 
                 sectionsData.push(sectionData);

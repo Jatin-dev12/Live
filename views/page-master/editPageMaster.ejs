@@ -27,6 +27,7 @@
                                     <option value="legislation" <%= page.template === 'legislation' ? 'selected' : '' %>>Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                     <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
                                     <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero with Buttons + Community Groups</option>
+                                    <option value="contact" <%= page.template === 'contact' ? 'selected' : '' %>>Contact Template - Contact blocks + Helpful Links</option>
                                 </select>
                                 <small class="text-muted">
                                     <i class="fas fa-lock me-1"></i>
@@ -187,6 +188,10 @@
             membership: {
                 description: 'This template includes:<br>• Hero section (heading + subheading + 2 CTA buttons)<br>• Community Groups section (displays pages with community category)',
                 image: '/images/templates/membership-template-preview.jpg'
+            },
+            contact: {
+                description: 'This template includes:<br>• Contact section (email, call, general contact form)<br>• Helpful links list (dynamic)',
+                image: '/images/templates/contact-template-preview.jpg'
             },
             // membership: {
             //     description: 'This template includes:<br>• Hero section (heading + subheading)',

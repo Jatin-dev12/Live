@@ -84,7 +84,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 // Create new content
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups, contactSection } = req.body;
         
         // Validate required fields
         if (!pageId || !title) {
@@ -118,6 +118,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             callOutCards: callOutCards || undefined,
             tabsSection: tabsSection || undefined,
             communityGroups: communityGroups || undefined,
+            contactSection: contactSection || undefined,
             customFields,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
@@ -190,6 +191,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         ...(s.callOutCards !== undefined && { callOutCards: s.callOutCards }),
                         ...(s.tabsSection !== undefined && { tabsSection: s.tabsSection }),
                         ...(s.communityGroups !== undefined && { communityGroups: s.communityGroups }),
+                        ...(s.contactSection !== undefined && { contactSection: s.contactSection }),
                         updatedBy: req.user ? req.user._id : null
                     };
 
@@ -208,6 +210,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         callOutCards: s.callOutCards || undefined,
                         tabsSection: s.tabsSection || undefined,
                         communityGroups: s.communityGroups || undefined,
+                        contactSection: s.contactSection || undefined,
                         thumbnail: s.thumbnail || undefined,
                         createdBy: req.user ? req.user._id : null,
                         updatedBy: req.user ? req.user._id : null
@@ -240,7 +243,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups, contactSection } = req.body;
         
         // Verify page exists if pageId is being updated
         if (pageId) {
@@ -270,6 +273,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 callOutCards,
                 tabsSection,
                 communityGroups,
+                contactSection,
                 customFields,
                 updatedBy: req.user._id
             },

@@ -64,7 +64,10 @@ router.post('/signup', async (req, res) => {
 // Login
 router.post('/login', validateLogin, handleValidationErrors, async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const rawEmail = req.body.email || "";
+        const email = rawEmail.trim().toLowerCase();
+        const password = req.body.password;
+        // const { email, password } = req.body;
 
         console.log('🔐 Login attempt for:', email);
 
@@ -78,7 +81,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             });
         }
 
-        console.log('✅ Database connected');
+        // console.log('✅ Database connected');
 
         // Find user with password field
         const user = await User.findOne({ email: email.toLowerCase() })
@@ -98,7 +101,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             });
         }
 
-        console.log('✅ User found:', user.email);
+        // console.log('✅ User found:', user.email);
 
         // Check if user is active
         if (!user.isActive) {
@@ -109,7 +112,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             });
         }
 
-        console.log('✅ User is active');
+        // console.log('✅ User is active');
 
         // Verify password
         const isPasswordValid = await user.comparePassword(password);
@@ -122,7 +125,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
             });
         }
 
-        console.log('✅ Password valid');
+        // console.log('✅ Password valid');
 
         // Update last login
         user.lastLogin = new Date();
@@ -133,7 +136,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         req.session.userRole = user.role.slug;
         req.session.sessionVersion = user.sessionVersion || 1;
 
-        console.log('✅ Session created');
+        // console.log('✅ Session created');
 
         // Remove password from response
         const userResponse = user.toObject();
@@ -152,7 +155,7 @@ router.post('/login', validateLogin, handleValidationErrors, async (req, res) =>
         //     redirectUrl = '/index'; // Default dashboard
         // }
 
-        console.log('✅ Login successful, redirecting to:', redirectUrl);
+        // console.log('✅ Login successful, redirecting to:', redirectUrl);
 
         res.json({
             success: true,

@@ -5,7 +5,7 @@
 			<a href="/media/library" class="btn btn-primary btn-sm">
 				<i class="bi bi-grid-3x3-gap me-1"></i> Media Library
 			</a>
-			<input id="fileInput" class="d-none" type="file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+			<input id="fileInput" class="d-none" type="file" accept="image/*,video/*"
 				multiple>
 		</div>
 	</nav>
@@ -116,10 +116,7 @@
 			var allowedExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|avi|mov|pdf|doc|docx|xls|xlsx|mp3|wav)$/i;
 			var allowedMimeTypes = [
 				'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-				'video/mp4', 'video/avi', 'video/quicktime', 'application/pdf',
-				'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-				'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-				'audio/mpeg', 'audio/wav', 'audio/mp3'
+				'video/mp4', 'video/avi', 'video/quicktime'
 			];
 			
 			// Check file size
@@ -129,7 +126,7 @@
 			
 			// Check file extension
 			if (!allowedExtensions.test(file.name)) {
-				errors.push('File "' + file.name + '" has an invalid extension. Only images, videos, documents, and audio files are allowed.');
+				errors.push('File "' + file.name + '" has an invalid extension. Only images, videos are allowed.');
 			}
 			
 			// Check MIME type
@@ -139,7 +136,7 @@
 								  file.type.indexOf('audio/') === 0;
 			
 			if (!mimetypeAllowed) {
-				errors.push('File "' + file.name + '" has an invalid type (' + file.type + '). Only images, videos, documents, and audio files are allowed.');
+				errors.push('Only images, videos are allowed.');
 			}
 			
 			return errors;
@@ -238,7 +235,7 @@
 							successMsg.textContent = 'Upload complete!';
 							meta.appendChild(successMsg);
 
-							showToast('✅ File uploaded successfully!', 'success');
+							showToast('File uploaded successfully!', 'success');
 						} else {
 							handleUploadError(item, bar, response.message || 'Upload failed');
 						}
