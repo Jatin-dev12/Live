@@ -412,8 +412,21 @@ class MediaPicker {
             return `<img src="${item.src}" class="${className}" style="${style}" alt="${item.name}">`;
         }
         
+        if (item.type === 'video') {
+            const videoStyle = size === 'small' ? 'width: 100%; height: 100%; object-fit: cover;' : 'height: 120px; width: 100%; object-fit: cover;';
+            const playIconSize = size === 'small' ? 'fs-6' : 'fs-3';
+            
+            return `<div class="video-thumbnail-container position-relative ${className}" style="${style}">
+                        <video class="video-thumbnail" muted preload="metadata" style="${videoStyle}">
+                            <source src="${item.src}#t=1" type="${item.mimeType}">
+                        </video>
+                        <div class="video-play-overlay position-absolute top-50 start-50 translate-middle">
+                            <i class="bi bi-play-circle-fill ${playIconSize} text-white" style="text-shadow: 0 0 10px rgba(0,0,0,0.5);"></i>
+                        </div>
+                    </div>`;
+        }
+        
         const iconMap = {
-            video: 'bi-camera-video-fill text-info',
             audio: 'bi-music-note-beamed text-success',
             pdf: 'bi-file-earmark-pdf-fill text-danger',
             doc: 'bi-file-earmark-word-fill text-primary'
@@ -582,29 +595,21 @@ class MediaPicker {
         ];
         
         files.forEach((file, index) => {
-            // Check file size
-
+            // Check file type first (images and videos only for media picker)
             if (!(file.type.startsWith("image/") || file.type.startsWith("video/"))) {
-                errors.push(`"${file.name}" is not allowed. Only images and videos can be uploaded.`);
-                return;
+                errors.push(`File "${file.name}" has an invalid type. Only images and videos are allowed.`);
+                return; // Skip other checks for this file
             }
+            
+            // Check file size
             if (file.size > maxFileSize) {
                 errors.push(`File "${file.name}" is too large (${this.formatFileSize(file.size)}). Maximum size is 10MB.`);
             }
             
-            // Check file extension
-            if (!allowedExtensions.test(file.name)) {
-                errors.push(`File "${file.name}" has an invalid extension. Only images, videos, documents, and audio files are allowed.`);
-            }
-            
-            // Check MIME type
-            const mimetypeAllowed = allowedMimeTypes.includes(file.type) || 
-                                  file.type.startsWith('image/') || 
-                                  file.type.startsWith('video/') || 
-                                  file.type.startsWith('audio/');
-            
-            if (!mimetypeAllowed) {
-                errors.push(`File "${file.name}" has an invalid type (${file.type}). Only images, videos, documents, and audio files are allowed.`);
+            // Check file extension (only for images and videos)
+            const imageVideoExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|avi|mov)$/i;
+            if (!imageVideoExtensions.test(file.name)) {
+                errors.push(`File "${file.name}" has an invalid extension. Only image and video files are allowed.`);
             }
         });
         

@@ -843,6 +843,85 @@
     max-width: 100% !important;
     height: auto !important;
 }
+
+/* Media Library Button Styles */
+/* .media-library-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.media-library-btn:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+} */
+
+/* WordPress-style Image Size Classes */
+.ck-content .wp-image {
+    height: auto;
+    max-width: 100%;
+}
+
+.ck-content .size-thumbnail {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.ck-content .size-medium {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.ck-content .size-medium_large {
+    max-width: 768px;
+    height: auto;
+}
+
+.ck-content .size-large {
+    max-width: 1024px;
+    max-height: 1024px;
+}
+
+.ck-content .size-full {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Image Size Selection Modal Styles */
+.image-size-options .form-check-label {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.image-size-options .form-check-label:hover {
+    background-color: #f8f9fa;
+}
+
+.image-size-options .form-check-input:checked + .form-check-label {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.size-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-images-preview {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/ckeditor.js"></script>
@@ -868,91 +947,260 @@ window.ckEditorFallback = function() {
     // CKEditor 5 instances storage
     let editorInstances = {};
     
-    // Custom upload adapter for CKEditor
-    class MyUploadAdapter {
-        constructor(loader) {
-            this.loader = loader;
+    // Upload functionality removed - users must use media library for all images
+
+    // WordPress-style image size options
+    const imageSizeOptions = {
+        'thumbnail': { width: 150, height: 150, label: 'Thumbnail (150x150)' },
+        'medium': { width: 300, height: 300, label: 'Medium (300x300)' },
+        'medium_large': { width: 768, height: 0, label: 'Medium Large (768px width)' },
+        'large': { width: 1024, height: 1024, label: 'Large (1024x1024)' },
+        'full': { width: 0, height: 0, label: 'Full Size (Original)' }
+    };
+
+    // Function to generate image with size styling
+    function getImageWithSizeStyle(originalUrl, sizeKey, alt, mediaId) {
+        const size = imageSizeOptions[sizeKey];
+        
+        if (sizeKey === 'full' || !size) {
+            return '<img src="' + originalUrl + '" alt="' + alt + '" class="wp-image-' + mediaId + '" />';
         }
+        
+        let style = '';
+        let className = 'wp-image-' + mediaId + ' size-' + sizeKey;
+        
+        // Add size constraints
+        if (size.width > 0 && size.height > 0) {
+            style = 'max-width: ' + size.width + 'px; max-height: ' + size.height + 'px; width: auto; height: auto;';
+        } else if (size.width > 0) {
+            style = 'max-width: ' + size.width + 'px; width: auto; height: auto;';
+        } else if (size.height > 0) {
+            style = 'max-height: ' + size.height + 'px; width: auto; height: auto;';
+        }
+        
+        return '<img src="' + originalUrl + '" alt="' + alt + '" class="' + className + '" style="' + style + '" />';
+    }
 
-        upload() {
-            return this.loader.file.then(file => new Promise((resolve, reject) => {
-                console.log('Starting file upload:', file.name);
+    // Function to show WordPress-style image size selection modal
+    function showImageSizeModal(selectedImages, callback) {
+        const modalId = 'imageSizeModal_' + Math.random().toString(36).substr(2, 9);
+        
+        // Build selected images HTML
+        let selectedImagesHtml = '';
+        selectedImages.forEach(function(img) {
+            selectedImagesHtml += '<div class="d-flex align-items-center mb-2 p-2 border rounded">' +
+                '<img src="' + img.src + '" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">' +
+                '<div class="flex-grow-1">' +
+                '<div class="fw-medium text-truncate">' + img.name + '</div>' +
+                '<small class="text-muted">' + (img.title || '') + '</small>' +
+                '</div>' +
+                '</div>';
+        });
+        
+        // Build size options HTML
+        let sizeOptionsHtml = '';
+        Object.entries(imageSizeOptions).forEach(function([key, size]) {
+            const checked = key === 'medium' ? 'checked' : '';
+            const dimensions = size.width > 0 || size.height > 0 ? 
+                (size.width || 'auto') + ' × ' + (size.height || 'auto') : 
+                'Original dimensions';
+            
+            sizeOptionsHtml += '<div class="form-check mb-2">' +
+                '<input class="form-check-input" type="radio" name="imageSize" id="size_' + key + '" value="' + key + '" ' + checked + '>' +
+                '<label class="form-check-label d-flex justify-content-between align-items-center" for="size_' + key + '">' +
+                '<span>' + size.label + '</span>' +
+                '<small class="text-muted">' + dimensions + '</small>' +
+                '</label>' +
+                '</div>';
+        });
+        
+        const modalHTML = '<div class="modal fade" id="' + modalId + '" tabindex="-1" aria-hidden="true">' +
+            '<div class="modal-dialog modal-lg">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<h5 class="modal-title">Insert Images - Choose Size</h5>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+            '</div>' +
+            '<div class="modal-body">' +
+            '<div class="row">' +
+            '<div class="col-md-6">' +
+            '<h6 class="mb-3">Selected Images (' + selectedImages.length + ')</h6>' +
+            '<div class="selected-images-preview" style="max-height: 300px; overflow-y: auto;">' +
+            selectedImagesHtml +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<h6 class="mb-3">Image Size Options</h6>' +
+            '<div class="image-size-options">' +
+            sizeOptionsHtml +
+            '</div>' +
+            '<div class="mt-4">' +
+            '<h6 class="mb-2">Preview</h6>' +
+            '<div class="size-preview-container border rounded p-3 text-center" style="min-height: 150px; background-color: #f8f9fa;">' +
+            '<img id="sizePreviewImage" src="' + selectedImages[0].src + '" class="img-fluid" style="max-width: 200px; max-height: 150px; object-fit: contain;">' +
+            '<div class="mt-2">' +
+            '<small class="text-muted" id="sizePreviewText">Medium (300x300)</small>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="mt-4">' +
+            '<div class="form-check">' +
+            '<input class="form-check-input" type="checkbox" id="linkToFullSize" checked>' +
+            '<label class="form-check-label" for="linkToFullSize">' +
+            'Link to full-size image' +
+            '</label>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>' +
+            '<button type="button" class="btn btn-primary" id="insertImagesBtn">Insert Images</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById(modalId);
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        const modal = document.getElementById(modalId);
+        const bsModal = new bootstrap.Modal(modal);
+        
+        // Handle size selection change
+        modal.querySelectorAll('input[name="imageSize"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedSize = this.value;
+                const sizeInfo = imageSizeOptions[selectedSize];
+                const previewImg = modal.querySelector('#sizePreviewImage');
+                const previewText = modal.querySelector('#sizePreviewText');
                 
-                const formData = new FormData();
-                formData.append('file', file);
+                // Update preview image (keep original URL but update styling)
+                previewImg.src = selectedImages[0].src;
+                
+                // Update preview text
+                previewText.textContent = sizeInfo.label;
+                
+                // Update preview image style based on size
+                if (selectedSize === 'thumbnail') {
+                    previewImg.style.maxWidth = '150px';
+                    previewImg.style.maxHeight = '150px';
+                } else if (selectedSize === 'medium') {
+                    previewImg.style.maxWidth = '200px';
+                    previewImg.style.maxHeight = '200px';
+                } else {
+                    previewImg.style.maxWidth = '200px';
+                    previewImg.style.maxHeight = '150px';
+                }
+            });
+        });
+        
+        // Handle insert button click
+        modal.querySelector('#insertImagesBtn').addEventListener('click', function() {
+            const selectedSize = modal.querySelector('input[name="imageSize"]:checked').value;
+            const linkToFullSize = modal.querySelector('#linkToFullSize').checked;
+            
+            callback(selectedImages, selectedSize, linkToFullSize);
+            bsModal.hide();
+        });
+        
+        // Clean up modal when hidden
+        modal.addEventListener('hidden.bs.modal', function() {
+            modal.remove();
+        });
+        
+        // Show modal
+        bsModal.show();
+    }
 
-                $.ajax({
-                    url: '/api/upload-basic',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    xhr: function() {
-                        const xhr = new window.XMLHttpRequest();
-                        // Upload progress
-                        xhr.upload.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                const percentComplete = evt.loaded / evt.total;
-                                console.log('Upload progress:', Math.round(percentComplete * 100) + '%');
-                            }
-                        }, false);
-                        return xhr;
-                    },
-                    success: function(result) {
-                        console.log('Upload success response:', result);
-                        if (result.success && result.url) {
-                            let imageUrl = result.url;
+    // Function to add media library button next to CKEditor instances
+    function addMediaLibraryButton(editorElement, editorInstance) {
+        // Check if button already exists
+        if (editorElement.parentNode.querySelector('.media-library-btn')) {
+            return;
+        }
+        
+        // Create media library button
+        const mediaBtn = document.createElement('button');
+        mediaBtn.type = 'button';
+        mediaBtn.className = 'btn btn-sm btn-outline-primary media-library-btn mb-3';
+        mediaBtn.innerHTML = '<i class="bi bi-images me-1"></i>Add Images';
+        
+        // Add click handler
+        mediaBtn.addEventListener('click', function() {
+            // Create media picker instance
+            const mediaPicker = new MediaPicker({
+                multiple: true,
+                allowedTypes: ['image'],
+                title: 'Select Images from Media Library',
+                buttonText: 'Continue',
+                onSelect: (selectedMedia) => {
+                    const images = Array.isArray(selectedMedia) ? selectedMedia : [selectedMedia];
+                    
+                    // Show WordPress-style size selection modal
+                    showImageSizeModal(images, function(selectedImages, sizeKey, linkToFullSize) {
+                        // Insert selected images with chosen size into CKEditor
+                        selectedImages.forEach(media => {
+                            let imageUrl = media.src;
                             
                             // Ensure URL starts with / for absolute path
                             if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
                                 imageUrl = '/' + imageUrl;
                             }
                             
-                            // Construct full URL for CKEditor
-                            const fullUrl = window.location.origin + imageUrl;
-                            console.log('Using full image URL:', fullUrl);
+                            // Get the full original URL
+                            const fullOriginalUrl = window.location.origin + imageUrl;
                             
-                            // Test if image is accessible
-                            const testImg = new Image();
-                            testImg.onload = function() {
-                                console.log('Image loaded successfully, returning full URL:', fullUrl);
-                                resolve({
-                                    default: fullUrl
+                            // Generate image HTML with size styling
+                            const imgTag = getImageWithSizeStyle(fullOriginalUrl, sizeKey, media.alt || media.name || '', media.id || '');
+                            
+                            // Prepare image HTML with optional link to full size
+                            let imgHtml;
+                            if (linkToFullSize && sizeKey !== 'full') {
+                                imgHtml = '<a href="' + fullOriginalUrl + '" target="_blank">' + imgTag + '</a>';
+                            } else {
+                                imgHtml = imgTag;
+                            }
+                            
+                            // Insert image into editor
+                            if (editorInstance && editorInstance.model) {
+                                // CKEditor 5 - insert as HTML
+                                editorInstance.model.change(writer => {
+                                    const viewFragment = editorInstance.data.processor.toView(imgHtml);
+                                    const modelFragment = editorInstance.data.toModel(viewFragment);
+                                    editorInstance.model.insertContent(modelFragment, editorInstance.model.document.selection);
                                 });
-                            };
-                            testImg.onerror = function() {
-                                console.error('Image failed to load:', fullUrl);
-                                reject('Uploaded image is not accessible at: ' + fullUrl);
-                            };
-                            testImg.src = fullUrl;
-                            
-                        } else {
-                            console.error('Upload failed:', result);
-                            reject(result.message || 'Upload failed - no URL returned');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Upload AJAX error:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
+                            } else if (window.CKEDITOR && window.CKEDITOR.instances && window.CKEDITOR.instances[editorElement.id]) {
+                                // CKEditor 4 fallback
+                                const ckEditor4 = window.CKEDITOR.instances[editorElement.id];
+                                ckEditor4.insertHtml(imgHtml);
+                            } else {
+                                // Fallback: insert at cursor position in textarea
+                                const cursorPos = editorElement.selectionStart;
+                                const textBefore = editorElement.value.substring(0, cursorPos);
+                                const textAfter = editorElement.value.substring(cursorPos);
+                                editorElement.value = textBefore + imgHtml + textAfter;
+                                editorElement.focus();
+                                editorElement.setSelectionRange(cursorPos + imgHtml.length, cursorPos + imgHtml.length);
+                            }
                         });
-                        reject('Upload failed: ' + error);
-                    }
-                });
-            }));
-        }
-
-        abort() {
-            console.log('Upload aborted');
-        }
-    }
-
-    function MyCustomUploadAdapterPlugin(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-            return new MyUploadAdapter(loader);
-        };
+                    });
+                }
+            });
+            
+            // Open the media picker
+            mediaPicker.open();
+        });
+        
+        // Insert button after the editor
+        const editorContainer = editorElement.closest('.ck-editor') || editorElement.parentNode;
+        editorContainer.parentNode.insertBefore(mediaBtn, editorContainer.nextSibling);
     }
 
     // Initialize CKEditor 5
@@ -1056,9 +1304,10 @@ window.ckEditorFallback = function() {
                 toolbarItems.push('link');
             }
             
-            if (Image && ImageUpload && FileRepository) {
-                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, ImageUpload, FileRepository);
-                toolbarItems.push('uploadImage');
+            // Add Image display plugins (without upload functionality)
+            if (Image) {
+                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar);
+                // Note: No uploadImage button - users must use media library
             }
             
             toolbarItems.push('|', 'undo', 'redo');
@@ -1070,6 +1319,10 @@ window.ckEditorFallback = function() {
                 plugins: plugins,
                 toolbar: {
                     items: toolbarItems
+                },
+                // Disable drag and drop file uploads - force users to use media library
+                simpleUpload: {
+                    uploadUrl: null
                 },
                     heading: {
                         options: [
@@ -1122,10 +1375,7 @@ window.ckEditorFallback = function() {
                     }
             };
             
-            // Add upload adapter only if image upload is available
-            if (Image && ImageUpload && FileRepository) {
-                editorConfig.extraPlugins = [MyCustomUploadAdapterPlugin];
-            }
+            // No upload adapter - users must use media library for images
             
             // Initialize CKEditor 5
             ClassicEditor
@@ -1134,6 +1384,9 @@ window.ckEditorFallback = function() {
                     console.log('CKEditor initialized successfully for:', textarea.id);
                     console.log('Available commands:', Object.keys(editor.commands._commands));
                     editorInstances[textarea.id] = editor;
+                    
+                    // Add media library button
+                    addMediaLibraryButton(textarea, editor);
                 })
                 .catch(error => {
                     console.error('CKEditor initialization error:', error);
@@ -1151,6 +1404,9 @@ window.ckEditorFallback = function() {
                         .then(editor => {
                             console.log('Minimal CKEditor initialized for:', textarea.id);
                             editorInstances[textarea.id] = editor;
+                            
+                            // Add media library button
+                            addMediaLibraryButton(textarea, editor);
                         })
                         .catch(minimalError => {
                             console.error('Even minimal CKEditor failed:', minimalError);
@@ -1174,8 +1430,8 @@ window.ckEditorFallback = function() {
                     { name: 'styles', items: ['Format', 'FontSize'] },
                     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
                     { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
-                    { name: 'links', items: ['Link', 'Unlink'] },
-                    { name: 'insert', items: ['Image'] }
+                    { name: 'links', items: ['Link', 'Unlink'] }
+                    // Note: Image button removed - users must use media library
                 ],
                 format_tags: 'p;h1;h2;h3;h4;h5;h6',
                 fontSize_sizes: '8/8px;9/9px;10/10px;11/11px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;36/36px;48/48px;72/72px',
@@ -1183,7 +1439,10 @@ window.ckEditorFallback = function() {
                 height: 150,
                 removeButtons: '',
                 allowedContent: true,
-                versionCheck: false
+                versionCheck: false,
+                // Disable file uploads - force users to use media library
+                filebrowserUploadUrl: null,
+                filebrowserImageUploadUrl: null
             });
             
             editorInstances[textarea.id] = {
@@ -1193,6 +1452,9 @@ window.ckEditorFallback = function() {
             };
             
             console.log('CKEditor 4 initialized successfully for:', textarea.id);
+            
+            // Add media library button for CKEditor 4
+            addMediaLibraryButton(textarea, null);
         } else {
             console.error('CKEditor 4 not available');
         }

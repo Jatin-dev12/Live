@@ -301,8 +301,9 @@
                         // User is now active - show toggle-on icon (warning color to deactivate)
                         statusBadge.removeClass('bg-danger-100 text-danger-600').addClass('bg-success-100 text-success-600');
                         statusBadge.html('<i class="ri-check-line me-1"></i> Active');
-                        button.html('<iconify-icon icon="mdi:toggle-switch" class="icon text-xl"></iconify-icon>');
-                        button.removeClass('bg-success-focus bg-hover-success-200 text-success-600').addClass('text-warning-600');
+                        button.html('<iconify-icon icon="mdi:toggle-switch" class="icon fs-2"></iconify-icon>');
+                        button.removeClass('text-warning-600');
+                        button.addClass('bg-success-focus bg-hover-success-200 text-success-600');
                         button.attr('title', 'Deactivate User');
                         row.removeClass('table-danger');
                     } else {
@@ -310,7 +311,7 @@
                         statusBadge.removeClass('bg-success-100 text-success-600').addClass('bg-danger-100 text-danger-600');
                         statusBadge.html('<i class="ri-close-line me-1"></i> Inactive');
                         button.html('<iconify-icon icon="mdi:toggle-switch-off" class="icon fs-2"></iconify-icon>');
-                        button.removeClass('text-warning-600').addClass('bg-success-focus bg-hover-success-200 text-success-600');
+                        button.addClass('bg-success-focus bg-hover-success-200 text-success-600 text-warning-600');
                         button.attr('title', 'Activate User');
                         row.addClass('table-danger');
                     }

@@ -50,19 +50,15 @@
 			errors.push('File "' + file.name + '" is too large (' + bytesToSize(file.size) + '). Maximum size is 10MB.');
 		}
 		
-		// Check file extension
-		if (!allowedExtensions.test(file.name)) {
-			errors.push('File "' + file.name + '" has an invalid extension. Only images, videos, documents, and audio files are allowed.');
-		}
-		
-		// Check MIME type
+		// Check file type (extension and MIME type together to avoid duplicates)
+		var extensionValid = allowedExtensions.test(file.name);
 		var mimetypeAllowed = allowedMimeTypes.indexOf(file.type) !== -1 || 
 							  file.type.indexOf('image/') === 0 || 
 							  file.type.indexOf('video/') === 0 || 
 							  file.type.indexOf('audio/') === 0;
 		
-		if (!mimetypeAllowed) {
-			errors.push('File "' + file.name + '" has an invalid type (' + file.type + '). Only images, videos, documents, and audio files are allowed.');
+		if (!extensionValid || !mimetypeAllowed) {
+			errors.push('File "' + file.name + '" has an invalid file type. Only images, videos, documents, and audio files are allowed.');
 		}
 		
 		return errors;
@@ -115,6 +111,22 @@
 		if (file.type && file.type.startsWith('image/')) {
 			var url = URL.createObjectURL(file);
 			thumb.style.backgroundImage = 'url(' + url + ')';
+		} else if (file.type && file.type.startsWith('video/')) {
+			var url = URL.createObjectURL(file);
+			var video = document.createElement('video');
+			video.src = url;
+			video.muted = true;
+			video.preload = 'metadata';
+			video.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 8px;';
+			
+			// Add play overlay
+			var overlay = document.createElement('div');
+			overlay.className = 'position-absolute top-50 start-50 translate-middle';
+			overlay.innerHTML = '<i class="bi bi-play-circle-fill fs-3 text-white" style="text-shadow: 0 0 10px rgba(0,0,0,0.5);"></i>';
+			
+			thumb.style.position = 'relative';
+			thumb.appendChild(video);
+			thumb.appendChild(overlay);
 		}
 
 		// Create FormData and upload

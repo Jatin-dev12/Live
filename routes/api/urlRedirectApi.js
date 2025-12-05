@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UrlRedirect = require('../../models/UrlRedirect');
+const Page = require('../../models/Page');
 const { isAuthenticated } = require('../../middleware/auth');
 
 // Get all redirects
@@ -49,7 +50,32 @@ router.get('/url-redirects', isAuthenticated, async (req, res) => {
 });
 
 
-// Helper function to validate URL format
+// Helper function to validate that URL exists in database
+async function validateUrlExistsInDatabase(url, fieldName) {
+    if (!url || typeof url !== 'string') {
+        return `${fieldName} is required`;
+    }
+    
+    const trimmed = url.trim();
+    
+    if (!trimmed) {
+        return `${fieldName} cannot be empty`;
+    }
+    
+    // Remove leading slash for slug comparison
+    const slug = trimmed.startsWith('/') ? trimmed.substring(1) : trimmed;
+    
+    // Check if page exists in database
+    const pageExists = await Page.findOne({ slug: slug });
+    
+    if (!pageExists) {
+        return `${fieldName} must be a valid page . Selected URL does not exist.`;
+    }
+    
+    return null; // Valid
+}
+
+// Helper function to validate URL format (kept for backward compatibility)
 function validateUrl(url, fieldName) {
     if (!url || typeof url !== 'string') {
         return `${fieldName} is required`;
@@ -105,8 +131,8 @@ router.post('/', isAuthenticated, async (req, res) => {
     try {
         const { oldUrl, newUrl, redirectType, description, isActive } = req.body;
         
-        // Validate URLs
-        const oldUrlError = validateUrl(oldUrl, 'Old URL');
+        // Validate URLs exist in database
+        const oldUrlError = await validateUrlExistsInDatabase(oldUrl, 'Old URL');
         if (oldUrlError) {
             return res.status(400).json({
                 success: false,
@@ -114,7 +140,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             });
         }
         
-        const newUrlError = validateUrl(newUrl, 'New URL');
+        const newUrlError = await validateUrlExistsInDatabase(newUrl, 'New URL');
         if (newUrlError) {
             return res.status(400).json({
                 success: false,
@@ -189,9 +215,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
-        // Validate URLs if they are being updated
+        // Validate URLs exist in database if they are being updated
         if (oldUrl) {
-            const oldUrlError = validateUrl(oldUrl, 'Old URL');
+            const oldUrlError = await validateUrlExistsInDatabase(oldUrl, 'Old URL');
             if (oldUrlError) {
                 return res.status(400).json({
                     success: false,
@@ -201,7 +227,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         }
         
         if (newUrl) {
-            const newUrlError = validateUrl(newUrl, 'New URL');
+            const newUrlError = await validateUrlExistsInDatabase(newUrl, 'New URL');
             if (newUrlError) {
                 return res.status(400).json({
                     success: false,

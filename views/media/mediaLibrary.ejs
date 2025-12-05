@@ -1,5 +1,5 @@
 <div class="custom-library-widget">
-   <nav class="navbar navbar-light bg-light border-bottom sticky-top mb-3">
+   <nav class="navbar navbar-light bg-light border-bottom mb-3">
       <div class="container-fluid">
         <!-- <span class="navbar-brand mb-0 h1">Media Library</span> -->
         <span class="navbar-brand mb-0 h1"></span>
@@ -29,19 +29,18 @@
           <option value="all" selected>All media items</option>
           <option value="image">Images</option>
           <option value="video">Videos</option>
-          <option value="pdf">PDF</option>
-          <option value="doc">Documents</option>
+          <!-- <option value="pdf">PDF</option> -->
+          <!-- <option value="doc">Documents</option> -->
         </select>
 
         <select id="filterDate" class="form-select form-select-sm w-auto">
           <option value="all" selected>All dates</option>
-          <option value="2025-09">September 2025</option>
-          <option value="2025-08">August 2025</option>
-          <option value="2025-07">July 2025</option>
+          <!-- Dynamic options will be populated by JavaScript -->
         </select>
 
         <div class="ms-auto d-flex flex-wrap align-items-center gap-2">
           <button id="btnBulk" class="btn btn-outline-secondary btn-sm">Bulk select</button>
+          <button id="btnSelectAll" class="btn btn-outline-secondary btn-sm d-none">Select all</button>
           <span id="bulkCount" class="text-muted small d-none">Selected: 0</span>
           <button id="btnBulkDelete" class="btn btn-primary btn-sm d-none">Delete permanently</button>
           <div class="input-group input-group-sm media-search">
