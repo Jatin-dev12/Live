@@ -151,6 +151,8 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         // If the request contains a sections array, perform a bulk sync for the page
         if (Array.isArray(req.body.sections)) {
             const { pageId, status, sections } = req.body;
+            // console.log('Updating sections for page:', pageId);
+            // console.log('Sections data received:', JSON.stringify(sections, null, 2));
 
             // pageId is required to map sections
             if (!pageId) {

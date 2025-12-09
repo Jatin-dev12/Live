@@ -624,7 +624,7 @@
                     });
 
                     // Clean input on paste/input
-                    fullNameInput.addEventListener('input', function() {
+                    /* fullNameInput.addEventListener('input', function() {
                         let value = this.value;
 
                         // Remove everything except letters & spaces
@@ -637,7 +637,7 @@
                         value = value.trimStart();
 
                         this.value = value;
-                    });
+                    }); */
 
                     // Block paste of invalid characters
                     fullNameInput.addEventListener('paste', function(e) {

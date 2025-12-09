@@ -70,6 +70,25 @@ const contentSchema = new mongoose.Schema({
         image: {
             type: String,
             trim: true
+        },
+        ad: {
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Ad',
+            },
+            image: {
+                type: String,
+                trim: true
+            },
+            link: {
+                type: String,
+                trim: true
+            },
+            target: {
+                type: String,
+                trim: true,
+                default: '_self'
+            }
         }
     },
     // Three column info section

@@ -48,16 +48,14 @@
                         <th scope="col">Id</th>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Media URL</th>
-                        <th scope="col">Ad Type</th>
-                        <th scope="col">Placement ID</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Start Date</th>
-                        <th scope="col">End Date</th>
-                        <!-- <th scope="col">Budget</th>
-                        <th scope="col">Max Impressions</th>
-                        <th scope="col">Max Clicks</th> -->
-                        <!-- <th scope="col">Created By</th> -->
+                        <th scope="col">Media</th>
+                        <!-- <th scope="col">Ad Type</th> -->
+                        <th scope="col">Link</th>
+                        <!-- <th scope="col">Priority</th> -->
+                        <!-- <th scope="col">Placement</th> -->
+                        <!-- <th scope="col">Status</th> -->
+                        <!-- <th scope="col">Start Date</th> -->
+                        <!-- <th scope="col">End Date</th> -->
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -67,19 +65,42 @@
                             <tr data-status="<%= ad.status %>" data-type="<%= ad.ad_type %>">
                                 <td><%= String(index + 1).padStart(2, '0') %></td>
                                 <td class="title-table"><%= ad.title %></td>
-                                <td class="desc-table"><%= ad.description.substring(0, 80) %><%= ad.description.length > 80 ? '...' : '' %></td>
-                                <td class=""><%= ad.media_url %></td>
-                                <td class="text-capitalize"><%= ad.ad_type %></td>
-                                <td class="text-capitalize">
-                                    <% if (ad.page_name && ad.page_section) { %>
-                                        <%= ad.page_name.replace('-', ' ') %> - <%= ad.page_section.replace('-', ' ') %>
-                                    <% } else if (ad.placement_id) { %>
-                                        <%= ad.placement_id.placementId %>
+                                <td class="desc-table"><%= ad.description.substring(0, 50) %><%= ad.description.length > 50 ? '...' : '' %></td>
+                                <td class="text-center">
+                                    <% if (ad.media_url) { %>
+                                        <% if (ad.media_url.includes('.mp4') || ad.media_url.includes('.avi') || ad.media_url.includes('.mov')) { %>
+                                            <iconify-icon icon="material-symbols:videocam" class="text-primary" title="Video"></iconify-icon>
+                                        <% } else { %>
+                                            <!-- <iconify-icon icon="material-symbols:image" class="text-success" title="Image"></iconify-icon> -->
+                                            <img src="<%= ad.media_url %>" width="100px" />
+                                        <% } %>
                                     <% } else { %>
-                                        N/A
+                                        <span class="text-muted">-</span>
                                     <% } %>
                                 </td>
-                                <td>
+                                <!-- <td class="text-capitalize"><%= ad.ad_type %></td> -->
+                                <td class="text-center">
+                                    <% if (ad.link_url) { %>
+                                        <a href="<%= ad.link_url %>" target="_blank" class="btn btn-sm btn-outline-primary" title="<%= ad.link_url %>">
+                                            <iconify-icon icon="material-symbols:link"></iconify-icon>
+                                        </a>
+                                    <% } else { %>
+                                        <span class="text-muted">-</span>
+                                    <% } %>
+                                </td>
+                                <!-- <td class="text-center">
+                                    <span class="badge bg-info text-dark"><%= ad.priority || 1 %></span>
+                                </td> -->
+                                <!-- <td class="text-capitalize">
+                                    <% if (ad.placement_id && ad.placement_id.name) { %>
+                                        <%= ad.placement_id.name %>
+                                    <% } else if (ad.page_name && ad.page_section) { %>
+                                        <%= ad.page_name.replace('-', ' ') %> - <%= ad.page_section.replace('-', ' ') %>
+                                    <% } else { %>
+                                        <span class="text-muted">N/A</span>
+                                    <% } %>
+                                </td> -->
+                                <!-- <td>
                                     <% if (ad.status === 'active') { %>
                                         <span class="badge custom-badge badge-outline-success">Active</span>
                                     <% } else if (ad.status === 'paused') { %>
@@ -91,16 +112,18 @@
                                     <% } else if (ad.status === 'rejected') { %>
                                         <span class="badge custom-badge badge-outline-dark">Rejected</span>
                                     <% } %>
-                                </td>
-                                <td class=""><%= new Date(ad.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
-                                <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                                </td> -->
+                                <!-- <td class=""><%= new Date(ad.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td> -->
+                                <!-- <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td> -->
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <a href="/ads/edit-ad/<%= ad._id %>" class="btn btn-sm btn-outline-primary" title="Edit Ad">
+                                            <iconify-icon icon="material-symbols:edit-outline"></iconify-icon>
+                                        </a>
                                         <button type="button" class="delete-ad-btn btn btn-sm btn-outline-danger"
                                                 data-ad-id="<%= ad._id %>"
                                                 data-ad-title="<%= ad.title %>"
                                                 title="Delete Ad">
-                                            <!-- <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon> -->
                                              <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
                                         </button>
                                     </div>
@@ -109,7 +132,7 @@
                         <% }); %>
                     <% } else { %>
                         <tr>
-                            <td colspan="10" class="text-center py-4">
+                            <td colspan="12" class="text-center py-4">
                                 <div class="text-muted">
                                     <iconify-icon icon="mdi:advertisement-off" class="text-4xl mb-2"></iconify-icon>
                                     <p>No ads found. <a href="/ads/add-ad">Create your first ad</a></p>
@@ -282,7 +305,7 @@
             if ($('.no-results-row').length === 0) {
                 $('#adsTableBody').append(
                     '<tr class="no-results-row">' +
-                    '<td colspan="10" class="text-center py-4">' +
+                    '<td colspan="12" class="text-center py-4">' +
                     '<div class="text-muted">' +
                     '<iconify-icon icon="mdi:magnify-close" class="text-4xl mb-2"></iconify-icon>' +
                     '<p>No ads found matching your filters</p>' +

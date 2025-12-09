@@ -20,7 +20,7 @@ const adSchema = new mongoose.Schema({
     },
     ad_type: {
         type: String,
-        required: [true, 'Ad type is required'],
+        required: [false, 'Ad type is required'],
         lowercase: true,
         trim: true
     },
@@ -37,16 +37,41 @@ const adSchema = new mongoose.Schema({
     page_section: {
         type: String,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        required: false
     },
     placement: {
         type: String,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        required: false
+    },
+    link_url: {
+        type: String,
+        trim: true,
+        validate: {
+            validator: function(v) {
+                if (!v) return true; // Optional field
+                return /^https?:\/\/.+/.test(v);
+            },
+            message: 'Link URL must be a valid HTTP/HTTPS URL'
+        }
+    },
+    link_target: {
+        type: String,
+        enum: ['_self', '_blank'],
+        default: '_blank'
+    },
+    priority: {
+        type: Number,
+        min: [1, 'Priority must be at least 1'],
+        max: [100, 'Priority cannot exceed 100'],
+        default: 1,
+        required: false
     },
     status: {
         type: String,
-        required: true,
+        required: false,
         enum: {
             values: ['active', 'paused', 'expired', 'pending', 'rejected'],
             message: 'Status must be active, paused, expired, pending, or rejected'
@@ -55,11 +80,11 @@ const adSchema = new mongoose.Schema({
     },
     start_date: {
         type: Date,
-        required: [true, 'Start date is required']
+        required: [false, 'Start date is required']
     },
     end_date: {
         type: Date,
-        required: [true, 'End date is required'],
+        required: [false, 'End date is required'],
         validate: {
             validator: function(value) {
                 return value > this.start_date;
@@ -69,19 +94,19 @@ const adSchema = new mongoose.Schema({
     },
     budget: {
         type: Number,
-        required: [true, 'Budget is required'],
+        required: [false, 'Budget is required'],
         min: [0, 'Budget cannot be negative'],
         default: 0
     },
     max_impressions: {
         type: Number,
-        required: [true, 'Max impressions is required'],
+        required: [false, 'Max impressions is required'],
         min: [0, 'Max impressions cannot be negative'],
         default: 0
     },
     max_clicks: {
         type: Number,
-        required: [true, 'Max clicks is required'],
+        required: [false, 'Max clicks is required'],
         min: [0, 'Max clicks cannot be negative'],
         default: 0
     },

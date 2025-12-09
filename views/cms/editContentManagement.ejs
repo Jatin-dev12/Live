@@ -161,19 +161,38 @@
                                                 </div>
                                                 
                                                 <div class="mb-3">
-                                                    <label class="form-label fw-bold text-neutral-900">Hero Image</label>
-                                                    <p class="text-muted small mb-3">Choose from your media library or upload a new image</p>
+                                                    <label class="form-label fw-bold text-neutral-900">AD Image</label>
+                                                    <p class="text-muted small mb-3">Select an advertisement to display</p>
                                                     
-                                                    <!-- WordPress-style Media Picker -->
+                                                    <!-- AD Image Dropdown with Preview -->
+                                                    <select class="form-control border border-neutral-200 radius-8 ad-image-select" 
+                                                            name="adImage" data-id="<%= section.heroSection?.ad?.id %>"
+                                                            data-current-value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
+                                                        <option value="">-- Select Advertisement --</option>
+                                                    </select>
+
+                                                    <!-- AD Preview -->
+                                                    <div class="ad-preview-container mt-3" style="display: none;">
+                                                        <div class="card">
+                                                            <div class="card-body p-3">
+                                                                <div class="d-flex align-items-center gap-3">
+                                                                    <img class="ad-preview-image" src="" alt="AD Preview" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                                                    <div class="ad-preview-details">
+                                                                        <h6 class="ad-preview-title mb-1"></h6>
+                                                                        <p class="ad-preview-description text-muted small mb-0"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
                                                     <input type="hidden" 
-                                                           class="hero-image-input" 
-                                                           name="heroImage" 
-                                                           value="<%= section.heroSection?.image || '' %>"
-                                                           data-media-picker="true"
-                                                           data-media-picker-types="image"
-                                                           data-media-picker-title="Select Hero Image"
-                                                           data-media-picker-button="Select Image">
-                                                    <!-- </div> -->
+                                                           class="ad-image-input" 
+                                                           name="adImage" 
+                                                           value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
+                                                    
+                                                    <!-- Debug button to check ad data -->
+                                                    <!-- <button type="button" class="btn btn-sm btn-info mt-2 debug-ad-btn">Debug Ad Data</button> -->
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
@@ -924,23 +943,40 @@
 }
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/superbuild/ckeditor.js"></script>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
 
 <!-- Alternative CKEditor build with more plugins -->
 <script>
 // Fallback to CKEditor 4 if CKEditor 5 plugins are not available
 window.ckEditorFallback = function() {
-    console.log('Loading CKEditor 4 as fallback...');
+    // console.log('Loading CKEditor 4 as fallback...');
     const script = document.createElement('script');
-    script.src = 'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js';
+    script.src = 'https://cdn.ckeditor.com/4.22.1/full/ckeditor.js';
     document.head.appendChild(script);
     
     script.onload = function() {
-        console.log('CKEditor 4 loaded as fallback');
+        // console.log('CKEditor 4 loaded as fallback');
         initCKEditor4();
     };
 };
+</script>
+
+<!-- Pass ads data to JavaScript -->
+<script>
+    window.adsData = <%- JSON.stringify(ads || []) %>;
+    
+    // Debug: Show what section data is being passed
+    // console.log('🔍 Server-side section data:');
+    <% if (typeof allSections !== 'undefined' && allSections.length > 0) { %>
+        <% allSections.forEach(function(section, index) { %>
+            // console.log('Section <%= index %>:', {
+            //     sectionType: '<%= section.sectionType %>',
+            //     heroSection: <%- JSON.stringify(section.heroSection || {}) %>,
+            //     ad: <%- JSON.stringify(section.heroSection?.ad || null) %>
+            // });
+        <% }); %>
+    <% } %>
 </script>
 
 <% script=`<script>
@@ -1206,7 +1242,7 @@ window.ckEditorFallback = function() {
     // Initialize CKEditor 5
     function initCKEditor() {
         if (typeof window.CKEDITOR === 'undefined') {
-            console.error('CKEditor not loaded');
+            // console.error('CKEditor not loaded');
             return;
         }
         
@@ -1233,7 +1269,12 @@ window.ckEditorFallback = function() {
             ImageStyle,
             ImageToolbar,
             ImageUpload,
-            FileRepository
+            FileRepository,
+            Table,
+            TableToolbar,
+            TableProperties,
+            TableCellProperties,
+            SourceEditing
         } = CKEDITOR;
         
         // Check which plugins are actually available
@@ -1248,10 +1289,15 @@ window.ckEditorFallback = function() {
             Link: !!Link,
             Heading: !!Heading,
             Image: !!Image,
-            ImageUpload: !!ImageUpload
+            ImageUpload: !!ImageUpload,
+            Table: !!Table,
+            TableToolbar: !!TableToolbar,
+            TableProperties: !!TableProperties,
+            TableCellProperties: !!TableCellProperties,
+            SourceEditing: !!SourceEditing
         };
         
-        console.log('Available CKEditor plugins:', availablePlugins);
+        // console.log('Available CKEditor plugins:', availablePlugins);
         
         // Find all textareas with ckeditor-paragraph class
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
@@ -1304,10 +1350,24 @@ window.ckEditorFallback = function() {
                 toolbarItems.push('link');
             }
             
+            // Add Table functionality
+            if (Table && TableToolbar) {
+                plugins.push(Table, TableToolbar);
+                if (TableProperties) plugins.push(TableProperties);
+                if (TableCellProperties) plugins.push(TableCellProperties);
+                toolbarItems.push('|', 'insertTable');
+            }
+            
             // Add Image display plugins (without upload functionality)
             if (Image) {
                 plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar);
                 // Note: No uploadImage button - users must use media library
+            }
+            
+            // Add HTML source code view
+            if (SourceEditing) {
+                plugins.push(SourceEditing);
+                toolbarItems.push('|', 'sourceEditing');
             }
             
             toolbarItems.push('|', 'undo', 'redo');
@@ -1372,6 +1432,15 @@ window.ckEditorFallback = function() {
                                 value: '75'
                             }
                         ]
+                    },
+                    table: {
+                        contentToolbar: [
+                            'tableColumn',
+                            'tableRow',
+                            'mergeTableCells',
+                            'tableCellProperties',
+                            'tableProperties'
+                        ]
                     }
             };
             
@@ -1419,7 +1488,7 @@ window.ckEditorFallback = function() {
     
     // CKEditor 4 fallback functions
     function initCKEditor4ForTextarea(textarea) {
-        console.log('Initializing CKEditor 4 for:', textarea.id);
+        // console.log('Initializing CKEditor 4 for:', textarea.id);
         
         if (typeof CKEDITOR !== 'undefined' && CKEDITOR.replace) {
             // Suppress the version warning
@@ -1430,7 +1499,9 @@ window.ckEditorFallback = function() {
                     { name: 'styles', items: ['Format', 'FontSize'] },
                     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
                     { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
-                    { name: 'links', items: ['Link', 'Unlink'] }
+                    { name: 'links', items: ['Link', 'Unlink'] },
+                    { name: 'insert', items: ['Table'] },
+                    { name: 'tools', items: ['Source'] }
                     // Note: Image button removed - users must use media library
                 ],
                 format_tags: 'p;h1;h2;h3;h4;h5;h6',
@@ -1451,7 +1522,7 @@ window.ckEditorFallback = function() {
                 destroy: () => editor.destroy()
             };
             
-            console.log('CKEditor 4 initialized successfully for:', textarea.id);
+            // console.log('CKEditor 4 initialized successfully for:', textarea.id);
             
             // Add media library button for CKEditor 4
             addMediaLibraryButton(textarea, null);
@@ -1461,7 +1532,7 @@ window.ckEditorFallback = function() {
     }
     
     function initCKEditor4() {
-        console.log('Initializing all CKEditor 4 instances...');
+        // console.log('Initializing all CKEditor 4 instances...');
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
             if (!textarea.id) {
                 textarea.id = 'editor_' + Math.random().toString(36).substr(2, 9);
@@ -1472,14 +1543,14 @@ window.ckEditorFallback = function() {
 
     // Wait for page to load
     window.addEventListener('load', function() {
-        console.log('Page loaded, checking CKEditor availability...');
-        console.log('window.CKEDITOR available:', typeof window.CKEDITOR !== 'undefined');
+        // console.log('Page loaded, checking CKEditor availability...');
+        // console.log('window.CKEDITOR available:', typeof window.CKEDITOR !== 'undefined');
         
         if (typeof window.CKEDITOR !== 'undefined') {
-            console.log('CKEditor 5 UMD build detected, initializing...');
+            // console.log('CKEditor 5 UMD build detected, initializing...');
             setTimeout(initCKEditor, 500);
         } else {
-            console.log('CKEditor 5 not available, trying CKEditor 4...');
+            // console.log('CKEditor 5 not available, trying CKEditor 4...');
             window.ckEditorFallback();
         }
     });
@@ -1942,20 +2013,30 @@ window.ckEditorFallback = function() {
                     const paragraphEditor = $section.find(".hero-paragraph");
                     const editorId = paragraphEditor.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
-                    // Get hero image from media picker
-                    const heroImageInput = $section.find(".hero-image-input");
-                    const heroImageUrl = heroImageInput.val();
+                    // Get ad object from dropdown
+                    const adImageInput = $section.find(".ad-image-input");
+                    const adData = adImageInput.val();
                     
-                    // Save the image URL from media picker as full URL
-                    if (heroImageUrl && heroImageUrl.trim() !== '') {
-                        // Convert relative URL to full URL if needed
-                        if (!heroImageUrl.startsWith('http') && !heroImageUrl.startsWith('data:')) {
-                            sectionData.heroSection.image = window.location.origin + heroImageUrl;
-                        } else {
-                            sectionData.heroSection.image = heroImageUrl;
+                    // Save the ad object
+                    console.log('📋 Processing ad data for form submission:', adData);
+                    if (adData && adData.trim() !== '') {
+                        try {
+                            const adObject = JSON.parse(adData);
+                            sectionData.heroSection.ad = adObject;
+                            console.log('✅ Ad object saved to section:', adObject);
+                        } catch (e) {
+                            console.error('❌ Error parsing ad data:', e);
+                            // Fallback for old format (just image URL)
+                            sectionData.heroSection.ad = {
+                                image: adData,
+                                link: '',
+                                target: '_self'
+                            };
+                            console.log('🔄 Using fallback ad object:', sectionData.heroSection.ad);
                         }
                     } else {
-                        sectionData.heroSection.image = null;
+                        sectionData.heroSection.ad = null;
+                        console.log('⚠️ No ad data found, setting ad to null');
                     }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "left-heading-image-right-text") {
@@ -2156,6 +2237,7 @@ window.ckEditorFallback = function() {
             };
             
             console.log('Complete payload being sent:', payload);
+            console.log('🔍 Hero section data being sent:', payload.sections.find(s => s.sectionType === 'hero-section'));
 
             // Single AJAX call to update everything
             $.ajax({
@@ -2247,20 +2329,29 @@ window.ckEditorFallback = function() {
                     const paragraphEditor2 = $section.find(".hero-paragraph");
                     const editorId2 = paragraphEditor2.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
-                    // Get hero image from media picker
-                    const heroImageInput2 = $section.find(".hero-image-input");
-                    const heroImageUrl2 = heroImageInput2.val();
+                    // Get ad object from dropdown
+                    const adImageInput2 = $section.find(".ad-image-input");
+                    const adData2 = adImageInput2.val();
                     
-                    // Save the image URL from media picker as full URL
-                    if (heroImageUrl2 && heroImageUrl2.trim() !== '') {
-                        // Convert relative URL to full URL if needed
-                        if (!heroImageUrl2.startsWith('http') && !heroImageUrl2.startsWith('data:')) {
-                            sectionData.heroSection.image = window.location.origin + heroImageUrl2;
-                        } else {
-                            sectionData.heroSection.image = heroImageUrl2;
+                    // Save the ad object
+                    if (adData2 && adData2.trim() !== '') {
+                        try {
+                            const adObject2 = JSON.parse(adData2);
+                            sectionData.heroSection.ad = adObject2;
+                            console.log('Ad object saved to section (handler 2):', adObject2);
+                        } catch (e) {
+                            console.error('Error parsing ad data (handler 2):', e);
+                            // Fallback for old format (just image URL)
+                            sectionData.heroSection.ad = {
+                                image: adData2,
+                                link: '',
+                                target: '_self'
+                            };
+                            console.log('Using fallback ad object (handler 2):', sectionData.heroSection.ad);
                         }
                     } else {
-                        sectionData.heroSection.image = null;
+                        sectionData.heroSection.ad = null;
+                        console.log('No ad data found (handler 2), setting ad to null');
                     }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "three-column-info") {
@@ -3054,6 +3145,265 @@ window.ckEditorFallback = function() {
             });
         });
     });
+    
+    // AD Image Dropdown Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load ads for dropdown
+        function loadAdsForDropdown() {
+            // Load ads from server-side data instead of AJAX
+            const adsData = window.adsData || [];
+            console.log('Ads loaded from server:', adsData);
+            populateAdDropdowns(adsData);
+            
+            // Show previews for already selected ads after population
+            setTimeout(function() {
+                $('.ad-image-select').each(function() {
+                    const $select = $(this);
+                    const selectedOption = $select.find('option:selected');
+                    if (selectedOption.val() && selectedOption.val() !== '') {
+                        const title = selectedOption.data('title');
+                        const description = selectedOption.data('description');
+                        const imageUrl = selectedOption.data('image');
+                        if (title && imageUrl) {
+                            console.log('Showing preview for selected ad:', title);
+                            showAdPreview($select, title, description, imageUrl);
+                        }
+                    }
+                });
+            }, 100);
+        }
+        
+        // Populate all AD dropdowns
+        function populateAdDropdowns(ads) {
+            console.log('Populating ad dropdowns with:', ads);
+            $('.ad-image-select').each(function() {
+                const $select = $(this);
+                const currentValue = $select.data('current-value');
+                const dropdownAdId = $select.data('id');
+                console.log('Current value for dropdown:', currentValue);
+                console.log('Type of current value:', typeof currentValue);
+                
+                // Clear existing options except the first one
+                $select.find('option:not(:first)').remove();
+                
+                // Reset selection to default
+                $select.val('');
+                
+                // Add ads as options
+                ads.forEach(function(ad, index) {
+                    console.log('Processing ad ' + (index + 1) + ':', {
+                        id: ad._id,
+                        title: ad.title,
+                        media_url: ad.media_url,
+                        link_url: ad.link_url,
+                        link_target: ad.link_target
+                    });
+                    if (ad.media_url) {
+                        const fullUrl = ad.media_url.startsWith('http') ? ad.media_url : window.location.origin + ad.media_url;
+                        const adObject = {
+                            id: ad._id,
+                            image: fullUrl,
+                            link: ad.link_url || '',
+                            target: ad.link_target || '_self'
+                        };
+                        console.log('Created ad object:', adObject);
+                        
+                        const option = $('<option></option>')
+                            .attr('value', ad._id)
+                            .attr('data-ad-id', ad._id)
+                            .attr('data-title', ad.title)
+                            .attr('data-description', ad.description)
+                            .attr('data-image', fullUrl)
+                            .attr('data-link', ad.link_url || '')
+                            .attr('data-target', ad.link_target || '_self')
+                            .text(ad.title);
+
+                        if (dropdownAdId == ad._id) {
+                            option.prop('selected', true);
+
+                            const adObject = {
+                                id: ad._id,
+                                image: fullUrl,
+                                link: ad.link_url || '',
+                                target: ad.link_target || '_self'
+                            };
+
+                            $select.siblings('.ad-image-input').val(JSON.stringify(adObject));
+
+                            showAdPreview($select, ad.title, ad.description, fullUrl);
+                        }
+                        
+                        // Check if this matches current value
+                        if (currentValue && currentValue.trim() !== '') {
+                            let shouldSelect = false;
+                            let currentAd = null;
+                            
+                            try {
+                                currentAd = JSON.parse(currentValue);
+                                console.log('🔍 Comparing current ad image:', currentAd.image);
+                                console.log('🔍 With dropdown ad image:', fullUrl);
+                                console.log('🔍 Ad media_url:', ad.media_url);
+                                
+                                // Extract filename from URLs for comparison
+                                const currentImageFile = currentAd.image ? currentAd.image.split('/').pop() : '';
+                                const adImageFile = ad.media_url ? ad.media_url.split('/').pop() : '';
+                                const fullUrlFile = fullUrl ? fullUrl.split('/').pop() : '';
+                                
+                                console.log('🔍 Comparing filenames:', {
+                                    current: currentImageFile,
+                                    adFile: adImageFile,
+                                    fullUrlFile: fullUrlFile
+                                });
+                                
+                                // Match by image URL or filename
+                                if (currentAd.image === fullUrl || 
+                                    currentAd.image === ad.media_url ||
+                                    currentImageFile === adImageFile ||
+                                    currentImageFile === fullUrlFile) {
+                                    shouldSelect = true;
+                                    console.log('✅ Match found for ad:', ad.title);
+                                }
+                            } catch (e) {
+                                console.error('❌ Error parsing current value:', e, 'Value:', currentValue);
+                                // Handle old format (just image URL)
+                                if (currentValue === fullUrl || currentValue === ad.media_url) {
+                                    shouldSelect = true;
+                                    console.log('✅ Match found (old format) for ad:', ad.title);
+                                }
+                            }
+                            
+                            if (shouldSelect) {
+                                // option.prop('selected', true);
+                                $select.val(JSON.stringify(adObject));
+                                showAdPreview($select, ad.title, ad.description, fullUrl);
+                                console.log('🎯 Selected ad option for:', ad.title, adObject);
+                                
+                                // Update the hidden input with the current ad object
+                                const $adInput = $select.siblings('.ad-image-input');
+                                $adInput.val(JSON.stringify(adObject));
+                                
+                                // Mark that we found a match
+                                $select.data('match-found', true);
+                            }
+                        }
+                        
+                        $select.append(option);
+                    }
+                });
+                
+                // If no match was found and we have a current value, log it
+                if (currentValue && currentValue.trim() !== '' && !$select.data('match-found')) {
+                    console.log('⚠️ No match found for current value:', currentValue);
+                    console.log('⚠️ Available ads:', ads.map(ad => ({
+                        title: ad.title,
+                        media_url: ad.media_url
+                    })));
+                }
+            });
+        }
+        
+        // Show AD preview
+        function showAdPreview($select, title, description, imageUrl) {
+            const $container = $select.siblings('.ad-preview-container');
+            const $image = $container.find('.ad-preview-image');
+            const $title = $container.find('.ad-preview-title');
+            const $description = $container.find('.ad-preview-description');
+            
+            $image.attr('src', imageUrl);
+            $title.text(title);
+            $description.text(description);
+            $container.show();
+        }
+        
+        // Hide AD preview
+        function hideAdPreview($select) {
+            const $container = $select.siblings('.ad-preview-container');
+            $container.hide();
+        }
+        
+        // Handle AD selection change
+        $(document).on('change', '.ad-image-select', function() {
+            const $select = $(this);
+            const selectedOption = $select.find('option:selected');
+            const $adImageInput = $select.siblings('.ad-image-input');
+            
+            console.log('🔄 Ad selection changed');
+            console.log('Selected option value:', selectedOption.val());
+            console.log('Selected option data:', {
+                title: selectedOption.data('title'),
+                description: selectedOption.data('description'),
+                image: selectedOption.data('image'),
+                link: selectedOption.data('link'),
+                target: selectedOption.data('target')
+            });
+            
+            if (selectedOption.val()) {
+                const title = selectedOption.data('title');
+                const description = selectedOption.data('description');
+                const imageUrl = selectedOption.data('image');
+                const linkUrl = selectedOption.data('link');
+                const linkTarget = selectedOption.data('target');
+                const adId = selectedOption.data('ad-id');
+                
+                // Create ad object with image, link, and target
+                const adObject = {
+                    id: adId,
+                    image: imageUrl,
+                    link: linkUrl,
+                    target: linkTarget
+                };
+                
+                console.log('📦 Created ad object:', adObject);
+                
+                // Update hidden input with ad object
+                $adImageInput.val(JSON.stringify(adObject));
+                console.log('💾 Updated hidden input value:', $adImageInput.val());
+                console.log('💾 Hidden input element found:', $adImageInput.length);
+                
+                // Show preview
+                showAdPreview($select, title, description, imageUrl);
+                
+                showToast('Advertisement selected successfully', 'success');
+            } else {
+                // Clear selection
+                $adImageInput.val('');
+                hideAdPreview($select);
+                console.log('🗑️ Cleared ad selection');
+            }
+        });
+        
+        // Debug button handler
+        $(document).on('click', '.debug-ad-btn', function() {
+            const $section = $(this).closest('.section-block');
+            const $select = $section.find('.ad-image-select');
+            const $input = $section.find('.ad-image-input');
+            
+            console.log('🐛 DEBUG AD DATA:');
+            console.log('Selected option:', $select.find('option:selected').text());
+            console.log('Selected value:', $select.val());
+            console.log('Hidden input value:', $input.val());
+            console.log('Current data-current-value:', $select.data('current-value'));
+            
+            console.log('🔍 ALL DROPDOWN OPTIONS:');
+            $select.find('option').each(function(index) {
+                const $option = $(this);
+                console.log('Option ' + index + ':', {
+                    text: $option.text(),
+                    value: $option.val(),
+                    selected: $option.prop('selected'),
+                    dataImage: $option.data('image')
+                });
+            });
+            
+            console.log('🔍 AVAILABLE ADS DATA:', window.adsData);
+            
+            alert('Check console for detailed ad debug data');
+        });
+        
+        // Load ads on page load
+        loadAdsForDropdown();
+    });
+    
     </script>
     ` %>
 
@@ -3065,10 +3415,10 @@ window.ckEditorFallback = function() {
 <script>
 // Initialize media picker for hero image
 /* document.addEventListener('DOMContentLoaded', function() {
-    // Initialize media picker for hero image input
-    const heroImageInputs = document.querySelectorAll('.hero-image-input');
+    // Initialize media picker for ad image input
+    const adImageInputs = document.querySelectorAll('.ad-image-input');
     
-    heroImageInputs.forEach(input => {
+    adImageInputs.forEach(input => {
         const sectionBlock = input.closest('.section-block');
         const sectionId = sectionBlock ? sectionBlock.dataset.id : 'hero';
         

@@ -93,6 +93,7 @@ router.get('/public/all', async (req, res) => {
                         thumbnail: content.thumbnail,
                         order: content.order,
                         heroSection: content.heroSection,
+                        adImage: content.heroSection?.image || null,
                         threeColumnInfo: content.threeColumnInfo,
                         callOutCards: content.callOutCards,
                         contactSection: content.contactSection,
@@ -245,6 +246,7 @@ router.get('/public/slug/:slug', async (req, res) => {
                     thumbnail: content.thumbnail,
                     order: content.order,
                     heroSection: content.heroSection,
+                    adImage: content.heroSection?.image || null,
                     threeColumnInfo: content.threeColumnInfo,
                     callOutCards: content.callOutCards,
                     contactSection: content.contactSection,
@@ -387,9 +389,33 @@ router.get('/:id/sections', async (req, res) => {
             .populate('updatedBy', 'name email')
             .populate('communityGroups.selectedPages.page', 'name _id slug');
         
-        // Add hero images to community groups selected pages
-        const sectionsWithHeroImages = await Promise.all(
+        // Process sections and modify heroSection structure
+        const sectionsWithAdImages = await Promise.all(
             sections.map(async (section) => {
+                const sectionObj = section.toObject();
+                
+                // For hero sections, create ad object structure
+                if (sectionObj.heroSection) {
+                    // Check if we have the new ad object structure or old image format
+                    if (sectionObj.heroSection.ad) {
+                        // New format - ad object already exists
+                        sectionObj.heroSection.ad = sectionObj.heroSection.ad;
+                    } else if (sectionObj.heroSection.image) {
+                        // Old format - convert image to ad object
+                        sectionObj.heroSection.ad = {
+                            image: sectionObj.heroSection.image,
+                            link: '',
+                            target: '_self'
+                        };
+                    } else {
+                        // No ad data
+                        sectionObj.heroSection.ad = null;
+                    }
+                    
+                    // Remove the old image key
+                    delete sectionObj.heroSection.image;
+                }
+                
                 if (section.sectionType === 'community-groups' && section.communityGroups?.selectedPages) {
                     // Get hero images for each selected page
                     const selectedPagesWithHeroImages = await Promise.all(
@@ -415,11 +441,10 @@ router.get('/:id/sections', async (req, res) => {
                     );
                     
                     // Update the section with hero images
-                    const sectionObj = section.toObject();
                     sectionObj.communityGroups.selectedPages = selectedPagesWithHeroImages;
-                    return sectionObj;
                 }
-                return section.toObject();
+                
+                return sectionObj;
             })
         );
         
@@ -456,8 +481,8 @@ router.get('/:id/sections', async (req, res) => {
                     template: page.template || null
                 },
                 // template: templateData,
-                sections: sectionsWithHeroImages,
-                total: sectionsWithHeroImages.length
+                sections: sectionsWithAdImages,
+                total: sectionsWithAdImages.length
             }
         });
     } catch (error) {

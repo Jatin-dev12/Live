@@ -41,22 +41,21 @@ const upload = multer({
 // Configure multer for dynamic folder uploads (ads, media, etc.)
 const dynamicStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        console.log('Multer destination called with:', {
-            folder: req.body.folder,
-            originalname: file.originalname
-        });
+        // Default to general folder, will be moved later if needed
+        const uploadPath = path.join(__dirname, '../../public/uploads/general');
         
-        const folder = req.body.folder || 'general';
-        const uploadPath = path.join(__dirname, '../../public/uploads', folder);
-        
-        console.log('Upload path:', uploadPath);
+        // console.log('Multer destination (temp):', uploadPath);
         
         // Create directory if it doesn't exist
         if (!fs.existsSync(uploadPath)) {
             console.log('Creating directory:', uploadPath);
-            fs.mkdirSync(uploadPath, { recursive: true });
-        } else {
-            console.log('Directory already exists:', uploadPath);
+            try {
+                fs.mkdirSync(uploadPath, { recursive: true });
+                // console.log('Directory created successfully:', uploadPath);
+            } catch (dirError) {
+                // console.error('Failed to create directory:', dirError);
+                return cb(new Error('Failed to create upload directory'));
+            }
         }
         
         cb(null, uploadPath);
@@ -77,12 +76,12 @@ const dynamicFileFilter = (req, file, cb) => {
         size: file.size
     });
     
-    // Accept images and videos
-    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'];
+    // Accept images only (no videos for ads)
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     
     if (!allowedMimes.includes(file.mimetype)) {
         console.log('File rejected - invalid mimetype:', file.mimetype);
-        return cb(new Error('Only image and video files are allowed!'), false);
+        return cb(new Error('Only image files are allowed!'), false);
     }
     
     console.log('File accepted:', file.originalname);
@@ -114,10 +113,10 @@ function handleMulterError(err, req, res) {
         });
     }
     
-    if (err.message && err.message.includes('Only image and video files are allowed')) {
+    if (err.message && err.message.includes('Only image files are allowed')) {
         return res.status(400).json({
             success: false,
-            message: 'Only image and video files are allowed'
+            message: 'Only image files are allowed'
         });
     }
     
@@ -155,17 +154,43 @@ router.post('/upload', isAuthenticated, (req, res) => {
             }
             
             const folder = req.body.folder || 'general';
+            // console.log('Requested folder:', folder);
+            // console.log('File uploaded to temp location:', req.file.path);
+            
+            // Create target directory if it doesn't exist
+            const targetDir = path.join(__dirname, '../../public/uploads', folder);
+            if (!fs.existsSync(targetDir)) {
+                console.log('Creating target directory:', targetDir);
+                fs.mkdirSync(targetDir, { recursive: true });
+            }
+            
+            // Move file to correct folder
+            const targetPath = path.join(targetDir, req.file.filename);
             const filePath = '/uploads/' + folder + '/' + req.file.filename;
             
-            // Check if file actually exists
-            const fullPath = path.join(__dirname, '../../public', filePath);
-            console.log('Checking file exists at:', fullPath);
+            // console.log('Moving file from:', req.file.path);
+            // console.log('Moving file to:', targetPath);
             
-            if (!fs.existsSync(fullPath)) {
-                console.error('File was not saved properly:', fullPath);
+            try {
+                // Move the file from general to the target folder
+                if (req.file.path !== targetPath) {
+                    fs.renameSync(req.file.path, targetPath);
+                    console.log('File moved successfully to:', targetPath);
+                }
+                
+                // Verify file exists at target location
+                if (!fs.existsSync(targetPath)) {
+                    console.error('File was not moved properly to:', targetPath);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'File upload failed - file not moved to target folder'
+                    });
+                }
+            } catch (moveError) {
+                console.error('Failed to move file:', moveError);
                 return res.status(500).json({
                     success: false,
-                    message: 'File upload failed - file not saved'
+                    message: 'File upload failed - could not move file to target folder'
                 });
             }
             
