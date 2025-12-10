@@ -3,6 +3,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const Page = require('../models/Page');
 const Content = require('../models/Content');
+const Ad = require('../models/Ad');
 
 // List all content
 router.get('/content-management', isAuthenticated, async (req, res) => {
@@ -67,12 +68,30 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
 
         // Get all sections for this page
         const allSections = await Content.find({ page: pageId })
-            .populate('communityGroups.selectedPages.page', 'name _id')
+            .populate('communityGroups.selectedPages.page', 'name _id slug category thumbnail')
             .sort({ order: 1, createdAt: 1 })
             .lean();
             
         // Get all active pages for dropdown
        const allPages = await Page.find({ status: { $in: ['active', 'inactive'] } }).sort({ name: 1 });
+
+        // Get all ads for dropdown (irrespective of status)
+        const allAds = await Ad.find({})
+            .select('title description media_url link_url link_target status')
+            .sort({ title: 1 });
+
+        // Get all media for thumbnail selection
+        const Media = require('../models/Media');
+        const allMedia = await Media.find({ type: 'image' })
+            .select('filename originalName url title alt')
+            .sort({ createdAt: -1 });
+            
+        console.log('🔍 CMS Route - Total ads found:', allAds.length);
+        console.log('🔍 CMS Route - Ads data:', allAds.map(ad => ({
+            title: ad.title,
+            media_url: ad.media_url,
+            status: ad.status
+        })));
 
         
         // Process each section to ensure all fields are present
@@ -96,7 +115,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 heading: section.heroSection?.heading || '',
                 paragraph: section.heroSection?.paragraph || '',
                 ctas: section.heroSection?.ctas || [],
-                image: section.heroSection?.image || ''
+                image: section.heroSection?.image || '',
+                ad: section.heroSection?.ad || null
             },
             threeColumnInfo: {
                 heading: section.threeColumnInfo?.heading || section.customFields?.heading || '',
@@ -132,7 +152,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 heading: '',
                 paragraph: '',
                 ctas: [],
-                image: ''
+                image: '',
+                ad: null
             },
             threeColumnInfo: {
                 columns: []
@@ -162,7 +183,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     heading: section.heroSection?.heading || '',
                     paragraph: section.heroSection?.paragraph || '',
                     ctas: section.heroSection?.ctas || [],
-                    image: section.heroSection?.image || ''
+                    image: section.heroSection?.image || '',
+                    ad: section.heroSection?.ad || null
                 },
                 threeColumnInfo: {
                     ...section.threeColumnInfo,
@@ -186,10 +208,13 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     selectedPages: section.communityGroups?.selectedPages || []
                 }
             })),
-            pages: allPages
+            pages: allPages,
+            ads: allAds,
+            media: allMedia,
+            frontendUrl: process.env.FRONTEND_URL
         };
-        // console.log('---------------------page',page);
-        
+        // console.log('🔍 CMS Route - Response data ads count:', responseData.ads.length);
+        // console.log('🔍 CMS Route - About to render with ads:', responseData.ads.map(ad => ad.title));
         
         return res.render('cms/editContentManagement', responseData);
     } catch (error) {

@@ -11,14 +11,25 @@
                         <!-- Page Selection -->
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Select Page <span class="text-danger">*</span></label>
-                            <select class="form-select" id="pageId" name="page" required>
-                                <% if (pages && pages.length > 0) { %>
-                                    <% pages.forEach(function(page) { %>
-                                        <option value="<%= page._id %>" <%= seo.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %></option>
-                                    <% }); %>
-                                <% } %>
-                            </select>
-                            <small class="text-muted">Select the page for which you want to add SEO</small>
+                            <% if (locals.isPageLocked) { %>
+                                <select class="form-select" id="pageId" name="page" required disabled title="Page is locked and cannot be changed">
+                                    <option value="<%= seo.page._id %>" selected><%= seo.page.name %></option>
+                                </select>
+                                <input type="hidden" name="pageIdHidden" value="<%= seo.page._id %>">
+                                <small class="text-muted">
+                                    <i class="fas fa-lock me-1"></i>
+                                    Page is locked and cannot be changed
+                                </small>
+                            <% } else { %>
+                                <select class="form-select" id="pageId" name="page" required>
+                                    <% if (pages && pages.length > 0) { %>
+                                        <% pages.forEach(function(page) { %>
+                                            <option value="<%= page._id %>" <%= seo.page._id.toString() === page._id.toString() ? 'selected' : '' %>><%= page.name %></option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                                <small class="text-muted">Select the page for which you want to add SEO</small>
+                            <% } %>
                         </div>
 
                         <!-- Meta Title -->
@@ -290,7 +301,7 @@
 
         // Get form data
         const formData = {
-            page: $('#pageId').val(),
+            page: $('#pageId').is(':disabled') ? $('input[name="pageIdHidden"]').val() : $('#pageId').val(),
             metaTitle: $('#metaTitle').val().trim(),
             metaDescription: $('#metaDescription').val().trim(),
             metaKeywords: $('#metaKeywords').val().trim(),

@@ -16,7 +16,7 @@
                             <div class="mb-20">
                                 <label for="fullName" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label>
                                 <input type="text" class="form-control radius-8" id="fullName" name="fullName" value="<%= user.fullName %>" placeholder="Enter Full Name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required autocomplete="off" maxlength="100">
-                                 <small class="text-muted d-block">Maximum 15 characters</small>
+                                 <small class="text-muted d-block">Maximum 50 characters</small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -611,8 +611,8 @@ function validateForm(formData, isPasswordChange) {
     const fullName = formData.get('fullName');
     if (!fullName || fullName.trim().length < 2) {
         errors.push('Full name must be at least 2 characters long');
-    } else if (fullName.trim().length > 15) {
-        errors.push('Full name must not exceed 15 characters');
+    } else if (fullName.trim().length > 50) {
+        errors.push('Full name must not exceed 50 characters');
     }
 
     // Validate email

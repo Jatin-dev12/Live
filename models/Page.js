@@ -15,7 +15,7 @@ const pageSchema = new mongoose.Schema({
     },
     path: {
         type: String,
-        required: true,
+        required: false, // Will be auto-generated in pre-save hook if not provided
         unique: true,
         trim: true
     },
@@ -39,7 +39,7 @@ const pageSchema = new mongoose.Schema({
     template: {
         type: String,
         trim: true,
-        enum: ['', 'home', 'about', 'newsletter', 'legislation', 'membership', 'query'],
+        enum: ['', 'home', 'about', 'newsletter', 'legislation', 'membership', 'query', 'contact'],
         default: ''
     },
     category: {
@@ -47,6 +47,10 @@ const pageSchema = new mongoose.Schema({
         trim: true,
         enum: ['', 'community', 'news', 'events', 'resources'],
         default: ''
+    },
+    thumbnail: {
+        type: String,
+        trim: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -70,12 +74,17 @@ pageSchema.pre('save', function(next) {
             .replace(/^-+|-+$/g, '');
     }
     
-    // Auto-generate path from name if not provided
-    if (!this.path && this.name) {
+    // Auto-generate path from name if not provided or empty
+    if ((!this.path || this.path.trim() === '') && this.name) {
         const pathSlug = this.name.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
         this.path = pathSlug === 'home' ? '/' : `/${pathSlug}`;
+    }
+    
+    // Ensure path is always set
+    if (!this.path) {
+        return next(new Error('Path is required and could not be auto-generated'));
     }
     
     next();

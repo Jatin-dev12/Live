@@ -32,22 +32,22 @@ router.get('/roles-management', isAuthenticated, async (req, res) => {
             slug: { $ne: 'super-admin' }
         }).select('name').sort({ level: 1 }).lean();
         
-        console.log('=== FETCHING USERS FROM DB ===');
-        console.log('Total users found (excluding system accounts):', users.length);
+        // console.log('=== FETCHING USERS FROM DB ===');
+        // console.log('Total users found (excluding system accounts):', users.length);
         
         // Log each user for debugging
-        users.forEach((user, index) => {
-            console.log(`User ${index + 1}:`, {
-                id: user._id,
-                name: user.fullName,
-                email: user.email,
-                role: user.role ? user.role.name : 'No Role',
-                isActive: user.isActive,
-                createdAt: user.createdAt
-            });
-        });
+        // users.forEach((user, index) => {
+        //     console.log(`User ${index + 1}:`, {
+        //         id: user._id,
+        //         name: user.fullName,
+        //         email: user.email,
+        //         role: user.role ? user.role.name : 'No Role',
+        //         isActive: user.isActive,
+        //         createdAt: user.createdAt
+        //     });
+        // });
         
-        console.log('=== SENDING TO TEMPLATE ===');
+        // console.log('=== SENDING TO TEMPLATE ===');
         
         res.render('roles/rolesManagement', {
             title: "Users Management", 

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor Test - HTML Source & Table</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/superbuild/ckeditor.js"></script>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
+</head>
+<body>
+    <div style="max-width: 800px; margin: 50px auto; padding: 20px;">
+        <h1>CKEditor 5 Test - HTML Source Code & Table Features</h1>
+        <p>This test verifies that CKEditor includes HTML source code view and table functionality.</p>
+        
+        <div style="margin: 20px 0;">
+            <label for="editor">Rich Text Editor:</label>
+            <textarea id="editor" class="ckeditor-paragraph">
+                <h2>Sample Content</h2>
+                <p>This is a test paragraph with <strong>bold</strong> and <em>italic</em> text.</p>
+                <ul>
+                    <li>List item 1</li>
+                    <li>List item 2</li>
+                </ul>
+            </textarea>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Look for the <strong>"Source"</strong> button in the toolbar (usually represented by &lt;/&gt; icon)</li>
+                <li>Look for the <strong>"Insert Table"</strong> button in the toolbar (grid icon)</li>
+                <li>Click the Source button to view/edit HTML code</li>
+                <li>Click the Insert Table button to add tables</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const {
+            ClassicEditor,
+            Essentials,
+            Bold,
+            Italic,
+            Underline,
+            Paragraph,
+            List,
+            Link,
+            Heading,
+            Table,
+            TableToolbar,
+            TableProperties,
+            TableCellProperties,
+            SourceEditing
+        } = CKEDITOR;
+
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                plugins: [
+                    Essentials,
+                    Paragraph,
+                    Heading,
+                    Bold,
+                    Italic,
+                    Underline,
+                    List,
+                    Link,
+                    Table,
+                    TableToolbar,
+                    TableProperties,
+                    TableCellProperties,
+                    SourceEditing
+                ],
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'link', '|',
+                        'insertTable', '|',
+                        'sourceEditing', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                table: {
+                    contentToolbar: [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells',
+                        'tableCellProperties',
+                        'tableProperties'
+                    ]
+                },
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                }
+            })
+            .then(editor => {
+                console.log('CKEditor initialized successfully!');
+                console.log('Available commands:', Object.keys(editor.commands._commands));
+                
+                // Check if source editing and table commands are available
+                const hasSourceEditing = editor.commands.has('sourceEditing');
+                const hasInsertTable = editor.commands.has('insertTable');
+                
+                console.log('Source Editing available:', hasSourceEditing);
+                console.log('Insert Table available:', hasInsertTable);
+                
+                if (hasSourceEditing && hasInsertTable) {
+                    console.log('✅ SUCCESS: Both HTML Source Code and Table features are available!');
+                } else {
+                    console.log('❌ ERROR: Some features are missing');
+                    console.log('Missing features:', {
+                        sourceEditing: !hasSourceEditing,
+                        insertTable: !hasInsertTable
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('CKEditor initialization error:', error);
+            });
+    </script>
+</body>
+</html>

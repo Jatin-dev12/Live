@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Media = require('../../models/Media');
 const { isAuthenticated } = require('../../middleware/auth');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -34,11 +35,7 @@ const fileFilter = (req, file, cb) => {
     // Allowed MIME types
     const allowedMimeTypes = [
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-        'video/mp4', 'video/avi', 'video/quicktime',
-        'application/pdf',
-        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'audio/mpeg', 'audio/wav', 'audio/mp3'
+        'video/mp4', 'video/avi', 'video/quicktime'
     ];
     
     const mimetypeAllowed = allowedMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/');
@@ -53,7 +50,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 50 * 1024 * 1024 // 50MB limit
+        fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 // 10MB limit
     },
     fileFilter: fileFilter
 });
@@ -123,10 +120,16 @@ router.post('/upload', isAuthenticated, (req, res) => {
                 uploadedMedia.push(media);
             }
 
+            // Convert URLs to absolute before returning
+            const mediaWithAbsoluteUrls = uploadedMedia.map(media => ({
+                ...media.toObject(),
+                url: toAbsoluteUrl(media.url)
+            }));
+
             res.json({
                 success: true,
                 message: `${uploadedMedia.length} file(s) uploaded successfully`,
-                data: uploadedMedia
+                data: mediaWithAbsoluteUrls
             });
         } catch (error) {
             console.error('Database save error:', error);
@@ -177,9 +180,15 @@ router.get('/list', isAuthenticated, async (req, res) => {
         
         const total = await Media.countDocuments(query);
         
+        // Convert URLs to absolute before returning
+        const mediaWithAbsoluteUrls = media.map(item => ({
+            ...item.toObject(),
+            url: toAbsoluteUrl(item.url)
+        }));
+
         res.json({
             success: true,
-            data: media,
+            data: mediaWithAbsoluteUrls,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
@@ -209,9 +218,15 @@ router.get('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Convert URL to absolute before returning
+        const mediaWithAbsoluteUrl = {
+            ...media.toObject(),
+            url: toAbsoluteUrl(media.url)
+        };
+
         res.json({
             success: true,
-            data: media
+            data: mediaWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Get media error:', error);
@@ -244,10 +259,16 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         
         await media.save();
         
+        // Convert URL to absolute before returning
+        const mediaWithAbsoluteUrl = {
+            ...media.toObject(),
+            url: toAbsoluteUrl(media.url)
+        };
+
         res.json({
             success: true,
             message: 'Media updated successfully',
-            data: media
+            data: mediaWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Update media error:', error);

@@ -3,86 +3,171 @@
         <div class="card">
             <div class="card-body">
                 <form id="editAdForm">
-                    <input type="hidden" id="adId" value="<%= ad._id %>">
+                    <input type="hidden" id="adId" value="">
                     <div class="row gy-3">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label">Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" id="title" class="form-control" value="<%= ad.title %>" required>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="Enter ad title" required>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label class="form-label">Ad Type <span class="text-danger">*</span></label>
                             <select name="ad_type" id="ad_type" class="form-select" required>
-                                <option value="banner" <%= ad.ad_type === 'banner' ? 'selected' : '' %>>Banner</option>
-                                <option value="video" <%= ad.ad_type === 'video' ? 'selected' : '' %>>Video</option>
-                                <option value="native" <%= ad.ad_type === 'native' ? 'selected' : '' %>>Native</option>
-                                <option value="popup" <%= ad.ad_type === 'popup' ? 'selected' : '' %>>Popup</option>
+                                <option value="">Select Ad Type</option>
+                                <option value="banner">Banner</option>
+                                <option value="video">Video</option>
+                                <option value="native">Native</option>
+                                <option value="popup">Popup</option>
+                                <option value="custom">+ Add Custom Ad Type</option>
                             </select>
+                        </div> -->
+
+                        <div class="col-md-6 d-none" id="customAdTypeContainer">
+                            <label class="form-label">Custom Ad Type Name <span class="text-danger">*</span></label>
+                            <input type="text" id="custom_ad_type" class="form-control" placeholder="Enter custom ad type name">
+                            <small class="text-muted">Enter a custom ad type (e.g., "interstitial", "rewarded")</small>
                         </div>
                         
                         <div class="col-md-12">
                             <label class="form-label">Description <span class="text-danger">*</span></label>
-                            <textarea name="description" id="description" class="form-control" rows="4" required><%= ad.description %></textarea>
+                            <textarea name="description" id="description" class="form-control" rows="4" placeholder="Enter ad description..." required></textarea>
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label">Media URL <span class="text-danger">*</span></label>
-                            <input type="text" name="media_url" id="media_url" class="form-control" value="<%= ad.media_url %>" required>
-                            <small class="text-muted">Current media: <%= ad.media_url %></small>
+                            <label class="form-label">Upload Media <span class="text-danger">*</span></label>
+                            
+                            <div class="ad-media-manager border rounded p-3 bg-light">
+                                <!-- Selected Media Preview -->
+                                <div id="selectedMediaPreview" class="selected-media-preview mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="selected-media-thumb" style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid #dee2e6; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                                <img id="selectedMediaImage" src="" alt="Current media" class="w-100 h-100 object-fit-cover" style="display: none;">
+                                                <div id="mediaPlaceholder" class="text-muted" style="font-size: 12px; text-align: center;">
+                                                    <iconify-icon icon="material-symbols:image-outline" style="font-size: 24px; display: block; margin-bottom: 4px;"></iconify-icon>
+                                                    Loading...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h6 class="mb-1" id="selectedMediaName">Current Media</h6>
+                                            <small class="text-muted" id="selectedMediaInfo">Image file</small>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="removeSelectedMedia">
+                                                <iconify-icon icon="material-symbols:edit"></iconify-icon> Change Media
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Media Library Interface -->
+                                <div id="adMediaLibrary" class="d-none">
+                                    <!-- Toolbar -->
+                                    <div class="media-toolbar d-flex flex-wrap align-items-center gap-2 mb-3">
+                                        <button type="button" class="btn btn-primary btn-sm" id="uploadNewMedia">
+                                            <iconify-icon icon="ic:baseline-plus"></iconify-icon> Upload New
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshAdMedia">
+                                            <iconify-icon icon="material-symbols:refresh"></iconify-icon> Refresh
+                                        </button>
+                                        
+                                        <select id="adFilterType" class="form-select form-select-sm w-auto">
+                                            <option value="all">All images</option>
+                                            <option value="image">Images only</option>
+                                        </select>
+
+                                        <div class="ms-auto">
+                                            <div class="input-group input-group-sm">
+                                                <input id="adSearchInput" type="search" class="form-control form-control-sm" placeholder="Search media">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Media Grid -->
+                                    <div id="adMediaGrid" class="ad-media-grid row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2" style="max-height: 300px; overflow-y: auto;">
+                                        <!-- Media items will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" id="media_url" name="media_url" required>
+                            <small class="text-muted">Select or upload an image for your advertisement. Files are stored separately from the main media library.</small>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label">Link URL</label>
+                            <input type="url" name="link_url" id="link_url" class="form-control" placeholder="https://example.com">
+                            <small class="text-muted">Optional: Where should the ad redirect when clicked</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Link Target</label>
+                            <select name="link_target" id="link_target" class="form-select">
+                                <option value="_self">Same Window</option>
+                                <option value="_blank">New Window</option>
+                            </select>
+                        </div>
+
+                        <!-- <div class="col-md-6">
+                            <label class="form-label">Placement <span class="text-danger">*</span></label>
+                            <select name="placement_id" id="placement_id" class="form-select" required>
+                                <option value="">Select Placement</option>
+                            </select>
+                            <small class="text-muted">Select where to display the advertisement</small>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Placement <span class="text-danger">*</span></label>
-                            <select name="placement_id" id="placement_id" class="form-select" required>
-                                <% if (typeof placements !== 'undefined' && placements && placements.length > 0) { %>
-                                    <% placements.forEach(placement => { %>
-                                        <option value="<%= placement._id %>" <%= ad.placement_id && ad.placement_id._id.toString() === placement._id.toString() ? 'selected' : '' %>>
-                                            <%= placement.placementId %> - <%= placement.name %> (<%= placement.pageLocation %>)
-                                        </option>
-                                    <% }); %>
-                                <% } %>
-                            </select>
+                            <label class="form-label">Priority</label>
+                            <input type="number" name="priority" id="priority" class="form-control" placeholder="1" min="1" max="100" value="1">
+                            <small class="text-muted">Higher numbers show first (1-100)</small>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Status <span class="text-danger">*</span></label>
                             <select name="status" id="status" class="form-select" required>
-                                <option value="pending" <%= ad.status === 'pending' ? 'selected' : '' %>>Pending</option>
-                                <option value="active" <%= ad.status === 'active' ? 'selected' : '' %>>Active</option>
-                                <option value="paused" <%= ad.status === 'paused' ? 'selected' : '' %>>Paused</option>
-                                <option value="expired" <%= ad.status === 'expired' ? 'selected' : '' %>>Expired</option>
-                                <option value="rejected" <%= ad.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                                <option value="pending">Pending</option>
+                                <option value="active">Active</option>
+                                <option value="paused">Paused</option>
+                                <option value="expired">Expired</option>
+                                <option value="rejected">Rejected</option>
                             </select>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Start Date <span class="text-danger">*</span></label>
-                            <input type="date" name="start_date" id="start_date" class="form-control" value="<%= new Date(ad.start_date).toISOString().split('T')[0] %>" required>
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">End Date <span class="text-danger">*</span></label>
-                            <input type="date" name="end_date" id="end_date" class="form-control" value="<%= new Date(ad.end_date).toISOString().split('T')[0] %>" required>
+                            <input type="date" name="end_date" id="end_date" class="form-control" required>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Budget ($)</label>
-                            <input type="number" name="budget" id="budget" class="form-control" min="0" step="0.01" value="<%= ad.budget %>">
+                            <input type="number" name="budget" id="budget" class="form-control" placeholder="0.00" min="0" step="0.01" value="0">
                             <small class="text-muted">Leave 0 for unlimited</small>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Max Impressions</label>
-                            <input type="number" name="max_impressions" id="max_impressions" class="form-control" min="0" value="<%= ad.max_impressions %>">
+                            <input type="number" name="max_impressions" id="max_impressions" class="form-control" placeholder="0" min="0" value="0">
                             <small class="text-muted">Leave 0 for unlimited</small>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Max Clicks</label>
-                            <input type="number" name="max_clicks" id="max_clicks" class="form-control" min="0" value="<%= ad.max_clicks %>">
+                            <input type="number" name="max_clicks" id="max_clicks" class="form-control" placeholder="0" min="0" value="0">
                             <small class="text-muted">Leave 0 for unlimited</small>
                         </div>
 
-                        <!-- Analytics Section -->
+                        <div class="col-md-6">
+                            <label class="form-label">Created By Type</label>
+                            <select name="created_by_type" id="created_by_type" class="form-select">
+                                <option value="admin">Admin</option>
+                                <option value="advertiser">Advertiser</option>
+                            </select>
+                        </div>
+
                         <div class="col-12">
                             <hr class="my-3">
                             <h6 class="mb-3">Current Analytics</h6>
@@ -90,18 +175,18 @@
 
                         <div class="col-md-4">
                             <label class="form-label">Current Impressions</label>
-                            <input type="text" class="form-control" value="<%= ad.current_impressions %>" readonly>
+                            <input type="text" class="form-control" id="current_impressions" readonly>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Current Clicks</label>
-                            <input type="text" class="form-control" value="<%= ad.current_clicks %>" readonly>
+                            <input type="text" class="form-control" id="current_clicks" readonly>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Spent Budget ($)</label>
-                            <input type="text" class="form-control" value="<%= ad.spent_budget.toFixed(2) %>" readonly>
-                        </div>
+                            <input type="text" class="form-control" id="spent_budget" readonly>
+                        </div> -->
 
                         <div class="col-12">
                             <button type="submit" class="btn btn-sm btn-primary" id="submitBtn">
@@ -120,12 +205,64 @@
     </div>
 </div>
 
-<% script = `
 <!-- SweetAlert2 CSS and JS -->
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
+<style>
+    .swal-toast-small {
+        font-size: 13px !important;
+    }
+    
+    .ad-media-manager {
+        min-height: 200px;
+    }
+    
+    .ad-media-item {
+        transition: all 0.2s ease;
+    }
+    
+    .ad-media-item:hover {
+        border-color: #0d6efd !important;
+        background-color: #f8f9fa !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .selected-media-thumb {
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .media-thumb img,
+    .media-thumb video {
+        border-radius: 4px;
+    }
+    
+    .ad-media-grid {
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 10px;
+        background: white;
+    }
+    
+    .ad-media-grid:empty::after {
+        content: "No media files found";
+        display: block;
+        text-align: center;
+        color: #6c757d;
+        padding: 2rem;
+    }
+</style>
+
 <script>
+    // Global variables for ad data
+    window.adData = {};
+    let adMediaItems = [];
+    let selectedMedia = null;
+
     // Toast notification function
     function showToast(message, type) {
         const Toast = Swal.mixin({
@@ -134,6 +271,9 @@
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true,
+            customClass: {
+                title: 'swal-toast-small'
+            },
             didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -151,86 +291,480 @@
         });
     }
 
-    // Update end date minimum when start date changes
-    document.getElementById('start_date').addEventListener('change', function() {
-        const startDate = this.value;
-        document.getElementById('end_date').setAttribute('min', startDate);
-        
-        const endDate = document.getElementById('end_date').value;
-        if (endDate && endDate < startDate) {
-            document.getElementById('end_date').value = '';
-        }
+    // Handle Ad Type dropdown change
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('ad_type').addEventListener('change', function() {
+            const customContainer = document.getElementById('customAdTypeContainer');
+            if (this.value === 'custom') {
+                customContainer.classList.remove('d-none');
+                document.getElementById('custom_ad_type').setAttribute('required', 'required');
+            } else {
+                customContainer.classList.add('d-none');
+                document.getElementById('custom_ad_type').removeAttribute('required');
+                document.getElementById('custom_ad_type').value = '';
+            }
+        });
     });
 
-    // Form submission
-    document.getElementById('editAdForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    // Fetch media for ads (only from ads folder)
+    async function fetchAdMedia() {
+        try {
+            console.log('Fetching ad media from /api/ads/media');
+            const response = await fetch('/api/ads/media');
+            if (!response.ok) {
+                console.error('Response not OK:', response.status, response.statusText);
+                throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+            }
+            
+            const result = await response.json();
+            
+            console.log('Ad media API response:', result);
+            
+            if (result.success) {
+                // Filter to only show images
+                adMediaItems = result.data.filter(item => item.type === 'image');
+                console.log('Filtered ad media items:', adMediaItems.length, 'images');
+                renderAdMediaGrid();
+                
+                if (adMediaItems.length > 0) {
+                    showToast('Loaded ' + adMediaItems.length + ' ad images', 'success');
+                }
+            } else {
+                console.error('API returned error:', result.message);
+                showToast('Failed to load ad media: ' + (result.message || 'Unknown error'), 'error');
+                adMediaItems = [];
+                renderAdMediaGrid();
+            }
+        } catch (error) {
+            console.error('Error fetching ad media:', error);
+            showToast('Error loading ad media', 'error');
+            // Show empty state
+            adMediaItems = [];
+            renderAdMediaGrid();
+        }
+    }
 
-        const adId = document.getElementById('adId').value;
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnSpinner = submitBtn.querySelector('.btn-spinner');
+    // Render media grid for ads
+    function renderAdMediaGrid() {
+        const grid = document.getElementById('adMediaGrid');
+        const searchTerm = document.getElementById('adSearchInput').value.toLowerCase();
+        const typeFilter = document.getElementById('adFilterType').value;
+        
+        let filteredItems = adMediaItems.filter(item => {
+            const matchesSearch = item.originalName.toLowerCase().includes(searchTerm);
+            // Only show images (no videos)
+            const matchesType = item.type === 'image';
+            return matchesSearch && matchesType;
+        });
 
-        // Validate dates
-        const startDate = document.getElementById('start_date').value;
-        const endDate = document.getElementById('end_date').value;
-
-        if (new Date(endDate) <= new Date(startDate)) {
-            showToast('End date must be after start date', 'error');
+        if (filteredItems.length === 0) {
+            const emptyMessage = adMediaItems.length === 0 ? 
+                'No ad images yet. Upload your first image!' : 
+                'No images found matching your search.';
+            grid.innerHTML = '<div class="col-12 text-center py-4">' +
+                '<iconify-icon icon="material-symbols:image-outline" class="text-muted" style="font-size: 3rem;"></iconify-icon>' +
+                '<p class="text-muted mb-0 mt-2">' + emptyMessage + '</p>' +
+                '</div>';
             return;
         }
 
-        // Show loading state
-        submitBtn.disabled = true;
-        btnText.classList.add('d-none');
-        btnSpinner.classList.remove('d-none');
+        grid.innerHTML = filteredItems.map(item => {
+            // Only images are supported now
+            const mediaHtml = '<img src="' + item.url + '" alt="' + item.originalName + '" class="w-100 h-100 object-fit-cover">';
+            
+            return '<div class="col">' +
+                '<div class="ad-media-item border rounded p-2 text-center" ' +
+                'data-id="' + item._id + '" ' +
+                'data-url="' + item.url + '" ' +
+                'data-name="' + item.originalName + '" ' +
+                'data-type="' + item.type + '" ' +
+                'style="cursor: pointer; transition: all 0.2s;">' +
+                '<div class="media-thumb mb-2" style="height: 60px; overflow: hidden; border-radius: 4px;">' +
+                mediaHtml +
+                '</div>' +
+                '<small class="text-truncate d-block" title="' + item.originalName + '">' + item.originalName + '</small>' +
+                '</div>' +
+                '</div>';
+        }).join('');
 
-        // Collect form data
-        const formData = {
-            title: document.getElementById('title').value,
-            description: document.getElementById('description').value,
-            media_url: document.getElementById('media_url').value,
-            ad_type: document.getElementById('ad_type').value,
-            placement_id: document.getElementById('placement_id').value,
-            status: document.getElementById('status').value,
-            start_date: startDate,
-            end_date: endDate,
-            budget: parseFloat(document.getElementById('budget').value) || 0,
-            max_impressions: parseInt(document.getElementById('max_impressions').value) || 0,
-            max_clicks: parseInt(document.getElementById('max_clicks').value) || 0
-        };
-
-        try {
-            const response = await fetch('/api/ads/' + adId, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+        // Add click handlers
+        grid.querySelectorAll('.ad-media-item').forEach(item => {
+            item.addEventListener('click', function() {
+                selectAdMedia({
+                    id: this.dataset.id,
+                    url: this.dataset.url,
+                    name: this.dataset.name,
+                    type: this.dataset.type
+                });
             });
 
-            const result = await response.json();
+            // Hover effects
+            item.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#0d6efd';
+                this.style.backgroundColor = '#f8f9fa';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.borderColor = '#dee2e6';
+                this.style.backgroundColor = 'white';
+            });
+        });
+    }
 
-            if (result.success) {
-                showToast('Ad updated successfully!', 'success');
-                setTimeout(() => {
-                    window.location.href = '/ads/ads-management';
-                }, 1500);
-            } else {
-                showToast('Failed to update ad: ' + (result.message || 'Unknown error'), 'error');
-                // Reset button state
+    // Select media for ad
+    function selectAdMedia(media) {
+        selectedMedia = media;
+        document.getElementById('media_url').value = media.url;
+        
+        // Show preview
+        const preview = document.getElementById('selectedMediaPreview');
+        const image = document.getElementById('selectedMediaImage');
+        const name = document.getElementById('selectedMediaName');
+        const info = document.getElementById('selectedMediaInfo');
+        
+        image.src = media.url;
+        name.textContent = media.name;
+        info.textContent = 'Image file';
+        
+        preview.classList.remove('d-none');
+        document.getElementById('adMediaLibrary').classList.add('d-none');
+        
+        showToast('Media selected successfully', 'success');
+    }
+
+    // Remove selected media (show library to select new one)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('removeSelectedMedia').addEventListener('click', function() {
+            document.getElementById('selectedMediaPreview').classList.add('d-none');
+            document.getElementById('adMediaLibrary').classList.remove('d-none');
+            fetchAdMedia(); // Load media library
+        });
+    });
+
+    // Upload new media
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('uploadNewMedia').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = false;
+            
+            input.onchange = async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('folder', 'ads');
+                
+                try {
+                    showToast('Uploading media...', 'info');
+                    
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const uploadedMedia = result.data;
+                        
+                        // Refresh the ad media list to get the latest files
+                        await fetchAdMedia();
+                        
+                        // Auto-select the uploaded media
+                        selectAdMedia({
+                            id: 'file_' + Date.now(),
+                            url: uploadedMedia.path,
+                            name: uploadedMedia.filename,
+                            type: 'image'
+                        });
+                        
+                        showToast('Media uploaded and selected!', 'success');
+                    } else {
+                        showToast('Failed to upload media: ' + (result.message || 'Unknown error'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showToast('Error uploading media', 'error');
+                }
+            };
+            
+            input.click();
+        });
+    });
+
+    // Media search and filter
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('adSearchInput').addEventListener('input', function() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(renderAdMediaGrid, 300);
+        });
+
+        document.getElementById('adFilterType').addEventListener('change', renderAdMediaGrid);
+
+        // Refresh media library
+        document.getElementById('refreshAdMedia').addEventListener('click', function() {
+            showToast('Refreshing media library...', 'info');
+            fetchAdMedia();
+        });
+    });
+
+    // Initialize form with ad data
+    function initializeForm(ad) {
+        window.adData = ad;
+        
+        document.getElementById('adId').value = ad._id;
+        document.getElementById('title').value = ad.title;
+        document.getElementById('description').value = ad.description;
+        document.getElementById('media_url').value = ad.media_url;
+        document.getElementById('link_url').value = ad.link_url || '';
+        // document.getElementById('priority').value = ad.priority || 1;
+        // document.getElementById('budget').value = ad.budget || 0;
+        // document.getElementById('max_impressions').value = ad.max_impressions || 0;
+        // document.getElementById('max_clicks').value = ad.max_clicks || 0;
+        // document.getElementById('current_impressions').value = ad.current_impressions || 0;
+        // document.getElementById('current_clicks').value = ad.current_clicks || 0;
+        // document.getElementById('spent_budget').value = (ad.spent_budget || 0).toFixed(2);
+        
+        // // Set selected options
+        // document.getElementById('ad_type').value = ad.ad_type;
+        // document.getElementById('link_target').value = ad.link_target || '_self';
+        // document.getElementById('status').value = ad.status;
+        // document.getElementById('created_by_type').value = ad.created_by_type || 'admin';
+        
+        // Set dates
+        if (ad.start_date) {
+            document.getElementById('start_date').value = new Date(ad.start_date).toISOString().split('T')[0];
+        }
+        if (ad.end_date) {
+            document.getElementById('end_date').value = new Date(ad.end_date).toISOString().split('T')[0];
+        }
+        
+        // Set placement
+        if (ad.placement_id && ad.placement_id._id) {
+            document.getElementById('placement_id').value = ad.placement_id._id;
+        }
+        
+        // Set current media and initialize selectedMedia object
+        if (ad.media_url) {
+            // Extract filename from URL for better display
+            const urlParts = ad.media_url.split('/');
+            const filename = urlParts[urlParts.length - 1] || 'Current Media';
+            
+            selectedMedia = {
+                url: ad.media_url,
+                name: filename,
+                type: 'image'
+            };
+            
+            // Set the image source and handle loading
+            const mediaImage = document.getElementById('selectedMediaImage');
+            const placeholder = document.getElementById('mediaPlaceholder');
+            
+            mediaImage.onload = function() {
+                console.log('Media image loaded successfully:', ad.media_url);
+                this.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+            };
+            
+            mediaImage.onerror = function() {
+                console.error('Failed to load media image:', ad.media_url);
+                this.style.display = 'none';
+                if (placeholder) {
+                    placeholder.innerHTML = '<iconify-icon icon="material-symbols:broken-image" style="font-size: 24px; display: block; margin-bottom: 4px; color: #dc3545;"></iconify-icon>Failed to load';
+                    placeholder.style.display = 'block';
+                }
+            };
+            
+            // Set the source to trigger loading
+            mediaImage.src = ad.media_url;
+            
+            document.getElementById('selectedMediaName').textContent = filename;
+            document.getElementById('selectedMediaInfo').textContent = 'Image file • ' + ad.media_url.split('/').slice(-2, -1)[0] + ' folder';
+            document.getElementById('selectedMediaPreview').classList.remove('d-none');
+            
+            console.log('Initialized media preview with:', {
+                url: ad.media_url,
+                filename: filename
+            });
+        } else {
+            console.warn('No media_url found in ad data');
+        }
+    }
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('start_date').setAttribute('min', today);
+        document.getElementById('end_date').setAttribute('min', today);
+
+        // Update end date minimum when start date changes
+        document.getElementById('start_date').addEventListener('change', function() {
+            const startDate = this.value;
+            document.getElementById('end_date').setAttribute('min', startDate);
+            
+            // Clear end date if it's before the new start date
+            const endDate = document.getElementById('end_date').value;
+            if (endDate && endDate < startDate) {
+                document.getElementById('end_date').value = '';
+            }
+        });
+    });
+
+    // Form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('editAdForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const adId = document.getElementById('adId').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnSpinner = submitBtn.querySelector('.btn-spinner');
+
+            // Validate dates
+            // const startDate = document.getElementById('start_date').value;
+            // const endDate = document.getElementById('end_date').value;
+
+            // if (new Date(endDate) <= new Date(startDate)) {
+                // showToast('End date must be after start date', 'error');
+                // return;
+            // }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnSpinner.classList.remove('d-none');
+
+            // Handle custom ad type
+            /* let adType = document.getElementById('ad_type').value;
+            if (adType === 'custom') {
+                const customAdType = document.getElementById('custom_ad_type').value.trim();
+                if (!customAdType) {
+                    showToast('Please enter a custom ad type name', 'error');
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+                    return;
+                }
+                adType = customAdType.toLowerCase().replace(/\s+/g, '-');
+            } */
+
+            // Check if media is selected
+            const mediaUrl = document.getElementById('media_url').value;
+            if (!mediaUrl) {
+                showToast('Please select a media file', 'error');
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnSpinner.classList.add('d-none');
+                return;
+            }
+
+            // Collect form data
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                media_url: mediaUrl,
+                // ad_type: adType,
+                // placement_id: document.getElementById('placement_id').value,
+                link_url: document.getElementById('link_url').value,
+                link_target: document.getElementById('link_target').value,
+                // priority: parseInt(document.getElementById('priority').value) || 1,
+                // status: document.getElementById('status').value,
+                // start_date: startDate,
+                // end_date: endDate,
+                // budget: parseFloat(document.getElementById('budget').value) || 0,
+                // max_impressions: parseInt(document.getElementById('max_impressions').value) || 0,
+                // max_clicks: parseInt(document.getElementById('max_clicks').value) || 0,
+                // created_by_type: document.getElementById('created_by_type').value
+            };
+
+            try {
+                const response = await fetch('/api/ads/' + adId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('Ad updated successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/ads/ads-management';
+                    }, 1500);
+                } else {
+                    showToast('Failed to update ad: ' + (result.message || 'Unknown error'), 'error');
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnSpinner.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An error occurred while updating the ad', 'error');
                 submitBtn.disabled = false;
                 btnText.classList.remove('d-none');
                 btnSpinner.classList.add('d-none');
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showToast('An error occurred while updating the ad', 'error');
-            // Reset button state
-            submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnSpinner.classList.add('d-none');
-        }
+        });
     });
+
+    // Initialize form with server data
+    document.addEventListener('DOMContentLoaded', function() {
+        const adData = {
+            _id: '<%= ad._id %>',
+            title: '<%= ad.title %>',
+            description: `<%= ad.description %>`,
+            media_url: '<%= ad.media_url %>',
+            ad_type: '<%= ad.ad_type %>',
+            link_url: '<%= ad.link_url || "" %>',
+            link_target: '<%= ad.link_target || "_self" %>',
+            priority: <%= ad.priority || 1 %>,
+            status: '<%= ad.status %>',
+            start_date: '<%= ad.start_date %>',
+            end_date: '<%= ad.end_date %>',
+            budget: <%= ad.budget || 0 %>,
+            max_impressions: <%= ad.max_impressions || 0 %>,
+            max_clicks: <%= ad.max_clicks || 0 %>,
+            current_impressions: <%= ad.current_impressions || 0 %>,
+            current_clicks: <%= ad.current_clicks || 0 %>,
+            spent_budget: <%= ad.spent_budget || 0 %>,
+            created_by_type: '<%= ad.created_by_type || "admin" %>',
+            placement_id: '<%= ad.placement_id && ad.placement_id._id ? ad.placement_id._id : "" %>'
+        };
+        
+        console.log('Initializing edit form with ad data:', adData);
+        console.log('Media URL from database:', adData.media_url);
+        
+        initializeForm(adData);
+    });
+
+    // Populate placements dropdown
+    <% if (typeof placements !== 'undefined' && placements.length > 0) { %>
+    document.addEventListener('DOMContentLoaded', function() {
+        const placementSelect = document.getElementById('placement_id');
+        const placements = [
+            <% placements.forEach((placement, index) => { %>
+            {
+                _id: '<%= placement._id %>',
+                name: '<%= placement.name %>',
+                pageLocation: '<%= placement.pageLocation %>'
+            }<%= index < placements.length - 1 ? ',' : '' %>
+            <% }); %>
+        ];
+        
+        placements.forEach(placement => {
+            const option = document.createElement('option');
+            option.value = placement._id;
+            option.textContent = placement.name + ' - ' + placement.pageLocation;
+            if (placement._id === window.adData.placement_id) {
+                option.selected = true;
+            }
+            placementSelect.appendChild(option);
+        });
+    });
+    <% } %>
 </script>
-` %>

@@ -8,16 +8,15 @@
             <div class="card-body p-24">
                 <form id="editContentForm" class="d-flex flex-column gap-20">
                     <input type="hidden" id="contentId" value="<%= content._id %>">
+                    <input type="hidden" name="frontendUrl" id="frontendUrl" value="<%= frontendUrl %>">
                     <div class="row">
                         <div class="col-lg-8">
                             <div id="sectionsContainer">
                         <% if (allSections && allSections.length> 0) { %>
                             <% allSections.forEach(function(section, index) { %>
-                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3"
-                                    data-id="<%= section._id %>">
+                                <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3" data-id="<%= section._id %>">
                                   
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        
                                         <span class="badge custom-badge badge-primary">Template Section</span>
                                     </div>
                                     <div class="mb-3">
@@ -34,6 +33,7 @@
                                             <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
                                             <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
                                             <option value="community-groups" <%= section.sectionType === 'community-groups' ? 'selected' : '' %>>Community Groups</option>
+                                            <option value="contact-section" <%= section.sectionType === 'contact-section' ? 'selected' : '' %>>Contact Section</option>
                                         </select>
                                     </div>
 
@@ -41,7 +41,7 @@
 
                                     <!-- Dynamic fields based on section type -->
                                     <div class="section-fields asdf">
-                                        <!-- <pre><%= JSON.stringify(section, null, 2) %></pre> -->
+                                        <!-- <pre><%# JSON.stringify(section, null, 2) %></pre> -->
                                         <% if (section.sectionType==='image-with-text' ) { %>
                                             <div class="image-with-text-fields active">
                                                 <div class="mb-3">
@@ -157,52 +157,47 @@
                                                             <% }) %>
                                                         <% } %>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-primary mt-2 add-cta-btn">Add CTA Button</button>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-3 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 
                                                 <div class="mb-3">
-                                                    <label class="form-label fw-bold text-neutral-900">Hero Image</label>
-                                                    <% if (section.heroSection?.image) { %>
-                                                        <div class="mb-2">
-                                                            <label class="form-label text-sm">Current Image:</label>
-                                                            <div class="existing-image mb-2">
-                                                                <img src="<%= section.heroSection.image %>"
-                                                                    class="img-thumbnail"
-                                                                    style="max-height: 200px; max-width: 100%; object-fit: cover;">
-                                                            </div>
-                                                        </div>
-                                                    <% } %>
-                                                    <div class="upload-image-wrapper mt-5">
-                                                        <div class="uploaded-img-hero d-none position-relative w-100 border radius-8 overflow-hidden bg-white shadow-sm" style="min-height: 300px; max-height: 400px;">
-                                                            <button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-3 m-3 d-flex bg-danger-600 w-36-px h-36-px justify-content-center align-items-center rounded-circle shadow-lg border-0 transition-all" style="transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                                                <iconify-icon icon="radix-icons:cross-2" class="text-xl text-white"></iconify-icon>
-                                                            </button>
-                                                            <img class="uploaded-img-hero__preview w-100 h-100" src="/images/user.png" alt="Hero Image" style="object-fit: contain; background: #f8f9fa;">
-                                                            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center gap-2" style="backdrop-filter: blur(4px);">
-                                                                <label class="btn btn-sm btn-light d-flex align-items-center gap-2 mb-0 cursor-pointer" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                                                                    <iconify-icon icon="solar:camera-outline" class="text-lg"></iconify-icon>
-                                                                    <span class="fw-semibold">Change Image</span>
-                                                                    <input type="file" class="upload-file-hero-input-change" hidden accept="image/*">
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <label class="upload-file-hero w-100 border radius-8 overflow-hidden border-dashed bg-neutral-50 d-flex align-items-center flex-column justify-content-center gap-3 cursor-pointer transition-all" style="min-height: 300px; border: 2px dashed #cbd5e1; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#eff6ff'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#f9fafb'">
-                                                            <div class="d-flex flex-column align-items-center gap-2">
-                                                                <div class="bg-primary bg-opacity-10 rounded-circle p-4">
-                                                                    <iconify-icon icon="solar:camera-outline" class="text-4xl text-primary"></iconify-icon>
+                                                    <label class="form-label fw-bold text-neutral-900">AD Image</label>
+                                                    <p class="text-muted small mb-3">Select an advertisement to display</p>
+                                                    
+                                                    <!-- AD Image Dropdown with Preview -->
+                                                    <select class="form-control border border-neutral-200 radius-8 ad-image-select" 
+                                                            name="adImage" data-id="<%= section.heroSection?.ad?.id %>"
+                                                            data-current-value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
+                                                        <option value="">-- Select Advertisement --</option>
+                                                    </select>
+
+                                                    <!-- AD Preview -->
+                                                    <div class="ad-preview-container mt-3" style="display: none;">
+                                                        <div class="card">
+                                                            <div class="card-body p-3">
+                                                                <div class="d-flex align-items-center gap-3">
+                                                                    <img class="ad-preview-image" src="" alt="AD Preview" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                                                    <div class="ad-preview-details">
+                                                                        <h6 class="ad-preview-title mb-1"></h6>
+                                                                        <p class="ad-preview-description text-muted small mb-0"></p>
+                                                                    </div>
                                                                 </div>
-                                                                <span class="fw-semibold text-neutral-900 fs-5">Upload New Hero Image</span>
-                                                                <span class="text-secondary-light text-sm">Click to browse or drag and drop</span>
-                                                                <!-- <span class="text-muted text-xs">Recommended: 1920x600px (JPG, PNG, WebP)</span> -->
                                                             </div>
-                                                            <input type="file" class="upload-file-hero-input" hidden accept="image/*" data-existing-image="<%= section.heroSection?.image || '' %>">
-                                                        </label>
+                                                        </div>
                                                     </div>
+                                                    
+                                                    <input type="hidden" 
+                                                           class="ad-image-input" 
+                                                           name="adImage" 
+                                                           value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
+                                                    
+                                                    <!-- Debug button to check ad data -->
+                                                    <!-- <button type="button" class="btn btn-sm btn-info mt-2 debug-ad-btn">Debug Ad Data</button> -->
                                                 </div>
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
-                                            <!-- <pre><%= JSON.stringify(section) %></pre> -->
-                                            <!-- <pre><%= JSON.stringify(section.threeColumnInfo.heading) %></pre> -->
+                                            <!-- <pre><%# JSON.stringify(section) %></pre> -->
+                                            <!-- <pre><%# JSON.stringify(section.threeColumnInfo.heading) %></pre> -->
                                             <div class="three-column-info-fields active">
                                                 <div class="mb-3">
                                                     <label class="form-label">Section Heading:</label>
@@ -334,7 +329,7 @@
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
                                                                     <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading"
-                                                                        value="<%= card.heading %>" placeholder="e.g., Call Out 1" required>
+                                                                        value="<%= card.heading %>" placeholder="e.g., Call Out 1">
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label text-sm">Paragraph:</label>
@@ -445,6 +440,81 @@
                                                     <small class="text-muted">Select pages to display in this community groups section</small>
                                                 </div>
                                             </div>
+                                            <% } else if (section.sectionType==='contact-section' ) { %>
+                                                <div class="contact-section-fields active">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Section Heading:</label>
+                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cs-heading"
+                                                            value="<%= section.contactSection?.heading || '' %>" placeholder="Heading">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Section Subheading:</label>
+                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cs-subheading"
+                                                            value="<%= section.contactSection?.subheading || '' %>" placeholder="Subheading">
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Email Block</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-email-heading"
+                                                                value="<%= section.contactSection?.email?.heading || '' %>" placeholder="Email Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-email-subheading"
+                                                                value="<%= section.contactSection?.email?.subheading || '' %>" placeholder="Email Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="email" class="form-control border border-neutral-200 radius-8 cs-email-address"
+                                                                value="<%= section.contactSection?.email?.address || '' %>" placeholder="address@domain.org">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Call Block</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-heading"
+                                                                value="<%= section.contactSection?.call?.heading || '' %>" placeholder="Call Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-subheading"
+                                                                value="<%= section.contactSection?.call?.subheading || '' %>" placeholder="Call Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-call-phone"
+                                                                value="<%= section.contactSection?.call?.phone || '' %>" placeholder="+1 (555) 123-4567">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">General Contact Form</label>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-heading"
+                                                                value="<%= section.contactSection?.generalContactForm?.heading || '' %>" placeholder="Form Heading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-subheading"
+                                                                value="<%= section.contactSection?.generalContactForm?.subheading || '' %>" placeholder="Form Subheading">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input type="text" class="form-control border border-neutral-200 radius-8 cs-form-link"
+                                                                value="<%= section.contactSection?.generalContactForm?.openFormLink || '' %>" placeholder="/forms/contact">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3 border-top pt-3">
+                                                        <label class="form-label fw-semibold">Helpful Links</label>
+                                                        <div class="cs-helpful-links-list">
+                                                            <% (section.contactSection?.helpfulLinks || []).forEach(function(link, idx){ %>
+                                                                <div class="d-flex align-items-center gap-2 mb-2 cs-helpful-item">
+                                                                    <input type="text" class="form-control cs-helpful-text" value="<%= link.text %>" placeholder="Button text">
+                                                                    <input type="text" class="form-control cs-helpful-link" value="<%= link.link %>" placeholder="/path or https://...">
+                                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-helpful-link"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                                                                </div>
+                                                            <% }) %>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-primary mt-2 add-helpful-link-btn">Add Helpful Link</button>
+                                                    </div>
+                                                </div>
                                         <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
@@ -493,7 +563,7 @@
                             <div class="page-status-widget">
                                 <!-- <div>
                                     <label class="form-label" for="pageId">Select Page: <span class="text-danger-600">*</span></label>
-                                    <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" required disabled>
+                                    <select class="form-control border border-neutral-200 radius-8" id="pageId" name="pageId" disabled>
                                         <option value="">-- Select a Page --</option>
                                         <% if (typeof pages !=='undefined' && pages.length> 0) { %>
                                             <% pages.forEach(page=> { %>
@@ -520,6 +590,56 @@
                                     <% } %>
                                 </div>
                             </div>
+
+                            <!-- Thumbnail Selection for Pages with Category -->
+                            <% if (page.category && page.category.trim() !== '') { %>
+                            <div class="page-thumbnail-widget mt-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Page Thumbnail</h6>
+                                        <small class="text-muted">Select a thumbnail image for this page</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Current Thumbnail Preview -->
+                                        <% if (page.thumbnail) { %>
+                                        <div class="current-thumbnail-preview mb-3">
+                                            <!-- <label class="form-label text-sm">Current Thumbnail:</label> -->
+                                            <div class="thumbnail-preview-container">
+                                                <img src="<%= page.thumbnail %>" 
+                                                     alt="Current Thumbnail" 
+                                                     class="img-thumbnail current-thumbnail-img" 
+                                                     style="max-width: 150px; max-height: 100px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                        <!-- Thumbnail Selection Button -->
+                                        <button type="button" 
+                                                class="btn btn-outline-primary btn-sm w-100 select-thumbnail-btn"
+                                                data-current-thumbnail="<%= page.thumbnail || '' %>">
+                                            <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>
+                                            <%= page.thumbnail ? 'Change Thumbnail' : 'Select Thumbnail' %>
+                                        </button>
+
+                                        <!-- Hidden input to store selected thumbnail URL -->
+                                        <input type="hidden" 
+                                               name="pageThumbnail" 
+                                               id="pageThumbnail" 
+                                               value="<%= page.thumbnail || '' %>">
+
+                                        <!-- Remove Thumbnail Button -->
+                                        <% if (page.thumbnail) { %>
+                                        <button type="button" 
+                                                class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
+                                            <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
+                                            Remove Thumbnail
+                                        </button>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
                             <div class="d-flex publish-btns mt-3">
                                 <a href="/page-master/edit-page/<%= page._id %>"
                                     class="btn btn-sm btn-outline-secondary">
@@ -538,7 +658,7 @@
 
                     </div>
 
-                    <hr class="my-3">
+                    <!-- <hr class="my-3"> -->
 
                     <!-- Sections Container -->
 
@@ -549,11 +669,11 @@
 
 
                     <!-- Template-based sections only - no manual section addition -->
-                    <div class="alert alert-info text-center">
+                    <!-- <div class="alert alert-info text-center">
                         <small><strong>Note:</strong> This page uses a predefined template. To change the section structure, edit the page template in <a href="/page-master/web-page-master">Page Master</a>.</small>
-                    </div>
+                    </div> -->
 
-                    <hr class="my-3">
+                    <!-- <hr class="my-3"> -->
 
                     <!-- Hidden: Section Block Template -->
                      <!--
@@ -582,6 +702,7 @@
                                         <option value="three-column-info">Header Section</option>
                                         <option value="call-out-cards">Call Out Section</option>
                                         <option value="tabs-section">Tabs Section</option>
+                                        <option value="contact-section">Contact Section</option>
                                     </select>
                                 </div>
                                <div class="image-with-text-fields" style="display: none;">
@@ -615,7 +736,7 @@
                                 <div class="hero-section-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading: <span class="text-danger-600">*</span></label><input type="text" class="form-control border border-neutral-200 radius-8 hero-heading" placeholder="Enter main heading"></div>
                                     <div class="mb-3"><label class="form-label">Paragraph:</label><textarea class="form-control border border-neutral-200 radius-8 hero-paragraph" rows="4" placeholder="Description"></textarea></div>
-                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-2 add-cta-btn">Add CTA Button</button></div>
+                                    <div class="mb-3"><label class="form-label">Call To Action Buttons:</label><div class="cta-container"></div><button type="button" class="btn btn-sm btn-primary  mt-3 add-cta-btn">Add CTA Button</button></div>
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Right Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-hero d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-hero__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-hero__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-hero h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-hero-input" hidden accept="image/*"></label></div></div>
                                 </div>
                                 <div class="three-column-fields" style="display: none;">
@@ -791,122 +912,512 @@
     max-width: 100% !important;
     height: auto !important;
 }
+
+/* Media Library Button Styles */
+/* .media-library-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.media-library-btn:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+} */
+
+/* WordPress-style Image Size Classes */
+.ck-content .wp-image {
+    height: auto;
+    max-width: 100%;
+}
+
+.ck-content .size-thumbnail {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.ck-content .size-medium {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.ck-content .size-medium_large {
+    max-width: 768px;
+    height: auto;
+}
+
+.ck-content .size-large {
+    max-width: 1024px;
+    max-height: 1024px;
+}
+
+.ck-content .size-full {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Image Size Selection Modal Styles */
+.image-size-options .form-check-label {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.image-size-options .form-check-label:hover {
+    background-color: #f8f9fa;
+}
+
+.image-size-options .form-check-input:checked + .form-check-label {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.size-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-images-preview {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+}
 </style>
 
-<script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/superbuild/ckeditor.js"></script>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
 
 <!-- Alternative CKEditor build with more plugins -->
 <script>
 // Fallback to CKEditor 4 if CKEditor 5 plugins are not available
 window.ckEditorFallback = function() {
-    console.log('Loading CKEditor 4 as fallback...');
+    // console.log('Loading CKEditor 4 as fallback...');
     const script = document.createElement('script');
-    script.src = 'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js';
+    script.src = 'https://cdn.ckeditor.com/4.22.1/full/ckeditor.js';
     document.head.appendChild(script);
     
     script.onload = function() {
-        console.log('CKEditor 4 loaded as fallback');
+        // console.log('CKEditor 4 loaded as fallback');
         initCKEditor4();
     };
 };
+</script>
+
+<!-- Pass ads and media data to JavaScript -->
+<script>
+    window.adsData = <%-JSON.stringify(ads || [])%>;
+    window.mediaData = <%-JSON.stringify(media || [])%>;
+    
+    // Debug: Show what section data is being passed
+    console.log('🔍 Server-side section data loaded');
 </script>
 
 <% script=`<script>
     // CKEditor 5 instances storage
     let editorInstances = {};
     
-    // Custom upload adapter for CKEditor
-    class MyUploadAdapter {
-        constructor(loader) {
-            this.loader = loader;
+    // Toast notification function (same as ads management)
+    function showToast(message, type) {
+        // Remove any existing toasts first
+        var existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(function (toast) { toast.remove(); });
+
+        // Create toast element
+        var toast = document.createElement('div');
+        var alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+        toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+        toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+        // Set border color based on type
+        if (type === 'success') {
+            toast.style.borderColor = '#28a745';
+            toast.style.backgroundColor = '#d4edda';
+            toast.style.color = '#155724';
+        } else if (type === 'error') {
+            toast.style.borderColor = '#dc3545';
+            toast.style.backgroundColor = '#f8d7da';
+            toast.style.color = '#721c24';
         }
 
-        upload() {
-            return this.loader.file.then(file => new Promise((resolve, reject) => {
-                console.log('Starting file upload:', file.name);
-                
-                const formData = new FormData();
-                formData.append('file', file);
+        var iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        toast.innerHTML = '<div class="d-flex align-items-center">' +
+            '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+            '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+            '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+            '</div>';
 
-                $.ajax({
-                    url: '/api/upload-basic',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    xhr: function() {
-                        const xhr = new window.XMLHttpRequest();
-                        // Upload progress
-                        xhr.upload.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                const percentComplete = evt.loaded / evt.total;
-                                console.log('Upload progress:', Math.round(percentComplete * 100) + '%');
-                            }
-                        }, false);
-                        return xhr;
-                    },
-                    success: function(result) {
-                        console.log('Upload success response:', result);
-                        if (result.success && result.url) {
-                            let imageUrl = result.url;
+        document.body.appendChild(toast);
+
+        // Add entrance animation
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'transform 0.3s ease-out';
+        setTimeout(function () {
+            toast.style.transform = 'translateX(0)';
+        }, 10);
+
+        // Auto remove after duration based on type
+        var duration = type === 'success' ? 4000 : 6000;
+        setTimeout(function () {
+            if (toast.parentElement) {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(function () { toast.remove(); }, 300);
+            }
+        }, duration);
+    }
+
+    // Media Picker functionality for image uploads (same as ads management)
+    
+    // Helper function to create media picker for image uploads
+    function createImageMediaPicker(targetClass, previewClass, hiddenInputClass) {
+        return new MediaPicker({
+            allowedTypes: ['image'],
+            title: 'Select or Upload Image',
+            buttonText: 'Select Image',
+            multiple: false,
+            onSelect: function(selectedMedia) {
+                console.log('Image selected:', selectedMedia);
+                
+                // Update preview
+                const previewElement = document.querySelector(previewClass);
+                if (previewElement) {
+                    previewElement.src = selectedMedia.src;
+                    previewElement.closest('.uploaded-img-' + targetClass.replace('upload-file-', '').replace('-input', '')).classList.remove('d-none');
+                }
+                
+                // Update hidden input if exists
+                const hiddenInput = document.querySelector(hiddenInputClass);
+                if (hiddenInput) {
+                    hiddenInput.value = selectedMedia.src;
+                }
+                
+                showToast('Image selected successfully', 'success');
+            }
+        });
+    }
+    
+    // Initialize media pickers for all image upload sections
+    $(document).ready(function() {
+        // Replace file input clicks with media picker
+        $(document).on('click', '.upload-file-tci', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-tci', '.uploaded-img-tci__preview', 'input[name="tci-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-lhrt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-lhrt', '.uploaded-img-lhrt__preview', 'input[name="lhrt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-iwt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-iwt', '.uploaded-img-iwt__preview', 'input[name="iwt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-iwl', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-iwl', '.uploaded-img-iwl__preview', 'input[name="iwl-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-rhlt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-rhlt', '.uploaded-img-rhlt__preview', 'input[name="rhlt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-hero', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-hero', '.uploaded-img-hero__preview', 'input[name="hero-image"]');
+            mediaPicker.open();
+        });
+        
+        // Handle remove image buttons
+        $(document).on('click', '[class*="uploaded-img-"][class*="__remove"]', function() {
+            const uploadedContainer = $(this).closest('[class*="uploaded-img-"]');
+            const className = uploadedContainer.attr('class').match(/uploaded-img-(\w+)/)[1];
+            
+            uploadedContainer.addClass('d-none');
+            
+            // Clear hidden input if exists
+            const hiddenInput = document.querySelector(\`input[name="\${className}-image"]\`);
+            if (hiddenInput) {
+                hiddenInput.value = '';
+            }
+            
+            showToast('Image removed', 'info');
+        });
+    });
+
+    // WordPress-style image size options
+    const imageSizeOptions = {
+        'thumbnail': { width: 150, height: 150, label: 'Thumbnail (150x150)' },
+        'medium': { width: 300, height: 300, label: 'Medium (300x300)' },
+        'medium_large': { width: 768, height: 0, label: 'Medium Large (768px width)' },
+        'large': { width: 1024, height: 1024, label: 'Large (1024x1024)' },
+        'full': { width: 0, height: 0, label: 'Full Size (Original)' }
+    };
+
+    // Function to generate image with size styling
+    function getImageWithSizeStyle(originalUrl, sizeKey, alt, mediaId) {
+        const size = imageSizeOptions[sizeKey];
+        
+        if (sizeKey === 'full' || !size) {
+            return '<img src="' + originalUrl + '" alt="' + alt + '" class="wp-image-' + mediaId + '" />';
+        }
+        
+        let style = '';
+        let className = 'wp-image-' + mediaId + ' size-' + sizeKey;
+        
+        // Add size constraints
+        if (size.width > 0 && size.height > 0) {
+            style = 'max-width: ' + size.width + 'px; max-height: ' + size.height + 'px; width: auto; height: auto;';
+        } else if (size.width > 0) {
+            style = 'max-width: ' + size.width + 'px; width: auto; height: auto;';
+        } else if (size.height > 0) {
+            style = 'max-height: ' + size.height + 'px; width: auto; height: auto;';
+        }
+        
+        return '<img src="' + originalUrl + '" alt="' + alt + '" class="' + className + '" style="' + style + '" />';
+    }
+
+    // Function to show WordPress-style image size selection modal
+    function showImageSizeModal(selectedImages, callback) {
+        const modalId = 'imageSizeModal_' + Math.random().toString(36).substr(2, 9);
+        
+        // Build selected images HTML
+        let selectedImagesHtml = '';
+        selectedImages.forEach(function(img) {
+            selectedImagesHtml += '<div class="d-flex align-items-center mb-2 p-2 border rounded">' +
+                '<img src="' + img.src + '" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">' +
+                '<div class="flex-grow-1">' +
+                '<div class="fw-medium text-truncate">' + img.name + '</div>' +
+                '<small class="text-muted">' + (img.title || '') + '</small>' +
+                '</div>' +
+                '</div>';
+        });
+        
+        // Build size options HTML
+        let sizeOptionsHtml = '';
+        Object.entries(imageSizeOptions).forEach(function([key, size]) {
+            const checked = key === 'medium' ? 'checked' : '';
+            const dimensions = size.width > 0 || size.height > 0 ? 
+                (size.width || 'auto') + ' × ' + (size.height || 'auto') : 
+                'Original dimensions';
+            
+            sizeOptionsHtml += '<div class="form-check mb-2">' +
+                '<input class="form-check-input" type="radio" name="imageSize" id="size_' + key + '" value="' + key + '" ' + checked + '>' +
+                '<label class="form-check-label d-flex justify-content-between align-items-center" for="size_' + key + '">' +
+                '<span>' + size.label + '</span>' +
+                '<small class="text-muted">' + dimensions + '</small>' +
+                '</label>' +
+                '</div>';
+        });
+        
+        const modalHTML = '<div class="modal fade" id="' + modalId + '" tabindex="-1" aria-hidden="true">' +
+            '<div class="modal-dialog modal-lg">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<h5 class="modal-title">Insert Images - Choose Size</h5>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+            '</div>' +
+            '<div class="modal-body">' +
+            '<div class="row">' +
+            '<div class="col-md-6">' +
+            '<h6 class="mb-3">Selected Images (' + selectedImages.length + ')</h6>' +
+            '<div class="selected-images-preview" style="max-height: 300px; overflow-y: auto;">' +
+            selectedImagesHtml +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<h6 class="mb-3">Image Size Options</h6>' +
+            '<div class="image-size-options">' +
+            sizeOptionsHtml +
+            '</div>' +
+            '<div class="mt-4">' +
+            '<h6 class="mb-2">Preview</h6>' +
+            '<div class="size-preview-container border rounded p-3 text-center" style="min-height: 150px; background-color: #f8f9fa;">' +
+            '<img id="sizePreviewImage" src="' + selectedImages[0].src + '" class="img-fluid" style="max-width: 200px; max-height: 150px; object-fit: contain;">' +
+            '<div class="mt-2">' +
+            '<small class="text-muted" id="sizePreviewText">Medium (300x300)</small>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="mt-4">' +
+            '<div class="form-check">' +
+            '<input class="form-check-input" type="checkbox" id="linkToFullSize" checked>' +
+            '<label class="form-check-label" for="linkToFullSize">' +
+            'Link to full-size image' +
+            '</label>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>' +
+            '<button type="button" class="btn btn-primary" id="insertImagesBtn">Insert Images</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById(modalId);
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        const modal = document.getElementById(modalId);
+        const bsModal = new bootstrap.Modal(modal);
+        
+        // Handle size selection change
+        modal.querySelectorAll('input[name="imageSize"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedSize = this.value;
+                const sizeInfo = imageSizeOptions[selectedSize];
+                const previewImg = modal.querySelector('#sizePreviewImage');
+                const previewText = modal.querySelector('#sizePreviewText');
+                
+                // Update preview image (keep original URL but update styling)
+                previewImg.src = selectedImages[0].src;
+                
+                // Update preview text
+                previewText.textContent = sizeInfo.label;
+                
+                // Update preview image style based on size
+                if (selectedSize === 'thumbnail') {
+                    previewImg.style.maxWidth = '150px';
+                    previewImg.style.maxHeight = '150px';
+                } else if (selectedSize === 'medium') {
+                    previewImg.style.maxWidth = '200px';
+                    previewImg.style.maxHeight = '200px';
+                } else {
+                    previewImg.style.maxWidth = '200px';
+                    previewImg.style.maxHeight = '150px';
+                }
+            });
+        });
+        
+        // Handle insert button click
+        modal.querySelector('#insertImagesBtn').addEventListener('click', function() {
+            const selectedSize = modal.querySelector('input[name="imageSize"]:checked').value;
+            const linkToFullSize = modal.querySelector('#linkToFullSize').checked;
+            
+            callback(selectedImages, selectedSize, linkToFullSize);
+            bsModal.hide();
+        });
+        
+        // Clean up modal when hidden
+        modal.addEventListener('hidden.bs.modal', function() {
+            modal.remove();
+        });
+        
+        // Show modal
+        bsModal.show();
+    }
+
+    // Function to add media library button next to CKEditor instances
+    function addMediaLibraryButton(editorElement, editorInstance) {
+        // Check if button already exists
+        if (editorElement.parentNode.querySelector('.media-library-btn')) {
+            return;
+        }
+        
+        // Create media library button
+        const mediaBtn = document.createElement('button');
+        mediaBtn.type = 'button';
+        mediaBtn.className = 'btn btn-sm btn-outline-primary media-library-btn mb-3';
+        mediaBtn.innerHTML = '<i class="bi bi-images me-1"></i>Add Images';
+        
+        // Add click handler
+        mediaBtn.addEventListener('click', function() {
+            // Create media picker instance
+            const mediaPicker = new MediaPicker({
+                multiple: true,
+                allowedTypes: ['image'],
+                title: 'Select Images from Media Library',
+                buttonText: 'Continue',
+                onSelect: (selectedMedia) => {
+                    const images = Array.isArray(selectedMedia) ? selectedMedia : [selectedMedia];
+                    
+                    // Show WordPress-style size selection modal
+                    showImageSizeModal(images, function(selectedImages, sizeKey, linkToFullSize) {
+                        // Insert selected images with chosen size into CKEditor
+                        selectedImages.forEach(media => {
+                            let imageUrl = media.src;
                             
                             // Ensure URL starts with / for absolute path
                             if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
                                 imageUrl = '/' + imageUrl;
                             }
                             
-                            // Construct full URL for CKEditor
-                            const fullUrl = window.location.origin + imageUrl;
-                            console.log('Using full image URL:', fullUrl);
+                            // Get the full original URL
+                            const fullOriginalUrl = window.location.origin + imageUrl;
                             
-                            // Test if image is accessible
-                            const testImg = new Image();
-                            testImg.onload = function() {
-                                console.log('Image loaded successfully, returning full URL:', fullUrl);
-                                resolve({
-                                    default: fullUrl
+                            // Generate image HTML with size styling
+                            const imgTag = getImageWithSizeStyle(fullOriginalUrl, sizeKey, media.alt || media.name || '', media.id || '');
+                            
+                            // Prepare image HTML with optional link to full size
+                            let imgHtml;
+                            if (linkToFullSize && sizeKey !== 'full') {
+                                imgHtml = '<a href="' + fullOriginalUrl + '" target="_blank">' + imgTag + '</a>';
+                            } else {
+                                imgHtml = imgTag;
+                            }
+                            
+                            // Insert image into editor
+                            if (editorInstance && editorInstance.model) {
+                                // CKEditor 5 - insert as HTML
+                                editorInstance.model.change(writer => {
+                                    const viewFragment = editorInstance.data.processor.toView(imgHtml);
+                                    const modelFragment = editorInstance.data.toModel(viewFragment);
+                                    editorInstance.model.insertContent(modelFragment, editorInstance.model.document.selection);
                                 });
-                            };
-                            testImg.onerror = function() {
-                                console.error('Image failed to load:', fullUrl);
-                                reject('Uploaded image is not accessible at: ' + fullUrl);
-                            };
-                            testImg.src = fullUrl;
-                            
-                        } else {
-                            console.error('Upload failed:', result);
-                            reject(result.message || 'Upload failed - no URL returned');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Upload AJAX error:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
+                            } else if (window.CKEDITOR && window.CKEDITOR.instances && window.CKEDITOR.instances[editorElement.id]) {
+                                // CKEditor 4 fallback
+                                const ckEditor4 = window.CKEDITOR.instances[editorElement.id];
+                                ckEditor4.insertHtml(imgHtml);
+                            } else {
+                                // Fallback: insert at cursor position in textarea
+                                const cursorPos = editorElement.selectionStart;
+                                const textBefore = editorElement.value.substring(0, cursorPos);
+                                const textAfter = editorElement.value.substring(cursorPos);
+                                editorElement.value = textBefore + imgHtml + textAfter;
+                                editorElement.focus();
+                                editorElement.setSelectionRange(cursorPos + imgHtml.length, cursorPos + imgHtml.length);
+                            }
                         });
-                        reject('Upload failed: ' + error);
-                    }
-                });
-            }));
-        }
-
-        abort() {
-            console.log('Upload aborted');
-        }
-    }
-
-    function MyCustomUploadAdapterPlugin(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-            return new MyUploadAdapter(loader);
-        };
+                    });
+                }
+            });
+            
+            // Open the media picker
+            mediaPicker.open();
+        });
+        
+        // Insert button after the editor
+        const editorContainer = editorElement.closest('.ck-editor') || editorElement.parentNode;
+        editorContainer.parentNode.insertBefore(mediaBtn, editorContainer.nextSibling);
     }
 
     // Initialize CKEditor 5
     function initCKEditor() {
         if (typeof window.CKEDITOR === 'undefined') {
-            console.error('CKEditor not loaded');
+            // console.error('CKEditor not loaded');
             return;
         }
         
@@ -933,7 +1444,12 @@ window.ckEditorFallback = function() {
             ImageStyle,
             ImageToolbar,
             ImageUpload,
-            FileRepository
+            FileRepository,
+            Table,
+            TableToolbar,
+            TableProperties,
+            TableCellProperties,
+            SourceEditing
         } = CKEDITOR;
         
         // Check which plugins are actually available
@@ -948,10 +1464,15 @@ window.ckEditorFallback = function() {
             Link: !!Link,
             Heading: !!Heading,
             Image: !!Image,
-            ImageUpload: !!ImageUpload
+            ImageUpload: !!ImageUpload,
+            Table: !!Table,
+            TableToolbar: !!TableToolbar,
+            TableProperties: !!TableProperties,
+            TableCellProperties: !!TableCellProperties,
+            SourceEditing: !!SourceEditing
         };
         
-        console.log('Available CKEditor plugins:', availablePlugins);
+        // console.log('Available CKEditor plugins:', availablePlugins);
         
         // Find all textareas with ckeditor-paragraph class
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
@@ -1004,9 +1525,24 @@ window.ckEditorFallback = function() {
                 toolbarItems.push('link');
             }
             
-            if (Image && ImageUpload && FileRepository) {
-                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, ImageUpload, FileRepository);
-                toolbarItems.push('uploadImage');
+            // Add Table functionality
+            if (Table && TableToolbar) {
+                plugins.push(Table, TableToolbar);
+                if (TableProperties) plugins.push(TableProperties);
+                if (TableCellProperties) plugins.push(TableCellProperties);
+                toolbarItems.push('|', 'insertTable');
+            }
+            
+            // Add Image display plugins (without upload functionality)
+            if (Image) {
+                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar);
+                // Note: No uploadImage button - users must use media library
+            }
+            
+            // Add HTML source code view
+            if (SourceEditing) {
+                plugins.push(SourceEditing);
+                toolbarItems.push('|', 'sourceEditing');
             }
             
             toolbarItems.push('|', 'undo', 'redo');
@@ -1018,6 +1554,10 @@ window.ckEditorFallback = function() {
                 plugins: plugins,
                 toolbar: {
                     items: toolbarItems
+                },
+                // Disable drag and drop file uploads - force users to use media library
+                simpleUpload: {
+                    uploadUrl: null
                 },
                     heading: {
                         options: [
@@ -1067,13 +1607,19 @@ window.ckEditorFallback = function() {
                                 value: '75'
                             }
                         ]
+                    },
+                    table: {
+                        contentToolbar: [
+                            'tableColumn',
+                            'tableRow',
+                            'mergeTableCells',
+                            'tableCellProperties',
+                            'tableProperties'
+                        ]
                     }
             };
             
-            // Add upload adapter only if image upload is available
-            if (Image && ImageUpload && FileRepository) {
-                editorConfig.extraPlugins = [MyCustomUploadAdapterPlugin];
-            }
+            // No upload adapter - users must use media library for images
             
             // Initialize CKEditor 5
             ClassicEditor
@@ -1082,6 +1628,9 @@ window.ckEditorFallback = function() {
                     console.log('CKEditor initialized successfully for:', textarea.id);
                     console.log('Available commands:', Object.keys(editor.commands._commands));
                     editorInstances[textarea.id] = editor;
+                    
+                    // Add media library button
+                    addMediaLibraryButton(textarea, editor);
                 })
                 .catch(error => {
                     console.error('CKEditor initialization error:', error);
@@ -1099,6 +1648,9 @@ window.ckEditorFallback = function() {
                         .then(editor => {
                             console.log('Minimal CKEditor initialized for:', textarea.id);
                             editorInstances[textarea.id] = editor;
+                            
+                            // Add media library button
+                            addMediaLibraryButton(textarea, editor);
                         })
                         .catch(minimalError => {
                             console.error('Even minimal CKEditor failed:', minimalError);
@@ -1111,19 +1663,32 @@ window.ckEditorFallback = function() {
     
     // CKEditor 4 fallback functions
     function initCKEditor4ForTextarea(textarea) {
-        console.log('Initializing CKEditor 4 for:', textarea.id);
+        // console.log('Initializing CKEditor 4 for:', textarea.id);
         
         if (typeof CKEDITOR !== 'undefined' && CKEDITOR.replace) {
+            // Suppress the version warning
+            CKEDITOR.config.versionCheck = false;
+            
             const editor = CKEDITOR.replace(textarea.id, {
                 toolbar: [
+                    { name: 'styles', items: ['Format', 'FontSize'] },
                     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
                     { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
                     { name: 'links', items: ['Link', 'Unlink'] },
-                    { name: 'insert', items: ['Image'] }
+                    { name: 'insert', items: ['Table'] },
+                    { name: 'tools', items: ['Source'] }
+                    // Note: Image button removed - users must use media library
                 ],
+                format_tags: 'p;h1;h2;h3;h4;h5;h6',
+                fontSize_sizes: '8/8px;9/9px;10/10px;11/11px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;36/36px;48/48px;72/72px',
+                fontSize_defaultLabel: '14px',
                 height: 150,
                 removeButtons: '',
-                allowedContent: true
+                allowedContent: true,
+                versionCheck: false,
+                // Disable file uploads - force users to use media library
+                filebrowserUploadUrl: null,
+                filebrowserImageUploadUrl: null
             });
             
             editorInstances[textarea.id] = {
@@ -1132,14 +1697,17 @@ window.ckEditorFallback = function() {
                 destroy: () => editor.destroy()
             };
             
-            console.log('CKEditor 4 initialized successfully for:', textarea.id);
+            // console.log('CKEditor 4 initialized successfully for:', textarea.id);
+            
+            // Add media library button for CKEditor 4
+            addMediaLibraryButton(textarea, null);
         } else {
             console.error('CKEditor 4 not available');
         }
     }
     
     function initCKEditor4() {
-        console.log('Initializing all CKEditor 4 instances...');
+        // console.log('Initializing all CKEditor 4 instances...');
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
             if (!textarea.id) {
                 textarea.id = 'editor_' + Math.random().toString(36).substr(2, 9);
@@ -1150,10 +1718,14 @@ window.ckEditorFallback = function() {
 
     // Wait for page to load
     window.addEventListener('load', function() {
+        // console.log('Page loaded, checking CKEditor availability...');
+        // console.log('window.CKEDITOR available:', typeof window.CKEDITOR !== 'undefined');
+        
         if (typeof window.CKEDITOR !== 'undefined') {
+            // console.log('CKEditor 5 UMD build detected, initializing...');
             setTimeout(initCKEditor, 500);
         } else {
-            console.log('CKEditor 5 not available, trying CKEditor 4...');
+            // console.log('CKEditor 5 not available, trying CKEditor 4...');
             window.ckEditorFallback();
         }
     });
@@ -1311,6 +1883,23 @@ window.ckEditorFallback = function() {
         handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
+
+        // Helpful links add/remove handlers (for contact-section)
+        $(document).on('click', '.add-helpful-link-btn', function() {
+            const $section = $(this).closest('.section-block');
+            const $list = $section.find('.cs-helpful-links-list');
+            const itemHtml = \`
+                <div class="d-flex align-items-center gap-2 mb-2 cs-helpful-item">
+                    <input type="text" class="form-control cs-helpful-text" value="" placeholder="Button text">
+                    <input type="text" class="form-control cs-helpful-link" value="" placeholder="/path or https://...">
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-helpful-link"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                </div>\`;
+            $list.append(itemHtml);
+        });
+
+        $(document).on('click', '.remove-helpful-link', function() {
+            $(this).closest('.cs-helpful-item').remove();
+        });
 
         // Initialize existing hero images on page load
         $(".upload-file-hero-input").each(function() {
@@ -1494,6 +2083,29 @@ window.ckEditorFallback = function() {
             $wrapper.find(".upload-file-tci-input").val("").data("server-url", "");
         });
 
+        // Helper function to focus on field with proper scroll behavior
+        function focusFieldWithScroll($field, message) {
+            if (message) {
+                showToast(message, 'warning');
+            }
+            if ($field && $field.length) {
+                // Reset button state
+                const saveBtn = $('#editContentForm button[type="submit"]')[0];
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = 'Save Changes';
+                }
+                
+                setTimeout(() => {
+                    $field[0].scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    $field.focus();
+                }, 100);
+            }
+        }
+
         // Form submission logic
         $("#editContentForm").on("submit", function (e) {
             const saveBtn = $('#editContentForm button[type="submit"]')[0];
@@ -1563,22 +2175,43 @@ window.ckEditorFallback = function() {
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    
+                    // Validate hero section heading
+                    if (!sectionData.heroSection.heading || !sectionData.heroSection.heading.trim()) {
+                        const $heroHeadingField = $section.find(".hero-heading");
+                        focusFieldWithScroll($heroHeadingField, 'Hero Section heading is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
                     // Get CKEditor 5 content
                     const paragraphEditor = $section.find(".hero-paragraph");
                     const editorId = paragraphEditor.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
-                    const heroImageUrl = $section.find(".upload-file-hero-input").data("server-url");
-                    // Only save image if an actual image was uploaded (not the default placeholder)
-                    if (heroImageUrl && heroImageUrl !== '/images/user.png') {
-                        // Ensure we save full URL for hero image
-                        if (!heroImageUrl.startsWith('http') && !heroImageUrl.startsWith('data:')) {
-                            sectionData.heroSection.image = window.location.origin + heroImageUrl;
-                        } else {
-                            sectionData.heroSection.image = heroImageUrl;
+                    // Get ad object from dropdown
+                    const adImageInput = $section.find(".ad-image-input");
+                    const adData = adImageInput.val();
+                    
+                    // Save the ad object
+                    console.log('📋 Processing ad data for form submission:', adData);
+                    if (adData && adData.trim() !== '') {
+                        try {
+                            const adObject = JSON.parse(adData);
+                            sectionData.heroSection.ad = adObject;
+                            console.log('✅ Ad object saved to section:', adObject);
+                        } catch (e) {
+                            console.error('❌ Error parsing ad data:', e);
+                            // Fallback for old format (just image URL)
+                            sectionData.heroSection.ad = {
+                                image: adData,
+                                link: '',
+                                target: '_self'
+                            };
+                            console.log('🔄 Using fallback ad object:', sectionData.heroSection.ad);
                         }
                     } else {
-                        // No image uploaded or default placeholder - save as empty/null
-                        sectionData.heroSection.image = null;
+                        sectionData.heroSection.ad = null;
+                        console.log('⚠️ No ad data found, setting ad to null');
                     }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "left-heading-image-right-text") {
@@ -1643,7 +2276,11 @@ window.ckEditorFallback = function() {
                     if (cards.length > 0) {
                         const invalidCard = cards.find(card => !card.heading);
                         if (invalidCard) {
-                            showToast('All Call Out Section must have a heading', 'warning');
+                            // Find the first empty heading field and focus on it with proper scroll
+                            const $emptyHeadingField = $section.find(".callout-heading").filter(function() {
+                                return !$(this).val().trim();
+                            }).first();
+                            focusFieldWithScroll($emptyHeadingField, 'All Call Out Section must have a heading');
                             isValid = false;
                             return false;
                         }
@@ -1710,6 +2347,56 @@ window.ckEditorFallback = function() {
                         displayOrder: displayOrder,
                         selectedPages: selectedPages
                     };
+                } else if (sectionType === "contact-section") {
+                    // Collect contact section fields
+                    const cs = {};
+                    cs.heading = $section.find('.cs-heading').val();
+                    cs.subheading = $section.find('.cs-subheading').val();
+
+                    cs.email = {
+                        heading: $section.find('.cs-email-heading').val(),
+                        subheading: $section.find('.cs-email-subheading').val(),
+                        address: $section.find('.cs-email-address').val()
+                    };
+
+                    cs.call = {
+                        heading: $section.find('.cs-call-heading').val(),
+                        subheading: $section.find('.cs-call-subheading').val(),
+                        phone: $section.find('.cs-call-phone').val()
+                    };
+
+                    cs.generalContactForm = {
+                        heading: $section.find('.cs-form-heading').val(),
+                        subheading: $section.find('.cs-form-subheading').val(),
+                        openFormLink: $section.find('.cs-form-link').val()
+                    };
+
+                    // helpful links
+                    cs.helpfulLinks = $section.find('.cs-helpful-item').map(function() {
+                        return {
+                            text: $(this).find('.cs-helpful-text').val(),
+                            link: $(this).find('.cs-helpful-link').val()
+                        };
+                    }).get();
+
+                    // Validate email if present
+                    const emailVal = cs.email.address || '';
+                    if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                        focusFieldWithScroll($section.find('.cs-email-address'), 'Please enter a valid email address');
+                        isValid = false;
+                        return false;
+                    }
+
+                    // Validate phone - allow digits, spaces, + and parentheses only
+                    const phoneVal = cs.call.phone || '';
+                    if (phoneVal && !/^[0-9+\s()]+$/.test(phoneVal)) {
+                        focusFieldWithScroll($section.find('.cs-call-phone'), 'Phone number contains invalid characters');
+                        isValid = false;
+                        return false;
+                    }
+
+                    sectionData.title = cs.heading || 'Contact Section';
+                    sectionData.contactSection = cs;
                 }
 
                 sectionsData.push(sectionData);
@@ -1717,14 +2404,19 @@ window.ckEditorFallback = function() {
 
             if (!isValid) return;
 
+            // Get thumbnail data
+            const pageThumbnail = $("#pageThumbnail").val();
+
             // Consolidate all data into one payload
             const payload = {
                 pageId: pageId,
                 status: status,
-                sections: sectionsData
+                sections: sectionsData,
+                pageThumbnail: pageThumbnail || null
             };
             
             console.log('Complete payload being sent:', payload);
+            console.log('🔍 Hero section data being sent:', payload.sections.find(s => s.sectionType === 'hero-section'));
 
             // Single AJAX call to update everything
             $.ajax({
@@ -1803,22 +2495,42 @@ window.ckEditorFallback = function() {
                         }
                     });
                     sectionData.heroSection.heading = $section.find(".hero-heading").val();
+                    
+                    // Validate hero section heading
+                    if (!sectionData.heroSection.heading || !sectionData.heroSection.heading.trim()) {
+                        const $heroHeadingField = $section.find(".hero-heading");
+                        focusFieldWithScroll($heroHeadingField, 'Hero Section heading is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
                     // Get CKEditor 5 content
                     const paragraphEditor2 = $section.find(".hero-paragraph");
                     const editorId2 = paragraphEditor2.attr('id');
                     sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
-                    const heroImageUrl2 = $section.find(".upload-file-hero-input").data("server-url");
-                    // Only save image if an actual image was uploaded (not the default placeholder)
-                    if (heroImageUrl2 && heroImageUrl2 !== '/images/user.png') {
-                        // Ensure we save full URL for hero image
-                        if (!heroImageUrl2.startsWith('http') && !heroImageUrl2.startsWith('data:')) {
-                            sectionData.heroSection.image = window.location.origin + heroImageUrl2;
-                        } else {
-                            sectionData.heroSection.image = heroImageUrl2;
+                    // Get ad object from dropdown
+                    const adImageInput2 = $section.find(".ad-image-input");
+                    const adData2 = adImageInput2.val();
+                    
+                    // Save the ad object
+                    if (adData2 && adData2.trim() !== '') {
+                        try {
+                            const adObject2 = JSON.parse(adData2);
+                            sectionData.heroSection.ad = adObject2;
+                            console.log('Ad object saved to section (handler 2):', adObject2);
+                        } catch (e) {
+                            console.error('Error parsing ad data (handler 2):', e);
+                            // Fallback for old format (just image URL)
+                            sectionData.heroSection.ad = {
+                                image: adData2,
+                                link: '',
+                                target: '_self'
+                            };
+                            console.log('Using fallback ad object (handler 2):', sectionData.heroSection.ad);
                         }
                     } else {
-                        // No image uploaded or default placeholder - save as empty/null
-                        sectionData.heroSection.image = null;
+                        sectionData.heroSection.ad = null;
+                        console.log('No ad data found (handler 2), setting ad to null');
                     }
                     sectionData.heroSection.ctas = ctas;
                 } else if (sectionType === "three-column-info") {
@@ -1859,7 +2571,11 @@ window.ckEditorFallback = function() {
                     if (cards.length > 0) {
                         const invalidCard = cards.find(card => !card.heading);
                         if (invalidCard) {
-                            showToast('All Call Out Section must have a heading', 'warning');
+                            // Find the first empty heading field and focus on it with proper scroll
+                            const $emptyHeadingField = $section.find(".callout-heading").filter(function() {
+                                return !$(this).val().trim();
+                            }).first();
+                            focusFieldWithScroll($emptyHeadingField, 'All Call Out Section must have a heading');
                             isValid = false;
                             return false;
                         }
@@ -1919,6 +2635,53 @@ window.ckEditorFallback = function() {
                         displayOrder: displayOrder,
                         selectedPages: selectedPages
                     };
+                } else if (sectionType === "contact-section") {
+                    // Collect contact section fields for SEO update flow
+                    const cs = {};
+                    cs.heading = $section.find('.cs-heading').val();
+                    cs.subheading = $section.find('.cs-subheading').val();
+
+                    cs.email = {
+                        heading: $section.find('.cs-email-heading').val(),
+                        subheading: $section.find('.cs-email-subheading').val(),
+                        address: $section.find('.cs-email-address').val()
+                    };
+
+                    cs.call = {
+                        heading: $section.find('.cs-call-heading').val(),
+                        subheading: $section.find('.cs-call-subheading').val(),
+                        phone: $section.find('.cs-call-phone').val()
+                    };
+
+                    cs.generalContactForm = {
+                        heading: $section.find('.cs-form-heading').val(),
+                        subheading: $section.find('.cs-form-subheading').val(),
+                        openFormLink: $section.find('.cs-form-link').val()
+                    };
+
+                    cs.helpfulLinks = $section.find('.cs-helpful-item').map(function() {
+                        return {
+                            text: $(this).find('.cs-helpful-text').val(),
+                            link: $(this).find('.cs-helpful-link').val()
+                        };
+                    }).get();
+
+                    // Validation as above
+                    const emailVal = cs.email.address || '';
+                    if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                        focusFieldWithScroll($section.find('.cs-email-address'), 'Please enter a valid email address');
+                        isValid = false;
+                        return false;
+                    }
+                    const phoneVal = cs.call.phone || '';
+                    if (phoneVal && !/^[0-9+\s()]+$/.test(phoneVal)) {
+                        focusFieldWithScroll($section.find('.cs-call-phone'), 'Phone number contains invalid characters');
+                        isValid = false;
+                        return false;
+                    }
+
+                    sectionData.title = cs.heading || 'Contact Section';
+                    sectionData.contactSection = cs;
                 }
 
                 sectionsData.push(sectionData);
@@ -2000,7 +2763,8 @@ window.ckEditorFallback = function() {
                     $\{page.name} <small class="text-muted">($\{page.slug})</small>
                 </div>
                 \`);
-                const baseUrl = window.location.origin;
+                // const baseUrl = window.location.origin;
+                const baseUrl = $("#frontendUrl").val();
 
                 $item.on('click', function() {
                 $input.val(page.slug);
@@ -2131,12 +2895,29 @@ window.ckEditorFallback = function() {
         const $textarea = $tabItem.find('.tab-paragraph');
         const editorId = $textarea.attr('id');
         if (editorId && editorInstances[editorId]) {
-            editorInstances[editorId].destroy().then(() => {
+            const editorInstance = editorInstances[editorId];
+            if (editorInstance && typeof editorInstance.destroy === 'function') {
+                try {
+                    const destroyResult = editorInstance.destroy();
+                    // Check if destroy returns a Promise (CKEditor 5) or undefined (CKEditor 4)
+                    if (destroyResult && typeof destroyResult.then === 'function') {
+                        destroyResult.then(() => {
+                            delete editorInstances[editorId];
+                        }).catch(error => {
+                            console.error('Error destroying CKEditor:', error);
+                            delete editorInstances[editorId];
+                        });
+                    } else {
+                        // CKEditor 4 or synchronous destroy
+                        delete editorInstances[editorId];
+                    }
+                } catch (error) {
+                    console.error('Error calling destroy on CKEditor:', error);
+                    delete editorInstances[editorId];
+                }
+            } else {
                 delete editorInstances[editorId];
-            }).catch(error => {
-                console.error('Error destroying CKEditor:', error);
-                delete editorInstances[editorId];
-            });
+            }
         }
         
         $tabItem.remove();
@@ -2310,7 +3091,7 @@ window.ckEditorFallback = function() {
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Heading: <span class="text-danger-600">*</span></label>
-                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}" required>
+                <input type="text" class="form-control border border-neutral-200 radius-8 callout-heading" placeholder="Call Out Card \${cardNumber}">
             </div>
             <div class="mb-2">
                 <label class="form-label text-sm">Paragraph:</label>
@@ -2337,12 +3118,29 @@ window.ckEditorFallback = function() {
         const $textarea = $item.find('.callout-subheading');
         const editorId = $textarea.attr('id');
         if (editorId && editorInstances[editorId]) {
-            editorInstances[editorId].destroy().then(() => {
+            const editorInstance = editorInstances[editorId];
+            if (editorInstance && typeof editorInstance.destroy === 'function') {
+                try {
+                    const destroyResult = editorInstance.destroy();
+                    // Check if destroy returns a Promise (CKEditor 5) or undefined (CKEditor 4)
+                    if (destroyResult && typeof destroyResult.then === 'function') {
+                        destroyResult.then(() => {
+                            delete editorInstances[editorId];
+                        }).catch(error => {
+                            console.error('Error destroying CKEditor:', error);
+                            delete editorInstances[editorId];
+                        });
+                    } else {
+                        // CKEditor 4 or synchronous destroy
+                        delete editorInstances[editorId];
+                    }
+                } catch (error) {
+                    console.error('Error calling destroy on CKEditor:', error);
+                    delete editorInstances[editorId];
+                }
+            } else {
                 delete editorInstances[editorId];
-            }).catch(error => {
-                console.error('Error destroying CKEditor:', error);
-                delete editorInstances[editorId];
-            });
+            }
         }
         
         $item.remove();
@@ -2517,5 +3315,441 @@ window.ckEditorFallback = function() {
             });
         }
     });
+    // Initialize media picker for hero image
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize media picker for hero image input
+        const heroImageInputs = document.querySelectorAll('.hero-image-input');
+        
+        heroImageInputs.forEach(input => {
+            const sectionBlock = input.closest('.section-block');
+            const sectionId = sectionBlock ? sectionBlock.dataset.id : 'hero';
+            
+            window.initMediaPicker(\`input[name="heroImage"]\`, {
+                allowedTypes: ['image'],
+                title: 'Select Hero Image',
+                buttonText: 'Select Image',
+                onSelect: function(selectedMedia, inputElement) {
+                    console.log('Hero image selected:', selectedMedia);
+                    
+                    // Update any existing preview elements
+                    const existingImage = sectionBlock.querySelector('.existing-image img');
+                    if (existingImage) {
+                        existingImage.src = selectedMedia.src;
+                    }
+                    
+                    // Show success message
+                    if (window.showToast) {
+                        window.showToast('Hero image selected successfully!', 'success');
+                    }
+                },
+                onClear: function(inputElement) {
+                    console.log('Hero image cleared');
+                    
+                    // Clear any existing preview elements
+                    const existingImage = sectionBlock.querySelector('.existing-image img');
+                    if (existingImage) {
+                        existingImage.src = '/images/placeholder.jpg';
+                    }
+                    
+                    if (window.showToast) {
+                        window.showToast('Hero image removed', 'info');
+                    }
+                }
+            });
+        });
+    });
+    
+    // AD Image Dropdown Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load ads for dropdown
+        function loadAdsForDropdown() {
+            // Load ads from server-side data instead of AJAX
+            const adsData = window.adsData || [];
+            console.log('Ads loaded from server:', adsData);
+            populateAdDropdowns(adsData);
+            
+            // Show previews for already selected ads after population
+            setTimeout(function() {
+                $('.ad-image-select').each(function() {
+                    const $select = $(this);
+                    const selectedOption = $select.find('option:selected');
+                    if (selectedOption.val() && selectedOption.val() !== '') {
+                        const title = selectedOption.data('title');
+                        const description = selectedOption.data('description');
+                        const imageUrl = selectedOption.data('image');
+                        if (title && imageUrl) {
+                            console.log('Showing preview for selected ad:', title);
+                            showAdPreview($select, title, description, imageUrl);
+                        }
+                    }
+                });
+            }, 100);
+        }
+        
+        // Populate all AD dropdowns
+        function populateAdDropdowns(ads) {
+            console.log('Populating ad dropdowns with:', ads);
+            $('.ad-image-select').each(function() {
+                const $select = $(this);
+                const currentValue = $select.data('current-value');
+                const dropdownAdId = $select.data('id');
+                console.log('Current value for dropdown:', currentValue);
+                console.log('Type of current value:', typeof currentValue);
+                
+                // Clear existing options except the first one
+                $select.find('option:not(:first)').remove();
+                
+                // Reset selection to default
+                $select.val('');
+                
+                // Add ads as options
+                ads.forEach(function(ad, index) {
+                    console.log('Processing ad ' + (index + 1) + ':', {
+                        id: ad._id,
+                        title: ad.title,
+                        media_url: ad.media_url,
+                        link_url: ad.link_url,
+                        link_target: ad.link_target
+                    });
+                    if (ad.media_url) {
+                        const fullUrl = ad.media_url.startsWith('http') ? ad.media_url : window.location.origin + ad.media_url;
+                        const adObject = {
+                            id: ad._id,
+                            image: fullUrl,
+                            link: ad.link_url || '',
+                            target: ad.link_target || '_self'
+                        };
+                        console.log('Created ad object:', adObject);
+                        
+                        const option = $('<option></option>')
+                            .attr('value', ad._id)
+                            .attr('data-ad-id', ad._id)
+                            .attr('data-title', ad.title)
+                            .attr('data-description', ad.description)
+                            .attr('data-image', fullUrl)
+                            .attr('data-link', ad.link_url || '')
+                            .attr('data-target', ad.link_target || '_self')
+                            .text(ad.title);
+
+                        if (dropdownAdId == ad._id) {
+                            option.prop('selected', true);
+
+                            const adObject = {
+                                id: ad._id,
+                                image: fullUrl,
+                                link: ad.link_url || '',
+                                target: ad.link_target || '_self'
+                            };
+
+                            $select.siblings('.ad-image-input').val(JSON.stringify(adObject));
+
+                            showAdPreview($select, ad.title, ad.description, fullUrl);
+                        }
+                        
+                        // Check if this matches current value
+                        if (currentValue && currentValue.trim() !== '') {
+                            let shouldSelect = false;
+                            let currentAd = null;
+                            
+                            try {
+                                currentAd = JSON.parse(currentValue);
+                                console.log('🔍 Comparing current ad image:', currentAd.image);
+                                console.log('🔍 With dropdown ad image:', fullUrl);
+                                console.log('🔍 Ad media_url:', ad.media_url);
+                                
+                                // Extract filename from URLs for comparison
+                                const currentImageFile = currentAd.image ? currentAd.image.split('/').pop() : '';
+                                const adImageFile = ad.media_url ? ad.media_url.split('/').pop() : '';
+                                const fullUrlFile = fullUrl ? fullUrl.split('/').pop() : '';
+                                
+                                console.log('🔍 Comparing filenames:', {
+                                    current: currentImageFile,
+                                    adFile: adImageFile,
+                                    fullUrlFile: fullUrlFile
+                                });
+                                
+                                // Match by image URL or filename
+                                if (currentAd.image === fullUrl || 
+                                    currentAd.image === ad.media_url ||
+                                    currentImageFile === adImageFile ||
+                                    currentImageFile === fullUrlFile) {
+                                    shouldSelect = true;
+                                    console.log('✅ Match found for ad:', ad.title);
+                                }
+                            } catch (e) {
+                                console.error('❌ Error parsing current value:', e, 'Value:', currentValue);
+                                // Handle old format (just image URL)
+                                if (currentValue === fullUrl || currentValue === ad.media_url) {
+                                    shouldSelect = true;
+                                    console.log('✅ Match found (old format) for ad:', ad.title);
+                                }
+                            }
+                            
+                            if (shouldSelect) {
+                                // option.prop('selected', true);
+                                $select.val(JSON.stringify(adObject));
+                                showAdPreview($select, ad.title, ad.description, fullUrl);
+                                console.log('🎯 Selected ad option for:', ad.title, adObject);
+                                
+                                // Update the hidden input with the current ad object
+                                const $adInput = $select.siblings('.ad-image-input');
+                                $adInput.val(JSON.stringify(adObject));
+                                
+                                // Mark that we found a match
+                                $select.data('match-found', true);
+                            }
+                        }
+                        
+                        $select.append(option);
+                    }
+                });
+                
+                // If no match was found and we have a current value, log it
+                if (currentValue && currentValue.trim() !== '' && !$select.data('match-found')) {
+                    console.log('⚠️ No match found for current value:', currentValue);
+                    console.log('⚠️ Available ads:', ads.map(ad => ({
+                        title: ad.title,
+                        media_url: ad.media_url
+                    })));
+                }
+            });
+        }
+        
+        // Show AD preview
+        function showAdPreview($select, title, description, imageUrl) {
+            const $container = $select.siblings('.ad-preview-container');
+            const $image = $container.find('.ad-preview-image');
+            const $title = $container.find('.ad-preview-title');
+            const $description = $container.find('.ad-preview-description');
+            
+            $image.attr('src', imageUrl);
+            $title.text(title);
+            $description.text(description);
+            $container.show();
+        }
+        
+        // Hide AD preview
+        function hideAdPreview($select) {
+            const $container = $select.siblings('.ad-preview-container');
+            $container.hide();
+        }
+        
+        // Handle AD selection change
+        $(document).on('change', '.ad-image-select', function() {
+            const $select = $(this);
+            const selectedOption = $select.find('option:selected');
+            const $adImageInput = $select.siblings('.ad-image-input');
+            
+            console.log('🔄 Ad selection changed');
+            console.log('Selected option value:', selectedOption.val());
+            console.log('Selected option data:', {
+                title: selectedOption.data('title'),
+                description: selectedOption.data('description'),
+                image: selectedOption.data('image'),
+                link: selectedOption.data('link'),
+                target: selectedOption.data('target')
+            });
+            
+            if (selectedOption.val()) {
+                const title = selectedOption.data('title');
+                const description = selectedOption.data('description');
+                const imageUrl = selectedOption.data('image');
+                const linkUrl = selectedOption.data('link');
+                const linkTarget = selectedOption.data('target');
+                const adId = selectedOption.data('ad-id');
+                
+                // Create ad object with image, link, and target
+                const adObject = {
+                    id: adId,
+                    image: imageUrl,
+                    link: linkUrl,
+                    target: linkTarget
+                };
+                
+                console.log('📦 Created ad object:', adObject);
+                
+                // Update hidden input with ad object
+                $adImageInput.val(JSON.stringify(adObject));
+                console.log('💾 Updated hidden input value:', $adImageInput.val());
+                console.log('💾 Hidden input element found:', $adImageInput.length);
+                
+                // Show preview
+                showAdPreview($select, title, description, imageUrl);
+                
+                showToast('Advertisement selected successfully', 'success');
+            } else {
+                // Clear selection
+                $adImageInput.val('');
+                hideAdPreview($select);
+                console.log('🗑️ Cleared ad selection');
+            }
+        });
+        
+        // Debug button handler
+        $(document).on('click', '.debug-ad-btn', function() {
+            const $section = $(this).closest('.section-block');
+            const $select = $section.find('.ad-image-select');
+            const $input = $section.find('.ad-image-input');
+            
+            console.log('🐛 DEBUG AD DATA:');
+            console.log('Selected option:', $select.find('option:selected').text());
+            console.log('Selected value:', $select.val());
+            console.log('Hidden input value:', $input.val());
+            console.log('Current data-current-value:', $select.data('current-value'));
+            
+            console.log('🔍 ALL DROPDOWN OPTIONS:');
+            $select.find('option').each(function(index) {
+                const $option = $(this);
+                console.log('Option ' + index + ':', {
+                    text: $option.text(),
+                    value: $option.val(),
+                    selected: $option.prop('selected'),
+                    dataImage: $option.data('image')
+                });
+            });
+            
+            console.log('🔍 AVAILABLE ADS DATA:', window.adsData);
+            
+            alert('Check console for detailed ad debug data');
+        });
+        
+        // Load ads on page load
+        loadAdsForDropdown();
+    });
+    
+    // Thumbnail Selection Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle thumbnail selection button click
+        $(document).on('click', '.select-thumbnail-btn', function() {
+            const button = $(this);
+            const currentThumbnail = button.data('current-thumbnail');
+            
+            // Create media picker instance directly (same as ads management)
+            const mediaPicker = new MediaPicker({
+                allowedTypes: ['image'],
+                title: 'Select Page Thumbnail',
+                buttonText: 'Select Thumbnail',
+                multiple: false,
+                onSelect: function(selectedMedia) {
+                    console.log('Thumbnail selected:', selectedMedia);
+                    
+                    // Update hidden input
+                    $('#pageThumbnail').val(selectedMedia.src);
+                    
+                    // Update or create preview
+                    let previewContainer = $('.current-thumbnail-preview');
+                    if (previewContainer.length === 0) {
+                        // Create preview container if it doesn't exist
+                        previewContainer = $(\`
+                            <div class="current-thumbnail-preview mb-3">
+                                // <label class="form-label text-sm">Current Thumbnail:</label>
+                                <div class="thumbnail-preview-container">
+                                    <img src="" alt="Current Thumbnail" class="img-thumbnail current-thumbnail-img" 
+                                         style="max-width: 150px; max-height: 100px; object-fit: cover;">
+                                </div>
+                            </div>
+                        \`);
+                        button.parent().prepend(previewContainer);
+                    }
+                    
+                    // Update preview image
+                    previewContainer.find('.current-thumbnail-img').attr('src', selectedMedia.src);
+                    previewContainer.show();
+                    
+                    // Update button text
+                    button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Change Thumbnail');
+                    
+                    // Add remove button if it doesn't exist
+                    let removeBtn = $('.remove-thumbnail-btn');
+                    if (removeBtn.length === 0) {
+                        removeBtn = $(\`
+                            <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
+                                <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
+                                Remove Thumbnail
+                            </button>
+                        \`);
+                        button.after(removeBtn);
+                    }
+                    removeBtn.show();
+                    
+                    showToast('Thumbnail selected successfully', 'success');
+                }
+            });
+            
+            // Open the media picker
+            mediaPicker.open();
+        });
+        
+        // Handle remove thumbnail button click
+        $(document).on('click', '.remove-thumbnail-btn', function() {
+            const button = $(this);
+            
+            // Clear hidden input
+            $('#pageThumbnail').val('');
+            
+            // Hide preview
+            $('.current-thumbnail-preview').hide();
+            
+            // Update select button text
+            $('.select-thumbnail-btn').html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Select Thumbnail');
+            
+            // Hide remove button
+            button.hide();
+            
+            showToast('Thumbnail removed', 'success');
+        });
+    });
+
     </script>
     ` %>
+
+<!-- WordPress-style Media Picker -->
+<link rel="stylesheet" href="/css/media-picker.css">
+<script src="/js/media-picker.js"></script>
+<script src="/js/media-picker-integration.js"></script>
+
+<script>
+// Initialize media picker for hero image
+/* document.addEventListener('DOMContentLoaded', function() {
+    // Initialize media picker for ad image input
+    const adImageInputs = document.querySelectorAll('.ad-image-input');
+    
+    adImageInputs.forEach(input => {
+        const sectionBlock = input.closest('.section-block');
+        const sectionId = sectionBlock ? sectionBlock.dataset.id : 'hero';
+        
+        window.initMediaPicker(`input[name="heroImage"]`, {
+            allowedTypes: ['image'],
+            title: 'Select Hero Image',
+            buttonText: 'Select Image',
+            onSelect: function(selectedMedia, inputElement) {
+                console.log('Hero image selected:', selectedMedia);
+                
+                // Update any existing preview elements
+                const existingImage = sectionBlock.querySelector('.existing-image img');
+                if (existingImage) {
+                    existingImage.src = selectedMedia.src;
+                }
+                
+                // Show success message
+                if (window.showToast) {
+                    window.showToast('Hero image selected successfully!', 'success');
+                }
+            },
+            onClear: function(inputElement) {
+                console.log('Hero image cleared');
+                
+                // Clear any existing preview elements
+                const existingImage = sectionBlock.querySelector('.existing-image img');
+                if (existingImage) {
+                    existingImage.src = '/images/placeholder.jpg';
+                }
+                
+                if (window.showToast) {
+                    window.showToast('Hero image removed', 'info');
+                }
+            }
+        });
+    });
+}); */
+</script>

@@ -3,6 +3,7 @@ const router = express.Router();
 const SEO = require('../../models/SEO');
 const Page = require('../../models/Page');
 const { isAuthenticated } = require('../../middleware/auth');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 // Get all SEO records with pagination and search
 router.get('/seo', isAuthenticated, async (req, res) => {
@@ -37,11 +38,18 @@ router.get('/seo', isAuthenticated, async (req, res) => {
             );
         }
 
+        // Convert image URLs to absolute
+        const recordsWithAbsoluteUrls = filteredRecords.map(record => ({
+            ...record.toObject(),
+            ogImage: toAbsoluteUrl(record.ogImage),
+            ogImagePath: toAbsoluteUrl(record.ogImagePath)
+        }));
+
         const total = await SEO.countDocuments(query);
 
         res.json({
             success: true,
-            data: filteredRecords,
+            data: recordsWithAbsoluteUrls,
             pagination: {
                 total,
                 page: parseInt(page),
@@ -71,9 +79,16 @@ router.get('/seo/:id', isAuthenticated, async (req, res) => {
             });
         }
 
+        // Convert image URLs to absolute
+        const seoWithAbsoluteUrls = {
+            ...seo.toObject(),
+            ogImage: toAbsoluteUrl(seo.ogImage),
+            ogImagePath: toAbsoluteUrl(seo.ogImagePath)
+        };
+
         res.json({
             success: true,
-            data: seo
+            data: seoWithAbsoluteUrls
         });
     } catch (error) {
         console.error('Error fetching SEO record:', error);
@@ -90,9 +105,16 @@ router.get('/seo/page/:pageId', isAuthenticated, async (req, res) => {
     try {
         const seo = await SEO.findOne({ page: req.params.pageId }).populate('page', 'name path');
         
+        // Convert image URLs to absolute if seo exists
+        const seoWithAbsoluteUrls = seo ? {
+            ...seo.toObject(),
+            ogImage: toAbsoluteUrl(seo.ogImage),
+            ogImagePath: toAbsoluteUrl(seo.ogImagePath)
+        } : null;
+        
         res.json({
             success: true,
-            data: seo
+            data: seoWithAbsoluteUrls
         });
     } catch (error) {
         console.error('Error fetching SEO record:', error);
@@ -213,6 +235,15 @@ router.put('/seo/:id', isAuthenticated, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'SEO record not found'
+            });
+        }
+
+        // Check if page change is being attempted when it should be locked
+        const { pageId, from } = req.query;
+        if (pageId && from === 'content' && page && page !== seo.page.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Page cannot be changed when accessed from content management'
             });
         }
 

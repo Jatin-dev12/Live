@@ -3,6 +3,81 @@ const router = express.Router();
 const { isAuthenticated } = require('../../middleware/auth');
 const Ad = require('../../models/Ad');
 const AdPlacement = require('../../models/AdPlacement');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
+
+
+
+// Get ad media files (only from ads folder)
+router.get('/ads/media', isAuthenticated, async (req, res) => {
+    try {
+        const adsMediaPath = path.join(__dirname, '../../public/uploads/ads');
+        console.log('Checking ads media path:', adsMediaPath);
+        
+        // Check if ads directory exists
+        if (!fs.existsSync(adsMediaPath)) {
+            console.log('Ads directory does not exist');
+            return res.json({
+                success: true,
+                data: [],
+                message: 'No ad media folder found'
+            });
+        }
+        
+        // Read files from ads directory
+        const files = fs.readdirSync(adsMediaPath);
+        console.log('Found files in ads directory:', files);
+        const mediaFiles = [];
+        
+        files.forEach(filename => {
+            const filePath = path.join(adsMediaPath, filename);
+            const stats = fs.statSync(filePath);
+            
+            if (stats.isFile()) {
+                const ext = path.extname(filename).toLowerCase();
+                const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+                
+                let type = 'other';
+                let mimeType = 'application/octet-stream';
+                
+                if (imageExts.includes(ext)) {
+                    type = 'image';
+                    mimeType = 'image/' + ext.substring(1);
+                }
+                
+                // Only include images
+                if (type === 'image') {
+                    mediaFiles.push({
+                        _id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        originalName: filename,
+                        url: toAbsoluteUrl('/uploads/ads/' + filename),
+                        type: type,
+                        mimeType: mimeType,
+                        size: stats.size,
+                        createdAt: stats.birthtime
+                    });
+                }
+            }
+        });
+        
+        // Sort by creation date (newest first)
+        mediaFiles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        console.log('Returning media files:', mediaFiles.length, 'files');
+        
+        res.json({
+            success: true,
+            data: mediaFiles,
+            count: mediaFiles.length
+        });
+    } catch (error) {
+        console.error('Error fetching ad media:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching ad media',
+            error: error.message
+        });
+    }
+});
 
 // Get all ads with filters
 router.get('/ads', isAuthenticated, async (req, res) => {
@@ -30,10 +105,16 @@ router.get('/ads', isAuthenticated, async (req, res) => {
             .sort({ createdAt: -1 })
             .lean();
         
+        // Convert media URLs to absolute
+        const adsWithAbsoluteUrls = ads.map(ad => ({
+            ...ad,
+            media_url: toAbsoluteUrl(ad.media_url)
+        }));
+        
         res.json({
             success: true,
-            count: ads.length,
-            data: ads
+            count: adsWithAbsoluteUrls.length,
+            data: adsWithAbsoluteUrls
         });
     } catch (error) {
         console.error('Error fetching ads:', error);
@@ -59,9 +140,15 @@ router.get('/ads/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Convert media URL to absolute
+        const adWithAbsoluteUrl = {
+            ...ad.toObject(),
+            media_url: toAbsoluteUrl(ad.media_url)
+        };
+        
         res.json({
             success: true,
-            data: ad
+            data: adWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Error fetching ad:', error);
@@ -85,6 +172,9 @@ router.post('/ads', isAuthenticated, async (req, res) => {
             page_name,
             page_section,
             placement,
+            link_url,
+            link_target,
+            priority,
             status,
             start_date,
             end_date,
@@ -115,6 +205,9 @@ router.post('/ads', isAuthenticated, async (req, res) => {
             page_name: page_name || null,
             page_section: page_section || null,
             placement: placement || null,
+            link_url: link_url || null,
+            link_target: link_target || '_self',
+            priority: priority || 1,
             status: status || 'pending',
             start_date,
             end_date,
@@ -160,6 +253,9 @@ router.put('/ads/:id', isAuthenticated, async (req, res) => {
             page_name,
             page_section,
             placement,
+            link_url,
+            link_target,
+            priority,
             status,
             start_date,
             end_date,
@@ -197,6 +293,9 @@ router.put('/ads/:id', isAuthenticated, async (req, res) => {
         if (page_name) ad.page_name = page_name;
         if (page_section) ad.page_section = page_section;
         if (placement) ad.placement = placement;
+        if (link_url !== undefined) ad.link_url = link_url;
+        if (link_target) ad.link_target = link_target;
+        if (priority !== undefined) ad.priority = priority;
         if (status) ad.status = status;
         if (start_date) ad.start_date = start_date;
         if (end_date) ad.end_date = end_date;
@@ -456,6 +555,114 @@ router.post('/placements', isAuthenticated, async (req, res) => {
         res.status(400).json({
             success: false,
             message: 'Error creating placement',
+            error: error.message
+        });
+    }
+});
+
+// ============ AD MEDIA ROUTES ============
+
+const fs = require('fs');
+const path = require('path');
+
+// Delete ad media file
+router.delete('/ads/media/:filename', isAuthenticated, async (req, res) => {
+    try {
+        const adsMediaPath = path.join(__dirname, '../../public/uploads/ads');
+        console.log('Checking ads media path:', adsMediaPath);
+        
+        // Check if ads directory exists
+        if (!fs.existsSync(adsMediaPath)) {
+            console.log('Ads directory does not exist');
+            return res.json({
+                success: true,
+                data: [],
+                message: 'No ad media folder found'
+            });
+        }
+        
+        // Read files from ads directory
+        const files = fs.readdirSync(adsMediaPath);
+        console.log('Found files in ads directory:', files);
+        const mediaFiles = [];
+        
+        files.forEach(filename => {
+            const filePath = path.join(adsMediaPath, filename);
+            const stats = fs.statSync(filePath);
+            
+            if (stats.isFile()) {
+                const ext = path.extname(filename).toLowerCase();
+                const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+                
+                let type = 'other';
+                let mimeType = 'application/octet-stream';
+                
+                if (imageExts.includes(ext)) {
+                    type = 'image';
+                    mimeType = 'image/' + ext.substring(1);
+                }
+                
+                // Only include images
+                if (type === 'image') {
+                    mediaFiles.push({
+                        _id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        originalName: filename,
+                        url: toAbsoluteUrl('/uploads/ads/' + filename),
+                        type: type,
+                        mimeType: mimeType,
+                        size: stats.size,
+                        createdAt: stats.birthtime
+                    });
+                }
+            }
+        });
+        
+        // Sort by creation date (newest first)
+        mediaFiles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        console.log('Returning media files:', mediaFiles.length, 'files');
+        
+        res.json({
+            success: true,
+            data: mediaFiles,
+            count: mediaFiles.length
+        });
+    } catch (error) {
+        console.error('Error fetching ad media:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching ad media',
+            error: error.message
+        });
+    }
+});
+
+// Delete ad media file
+router.delete('/ads/media/:filename', isAuthenticated, async (req, res) => {
+    try {
+        const filename = req.params.filename;
+        const filePath = path.join(__dirname, '../../public/uploads/ads', filename);
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found'
+            });
+        }
+        
+        // Delete the file
+        fs.unlinkSync(filePath);
+        
+        res.json({
+            success: true,
+            message: 'File deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting ad media:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting file',
             error: error.message
         });
     }

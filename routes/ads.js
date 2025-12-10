@@ -48,7 +48,7 @@ router.get('/add-ad', isAuthenticated, async (req, res) => {
             .sort({ name: 1 })
             .lean();
 
-        console.log('Fetched pages for ads:', pages); // Debug log
+        // console.log('Fetched pages for ads:', pages); // Debug log
 
         res.render('ads/addAd', {
             title: "Add Advertisement",

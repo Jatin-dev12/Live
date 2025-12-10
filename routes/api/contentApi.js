@@ -84,7 +84,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 // Create new content
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups, contactSection } = req.body;
         
         // Validate required fields
         if (!pageId || !title) {
@@ -118,6 +118,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             callOutCards: callOutCards || undefined,
             tabsSection: tabsSection || undefined,
             communityGroups: communityGroups || undefined,
+            contactSection: contactSection || undefined,
             customFields,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
@@ -149,7 +150,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     try {
         // If the request contains a sections array, perform a bulk sync for the page
         if (Array.isArray(req.body.sections)) {
-            const { pageId, status, sections } = req.body;
+            const { pageId, status, sections, pageThumbnail } = req.body;
+            // console.log('Updating sections for page:', pageId);
+            // console.log('Sections data received:', JSON.stringify(sections, null, 2));
 
             // pageId is required to map sections
             if (!pageId) {
@@ -190,6 +193,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         ...(s.callOutCards !== undefined && { callOutCards: s.callOutCards }),
                         ...(s.tabsSection !== undefined && { tabsSection: s.tabsSection }),
                         ...(s.communityGroups !== undefined && { communityGroups: s.communityGroups }),
+                        ...(s.contactSection !== undefined && { contactSection: s.contactSection }),
                         updatedBy: req.user ? req.user._id : null
                     };
 
@@ -208,6 +212,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         callOutCards: s.callOutCards || undefined,
                         tabsSection: s.tabsSection || undefined,
                         communityGroups: s.communityGroups || undefined,
+                        contactSection: s.contactSection || undefined,
                         thumbnail: s.thumbnail || undefined,
                         createdBy: req.user ? req.user._id : null,
                         updatedBy: req.user ? req.user._id : null
@@ -227,6 +232,14 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 deleteResult = await Content.deleteMany({ _id: { $in: toDelete } });
             }
 
+            // Update page thumbnail if provided
+            if (pageThumbnail !== undefined) {
+                await Page.findByIdAndUpdate(pageId, { 
+                    thumbnail: pageThumbnail || null,
+                    updatedBy: req.user ? req.user._id : null
+                });
+            }
+
             return res.json({
                 success: true,
                 message: 'Sections synchronized successfully',
@@ -240,7 +253,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups } = req.body;
+        const { pageId, title, description, content, thumbnail, category, status, order, customFields, sectionType, heroSection, threeColumnInfo, callOutCards, tabsSection, communityGroups, contactSection } = req.body;
         
         // Verify page exists if pageId is being updated
         if (pageId) {
@@ -270,6 +283,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 callOutCards,
                 tabsSection,
                 communityGroups,
+                contactSection,
                 customFields,
                 updatedBy: req.user._id
             },

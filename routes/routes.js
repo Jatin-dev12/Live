@@ -88,7 +88,7 @@ router.get("/index", isAuthenticated, async (req, res) => {
     if (userRole !== 'super-admin' && !userPermissions.includes('dashboard')) {
       return res.render("errors/access-denied", {
         title: "Access Denied",
-        subTitle: "Dashboard",
+        subTitle: "",
         message: "You don't have permission to access the Dashboard."
       });
     }

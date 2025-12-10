@@ -4,6 +4,7 @@ const Page = require('../../models/Page');
 const Content = require('../../models/Content');
 const SEO = require('../../models/SEO');
 const { isAuthenticated } = require('../../middleware/auth');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 
 router.get('/all-pages/search', async (req, res) => {
@@ -32,7 +33,7 @@ router.get('/all-pages/search', async (req, res) => {
 router.get('/public/all', async (req, res) => {
     try {
         const pages = await Page.find({ status: 'active' })
-            .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt')
+            .select('name slug path template category thumbnail metaTitle metaDescription metaKeywords createdAt updatedAt')
             .sort({ createdAt: -1 });
         
         // Get community pages data once for all membership template pages
@@ -40,24 +41,33 @@ router.get('/public/all', async (req, res) => {
             category: 'community',
             status: 'active'
         })
-        .select('name slug path')
+        .select('name slug path thumbnail category')
         .sort({ name: 1 });
         
         const communityGroupsData = await Promise.all(
             communityPages.map(async (communityPage) => {
-                const heroContent = await Content.findOne({
-                    page: communityPage._id,
-                    sectionType: 'hero-section',
-                    status: 'active'
-                })
-                .select('heroSection');
+                let imageUrl = null;
+                
+                // If page has thumbnail, use it
+                if (communityPage.thumbnail) {
+                    imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                } else {
+                    // Fallback to hero section image
+                    const heroContent = await Content.findOne({
+                        page: communityPage._id,
+                        sectionType: 'hero-section',
+                        status: 'active'
+                    })
+                    .select('heroSection');
+                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                }
                 
                 return {
                     _id: communityPage._id,
                     name: communityPage.name,
                     slug: communityPage.slug,
                     path: communityPage.path,
-                    heroImage: heroContent?.heroSection?.image || null
+                    thumbnail: imageUrl
                 };
             })
         );
@@ -69,7 +79,7 @@ router.get('/public/all', async (req, res) => {
                     page: page._id, 
                     status: 'active' 
                 })
-                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards communityGroups customFields createdAt updatedAt')
+                .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards communityGroups contactSection customFields createdAt updatedAt')
                 .sort({ order: 1, createdAt: -1 });
                 
                 const pageData = {
@@ -78,6 +88,8 @@ router.get('/public/all', async (req, res) => {
                     slug: page.slug,
                     path: page.path,
                     template: page.template,
+                    category: page.category,
+                    thumbnail: toAbsoluteUrl(page.thumbnail),
                     metaTitle: page.metaTitle,
                     metaDescription: page.metaDescription,
                     metaKeywords: page.metaKeywords,
@@ -90,11 +102,13 @@ router.get('/public/all', async (req, res) => {
                         category: content.category,
                         description: content.description,
                         content: content.content,
-                        thumbnail: content.thumbnail,
+                        thumbnail: toAbsoluteUrl(content.thumbnail),
                         order: content.order,
                         heroSection: content.heroSection,
+                        adImage: toAbsoluteUrl(content.heroSection?.image) || null,
                         threeColumnInfo: content.threeColumnInfo,
                         callOutCards: content.callOutCards,
+                        contactSection: content.contactSection,
                         communityGroups: content.communityGroups,
                         customFields: content.customFields,
                         createdAt: content.createdAt,
@@ -160,7 +174,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             slug: req.params.slug, 
             status: 'active' 
         })
-        .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt');
+        .select('name slug path template category thumbnail metaTitle metaDescription metaKeywords createdAt updatedAt');
         
         if (!page) {
             return res.status(404).json({
@@ -174,7 +188,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             page: page._id, 
             status: 'active' 
         })
-        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards customFields communityGroups createdAt updatedAt')
+        .select('title category description content thumbnail order sectionType heroSection threeColumnInfo callOutCards contactSection customFields communityGroups createdAt updatedAt')
         .sort({ order: 1, createdAt: -1 });
         
         // If this is a membership template page, get community groups data
@@ -185,26 +199,34 @@ router.get('/public/slug/:slug', async (req, res) => {
                 category: 'community',
                 status: 'active'
             })
-            .select('name slug path')
+            .select('name slug path thumbnail category')
             .sort({ name: 1 });
             
-            // For each community page, get its hero section image
+            // For each community page, get its image (thumbnail if available, otherwise hero section image)
             const communityGroupsData = await Promise.all(
                 communityPages.map(async (communityPage) => {
-                    // Get hero section content for this page
-                    const heroContent = await Content.findOne({
-                        page: communityPage._id,
-                        sectionType: 'hero-section',
-                        status: 'active'
-                    })
-                    .select('heroSection');
+                    let imageUrl = null;
+                    
+                    // If page has thumbnail, use it
+                    if (communityPage.thumbnail) {
+                        imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                    } else {
+                        // Fallback to hero section image
+                        const heroContent = await Content.findOne({
+                            page: communityPage._id,
+                            sectionType: 'hero-section',
+                            status: 'active'
+                        })
+                        .select('heroSection');
+                        imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                    }
                     
                     return {
                         _id: communityPage._id,
                         name: communityPage.name,
                         slug: communityPage.slug,
                         path: communityPage.path,
-                        heroImage: heroContent?.heroSection?.image || null
+                        thumbnail: imageUrl
                     };
                 })
             );
@@ -229,6 +251,8 @@ router.get('/public/slug/:slug', async (req, res) => {
                 slug: page.slug,
                 path: page.path,
                 template: page.template,
+                category: page.category,
+                thumbnail: toAbsoluteUrl(page.thumbnail),
                 metaTitle: page.metaTitle,
                 metaDescription: page.metaDescription,
                 metaKeywords: page.metaKeywords,
@@ -241,11 +265,13 @@ router.get('/public/slug/:slug', async (req, res) => {
                     category: content.category,
                     description: content.description,
                     content: content.content,
-                    thumbnail: content.thumbnail,
+                    thumbnail: toAbsoluteUrl(content.thumbnail),
                     order: content.order,
                     heroSection: content.heroSection,
+                    adImage: toAbsoluteUrl(content.heroSection?.image) || null,
                     threeColumnInfo: content.threeColumnInfo,
                     callOutCards: content.callOutCards,
+                    contactSection: content.contactSection,
                     communityGroups: content.communityGroups,
                     customFields: content.customFields,
                     createdAt: content.createdAt,
@@ -306,12 +332,30 @@ router.get('/', async (req, res) => {
             // .limit(parseInt(limit))
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email');
+
+        const pageIds = pages.map(p => p._id);
+        const seoRecords = await SEO.find({ page: { $in: pageIds } });
+
+        // Convert SEO array → map for quick lookup
+        const seoMap = {};
+        seoRecords.forEach(seo => {
+            seoMap[seo.page.toString()] = seo;
+        });
+
+        // Attach SEO object to each page
+        const pagesWithSeo = pages.map(page => {
+            const seo = seoMap[page._id.toString()] || null;
+            return {
+                ...page.toObject(),
+                seo
+            };
+        });
         
         const total = await Page.countDocuments(query);
         
         res.json({
             success: true,
-            data: pages,
+            data: pagesWithSeo,
             pagination: {
                 total,
                 page: parseInt(page),
@@ -379,32 +423,64 @@ router.get('/:id/sections', async (req, res) => {
         
         // Get all sections for this page
         const sections = await Content.find(query)
-            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo customFields callOutCards tabsSection communityGroups createdAt updatedAt')
+            .select('title description content thumbnail category status order sectionType heroSection threeColumnInfo contactSection customFields callOutCards tabsSection communityGroups createdAt updatedAt')
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email')
-            .populate('communityGroups.selectedPages.page', 'name _id slug');
+            .populate('communityGroups.selectedPages.page', 'name _id slug category thumbnail');
         
-        // Add hero images to community groups selected pages
-        const sectionsWithHeroImages = await Promise.all(
+        // Process sections and modify heroSection structure
+        const sectionsWithAdImages = await Promise.all(
             sections.map(async (section) => {
+                const sectionObj = section.toObject();
+                
+                // For hero sections, create ad object structure
+                if (sectionObj.heroSection) {
+                    // Check if we have the new ad object structure or old image format
+                    if (sectionObj.heroSection.ad) {
+                        // New format - ad object already exists
+                        sectionObj.heroSection.ad = sectionObj.heroSection.ad;
+                    } else if (sectionObj.heroSection.image) {
+                        // Old format - convert image to ad object
+                        sectionObj.heroSection.ad = {
+                            image: sectionObj.heroSection.image,
+                            link: '',
+                            target: '_self'
+                        };
+                    } else {
+                        // No ad data
+                        sectionObj.heroSection.ad = null;
+                    }
+                    
+                    // Remove the old image key
+                    delete sectionObj.heroSection.image;
+                }
+                
                 if (section.sectionType === 'community-groups' && section.communityGroups?.selectedPages) {
-                    // Get hero images for each selected page
-                    const selectedPagesWithHeroImages = await Promise.all(
+                    // Get images for each selected page
+                    const selectedPagesWithImages = await Promise.all(
                         section.communityGroups.selectedPages.map(async (selectedPage) => {
                             if (selectedPage.page) {
-                                // Find hero section content for this page
-                                const heroContent = await Content.findOne({
-                                    page: selectedPage.page._id,
-                                    sectionType: 'hero-section',
-                                    status: 'active'
-                                }).select('heroSection');
+                                let imageUrl = null;
+                                
+                                // If page has category and thumbnail, use thumbnail
+                                if (selectedPage.page.category && selectedPage.page.thumbnail) {
+                                    imageUrl = toAbsoluteUrl(selectedPage.page.thumbnail);
+                                } else {
+                                    // Fallback to hero section image
+                                    const heroContent = await Content.findOne({
+                                        page: selectedPage.page._id,
+                                        sectionType: 'hero-section',
+                                        status: 'active'
+                                    }).select('heroSection');
+                                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                                }
                                 
                                 return {
                                     ...selectedPage.toObject(),
                                     page: {
                                         ...selectedPage.page.toObject(),
-                                        heroImage: process.env.APP_URL+heroContent?.heroSection?.image || null
+                                        thumbnail: imageUrl
                                     }
                                 };
                             }
@@ -412,12 +488,11 @@ router.get('/:id/sections', async (req, res) => {
                         })
                     );
                     
-                    // Update the section with hero images
-                    const sectionObj = section.toObject();
-                    sectionObj.communityGroups.selectedPages = selectedPagesWithHeroImages;
-                    return sectionObj;
+                    // Update the section with images
+                    sectionObj.communityGroups.selectedPages = selectedPagesWithImages;
                 }
-                return section.toObject();
+                
+                return sectionObj;
             })
         );
         
@@ -451,11 +526,13 @@ router.get('/:id/sections', async (req, res) => {
                     name: page.name,
                     slug: page.slug,
                     path: page.path,
-                    template: page.template || null
+                    template: page.template || null,
+                    category: page.category || null,
+                    thumbnail: toAbsoluteUrl(page.thumbnail) || null
                 },
                 // template: templateData,
-                sections: sectionsWithHeroImages,
-                total: sectionsWithHeroImages.length
+                sections: sectionsWithAdImages,
+                total: sectionsWithAdImages.length
             }
         });
     } catch (error) {
@@ -468,10 +545,103 @@ router.get('/:id/sections', async (req, res) => {
     }
 });
 
+// Bulk create/update sections for a page
+router.post('/:id/sections', isAuthenticated, async (req, res) => {
+    try {
+        const pageId = req.params.id;
+        const { sections, status } = req.body;
+
+        if (!Array.isArray(sections)) {
+            return res.status(400).json({ success: false, message: 'sections array is required' });
+        }
+
+        // verify page exists
+        const page = await Page.findById(pageId);
+        if (!page) return res.status(404).json({ success: false, message: 'Page not found' });
+
+        const existing = await Content.find({ page: pageId }).lean();
+        const existingIds = existing.map(s => s._id.toString());
+
+        const providedExistingIds = [];
+        const updatePromises = [];
+        const createPromises = [];
+
+        sections.forEach(s => {
+            const orderVal = Number(s.order) || 0;
+            const sectionStatus = s.status || status || 'active';
+
+            if (s.id && require('mongoose').Types.ObjectId.isValid(s.id)) {
+                providedExistingIds.push(s.id);
+                const updateFields = {
+                    ...(s.sectionType !== undefined && { sectionType: s.sectionType }),
+                    ...(s.title !== undefined && { title: s.title }),
+                    ...(s.thumbnail !== undefined && { thumbnail: s.thumbnail }),
+                    status: sectionStatus,
+                    order: orderVal,
+                    ...(s.customFields !== undefined && { customFields: s.customFields }),
+                    ...(s.heroSection !== undefined && { heroSection: s.heroSection }),
+                    ...(s.threeColumnInfo !== undefined && { threeColumnInfo: s.threeColumnInfo }),
+                    ...(s.callOutCards !== undefined && { callOutCards: s.callOutCards }),
+                    ...(s.tabsSection !== undefined && { tabsSection: s.tabsSection }),
+                    ...(s.communityGroups !== undefined && { communityGroups: s.communityGroups }),
+                    ...(s.contactSection !== undefined && { contactSection: s.contactSection }),
+                    updatedBy: req.user ? req.user._id : null
+                };
+
+                updatePromises.push(Content.findByIdAndUpdate(s.id, updateFields, { new: true, runValidators: true }));
+            } else {
+                const newContent = new Content({
+                    page: pageId,
+                    title: s.title || (s.customFields && (s.customFields.heading || s.customFields.leftHeading || s.customFields.rightHeading)) || 'Section',
+                    status: sectionStatus,
+                    order: orderVal,
+                    sectionType: s.sectionType || 'default',
+                    customFields: s.customFields || undefined,
+                    heroSection: s.heroSection || undefined,
+                    threeColumnInfo: s.threeColumnInfo || undefined,
+                    callOutCards: s.callOutCards || undefined,
+                    tabsSection: s.tabsSection || undefined,
+                    communityGroups: s.communityGroups || undefined,
+                    contactSection: s.contactSection || undefined,
+                    thumbnail: s.thumbnail || undefined,
+                    createdBy: req.user ? req.user._id : null,
+                    updatedBy: req.user ? req.user._id : null
+                });
+
+                createPromises.push(newContent.save());
+            }
+        });
+
+        const updatedResults = await Promise.all(updatePromises.map(p => p.catch(e => ({ error: e.message }))));
+        const createdResults = await Promise.all(createPromises.map(p => p.catch(e => ({ error: e.message }))));
+
+        const toDelete = existingIds.filter(id => !providedExistingIds.includes(id));
+        let deleteResult = { deletedCount: 0 };
+        if (toDelete.length > 0) {
+            deleteResult = await Content.deleteMany({ _id: { $in: toDelete } });
+        }
+
+        return res.json({
+            success: true,
+            message: 'Sections synchronized successfully',
+            data: {
+                updated: updatedResults.length,
+                created: createdResults.length,
+                deleted: deleteResult.deletedCount || 0,
+                updatedResults,
+                createdResults
+            }
+        });
+    } catch (error) {
+        console.error('Error syncing sections for page:', error);
+        res.status(500).json({ success: false, message: 'Error syncing sections', error: error.message });
+    }
+});
+
 // Create new page
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category, thumbnail } = req.body;
         
         // Validate required fields
         if (!name) {
@@ -495,13 +665,14 @@ router.post('/', isAuthenticated, async (req, res) => {
         
         const page = new Page({
             name,
-            path: path || undefined, // Let the model auto-generate if not provided
+            ...(path && { path }), // Only include path if it's provided and not empty
             status: status || 'active',
             metaTitle,
             metaDescription,
             metaKeywords,
             template: template || '',
             category: category || '',
+            thumbnail: thumbnail || null,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
         });
@@ -518,8 +689,9 @@ router.post('/', isAuthenticated, async (req, res) => {
                     const sectionData = {
                         page: page._id,
                         title: section.type === 'hero-section' ? 'Hero Section' : 
-                               section.type === 'call-out-cards' ? 'Call Out Cards' :
-                               section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                                       section.type === 'call-out-cards' ? 'Call Out Cards' :
+                                       section.type === 'tabs-section' ? 'Tabs Section' :
+                                       section.type === 'contact-section' ? 'Contact Section' : 'Section',
                         status: 'active',
                         order: index + 1,
                         sectionType: section.type,
@@ -548,6 +720,16 @@ router.post('/', isAuthenticated, async (req, res) => {
                     } else if (section.type === 'tabs-section') {
                         sectionData.tabsSection = {
                             tabs: section.fields.tabs || []
+                        };
+                    } else if (section.type === 'contact-section') {
+                        // Map contact template fields
+                        sectionData.contactSection = {
+                            heading: section.fields.heading || '',
+                            subheading: section.fields.subheading || '',
+                            email: section.fields.email || undefined,
+                            call: section.fields.call || undefined,
+                            generalContactForm: section.fields.generalContactForm || undefined,
+                            helpfulLinks: section.fields.helpfulLinks || []
                         };
                     }
                     
@@ -578,7 +760,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update page
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category, thumbnail } = req.body;
         
         // Get the old page data before update
         const oldPage = await Page.findById(req.params.id);
@@ -653,6 +835,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 metaKeywords,
                 template: template || '',
                 category: category || '',
+                thumbnail: thumbnail || null,
                 updatedBy: req.user ? req.user._id : null
             },
             { new: true, runValidators: true }
@@ -673,8 +856,9 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         const sectionData = {
                             page: page._id,
                             title: section.type === 'hero-section' ? 'Hero Section' : 
-                                   section.type === 'call-out-cards' ? 'Call Out Cards' :
-                                   section.type === 'tabs-section' ? 'Tabs Section' : 'Section',
+                                       section.type === 'call-out-cards' ? 'Call Out Cards' :
+                                       section.type === 'tabs-section' ? 'Tabs Section' :
+                                       section.type === 'contact-section' ? 'Contact Section' : 'Section',
                             status: 'active',
                             order: index + 1,
                             sectionType: section.type,
@@ -701,6 +885,15 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                         } else if (section.type === 'tabs-section') {
                             sectionData.tabsSection = {
                                 tabs: section.fields.tabs || []
+                            };
+                        } else if (section.type === 'contact-section') {
+                            sectionData.contactSection = {
+                                heading: section.fields.heading || '',
+                                subheading: section.fields.subheading || '',
+                                email: section.fields.email || undefined,
+                                call: section.fields.call || undefined,
+                                generalContactForm: section.fields.generalContactForm || undefined,
+                                helpfulLinks: section.fields.helpfulLinks || []
                             };
                         }
                         
@@ -865,26 +1058,34 @@ router.get('/test/community-groups', async (req, res) => {
             category: 'community',
             status: 'active'
         })
-        .select('name slug path')
+        .select('name slug path thumbnail category')
         .sort({ name: 1 });
         
-        // For each community page, get its hero section image
+        // For each community page, get its image (thumbnail if available, otherwise hero section image)
         const communityGroupsData = await Promise.all(
             communityPages.map(async (communityPage) => {
-                // Get hero section content for this page
-                const heroContent = await Content.findOne({
-                    page: communityPage._id,
-                    sectionType: 'hero-section',
-                    status: 'active'
-                })
-                .select('heroSection');
+                let imageUrl = null;
+                
+                // If page has thumbnail, use it
+                if (communityPage.thumbnail) {
+                    imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                } else {
+                    // Fallback to hero section image
+                    const heroContent = await Content.findOne({
+                        page: communityPage._id,
+                        sectionType: 'hero-section',
+                        status: 'active'
+                    })
+                    .select('heroSection');
+                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                }
                 
                 return {
                     _id: communityPage._id,
                     name: communityPage.name,
                     slug: communityPage.slug,
                     path: communityPage.path,
-                    heroImage: heroContent?.heroSection?.image || null
+                    thumbnail: imageUrl
                 };
             })
         );

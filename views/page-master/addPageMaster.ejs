@@ -28,9 +28,9 @@
                                     <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page
                                         Name <span class="text-danger-600">*</span></label>
                                     <input type="text" class="form-control radius-8" id="name" name="name"
-                                        placeholder="Enter Page Name" maxlength="30" pattern="[A-Za-z\s]+"
-                                        title="Only letters and spaces allowed, max 30 characters" required>
-                                    <small class="text-muted">Only letters allowed (max 30 characters)</small>
+                                        placeholder="Enter Page Name" maxlength="150" pattern="[A-Za-z\s]+"
+                                        title="Only letters and spaces allowed, max 150 characters" required>
+                                    <small class="text-muted">Only letters allowed (max 150 characters)</small>
                                 </div>
                                 <div class="mb-20">
                                     <label for="path"
@@ -51,6 +51,7 @@
                                         <option value="legislation">Legislation Template - Hero with 2 Buttons + 1 Callout Card</option>
                                         <option value="query">Query Template - Hero with 3 CTA Buttons</option>
                                         <option value="membership">Membership Template - Hero with Buttons + Community Groups</option>
+                                        <option value="contact">Contact Template - Contact blocks + Helpful Links</option>
                                     </select>
                                     <small class="text-muted">Select a template to auto-create page sections</small>
                                 </div>
@@ -204,6 +205,11 @@
             description: 'This template includes:<br>• Hero section (heading + subheading + 2 CTA buttons)<br>• Community Groups section (displays pages with community category)',
             image: '/images/templates/membership-template-preview.jpg'
         }
+        ,
+        contact: {
+            description: 'This template includes:<br>• Contact section (email, call, general contact form)<br>• Helpful links list (dynamic)',
+            image: '/images/templates/contact-template-preview.jpg'
+        }
     };
     //default template selection preview
     const $defaultPreview = $('#templatePreview');
@@ -253,9 +259,9 @@
         }
         
         // 2. ENFORCE MAX LENGTH (30 characters)
-        if (value.length > 30) {
-            value = value.substring(0, 30);
-            if ($(this).val().length > 30) {
+        if (value.length > 150) {
+            value = value.substring(0, 150);
+            if ($(this).val().length > 150) {
                 $(this).val(value);
             }
         }
@@ -310,7 +316,7 @@
         
         const formData = {
             name: $('#name').val(),
-            path: $('#path').val() || undefined,
+            path: $('#path').val().trim() || undefined,
             status: 'inactive', // Always save as draft
             template: $('#template').val(),
             category: selectedCategories.length > 0 ? selectedCategories[0] : '',
@@ -423,7 +429,7 @@
 
         const formData = {
             name: $('#name').val(),
-            path: $('#path').val() || undefined,
+            path: $('#path').val().trim() || undefined,
             status: $('#status').val(),
             template: $('#template').val(),
             category: selectedCategories.length > 0 ? selectedCategories[0] : '', // For now, take first selected category

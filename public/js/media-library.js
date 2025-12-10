@@ -52,7 +52,7 @@ function renderGrid(items){
   grid.innerHTML = items.map(item => `
     <div class="col">
       <div class="media-card ${state.selected.has(item.id)?'selected':''}" data-id="${item.id}">
-        <div class="check-wrap form-check ${state.bulk? '':'d-none'}">
+        <div class="check-wrap form-check media-input-bg ${state.bulk? '':'d-none'}">
           <input class="form-check-input select-item" type="checkbox" ${state.selected.has(item.id)?'checked':''}>
         </div>
         <div class="thumb">${renderThumb(item)}</div>

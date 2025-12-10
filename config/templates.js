@@ -189,6 +189,40 @@ const templates = {
         }
       }
     ]
+  },
+  contact: {
+    name: 'Contact Template',
+    description: 'Contact page with email, phone, form and helpful links',
+    previewImage: '/images/templates/contact-template-preview.svg',
+    sections: [
+      {
+        type: 'contact-section',
+        fields: {
+          heading: 'Contact ACRM',
+          subheading: 'Get in touch with our team',
+          email: {
+            heading: 'Email Member Services',
+            subheading: 'Send us an email for support',
+            address: ''
+          },
+          call: {
+            heading: 'Call',
+            subheading: 'Mon-Fri, 9:00-5:00 ET',
+            phone: ''
+          },
+          generalContactForm: {
+            heading: 'General Contact Form',
+            subheading: 'Route your message to the right team',
+            openFormLink: ''
+          },
+          helpfulLinks: [
+            { text: 'Member Login/Account Help', link: '' },
+            { text: 'Publications', link: '' },
+            { text: 'Conference & Registration', link: '' }
+          ]
+        }
+      }
+    ]
   }
 };
 
