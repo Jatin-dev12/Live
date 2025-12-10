@@ -28,9 +28,9 @@
                                     <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Page
                                         Name <span class="text-danger-600">*</span></label>
                                     <input type="text" class="form-control radius-8" id="name" name="name"
-                                        placeholder="Enter Page Name" maxlength="30" pattern="[A-Za-z\s]+"
-                                        title="Only letters and spaces allowed, max 30 characters" required>
-                                    <small class="text-muted">Only letters allowed (max 30 characters)</small>
+                                        placeholder="Enter Page Name" maxlength="150" pattern="[A-Za-z\s]+"
+                                        title="Only letters and spaces allowed, max 150 characters" required>
+                                    <small class="text-muted">Only letters allowed (max 150 characters)</small>
                                 </div>
                                 <div class="mb-20">
                                     <label for="path"
@@ -259,9 +259,9 @@
         }
         
         // 2. ENFORCE MAX LENGTH (30 characters)
-        if (value.length > 30) {
-            value = value.substring(0, 30);
-            if ($(this).val().length > 30) {
+        if (value.length > 150) {
+            value = value.substring(0, 150);
+            if ($(this).val().length > 150) {
                 $(this).val(value);
             }
         }

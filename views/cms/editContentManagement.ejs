@@ -590,6 +590,56 @@
                                     <% } %>
                                 </div>
                             </div>
+
+                            <!-- Thumbnail Selection for Pages with Category -->
+                            <% if (page.category && page.category.trim() !== '') { %>
+                            <div class="page-thumbnail-widget mt-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Page Thumbnail</h6>
+                                        <small class="text-muted">Select a thumbnail image for this page</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Current Thumbnail Preview -->
+                                        <% if (page.thumbnail) { %>
+                                        <div class="current-thumbnail-preview mb-3">
+                                            <!-- <label class="form-label text-sm">Current Thumbnail:</label> -->
+                                            <div class="thumbnail-preview-container">
+                                                <img src="<%= page.thumbnail %>" 
+                                                     alt="Current Thumbnail" 
+                                                     class="img-thumbnail current-thumbnail-img" 
+                                                     style="max-width: 150px; max-height: 100px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                        <!-- Thumbnail Selection Button -->
+                                        <button type="button" 
+                                                class="btn btn-outline-primary btn-sm w-100 select-thumbnail-btn"
+                                                data-current-thumbnail="<%= page.thumbnail || '' %>">
+                                            <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>
+                                            <%= page.thumbnail ? 'Change Thumbnail' : 'Select Thumbnail' %>
+                                        </button>
+
+                                        <!-- Hidden input to store selected thumbnail URL -->
+                                        <input type="hidden" 
+                                               name="pageThumbnail" 
+                                               id="pageThumbnail" 
+                                               value="<%= page.thumbnail || '' %>">
+
+                                        <!-- Remove Thumbnail Button -->
+                                        <% if (page.thumbnail) { %>
+                                        <button type="button" 
+                                                class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
+                                            <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
+                                            Remove Thumbnail
+                                        </button>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
                             <div class="d-flex publish-btns mt-3">
                                 <a href="/page-master/edit-page/<%= page._id %>"
                                     class="btn btn-sm btn-outline-secondary">
@@ -962,28 +1012,153 @@ window.ckEditorFallback = function() {
 };
 </script>
 
-<!-- Pass ads data to JavaScript -->
+<!-- Pass ads and media data to JavaScript -->
 <script>
-    window.adsData = <%- JSON.stringify(ads || []) %>;
+    window.adsData = <%-JSON.stringify(ads || [])%>;
+    window.mediaData = <%-JSON.stringify(media || [])%>;
     
     // Debug: Show what section data is being passed
-    // console.log('🔍 Server-side section data:');
-    <% if (typeof allSections !== 'undefined' && allSections.length > 0) { %>
-        <% allSections.forEach(function(section, index) { %>
-            // console.log('Section <%= index %>:', {
-            //     sectionType: '<%= section.sectionType %>',
-            //     heroSection: <%- JSON.stringify(section.heroSection || {}) %>,
-            //     ad: <%- JSON.stringify(section.heroSection?.ad || null) %>
-            // });
-        <% }); %>
-    <% } %>
+    console.log('🔍 Server-side section data loaded');
 </script>
 
 <% script=`<script>
     // CKEditor 5 instances storage
     let editorInstances = {};
     
-    // Upload functionality removed - users must use media library for all images
+    // Toast notification function (same as ads management)
+    function showToast(message, type) {
+        // Remove any existing toasts first
+        var existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(function (toast) { toast.remove(); });
+
+        // Create toast element
+        var toast = document.createElement('div');
+        var alertType = type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info';
+        toast.className = 'alert alert-' + alertType + ' position-fixed shadow-lg custom-toast';
+        toast.style.cssText = 'top: 80px; right: 20px; z-index: 999999; min-width: 400px; max-width: 600px; border-radius: 12px; font-size: 16px; padding: 20px; border: 2px solid;';
+
+        // Set border color based on type
+        if (type === 'success') {
+            toast.style.borderColor = '#28a745';
+            toast.style.backgroundColor = '#d4edda';
+            toast.style.color = '#155724';
+        } else if (type === 'error') {
+            toast.style.borderColor = '#dc3545';
+            toast.style.backgroundColor = '#f8d7da';
+            toast.style.color = '#721c24';
+        }
+
+        var iconEmoji = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        toast.innerHTML = '<div class="d-flex align-items-center">' +
+            '<span style="font-size: 24px; margin-right: 12px;">' + iconEmoji + '</span>' +
+            '<span style="font-weight: 600; flex-grow: 1;">' + message + '</span>' +
+            '<button type="button" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;" onclick="this.parentElement.parentElement.remove()">×</button>' +
+            '</div>';
+
+        document.body.appendChild(toast);
+
+        // Add entrance animation
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'transform 0.3s ease-out';
+        setTimeout(function () {
+            toast.style.transform = 'translateX(0)';
+        }, 10);
+
+        // Auto remove after duration based on type
+        var duration = type === 'success' ? 4000 : 6000;
+        setTimeout(function () {
+            if (toast.parentElement) {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(function () { toast.remove(); }, 300);
+            }
+        }, duration);
+    }
+
+    // Media Picker functionality for image uploads (same as ads management)
+    
+    // Helper function to create media picker for image uploads
+    function createImageMediaPicker(targetClass, previewClass, hiddenInputClass) {
+        return new MediaPicker({
+            allowedTypes: ['image'],
+            title: 'Select or Upload Image',
+            buttonText: 'Select Image',
+            multiple: false,
+            onSelect: function(selectedMedia) {
+                console.log('Image selected:', selectedMedia);
+                
+                // Update preview
+                const previewElement = document.querySelector(previewClass);
+                if (previewElement) {
+                    previewElement.src = selectedMedia.src;
+                    previewElement.closest('.uploaded-img-' + targetClass.replace('upload-file-', '').replace('-input', '')).classList.remove('d-none');
+                }
+                
+                // Update hidden input if exists
+                const hiddenInput = document.querySelector(hiddenInputClass);
+                if (hiddenInput) {
+                    hiddenInput.value = selectedMedia.src;
+                }
+                
+                showToast('Image selected successfully', 'success');
+            }
+        });
+    }
+    
+    // Initialize media pickers for all image upload sections
+    $(document).ready(function() {
+        // Replace file input clicks with media picker
+        $(document).on('click', '.upload-file-tci', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-tci', '.uploaded-img-tci__preview', 'input[name="tci-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-lhrt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-lhrt', '.uploaded-img-lhrt__preview', 'input[name="lhrt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-iwt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-iwt', '.uploaded-img-iwt__preview', 'input[name="iwt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-iwl', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-iwl', '.uploaded-img-iwl__preview', 'input[name="iwl-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-rhlt', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-rhlt', '.uploaded-img-rhlt__preview', 'input[name="rhlt-image"]');
+            mediaPicker.open();
+        });
+        
+        $(document).on('click', '.upload-file-hero', function(e) {
+            e.preventDefault();
+            const mediaPicker = createImageMediaPicker('upload-file-hero', '.uploaded-img-hero__preview', 'input[name="hero-image"]');
+            mediaPicker.open();
+        });
+        
+        // Handle remove image buttons
+        $(document).on('click', '[class*="uploaded-img-"][class*="__remove"]', function() {
+            const uploadedContainer = $(this).closest('[class*="uploaded-img-"]');
+            const className = uploadedContainer.attr('class').match(/uploaded-img-(\w+)/)[1];
+            
+            uploadedContainer.addClass('d-none');
+            
+            // Clear hidden input if exists
+            const hiddenInput = document.querySelector(\`input[name="\${className}-image"]\`);
+            if (hiddenInput) {
+                hiddenInput.value = '';
+            }
+            
+            showToast('Image removed', 'info');
+        });
+    });
 
     // WordPress-style image size options
     const imageSizeOptions = {
@@ -2229,11 +2404,15 @@ window.ckEditorFallback = function() {
 
             if (!isValid) return;
 
+            // Get thumbnail data
+            const pageThumbnail = $("#pageThumbnail").val();
+
             // Consolidate all data into one payload
             const payload = {
                 pageId: pageId,
                 status: status,
-                sections: sectionsData
+                sections: sectionsData,
+                pageThumbnail: pageThumbnail || null
             };
             
             console.log('Complete payload being sent:', payload);
@@ -2716,12 +2895,29 @@ window.ckEditorFallback = function() {
         const $textarea = $tabItem.find('.tab-paragraph');
         const editorId = $textarea.attr('id');
         if (editorId && editorInstances[editorId]) {
-            editorInstances[editorId].destroy().then(() => {
+            const editorInstance = editorInstances[editorId];
+            if (editorInstance && typeof editorInstance.destroy === 'function') {
+                try {
+                    const destroyResult = editorInstance.destroy();
+                    // Check if destroy returns a Promise (CKEditor 5) or undefined (CKEditor 4)
+                    if (destroyResult && typeof destroyResult.then === 'function') {
+                        destroyResult.then(() => {
+                            delete editorInstances[editorId];
+                        }).catch(error => {
+                            console.error('Error destroying CKEditor:', error);
+                            delete editorInstances[editorId];
+                        });
+                    } else {
+                        // CKEditor 4 or synchronous destroy
+                        delete editorInstances[editorId];
+                    }
+                } catch (error) {
+                    console.error('Error calling destroy on CKEditor:', error);
+                    delete editorInstances[editorId];
+                }
+            } else {
                 delete editorInstances[editorId];
-            }).catch(error => {
-                console.error('Error destroying CKEditor:', error);
-                delete editorInstances[editorId];
-            });
+            }
         }
         
         $tabItem.remove();
@@ -2922,12 +3118,29 @@ window.ckEditorFallback = function() {
         const $textarea = $item.find('.callout-subheading');
         const editorId = $textarea.attr('id');
         if (editorId && editorInstances[editorId]) {
-            editorInstances[editorId].destroy().then(() => {
+            const editorInstance = editorInstances[editorId];
+            if (editorInstance && typeof editorInstance.destroy === 'function') {
+                try {
+                    const destroyResult = editorInstance.destroy();
+                    // Check if destroy returns a Promise (CKEditor 5) or undefined (CKEditor 4)
+                    if (destroyResult && typeof destroyResult.then === 'function') {
+                        destroyResult.then(() => {
+                            delete editorInstances[editorId];
+                        }).catch(error => {
+                            console.error('Error destroying CKEditor:', error);
+                            delete editorInstances[editorId];
+                        });
+                    } else {
+                        // CKEditor 4 or synchronous destroy
+                        delete editorInstances[editorId];
+                    }
+                } catch (error) {
+                    console.error('Error calling destroy on CKEditor:', error);
+                    delete editorInstances[editorId];
+                }
+            } else {
                 delete editorInstances[editorId];
-            }).catch(error => {
-                console.error('Error destroying CKEditor:', error);
-                delete editorInstances[editorId];
-            });
+            }
         }
         
         $item.remove();
@@ -3404,6 +3617,89 @@ window.ckEditorFallback = function() {
         loadAdsForDropdown();
     });
     
+    // Thumbnail Selection Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle thumbnail selection button click
+        $(document).on('click', '.select-thumbnail-btn', function() {
+            const button = $(this);
+            const currentThumbnail = button.data('current-thumbnail');
+            
+            // Create media picker instance directly (same as ads management)
+            const mediaPicker = new MediaPicker({
+                allowedTypes: ['image'],
+                title: 'Select Page Thumbnail',
+                buttonText: 'Select Thumbnail',
+                multiple: false,
+                onSelect: function(selectedMedia) {
+                    console.log('Thumbnail selected:', selectedMedia);
+                    
+                    // Update hidden input
+                    $('#pageThumbnail').val(selectedMedia.src);
+                    
+                    // Update or create preview
+                    let previewContainer = $('.current-thumbnail-preview');
+                    if (previewContainer.length === 0) {
+                        // Create preview container if it doesn't exist
+                        previewContainer = $(\`
+                            <div class="current-thumbnail-preview mb-3">
+                                // <label class="form-label text-sm">Current Thumbnail:</label>
+                                <div class="thumbnail-preview-container">
+                                    <img src="" alt="Current Thumbnail" class="img-thumbnail current-thumbnail-img" 
+                                         style="max-width: 150px; max-height: 100px; object-fit: cover;">
+                                </div>
+                            </div>
+                        \`);
+                        button.parent().prepend(previewContainer);
+                    }
+                    
+                    // Update preview image
+                    previewContainer.find('.current-thumbnail-img').attr('src', selectedMedia.src);
+                    previewContainer.show();
+                    
+                    // Update button text
+                    button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Change Thumbnail');
+                    
+                    // Add remove button if it doesn't exist
+                    let removeBtn = $('.remove-thumbnail-btn');
+                    if (removeBtn.length === 0) {
+                        removeBtn = $(\`
+                            <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
+                                <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
+                                Remove Thumbnail
+                            </button>
+                        \`);
+                        button.after(removeBtn);
+                    }
+                    removeBtn.show();
+                    
+                    showToast('Thumbnail selected successfully', 'success');
+                }
+            });
+            
+            // Open the media picker
+            mediaPicker.open();
+        });
+        
+        // Handle remove thumbnail button click
+        $(document).on('click', '.remove-thumbnail-btn', function() {
+            const button = $(this);
+            
+            // Clear hidden input
+            $('#pageThumbnail').val('');
+            
+            // Hide preview
+            $('.current-thumbnail-preview').hide();
+            
+            // Update select button text
+            $('.select-thumbnail-btn').html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Select Thumbnail');
+            
+            // Hide remove button
+            button.hide();
+            
+            showToast('Thumbnail removed', 'success');
+        });
+    });
+
     </script>
     ` %>
 

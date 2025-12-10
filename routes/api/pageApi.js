@@ -4,6 +4,7 @@ const Page = require('../../models/Page');
 const Content = require('../../models/Content');
 const SEO = require('../../models/SEO');
 const { isAuthenticated } = require('../../middleware/auth');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 
 router.get('/all-pages/search', async (req, res) => {
@@ -32,7 +33,7 @@ router.get('/all-pages/search', async (req, res) => {
 router.get('/public/all', async (req, res) => {
     try {
         const pages = await Page.find({ status: 'active' })
-            .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt')
+            .select('name slug path template category thumbnail metaTitle metaDescription metaKeywords createdAt updatedAt')
             .sort({ createdAt: -1 });
         
         // Get community pages data once for all membership template pages
@@ -40,24 +41,33 @@ router.get('/public/all', async (req, res) => {
             category: 'community',
             status: 'active'
         })
-        .select('name slug path')
+        .select('name slug path thumbnail category')
         .sort({ name: 1 });
         
         const communityGroupsData = await Promise.all(
             communityPages.map(async (communityPage) => {
-                const heroContent = await Content.findOne({
-                    page: communityPage._id,
-                    sectionType: 'hero-section',
-                    status: 'active'
-                })
-                .select('heroSection');
+                let imageUrl = null;
+                
+                // If page has thumbnail, use it
+                if (communityPage.thumbnail) {
+                    imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                } else {
+                    // Fallback to hero section image
+                    const heroContent = await Content.findOne({
+                        page: communityPage._id,
+                        sectionType: 'hero-section',
+                        status: 'active'
+                    })
+                    .select('heroSection');
+                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                }
                 
                 return {
                     _id: communityPage._id,
                     name: communityPage.name,
                     slug: communityPage.slug,
                     path: communityPage.path,
-                    heroImage: heroContent?.heroSection?.image || null
+                    thumbnail: imageUrl
                 };
             })
         );
@@ -78,6 +88,8 @@ router.get('/public/all', async (req, res) => {
                     slug: page.slug,
                     path: page.path,
                     template: page.template,
+                    category: page.category,
+                    thumbnail: toAbsoluteUrl(page.thumbnail),
                     metaTitle: page.metaTitle,
                     metaDescription: page.metaDescription,
                     metaKeywords: page.metaKeywords,
@@ -90,10 +102,10 @@ router.get('/public/all', async (req, res) => {
                         category: content.category,
                         description: content.description,
                         content: content.content,
-                        thumbnail: content.thumbnail,
+                        thumbnail: toAbsoluteUrl(content.thumbnail),
                         order: content.order,
                         heroSection: content.heroSection,
-                        adImage: content.heroSection?.image || null,
+                        adImage: toAbsoluteUrl(content.heroSection?.image) || null,
                         threeColumnInfo: content.threeColumnInfo,
                         callOutCards: content.callOutCards,
                         contactSection: content.contactSection,
@@ -162,7 +174,7 @@ router.get('/public/slug/:slug', async (req, res) => {
             slug: req.params.slug, 
             status: 'active' 
         })
-        .select('name slug path template metaTitle metaDescription metaKeywords createdAt updatedAt');
+        .select('name slug path template category thumbnail metaTitle metaDescription metaKeywords createdAt updatedAt');
         
         if (!page) {
             return res.status(404).json({
@@ -187,26 +199,34 @@ router.get('/public/slug/:slug', async (req, res) => {
                 category: 'community',
                 status: 'active'
             })
-            .select('name slug path')
+            .select('name slug path thumbnail category')
             .sort({ name: 1 });
             
-            // For each community page, get its hero section image
+            // For each community page, get its image (thumbnail if available, otherwise hero section image)
             const communityGroupsData = await Promise.all(
                 communityPages.map(async (communityPage) => {
-                    // Get hero section content for this page
-                    const heroContent = await Content.findOne({
-                        page: communityPage._id,
-                        sectionType: 'hero-section',
-                        status: 'active'
-                    })
-                    .select('heroSection');
+                    let imageUrl = null;
+                    
+                    // If page has thumbnail, use it
+                    if (communityPage.thumbnail) {
+                        imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                    } else {
+                        // Fallback to hero section image
+                        const heroContent = await Content.findOne({
+                            page: communityPage._id,
+                            sectionType: 'hero-section',
+                            status: 'active'
+                        })
+                        .select('heroSection');
+                        imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                    }
                     
                     return {
                         _id: communityPage._id,
                         name: communityPage.name,
                         slug: communityPage.slug,
                         path: communityPage.path,
-                        heroImage: heroContent?.heroSection?.image || null
+                        thumbnail: imageUrl
                     };
                 })
             );
@@ -231,6 +251,8 @@ router.get('/public/slug/:slug', async (req, res) => {
                 slug: page.slug,
                 path: page.path,
                 template: page.template,
+                category: page.category,
+                thumbnail: toAbsoluteUrl(page.thumbnail),
                 metaTitle: page.metaTitle,
                 metaDescription: page.metaDescription,
                 metaKeywords: page.metaKeywords,
@@ -243,10 +265,10 @@ router.get('/public/slug/:slug', async (req, res) => {
                     category: content.category,
                     description: content.description,
                     content: content.content,
-                    thumbnail: content.thumbnail,
+                    thumbnail: toAbsoluteUrl(content.thumbnail),
                     order: content.order,
                     heroSection: content.heroSection,
-                    adImage: content.heroSection?.image || null,
+                    adImage: toAbsoluteUrl(content.heroSection?.image) || null,
                     threeColumnInfo: content.threeColumnInfo,
                     callOutCards: content.callOutCards,
                     contactSection: content.contactSection,
@@ -310,12 +332,30 @@ router.get('/', async (req, res) => {
             // .limit(parseInt(limit))
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email');
+
+        const pageIds = pages.map(p => p._id);
+        const seoRecords = await SEO.find({ page: { $in: pageIds } });
+
+        // Convert SEO array → map for quick lookup
+        const seoMap = {};
+        seoRecords.forEach(seo => {
+            seoMap[seo.page.toString()] = seo;
+        });
+
+        // Attach SEO object to each page
+        const pagesWithSeo = pages.map(page => {
+            const seo = seoMap[page._id.toString()] || null;
+            return {
+                ...page.toObject(),
+                seo
+            };
+        });
         
         const total = await Page.countDocuments(query);
         
         res.json({
             success: true,
-            data: pages,
+            data: pagesWithSeo,
             pagination: {
                 total,
                 page: parseInt(page),
@@ -387,7 +427,7 @@ router.get('/:id/sections', async (req, res) => {
             .sort({ order: 1, createdAt: -1 })
             .populate('createdBy', 'name email')
             .populate('updatedBy', 'name email')
-            .populate('communityGroups.selectedPages.page', 'name _id slug');
+            .populate('communityGroups.selectedPages.page', 'name _id slug category thumbnail');
         
         // Process sections and modify heroSection structure
         const sectionsWithAdImages = await Promise.all(
@@ -417,22 +457,30 @@ router.get('/:id/sections', async (req, res) => {
                 }
                 
                 if (section.sectionType === 'community-groups' && section.communityGroups?.selectedPages) {
-                    // Get hero images for each selected page
-                    const selectedPagesWithHeroImages = await Promise.all(
+                    // Get images for each selected page
+                    const selectedPagesWithImages = await Promise.all(
                         section.communityGroups.selectedPages.map(async (selectedPage) => {
                             if (selectedPage.page) {
-                                // Find hero section content for this page
-                                const heroContent = await Content.findOne({
-                                    page: selectedPage.page._id,
-                                    sectionType: 'hero-section',
-                                    status: 'active'
-                                }).select('heroSection');
+                                let imageUrl = null;
+                                
+                                // If page has category and thumbnail, use thumbnail
+                                if (selectedPage.page.category && selectedPage.page.thumbnail) {
+                                    imageUrl = toAbsoluteUrl(selectedPage.page.thumbnail);
+                                } else {
+                                    // Fallback to hero section image
+                                    const heroContent = await Content.findOne({
+                                        page: selectedPage.page._id,
+                                        sectionType: 'hero-section',
+                                        status: 'active'
+                                    }).select('heroSection');
+                                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                                }
                                 
                                 return {
                                     ...selectedPage.toObject(),
                                     page: {
                                         ...selectedPage.page.toObject(),
-                                        heroImage: process.env.APP_URL+heroContent?.heroSection?.image || null
+                                        thumbnail: imageUrl
                                     }
                                 };
                             }
@@ -440,8 +488,8 @@ router.get('/:id/sections', async (req, res) => {
                         })
                     );
                     
-                    // Update the section with hero images
-                    sectionObj.communityGroups.selectedPages = selectedPagesWithHeroImages;
+                    // Update the section with images
+                    sectionObj.communityGroups.selectedPages = selectedPagesWithImages;
                 }
                 
                 return sectionObj;
@@ -478,7 +526,9 @@ router.get('/:id/sections', async (req, res) => {
                     name: page.name,
                     slug: page.slug,
                     path: page.path,
-                    template: page.template || null
+                    template: page.template || null,
+                    category: page.category || null,
+                    thumbnail: toAbsoluteUrl(page.thumbnail) || null
                 },
                 // template: templateData,
                 sections: sectionsWithAdImages,
@@ -591,7 +641,7 @@ router.post('/:id/sections', isAuthenticated, async (req, res) => {
 // Create new page
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category, thumbnail } = req.body;
         
         // Validate required fields
         if (!name) {
@@ -622,6 +672,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             metaKeywords,
             template: template || '',
             category: category || '',
+            thumbnail: thumbnail || null,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
         });
@@ -709,7 +760,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update page
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category } = req.body;
+        const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category, thumbnail } = req.body;
         
         // Get the old page data before update
         const oldPage = await Page.findById(req.params.id);
@@ -784,6 +835,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
                 metaKeywords,
                 template: template || '',
                 category: category || '',
+                thumbnail: thumbnail || null,
                 updatedBy: req.user ? req.user._id : null
             },
             { new: true, runValidators: true }
@@ -1006,26 +1058,34 @@ router.get('/test/community-groups', async (req, res) => {
             category: 'community',
             status: 'active'
         })
-        .select('name slug path')
+        .select('name slug path thumbnail category')
         .sort({ name: 1 });
         
-        // For each community page, get its hero section image
+        // For each community page, get its image (thumbnail if available, otherwise hero section image)
         const communityGroupsData = await Promise.all(
             communityPages.map(async (communityPage) => {
-                // Get hero section content for this page
-                const heroContent = await Content.findOne({
-                    page: communityPage._id,
-                    sectionType: 'hero-section',
-                    status: 'active'
-                })
-                .select('heroSection');
+                let imageUrl = null;
+                
+                // If page has thumbnail, use it
+                if (communityPage.thumbnail) {
+                    imageUrl = toAbsoluteUrl(communityPage.thumbnail);
+                } else {
+                    // Fallback to hero section image
+                    const heroContent = await Content.findOne({
+                        page: communityPage._id,
+                        sectionType: 'hero-section',
+                        status: 'active'
+                    })
+                    .select('heroSection');
+                    imageUrl = toAbsoluteUrl(heroContent?.heroSection?.image) || null;
+                }
                 
                 return {
                     _id: communityPage._id,
                     name: communityPage.name,
                     slug: communityPage.slug,
                     path: communityPage.path,
-                    heroImage: heroContent?.heroSection?.image || null
+                    thumbnail: imageUrl
                 };
             })
         );

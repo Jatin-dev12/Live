@@ -68,7 +68,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
 
         // Get all sections for this page
         const allSections = await Content.find({ page: pageId })
-            .populate('communityGroups.selectedPages.page', 'name _id')
+            .populate('communityGroups.selectedPages.page', 'name _id slug category thumbnail')
             .sort({ order: 1, createdAt: 1 })
             .lean();
             
@@ -79,6 +79,12 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
         const allAds = await Ad.find({})
             .select('title description media_url link_url link_target status')
             .sort({ title: 1 });
+
+        // Get all media for thumbnail selection
+        const Media = require('../models/Media');
+        const allMedia = await Media.find({ type: 'image' })
+            .select('filename originalName url title alt')
+            .sort({ createdAt: -1 });
             
         console.log('🔍 CMS Route - Total ads found:', allAds.length);
         console.log('🔍 CMS Route - Ads data:', allAds.map(ad => ({
@@ -204,6 +210,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             })),
             pages: allPages,
             ads: allAds,
+            media: allMedia,
             frontendUrl: process.env.FRONTEND_URL
         };
         // console.log('🔍 CMS Route - Response data ads count:', responseData.ads.length);

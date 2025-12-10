@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Media = require('../../models/Media');
 const { isAuthenticated } = require('../../middleware/auth');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -119,10 +120,16 @@ router.post('/upload', isAuthenticated, (req, res) => {
                 uploadedMedia.push(media);
             }
 
+            // Convert URLs to absolute before returning
+            const mediaWithAbsoluteUrls = uploadedMedia.map(media => ({
+                ...media.toObject(),
+                url: toAbsoluteUrl(media.url)
+            }));
+
             res.json({
                 success: true,
                 message: `${uploadedMedia.length} file(s) uploaded successfully`,
-                data: uploadedMedia
+                data: mediaWithAbsoluteUrls
             });
         } catch (error) {
             console.error('Database save error:', error);
@@ -173,9 +180,15 @@ router.get('/list', isAuthenticated, async (req, res) => {
         
         const total = await Media.countDocuments(query);
         
+        // Convert URLs to absolute before returning
+        const mediaWithAbsoluteUrls = media.map(item => ({
+            ...item.toObject(),
+            url: toAbsoluteUrl(item.url)
+        }));
+
         res.json({
             success: true,
-            data: media,
+            data: mediaWithAbsoluteUrls,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
@@ -205,9 +218,15 @@ router.get('/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Convert URL to absolute before returning
+        const mediaWithAbsoluteUrl = {
+            ...media.toObject(),
+            url: toAbsoluteUrl(media.url)
+        };
+
         res.json({
             success: true,
-            data: media
+            data: mediaWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Get media error:', error);
@@ -240,10 +259,16 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         
         await media.save();
         
+        // Convert URL to absolute before returning
+        const mediaWithAbsoluteUrl = {
+            ...media.toObject(),
+            url: toAbsoluteUrl(media.url)
+        };
+
         res.json({
             success: true,
             message: 'Media updated successfully',
-            data: media
+            data: mediaWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Update media error:', error);

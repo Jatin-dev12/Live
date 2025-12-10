@@ -539,8 +539,21 @@
             } else {
                 const hasLowercase = /[a-z]/.test(password);
                 const hasUppercase = /[A-Z]/.test(password);
-                const hasNumber = /\d/.test(password);
+                const hasNumber = /[0-9]/.test(password);
                 const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+                // console.log('=== VALIDATE FORM DEBUG ===');
+                // console.log('Password:', password);
+                // console.log('Password type:', typeof password);
+                // console.log('Password length:', password.length);
+                // console.log('Password chars:', password.split('').map(c => c + ' (' + c.charCodeAt(0) + ')'));
+                // console.log('hasLowercase:', hasLowercase, '/[a-z]/.test(password)');
+                // console.log('hasUppercase:', hasUppercase, '/[A-Z]/.test(password)');
+                // console.log('hasNumber:', hasNumber, '/\\d/.test(password)');
+                // console.log('hasSpecialChar:', hasSpecialChar, '/[@$!%*?&]/.test(password)');
+                // console.log('Manual number test:', /[0-9]/.test(password));
+                // console.log('Manual digit test:', /\d/.test(password));
+                // console.log('============================');
 
                 if (!hasLowercase) {
                     errors.push('Password must contain at least one lowercase letter');
@@ -905,7 +918,7 @@
                     errors.push('Password must contain at least one uppercase letter');
                 }
 
-                if (!/\d/.test(password)) {
+                if (!/[0-9]/.test(password)) {
                     errors.push('Password must contain at least one number');
                 }
 
@@ -979,8 +992,16 @@
             // Additional password complexity checks
             const hasLowercase = /[a-z]/.test(password);
             const hasUppercase = /[A-Z]/.test(password);
-            const hasNumber = /\d/.test(password);
+            const hasNumber = /[0-9]/.test(password);
             const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+            // console.log('=== PASSWORD DEBUG ===');
+            // console.log('Password:', password);
+            // console.log('hasLowercase:', hasLowercase);
+            // console.log('hasUppercase:', hasUppercase);
+            // console.log('hasNumber:', hasNumber);
+            // console.log('hasSpecialChar:', hasSpecialChar);
+            // console.log('======================');
 
             if (!hasLowercase) {
                 showToast('Password must contain at least one lowercase letter', 'error');

@@ -253,9 +253,9 @@
             }
             
             // 2. ENFORCE MAX LENGTH (30 characters)
-            if (value.length > 30) {
-                value = value.substring(0, 30);
-                if ($(this).val().length > 30) {
+            if (value.length > 150) {
+                value = value.substring(0, 150);
+                if ($(this).val().length > 150) {
                     $(this).val(value);
                 }
             }

@@ -11,7 +11,7 @@ const app = express();
 connectDB();
 
 // Body parser middleware with increased limits for file uploads
-const requestSizeLimit = process.env.REQUEST_SIZE_LIMIT || '10mb';
+const requestSizeLimit = process.env.REQUEST_SIZE_LIMIT || '50mb';
 app.use(express.json({ limit: requestSizeLimit }));
 app.use(express.urlencoded({ extended: true, limit: requestSizeLimit }));
 

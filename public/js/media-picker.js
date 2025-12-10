@@ -45,12 +45,12 @@ class MediaPicker {
                             <div class="custm-media-tabs">
                                 <ul class="nav nav-tabs border-0" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="library-tab" data-bs-toggle="tab" data-bs-target="#library-panel" type="button" role="tab">
+                                        <button class="nav-link active" id="library-tab" data-bs-toggle="tab" data-bs-target="#library-panel" type="button" role="tab" aria-controls="library-panel" aria-selected="true">
                                             <i class="bi bi-grid-3x3-gap me-2"></i>Media Library
                                         </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-panel" type="button" role="tab">
+                                        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-panel" type="button" role="tab" aria-controls="upload-panel" aria-selected="false">
                                             <i class="bi bi-cloud-upload me-2"></i>Upload Files
                                         </button>
                                     </li>
@@ -59,7 +59,7 @@ class MediaPicker {
                             
                             <div class="tab-content">
                                 <!-- Media Library Tab -->
-                                <div class="tab-pane show active p-4" id="library-panel" role="tabpanel">
+                                <div class="tab-pane show active p-4" id="library-panel" role="tabpanel" aria-labelledby="library-tab" tabindex="0">
                                     <!-- Toolbar -->
                                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                                         <div class="btn-group btn-group-sm custom-switch-btn" role="group">
@@ -124,7 +124,7 @@ class MediaPicker {
                                 </div>
                                 
                                 <!-- Upload Tab -->
-                                <div class="tab-pane  p-4" id="upload-panel" role="tabpanel">
+                                <div class="tab-pane p-4" id="upload-panel" role="tabpanel" aria-labelledby="upload-tab" tabindex="0">
                                     <div class="upload-area border-2 border-dashed rounded p-5 text-center" id="uploadArea_${modalId}" style="border-color: #dee2e6; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
                                         <div class="upload-icon mb-3">
                                             <i class="bi bi-cloud-upload text-primary" style="font-size: 3rem;"></i>
@@ -169,16 +169,41 @@ class MediaPicker {
         this.bsModal = new bootstrap.Modal(this.modal);
     }
     
+    initializeTabs() {
+        // Ensure Bootstrap tabs are properly initialized
+        const tabElements = this.modal.querySelectorAll('[data-bs-toggle="tab"]');
+        tabElements.forEach(tabEl => {
+            if (!tabEl._bsTab) {
+                new bootstrap.Tab(tabEl);
+            }
+        });
+    }
+    
     bindEvents() {
         const modalId = this.modalId;
         
-        // Tab switching
-        document.getElementById('library-tab').addEventListener('click', () => {
+        // Tab switching with Bootstrap tab events
+        const libraryTab = document.getElementById('library-tab');
+        const uploadTab = document.getElementById('upload-tab');
+        
+        libraryTab.addEventListener('shown.bs.tab', (e) => {
             this.currentTab = 'library';
             this.loadMediaLibrary();
         });
         
-        document.getElementById('upload-tab').addEventListener('click', () => {
+        uploadTab.addEventListener('shown.bs.tab', (e) => {
+            this.currentTab = 'upload';
+        });
+        
+        // Also handle direct clicks for fallback
+        libraryTab.addEventListener('click', (e) => {
+            this.currentTab = 'library';
+            if (!this.mediaItems.length) {
+                this.loadMediaLibrary();
+            }
+        });
+        
+        uploadTab.addEventListener('click', (e) => {
             this.currentTab = 'upload';
         });
         
@@ -249,6 +274,8 @@ class MediaPicker {
         
         // Modal events
         this.modal.addEventListener('shown.bs.modal', () => {
+            // Initialize Bootstrap tabs if not already initialized
+            this.initializeTabs();
             this.loadMediaLibrary();
         });
         
@@ -532,7 +559,9 @@ class MediaPicker {
                             this.showSuccess(`${files.length} file(s) uploaded successfully`);
                             
                             // Switch to library tab and refresh
-                            document.getElementById('library-tab').click();
+                            const libraryTab = document.getElementById('library-tab');
+                            const libraryTabInstance = bootstrap.Tab.getOrCreateInstance(libraryTab);
+                            libraryTabInstance.show();
                             this.loadMediaLibrary();
                             
                             // Call upload callback
@@ -595,21 +624,24 @@ class MediaPicker {
         ];
         
         files.forEach((file, index) => {
-            // Check file type first (images and videos only for media picker)
-            if (!(file.type.startsWith("image/") || file.type.startsWith("video/"))) {
-                errors.push(`File "${file.name}" has an invalid type. Only images and videos are allowed.`);
-                return; // Skip other checks for this file
-            }
-            
-            // Check file size
+            // Check file size first
             if (file.size > maxFileSize) {
                 errors.push(`File "${file.name}" is too large (${this.formatFileSize(file.size)}). Maximum size is 10MB.`);
             }
             
-            // Check file extension (only for images and videos)
-            const imageVideoExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|avi|mov)$/i;
-            if (!imageVideoExtensions.test(file.name)) {
-                errors.push(`File "${file.name}" has an invalid extension. Only image and video files are allowed.`);
+            // Check file extension
+            if (!allowedExtensions.test(file.name)) {
+                errors.push(`File "${file.name}" has an invalid extension. Allowed types: images, videos, documents, and audio files.`);
+                return; // Skip MIME type check if extension is invalid
+            }
+            
+            // Check MIME type - be more flexible to match server-side validation
+            const isValidMimeType = allowedMimeTypes.includes(file.type) || 
+                                  file.type.startsWith('image/') || 
+                                  file.type.startsWith('video/');
+            
+            if (!isValidMimeType) {
+                errors.push(`File "${file.name}" has an invalid type (${file.type}). Allowed types: images`);
             }
         });
         

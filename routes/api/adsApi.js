@@ -3,6 +3,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../../middleware/auth');
 const Ad = require('../../models/Ad');
 const AdPlacement = require('../../models/AdPlacement');
+const { toAbsoluteUrl } = require('../../utils/urlHelper');
 
 
 
@@ -48,7 +49,7 @@ router.get('/ads/media', isAuthenticated, async (req, res) => {
                     mediaFiles.push({
                         _id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         originalName: filename,
-                        url: '/uploads/ads/' + filename,
+                        url: toAbsoluteUrl('/uploads/ads/' + filename),
                         type: type,
                         mimeType: mimeType,
                         size: stats.size,
@@ -104,10 +105,16 @@ router.get('/ads', isAuthenticated, async (req, res) => {
             .sort({ createdAt: -1 })
             .lean();
         
+        // Convert media URLs to absolute
+        const adsWithAbsoluteUrls = ads.map(ad => ({
+            ...ad,
+            media_url: toAbsoluteUrl(ad.media_url)
+        }));
+        
         res.json({
             success: true,
-            count: ads.length,
-            data: ads
+            count: adsWithAbsoluteUrls.length,
+            data: adsWithAbsoluteUrls
         });
     } catch (error) {
         console.error('Error fetching ads:', error);
@@ -133,9 +140,15 @@ router.get('/ads/:id', isAuthenticated, async (req, res) => {
             });
         }
         
+        // Convert media URL to absolute
+        const adWithAbsoluteUrl = {
+            ...ad.toObject(),
+            media_url: toAbsoluteUrl(ad.media_url)
+        };
+        
         res.json({
             success: true,
-            data: ad
+            data: adWithAbsoluteUrl
         });
     } catch (error) {
         console.error('Error fetching ad:', error);
@@ -594,7 +607,7 @@ router.delete('/ads/media/:filename', isAuthenticated, async (req, res) => {
                     mediaFiles.push({
                         _id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         originalName: filename,
-                        url: '/uploads/ads/' + filename,
+                        url: toAbsoluteUrl('/uploads/ads/' + filename),
                         type: type,
                         mimeType: mimeType,
                         size: stats.size,

@@ -150,7 +150,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     try {
         // If the request contains a sections array, perform a bulk sync for the page
         if (Array.isArray(req.body.sections)) {
-            const { pageId, status, sections } = req.body;
+            const { pageId, status, sections, pageThumbnail } = req.body;
             // console.log('Updating sections for page:', pageId);
             // console.log('Sections data received:', JSON.stringify(sections, null, 2));
 
@@ -230,6 +230,14 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             let deleteResult = { deletedCount: 0 };
             if (toDelete.length > 0) {
                 deleteResult = await Content.deleteMany({ _id: { $in: toDelete } });
+            }
+
+            // Update page thumbnail if provided
+            if (pageThumbnail !== undefined) {
+                await Page.findByIdAndUpdate(pageId, { 
+                    thumbnail: pageThumbnail || null,
+                    updatedBy: req.user ? req.user._id : null
+                });
             }
 
             return res.json({
