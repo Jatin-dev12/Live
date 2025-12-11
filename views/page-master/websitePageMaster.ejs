@@ -1,10 +1,22 @@
 <div class="card p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <form class="navbar-search">
-                <input type="text" id="pageSearch" class="bg-base h-40-px w-auto" placeholder="Search pages...">
-                <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-            </form>
+            <div class="search-container d-flex align-items-center gap-2">
+                <form method="GET" action="/page-master/web-page-master" class="d-flex align-items-center gap-2">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" name="search" id="pageSearch" class="form-control" placeholder="Search pages..." value="<%= search || '' %>">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <iconify-icon icon="ion:search-outline"></iconify-icon>
+                        </button>
+                    </div>
+                </form>
+                <% if (search) { %>
+                    <a href="/page-master/web-page-master" class="btn btn-sm btn-outline-danger">
+                        <iconify-icon icon="material-symbols:close"></iconify-icon>
+                        Clear
+                    </a>
+                <% } %>
+            </div>
         </div>
         <!-- <a href="/page-master/add-page" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
             <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
@@ -91,55 +103,116 @@
             </table>
         </div>
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-             <!-- <span>Showing 1 to 10 of 12 entries</span> -->
-            <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">
-                        <iconify-icon icon="ep:d-arrow-left" class=""></iconify-icon>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600 text-white" href="javascript:void(0)">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px" href="javascript:void(0)">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">4</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">5</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)">
-                        <iconify-icon icon="ep:d-arrow-right" class=""></iconify-icon>
-                    </a>
-                </li>
-            </ul>
+
+        
+        <% if (pagination && pagination.totalItems > 0) { %>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-4 pt-3 border-top">
+            <div class="text-muted">
+                Showing <%= ((pagination.currentPage - 1) * pagination.limit) + 1 %> to 
+                <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> 
+                of <%= pagination.totalItems %> entries
+            </div>
+            
+
+            
+
+            
+            <% if (pagination.totalPages > 1) { %>
+            <nav aria-label="Page navigation">
+                <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+                    <!-- Previous Button -->
+                    <li class="page-item">
+                        <% if (pagination.hasPrev) { %>
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.prevPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                                <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+                            </a>
+                        <% } else { %>
+                            <span class="page-link bg-neutral-200 text-neutral-400 fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">
+                                <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+                            </span>
+                        <% } %>
+                    </li>
+
+                    <!-- Dynamic Page Numbers -->
+                    <% 
+                        let startPage = Math.max(1, pagination.currentPage - 2);
+                        let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                        
+                        // Adjust if we're near the beginning or end
+                        if (endPage - startPage < 4) {
+                            if (startPage === 1) {
+                                endPage = Math.min(pagination.totalPages, startPage + 4);
+                            } else {
+                                startPage = Math.max(1, endPage - 4);
+                            }
+                        }
+                    %>
+
+                    <% if (startPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %>">1</a>
+                        </li>
+                        <% if (startPage > 2) { %>
+                            <li class="page-item">
+                                <span class="page-link bg-transparent text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">...</span>
+                            </li>
+                        <% } %>
+                    <% } %>
+
+                    <% for (let i = startPage; i <= endPage; i++) { %>
+                        <li class="page-item">
+                            <% if (i === pagination.currentPage) { %>
+                                <span class="page-link text-white fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600"><%= i %></span>
+                            <% } else { %>
+                                <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                                   href="?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+                            <% } %>
+                        </li>
+                    <% } %>
+
+                    <% if (endPage < pagination.totalPages) { %>
+                        <% if (endPage < pagination.totalPages - 1) { %>
+                            <li class="page-item">
+                                <span class="page-link bg-transparent text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">...</span>
+                            </li>
+                        <% } %>
+                        <li class="page-item">
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.totalPages %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= pagination.totalPages %></a>
+                        </li>
+                    <% } %>
+
+                    <!-- Next Button -->
+                    <li class="page-item">
+                        <% if (pagination.hasNext) { %>
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.nextPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                                <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+                            </a>
+                        <% } else { %>
+                            <span class="page-link bg-neutral-200 text-neutral-400 fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">
+                                <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+                            </span>
+                        <% } %>
+                    </li>
+                </ul>
+            </nav>
+
+
+            <% } %>
         </div>
+        <% } %>
     </div>
 </div>
 <% script = `
 <script>
-    // Search functionality
-    $('#pageSearch').on('keyup', function() {
-        const searchValue = $(this).val().toLowerCase();
-
-        $('#pagesTableBody tr').each(function() {
-            const row = $(this);
-            const pageName = row.find('td:eq(0)').text().toLowerCase();
-            const path = row.find('td:eq(1)').text().toLowerCase();
-
-            if (pageName.includes(searchValue) || path.includes(searchValue)) {
-                row.show();
-            } else {
-                row.hide();
-            }
-        });
+    // Search form submission on Enter key
+    $('#pageSearch').on('keypress', function(e) {
+        if (e.which === 13) {
+            $(this).closest('form').submit();
+        }
     });
 
     // Delete page functionality

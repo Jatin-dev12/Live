@@ -3,16 +3,37 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const Page = require('../models/Page');
 const Content = require('../models/Content');
+const { getPaginationLimit, calculatePagination, buildSearchQuery } = require('../utils/pagination');
 
-// List all pages
+// List all pages with search and pagination
 router.get('/web-page-master', isAuthenticated, async (req, res) => {
     try {
-        const pages = await Page.find().sort({ createdAt: -1 });
+        const currentPage = parseInt(req.query.page) || 1;
+        const search = req.query.search || '';
+        const limit = getPaginationLimit();
+
+        // Build search query using utility function
+        const searchQuery = buildSearchQuery(search, ['name', 'path', 'slug']);
+
+        // Get total count for pagination
+        const totalItems = await Page.countDocuments(searchQuery);
+        
+        // Calculate pagination metadata
+        const pagination = calculatePagination(currentPage, totalItems, limit);
+
+        // Get pages with pagination
+        const pages = await Page.find(searchQuery)
+            .sort({ createdAt: -1 })
+            .skip(pagination.skip)
+            .limit(pagination.limit);
+
         res.render('page-master/websitePageMaster', {
             title: "Website Page Master",
             subTitle: "Website Page Master",
             pages: pages,
-            frontendUrl: process.env.FRONTEND_URL
+            frontendUrl: process.env.FRONTEND_URL,
+            pagination: pagination,
+            search: search
         });
     } catch (error) {
         console.error('Error fetching pages:', error);
@@ -20,6 +41,9 @@ router.get('/web-page-master', isAuthenticated, async (req, res) => {
             title: "Website Page Master",
             subTitle: "Website Page Master",
             pages: [],
+            frontendUrl: process.env.FRONTEND_URL,
+            pagination: calculatePagination(1, 0),
+            search: '',
             error: 'Error loading pages'
         });
     }
