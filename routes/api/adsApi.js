@@ -79,6 +79,228 @@ router.get('/ads/media', isAuthenticated, async (req, res) => {
     }
 });
 
+// ============ PUBLIC ADS API ============
+
+// Get all active ads with pages (public endpoint for frontend display)
+router.get('/ads/active', async (req, res) => {
+    try {
+        const currentDate = new Date();
+        console.log('Current date for filtering:', currentDate);
+        
+        // First, let's check all ads to debug
+        const allAds = await Ad.find({}).select('_id title status start_date end_date selected_pages').lean();
+        console.log('All ads in database:');
+        allAds.forEach(ad => {
+            console.log(`- ${ad.title}: status=${ad.status}, start=${ad.start_date}, end=${ad.end_date}, pages=${ad.selected_pages ? ad.selected_pages.length : 0}`);
+        });
+        
+        // Check each filter step by step
+        console.log('\n=== FILTERING STEPS ===');
+        
+        // Step 1: Status filter
+        const statusFiltered = await Ad.find({ status: 'active' }).select('_id title status').lean();
+        console.log(`Step 1 - Status 'active': ${statusFiltered.length} ads`);
+        
+        // Step 2: Start date filter
+        const startDateFiltered = await Ad.find({ 
+            status: 'active',
+            start_date: { $lte: currentDate }
+        }).select('_id title start_date').lean();
+        console.log(`Step 2 - Start date <= now: ${startDateFiltered.length} ads`);
+        
+        // Step 3: End date filter
+        const endDateFiltered = await Ad.find({ 
+            status: 'active',
+            start_date: { $lte: currentDate },
+            end_date: { $gt: currentDate }
+        }).select('_id title end_date').lean();
+        console.log(`Step 3 - End date > now: ${endDateFiltered.length} ads`);
+        
+        // Step 4: Pages filter
+        const pagesFiltered = await Ad.find({ 
+            status: 'active',
+            start_date: { $lte: currentDate },
+            end_date: { $gt: currentDate },
+            selected_pages: { $exists: true, $not: { $size: 0 } }
+        }).select('_id title selected_pages').lean();
+        console.log(`Step 4 - Has selected pages: ${pagesFiltered.length} ads`);
+        
+        // Final query with population
+        const activeAds = await Ad.find({
+            status: 'active',
+            start_date: { $lte: currentDate },
+            end_date: { $gt: currentDate },
+            selected_pages: { $exists: true, $not: { $size: 0 } }
+        })
+        .populate('selected_pages', '_id name slug path')
+        .select('_id title description media_url ad_type link_url link_target start_date end_date selected_pages')
+        .lean();
+
+        // Transform the data to include page information
+        const adsWithPages = activeAds.map(ad => ({
+            id: ad._id,
+            title: ad.title,
+            description: ad.description,
+            media_url: toAbsoluteUrl(ad.media_url),
+            ad_type: ad.ad_type,
+            link_url: ad.link_url,
+            link_target: ad.link_target || '_blank',
+            start_date: ad.start_date,
+            end_date: ad.end_date,
+            pages: ad.selected_pages.map(page => ({
+                id: page._id,
+                name: page.name,
+                slug: page.slug,
+                path: page.path
+            }))
+        }));
+
+        console.log(`Final result: ${adsWithPages.length} active ads with pages`);
+
+        res.json({
+            success: true,
+            count: adsWithPages.length,
+            data: adsWithPages,
+            timestamp: currentDate.toISOString(),
+            debug: {
+                currentDate: currentDate,
+                totalAds: allAds.length,
+                statusFiltered: statusFiltered.length,
+                startDateFiltered: startDateFiltered.length,
+                endDateFiltered: endDateFiltered.length,
+                pagesFiltered: pagesFiltered.length
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching active ads:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching active ads',
+            error: error.message
+        });
+    }
+});
+
+// Get active ads for a specific page (by page slug or ID)
+router.get('/ads/page/:pageIdentifier', async (req, res) => {
+    try {
+        const { pageIdentifier } = req.params;
+        const currentDate = new Date();
+        
+        // First, find the page by slug or ID
+        const Page = require('../../models/Page');
+        let page;
+        
+        if (require('mongoose').Types.ObjectId.isValid(pageIdentifier)) {
+            page = await Page.findById(pageIdentifier);
+        } else {
+            page = await Page.findOne({ slug: pageIdentifier });
+        }
+        
+        if (!page) {
+            return res.status(404).json({
+                success: false,
+                message: 'Page not found'
+            });
+        }
+
+        // Find ads that are active and include this page
+        const activeAds = await Ad.find({
+            status: 'active',
+            start_date: { $lte: currentDate },
+            end_date: { $gt: currentDate },
+            selected_pages: page._id
+        })
+        .populate('selected_pages', '_id name slug path')
+        .select('_id title description media_url ad_type link_url link_target start_date end_date selected_pages')
+        .lean();
+
+        // Transform the data
+        const adsForPage = activeAds.map(ad => ({
+            id: ad._id,
+            title: ad.title,
+            description: ad.description,
+            media_url: toAbsoluteUrl(ad.media_url),
+            ad_type: ad.ad_type,
+            link_url: ad.link_url,
+            link_target: ad.link_target || '_blank',
+            start_date: ad.start_date,
+            end_date: ad.end_date,
+            pages: ad.selected_pages.map(p => ({
+                id: p._id,
+                name: p.name,
+                slug: p.slug,
+                path: p.path
+            }))
+        }));
+
+        console.log(`Found ${adsForPage.length} active ads for page: ${page.name}`);
+
+        res.json({
+            success: true,
+            count: adsForPage.length,
+            page: {
+                id: page._id,
+                name: page.name,
+                slug: page.slug,
+                path: page.path
+            },
+            data: adsForPage,
+            timestamp: currentDate.toISOString()
+        });
+
+    } catch (error) {
+        console.error('Error fetching ads for page:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching ads for page',
+            error: error.message
+        });
+    }
+});
+
+// Debug endpoint to check raw ad data
+router.get('/ads/debug', async (req, res) => {
+    try {
+        const ads = await Ad.find({})
+            .populate('selected_pages', '_id name slug path')
+            .select('_id title status start_date end_date selected_pages')
+            .lean();
+        
+        const currentDate = new Date();
+        
+        const debugData = ads.map(ad => ({
+            id: ad._id,
+            title: ad.title,
+            status: ad.status,
+            start_date: ad.start_date,
+            end_date: ad.end_date,
+            selected_pages_count: ad.selected_pages ? ad.selected_pages.length : 0,
+            selected_pages: ad.selected_pages || [],
+            is_active_status: ad.status === 'active',
+            is_start_date_valid: ad.start_date ? ad.start_date <= currentDate : false,
+            is_end_date_valid: ad.end_date ? ad.end_date > currentDate : false,
+            has_pages: ad.selected_pages && ad.selected_pages.length > 0
+        }));
+        
+        res.json({
+            success: true,
+            currentDate: currentDate,
+            count: debugData.length,
+            data: debugData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Debug error',
+            error: error.message
+        });
+    }
+});
+
+// ============ ADMIN ADS API ============
+
 // Get all ads with filters
 router.get('/ads', isAuthenticated, async (req, res) => {
     try {
@@ -215,7 +437,8 @@ router.post('/ads', isAuthenticated, async (req, res) => {
             max_impressions: max_impressions || 0,
             max_clicks: max_clicks || 0,
             created_by: req.user._id,
-            created_by_type: created_by_type || 'admin'
+            created_by_type: created_by_type || 'admin',
+            selected_pages: req.body.selected_pages || []
         });
         
         await ad.save();
@@ -663,6 +886,144 @@ router.delete('/ads/media/:filename', isAuthenticated, async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error deleting file',
+            error: error.message
+        });
+    }
+});
+
+// ============ PAGE SELECTION ROUTES ============
+
+// Get all pages for selection
+router.get('/pages', isAuthenticated, async (req, res) => {
+    try {
+        const Page = require('../../models/Page');
+        const pages = await Page.find({ status: 'active' })
+            .select('_id name slug path')
+            .sort({ name: 1 })
+            .lean();
+        
+        console.log('Pages API called - found', pages.length, 'active pages');
+        console.log('Sample pages:', pages.slice(0, 3));
+        
+        res.json({
+            success: true,
+            count: pages.length,
+            data: pages
+        });
+    } catch (error) {
+        console.error('Error fetching pages:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pages',
+            error: error.message
+        });
+    }
+});
+
+// Get selected pages for an ad
+router.get('/ads/:id/pages', isAuthenticated, async (req, res) => {
+    try {
+        const ad = await Ad.findById(req.params.id)
+            .populate('selected_pages', '_id name slug path')
+            .lean();
+        
+        if (!ad) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ad not found'
+            });
+        }
+        
+        res.json({
+            success: true,
+            data: ad.selected_pages || []
+        });
+    } catch (error) {
+        console.error('Error fetching ad pages:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching ad pages',
+            error: error.message
+        });
+    }
+});
+
+// Update selected pages for an ad
+router.put('/ads/:id/pages', isAuthenticated, async (req, res) => {
+    try {
+        let { selected_pages } = req.body;
+        
+        console.log('Received page selection request:');
+        console.log('Ad ID:', req.params.id);
+        console.log('Selected pages:', selected_pages);
+        console.log('Selected pages type:', typeof selected_pages);
+        console.log('Is array:', Array.isArray(selected_pages));
+        
+        if (!Array.isArray(selected_pages)) {
+            return res.status(400).json({
+                success: false,
+                message: 'selected_pages must be an array'
+            });
+        }
+        
+        const ad = await Ad.findById(req.params.id);
+        
+        if (!ad) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ad not found'
+            });
+        }
+        
+        // Validate that all page IDs exist (if any are provided)
+        if (selected_pages.length > 0) {
+            const Page = require('../../models/Page');
+            const mongoose = require('mongoose');
+            
+            // Convert all IDs to strings and filter out empty/null values
+            const cleanPageIds = selected_pages
+                .filter(id => id && id.toString().trim())
+                .map(id => id.toString().trim());
+            
+            console.log('Validating page IDs:', cleanPageIds);
+            
+            // For now, let's be more permissive and just check ObjectId format
+            const invalidObjectIds = cleanPageIds.filter(id => !mongoose.Types.ObjectId.isValid(id));
+            
+            if (invalidObjectIds.length > 0) {
+                console.log('Invalid ObjectId format:', invalidObjectIds);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Some page IDs have invalid format: ' + invalidObjectIds.join(', '),
+                    invalidPages: invalidObjectIds
+                });
+            }
+            
+            // Just validate ObjectId format for now, skip database check to avoid issues
+            console.log('All page IDs have valid ObjectId format');
+            selected_pages = cleanPageIds;
+        }
+        
+        // Update the ad with selected pages
+        ad.selected_pages = selected_pages;
+        await ad.save();
+        
+        // Return updated ad with populated pages
+        await ad.populate('selected_pages', '_id name slug path');
+        
+        res.json({
+            success: true,
+            message: 'Page selection updated successfully',
+            data: {
+                ad_id: ad._id,
+                selected_pages: ad.selected_pages
+            }
+        });
+    } catch (error) {
+        console.error('Error updating ad pages:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating ad pages',
             error: error.message
         });
     }

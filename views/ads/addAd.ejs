@@ -8,17 +8,27 @@
                             <label class="form-label">Title <span class="text-danger">*</span></label>
                             <input type="text" name="title" id="title" class="form-control" placeholder="Enter ad title" required>
                         </div>
-                        <!-- <div class="col-md-6">
+                        <div class="col-md-6">
                             <label class="form-label">Ad Type <span class="text-danger">*</span></label>
                             <select name="ad_type" id="ad_type" class="form-select" required>
                                 <option value="">Select Ad Type</option>
-                                <option value="banner">Banner</option>
-                                <option value="video">Video</option>
-                                <option value="native">Native</option>
+                                <option value="horizontal">Horizontal</option>
+                                <option value="vertical">Vertical</option>
+                                <!-- <option value="native">Native</option>
                                 <option value="popup">Popup</option>
-                                <option value="custom">+ Add Custom Ad Type</option>
+                                <option value="custom">+ Add Custom Ad Type</option> -->
                             </select>
-                        </div> -->
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="pending">Pending</option>
+                                <option value="active">Active</option>
+                                <option value="paused">Paused</option>
+                                <option value="expired">Expired</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
 
                         <!-- Custom Ad Type Input (Hidden by default) -->
                         <div class="col-md-6 d-none" id="customAdTypeContainer">
@@ -128,18 +138,9 @@
                             <small class="text-muted">Higher numbers show first (1-100)</small>
                         </div> -->
 
-                        <!-- <div class="col-md-6">
-                            <label class="form-label">Status <span class="text-danger">*</span></label>
-                            <select name="status" id="status" class="form-select" required>
-                                <option value="pending">Pending</option>
-                                <option value="active">Active</option>
-                                <option value="paused">Paused</option>
-                                <option value="expired">Expired</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div> -->
+                        
 
-                        <!-- <div class="col-md-6">
+                        <div class="col-md-6">
                             <label class="form-label">Start Date <span class="text-danger">*</span></label>
                             <input type="date" name="start_date" id="start_date" class="form-control" required>
                         </div>
@@ -147,7 +148,7 @@
                         <div class="col-md-6">
                             <label class="form-label">End Date <span class="text-danger">*</span></label>
                             <input type="date" name="end_date" id="end_date" class="form-control" required>
-                        </div> -->
+                        </div>
 
                         <!-- <div class="col-md-4">
                             <label class="form-label">Budget ($)</label>
@@ -173,6 +174,21 @@
                                 <option value="admin">Admin</option>
                                 <option value="advertiser">Advertiser</option>
                             </select>
+                        </div> -->
+
+                        <!-- <div class="col-12">
+                            <hr class="my-3">
+                            <h6 class="mb-3">Page Selection</h6>
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <button type="button" class="btn btn-outline-info btn-sm" id="openPageSelectionBtn">
+                                    <iconify-icon icon="material-symbols:web-stories-outline" class="me-1"></iconify-icon>
+                                    Manage Page Selection
+                                </button>
+                                <span class="text-muted" id="selectedPagesInfo">
+                                    <span id="selectedPagesCount">0</span> pages selected
+                                </span>
+                            </div>
+                            <input type="hidden" id="selected_pages" name="selected_pages" value="">
                         </div> -->
 
                         <div class="col-12">
@@ -543,7 +559,7 @@
     fetchAdMedia();
 
     // Set minimum date to today
-    /* const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
     document.getElementById('start_date').setAttribute('min', today);
     document.getElementById('end_date').setAttribute('min', today);
 
@@ -557,7 +573,7 @@
         if (endDate && endDate < startDate) {
             document.getElementById('end_date').value = '';
         }
-    }); */
+    });
 
     // Form submission
     document.getElementById('addAdForm').addEventListener('submit', async function(e) {
@@ -568,13 +584,13 @@
         const btnSpinner = submitBtn.querySelector('.btn-spinner');
 
         // Validate dates
-        /* const startDate = document.getElementById('start_date').value;
+        const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
 
         if (new Date(endDate) <= new Date(startDate)) {
             showToast('End date must be after start date', 'error');
             return;
-        } */
+        }
 
         // Show loading state
         submitBtn.disabled = true;
@@ -582,7 +598,7 @@
         btnSpinner.classList.remove('d-none');
 
         // Handle custom ad type
-        /* let adType = document.getElementById('ad_type').value;
+        let adType = document.getElementById('ad_type').value;
         if (adType === 'custom') {
             const customAdType = document.getElementById('custom_ad_type').value.trim();
             if (!customAdType) {
@@ -593,7 +609,7 @@
                 return;
             }
             adType = customAdType.toLowerCase().replace(/\s+/g, '-');
-        } */
+        }
 
         // Check if media is selected
         const mediaUrl = document.getElementById('media_url').value;
@@ -610,14 +626,14 @@
             title: document.getElementById('title').value,
             description: document.getElementById('description').value,
             media_url: mediaUrl,
-            // ad_type: adType,
+            ad_type: adType,
             // placement_id: document.getElementById('placement_id').value,
             link_url: document.getElementById('link_url').value,
             link_target: document.getElementById('link_target').value,
             // priority: parseInt(document.getElementById('priority').value) || 1,
-            // status: document.getElementById('status').value,
-            // start_date: startDate,
-            // end_date: endDate,
+            status: document.getElementById('status').value,
+            start_date: startDate,
+            end_date: endDate,
             // budget: parseFloat(document.getElementById('budget').value) || 0,
             // max_impressions: parseInt(document.getElementById('max_impressions').value) || 0,
             // max_clicks: parseInt(document.getElementById('max_clicks').value) || 0,

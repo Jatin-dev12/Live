@@ -196,7 +196,7 @@ router.post('/upload', isAuthenticated, (req, res) => {
             
             console.log('File uploaded successfully:', {
                 filePath: filePath,
-                fullPath: fullPath,
+                targetPath: targetPath,
                 size: req.file.size
             });
             

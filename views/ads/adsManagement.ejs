@@ -117,6 +117,12 @@
                                 <!-- <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td> -->
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <button type="button" class="page-selection-btn btn btn-sm btn-outline-info" 
+                                                data-ad-id="<%= ad._id %>"
+                                                data-ad-title="<%= ad.title %>"
+                                                title="Page Selection">
+                                            <iconify-icon icon="material-symbols:web-stories-outline"></iconify-icon>
+                                        </button>
                                         <a href="/ads/edit-ad/<%= ad._id %>" class="btn btn-sm btn-outline-primary" title="Edit Ad">
                                             <iconify-icon icon="material-symbols:edit-outline"></iconify-icon>
                                         </a>
@@ -177,6 +183,135 @@
     </div>
 </div>
 
+<!-- Page Selection Modal -->
+<div class="modal fade" id="pageSelectionModal" tabindex="-1" aria-labelledby="pageSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Modal Header -->
+            <div class="modal-header bg-gradient-primary text-white border-0 py-3">
+                <div class="d-flex align-items-center">
+                    <div class="modal-icon me-3">
+                        <iconify-icon icon="material-symbols:web-stories-outline" style="font-size: 1.5rem;"></iconify-icon>
+                    </div>
+                    <div>
+                        <h5 class="modal-title mb-0 fw-semibold text-white" id="pageSelectionModalLabel">Page Selection</h5>
+                        <small class="opacity-75" id="modalAdTitle">Configure ad placement</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Available Pages Panel -->
+                    <div class="col-md-5 border-end">
+                        <div class="panel-header bg-light px-3 py-2 border-bottom">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <iconify-icon icon="material-symbols:list-alt-outline" class="text-primary me-2" style="font-size: 1.1rem;"></iconify-icon>
+                                    <span class="fw-medium text-dark" style="font-size: 0.875rem;">Available Pages</span>
+                                </div>
+                                <span class="badge bg-light text-dark border" style="font-size: 0.75rem;" id="availablePagesCount">0</span>
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Select pages where this ad should appear</small>
+                        </div>
+                        
+                        <div class="search-container p-2 bg-white border-bottom">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-0">
+                                    <iconify-icon icon="material-symbols:search" class="text-muted"></iconify-icon>
+                                </span>
+                                <input type="text" id="availablePagesSearch" class="form-control border-0 bg-light" 
+                                       placeholder="Search available pages..." style="font-size: 0.8rem;">
+                            </div>
+                        </div>
+                        
+                        <div id="availablePagesList" class="pages-list" style="height: 350px; overflow-y: auto;">
+                            <!-- Available pages will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="col-md-2 d-flex flex-column justify-content-center align-items-center bg-light py-4">
+                        <div class="control-buttons d-flex flex-column gap-2">
+                            <button type="button" id="addSelectedPages" class="btn btn-primary btn-sm px-3 py-2" disabled>
+                                <iconify-icon icon="material-symbols:arrow-forward" class="me-1"></iconify-icon>
+                                <span style="font-size: 0.75rem;">Add</span>
+                            </button>
+                            <button type="button" id="addAllPages" class="btn btn-outline-primary btn-sm px-3 py-2">
+                                <iconify-icon icon="material-symbols:double-arrow" class="me-1"></iconify-icon>
+                                <span style="font-size: 0.75rem;">Add All</span>
+                            </button>
+                            <div class="divider my-2">
+                                <hr class="my-1">
+                            </div>
+                            <button type="button" id="removeSelectedPages" class="btn btn-outline-secondary btn-sm px-3 py-2" disabled>
+                                <iconify-icon icon="material-symbols:arrow-back" class="me-1"></iconify-icon>
+                                <span style="font-size: 0.75rem;">Remove</span>
+                            </button>
+                            <button type="button" id="removeAllPages" class="btn btn-outline-danger btn-sm px-3 py-2">
+                                <iconify-icon icon="material-symbols:keyboard-double-arrow-left" class="me-1"></iconify-icon>
+                                <span style="font-size: 0.75rem;">Clear All</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Pages Panel -->
+                    <div class="col-md-5">
+                        <div class="panel-header bg-success text-white px-3 py-2 border-bottom">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <iconify-icon icon="material-symbols:check-circle-outline" class="me-2" style="font-size: 1.1rem;"></iconify-icon>
+                                    <span class="fw-medium" style="font-size: 0.875rem;">Selected Pages</span>
+                                </div>
+                                <span class="badge bg-white text-success border" style="font-size: 0.75rem;" id="selectedPagesCount">0</span>
+                            </div>
+                            <small class="opacity-75 d-block mt-1" style="font-size: 0.75rem;">Pages where this ad will be displayed</small>
+                        </div>
+                        
+                        <div class="search-container p-2 bg-white border-bottom">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-0">
+                                    <iconify-icon icon="material-symbols:search" class="text-muted"></iconify-icon>
+                                </span>
+                                <input type="text" id="selectedPagesSearch" class="form-control border-0 bg-light" 
+                                       placeholder="Search selected pages..." style="font-size: 0.8rem;">
+                            </div>
+                        </div>
+                        
+                        <div id="selectedPagesList" class="pages-list" style="height: 350px; overflow-y: auto;">
+                            <div class="empty-state text-center text-muted p-4">
+                                <iconify-icon icon="material-symbols:web-stories-outline" style="font-size: 2.5rem; opacity: 0.3;"></iconify-icon>
+                                <p class="mb-0 mt-2" style="font-size: 0.875rem;">No pages selected</p>
+                                <small style="font-size: 0.75rem; opacity: 0.7;">Select pages from the left panel</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-light border-0 py-3">
+                <button type="button" class="btn btn-light border me-2" data-bs-dismiss="modal" style="font-size: 0.875rem;">
+                    <iconify-icon icon="material-symbols:close" class="me-1"></iconify-icon>
+                    Cancel
+                </button>
+                <button type="button" id="savePageSelection" class="btn btn-primary" style="font-size: 0.875rem;">
+                    <span class="btn-text">
+                        <iconify-icon icon="material-symbols:save" class="me-1"></iconify-icon>
+                        Save Selection
+                    </span>
+                    <span class="btn-spinner d-none">
+                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        Saving...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <% script = `
 <!-- SweetAlert2 CSS and JS -->
@@ -186,6 +321,170 @@
 <style>
     .swal-toast-small {
         font-size: 13px !important;
+    }
+    
+    /* Page Selection Modal Styles */
+    .modal-xl {
+        max-width: 1200px;
+    }
+    
+    .bg-gradient-primary {
+        background: #ce1126;
+    }
+    
+    .modal-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .panel-header {
+        min-height: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .pages-list {
+        background: #fff;
+    }
+    
+    .pages-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .pages-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .pages-list::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+    
+    .pages-list::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    
+    .page-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
+    
+    .page-item:hover {
+        background-color: #f8f9fa;
+        border-left: 3px solid #007bff;
+    }
+    
+    .page-item.selected {
+        background-color: #e3f2fd;
+        border-left: 3px solid #2196f3;
+    }
+    
+    .selected-page-item {
+        background-color: #f0f8f0;
+        border-left: 3px solid #28a745;
+    }
+    
+    .selected-page-item:hover {
+        background-color: #e8f5e8;
+        border-left: 3px solid #20c997;
+    }
+    
+    .page-checkbox, .selected-page-checkbox {
+        cursor: pointer;
+        transform: scale(0.9);
+    }
+    
+    .page-title {
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 0.875rem;
+        margin-bottom: 2px;
+    }
+    
+    .page-path {
+        color: #6c757d;
+        font-size: 0.75rem;
+    }
+    
+    .control-buttons .btn {
+        min-width: 90px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .control-buttons .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .empty-state {
+        padding: 3rem 2rem;
+    }
+    
+    .btn-spinner .spinner-border-sm {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+    
+    .search-container .input-group-text {
+        border-right: none;
+    }
+    
+    .search-container .form-control:focus {
+        border-color: #ced4da;
+        box-shadow: none;
+    }
+    
+    /* Skeleton Loading Styles */
+    .skeleton-item {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    
+    .skeleton-checkbox {
+        width: 16px;
+        height: 16px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        border-radius: 3px;
+    }
+    
+    .skeleton-title {
+        height: 16px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        border-radius: 4px;
+        width: 70%;
+    }
+    
+    .skeleton-subtitle {
+        height: 12px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        border-radius: 4px;
+        width: 50%;
+    }
+    
+    @keyframes skeleton-loading {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
     }
 </style>
 
@@ -334,6 +633,332 @@
     // Ad type filter
     $('#adTypeFilter').on('change', function() {
         applyFilters();
+    });
+
+    // Page Selection Modal Variables
+    let currentAdId = null;
+    let allPages = [];
+    let selectedPages = [];
+    let availablePages = [];
+
+    // Open Page Selection Modal
+    $(document).on('click', '.page-selection-btn', function() {
+        currentAdId = $(this).data('ad-id');
+        const adTitle = $(this).data('ad-title');
+        
+        $('#modalAdTitle').text(adTitle);
+        $('#pageSelectionModal').modal('show');
+        
+        // Load pages and current selection
+        loadPagesForSelection();
+    });
+
+    // Load pages for selection
+    async function loadPagesForSelection() {
+        try {
+            // Show loading skeletons
+            showLoadingSkeletons();
+            
+            showToast('Loading pages...', 'info');
+            
+            // Fetch all pages
+            const pagesResponse = await fetch('/api/pages');
+            const pagesResult = await pagesResponse.json();
+            
+            console.log('Pages API response:', pagesResult);
+            
+            if (pagesResult.success) {
+                allPages = pagesResult.data;
+                console.log('All pages loaded:', allPages);
+            } else {
+                throw new Error('Failed to load pages');
+            }
+            
+            // Fetch current ad's selected pages
+            const adResponse = await fetch('/api/ads/' + currentAdId + '/pages');
+            const adResult = await adResponse.json();
+            
+            if (adResult.success) {
+                selectedPages = adResult.data || [];
+            } else {
+                selectedPages = [];
+            }
+            
+            // Calculate available pages
+            const selectedPageIds = selectedPages.map(p => p._id);
+            availablePages = allPages.filter(p => !selectedPageIds.includes(p._id));
+            
+            // Render both lists
+            renderAvailablePages();
+            renderSelectedPages();
+            
+            showToast('Pages loaded successfully', 'success');
+            
+        } catch (error) {
+            console.error('Error loading pages:', error);
+            showToast('Error loading pages', 'error');
+            
+            // Show error state
+            showErrorState();
+        }
+    }
+
+    // Show loading skeletons
+    function showLoadingSkeletons() {
+        const availableContainer = $('#availablePagesList');
+        const selectedContainer = $('#selectedPagesList');
+        
+        const skeletonHtml = generateSkeletonItems(5);
+        
+        availableContainer.html(skeletonHtml);
+        selectedContainer.html(skeletonHtml);
+    }
+
+    // Generate skeleton loading items
+    function generateSkeletonItems(count) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+            html += 
+                '<div class="list-group-item skeleton-item">' +
+                '<div class="d-flex align-items-center">' +
+                '<div class="skeleton-checkbox me-3"></div>' +
+                '<div class="flex-grow-1">' +
+                '<div class="skeleton-title mb-2"></div>' +
+                '<div class="skeleton-subtitle"></div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        }
+        return html;
+    }
+
+    // Show error state
+    function showErrorState() {
+        const availableContainer = $('#availablePagesList');
+        const selectedContainer = $('#selectedPagesList');
+        
+        const errorHtml = 
+            '<div class="text-center text-muted p-4">' +
+            '<iconify-icon icon="material-symbols:error-outline" style="font-size: 2rem; color: #dc3545;"></iconify-icon>' +
+            '<p class="mb-0 mt-2">Failed to load pages</p>' +
+            '<small>Please try again</small>' +
+            '</div>';
+        
+        availableContainer.html(errorHtml);
+        selectedContainer.html(errorHtml);
+    }
+
+    // Render available pages list
+    function renderAvailablePages() {
+        const searchTerm = $('#availablePagesSearch').val().toLowerCase();
+        const filteredPages = availablePages.filter(page => 
+            page.name.toLowerCase().includes(searchTerm)
+        );
+        
+        const container = $('#availablePagesList');
+        $('#availablePagesCount').text(filteredPages.length);
+        
+        if (filteredPages.length === 0) {
+            container.html(
+                '<div class="empty-state text-center text-muted p-4">' +
+                '<iconify-icon icon="material-symbols:search-off" style="font-size: 2.5rem; opacity: 0.3;"></iconify-icon>' +
+                '<p class="mb-0 mt-2" style="font-size: 0.875rem;">No pages found</p>' +
+                '<small style="font-size: 0.75rem; opacity: 0.7;">Try adjusting your search</small>' +
+                '</div>'
+            );
+            return;
+        }
+        
+        const html = filteredPages.map(page => 
+            '<div class="page-item" data-page-id="' + page._id + '">' +
+            '<div class="d-flex align-items-center">' +
+            '<input type="checkbox" class="form-check-input me-3 page-checkbox" value="' + page._id + '">' +
+            '<div class="flex-grow-1">' +
+            '<div class="page-title">' + page.name + '</div>' +
+            '<div class="page-path">' + (page.path || '/') + '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        ).join('');
+        
+        container.html(html);
+    }
+
+    // Render selected pages list
+    function renderSelectedPages() {
+        const searchTerm = $('#selectedPagesSearch').val().toLowerCase();
+        const filteredPages = selectedPages.filter(page => 
+            page.name.toLowerCase().includes(searchTerm)
+        );
+        
+        const container = $('#selectedPagesList');
+        $('#selectedPagesCount').text(selectedPages.length);
+        
+        if (filteredPages.length === 0) {
+            const emptyMessage = selectedPages.length === 0 ? 
+                '<div class="empty-state text-center text-muted p-4">' +
+                '<iconify-icon icon="material-symbols:web-stories-outline" style="font-size: 2.5rem; opacity: 0.3;"></iconify-icon>' +
+                '<p class="mb-0 mt-2" style="font-size: 0.875rem;">No pages selected</p>' +
+                '<small style="font-size: 0.75rem; opacity: 0.7;">Select pages from the left panel</small>' +
+                '</div>' :
+                '<div class="empty-state text-center text-muted p-4">' +
+                '<iconify-icon icon="material-symbols:search-off" style="font-size: 2.5rem; opacity: 0.3;"></iconify-icon>' +
+                '<p class="mb-0 mt-2" style="font-size: 0.875rem;">No pages found</p>' +
+                '<small style="font-size: 0.75rem; opacity: 0.7;">Try adjusting your search</small>' +
+                '</div>';
+            
+            container.html(emptyMessage);
+            return;
+        }
+        
+        const html = filteredPages.map(page => 
+            '<div class="page-item selected-page-item" data-page-id="' + page._id + '">' +
+            '<div class="d-flex align-items-center">' +
+            '<input type="checkbox" class="form-check-input me-3 selected-page-checkbox" value="' + page._id + '">' +
+            '<div class="flex-grow-1">' +
+            '<div class="page-title">' + page.name + '</div>' +
+            '<div class="page-path">' + (page.path || '/') + '</div>' +
+            '</div>' +
+            '<iconify-icon icon="material-symbols:check-circle" class="text-success" style="font-size: 1.1rem;"></iconify-icon>' +
+            '</div>' +
+            '</div>'
+        ).join('');
+        
+        container.html(html);
+    }
+
+    // Search functionality for available pages
+    $('#availablePagesSearch').on('input', function() {
+        renderAvailablePages();
+    });
+
+    // Search functionality for selected pages
+    $('#selectedPagesSearch').on('input', function() {
+        renderSelectedPages();
+    });
+
+    // Handle checkbox changes for available pages
+    $(document).on('change', '.page-checkbox', function() {
+        const checkedBoxes = $('.page-checkbox:checked');
+        $('#addSelectedPages').prop('disabled', checkedBoxes.length === 0);
+    });
+
+    // Handle checkbox changes for selected pages
+    $(document).on('change', '.selected-page-checkbox', function() {
+        const checkedBoxes = $('.selected-page-checkbox:checked');
+        $('#removeSelectedPages').prop('disabled', checkedBoxes.length === 0);
+    });
+
+    // Add selected pages
+    $('#addSelectedPages').on('click', function() {
+        const checkedIds = $('.page-checkbox:checked').map(function() {
+            return $(this).val();
+        }).get();
+        
+        checkedIds.forEach(pageId => {
+            const page = availablePages.find(p => p._id === pageId);
+            if (page) {
+                selectedPages.push(page);
+                availablePages = availablePages.filter(p => p._id !== pageId);
+            }
+        });
+        
+        renderAvailablePages();
+        renderSelectedPages();
+        $('#addSelectedPages').prop('disabled', true);
+    });
+
+    // Add all pages
+    $('#addAllPages').on('click', function() {
+        selectedPages = [...selectedPages, ...availablePages];
+        availablePages = [];
+        
+        renderAvailablePages();
+        renderSelectedPages();
+    });
+
+    // Remove selected pages
+    $('#removeSelectedPages').on('click', function() {
+        const checkedIds = $('.selected-page-checkbox:checked').map(function() {
+            return $(this).val();
+        }).get();
+        
+        checkedIds.forEach(pageId => {
+            const page = selectedPages.find(p => p._id === pageId);
+            if (page) {
+                availablePages.push(page);
+                selectedPages = selectedPages.filter(p => p._id !== pageId);
+            }
+        });
+        
+        renderAvailablePages();
+        renderSelectedPages();
+        $('#removeSelectedPages').prop('disabled', true);
+    });
+
+    // Remove all pages
+    $('#removeAllPages').on('click', function() {
+        availablePages = [...availablePages, ...selectedPages];
+        selectedPages = [];
+        
+        renderAvailablePages();
+        renderSelectedPages();
+    });
+
+    // Save page selection
+    $('#savePageSelection').on('click', async function() {
+        const saveBtn = $(this);
+        const btnText = saveBtn.find('.btn-text');
+        const btnSpinner = saveBtn.find('.btn-spinner');
+        
+        // Show loading state
+        saveBtn.prop('disabled', true);
+        btnText.addClass('d-none');
+        btnSpinner.removeClass('d-none');
+        
+        try {
+            const selectedPageIds = selectedPages.map(p => p._id);
+            
+            console.log('Saving page selection:');
+            console.log('Current Ad ID:', currentAdId);
+            console.log('Selected pages:', selectedPages);
+            console.log('Selected page IDs:', selectedPageIds);
+            
+            const response = await fetch('/api/ads/' + currentAdId + '/pages', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    selected_pages: selectedPageIds
+                })
+            });
+            
+            const result = await response.json();
+            
+            console.log('Save response:', result);
+            
+            if (result.success) {
+                showToast('Page selection saved successfully!', 'success');
+                $('#pageSelectionModal').modal('hide');
+            } else {
+                console.error('Save failed:', result);
+                let errorMessage = result.message || 'Failed to save page selection';
+                if (result.invalidPages && result.invalidPages.length > 0) {
+                    errorMessage += '. Invalid pages: ' + result.invalidPages.join(', ');
+                }
+                throw new Error(errorMessage);
+            }
+            
+        } catch (error) {
+            console.error('Error saving page selection:', error);
+            showToast('Error saving page selection: ' + error.message, 'error');
+        } finally {
+            // Reset button state
+            saveBtn.prop('disabled', false);
+            btnText.removeClass('d-none');
+            btnSpinner.addClass('d-none');
+        }
     });
 </script>
 <!-- <script>
