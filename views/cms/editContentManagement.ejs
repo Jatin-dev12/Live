@@ -595,11 +595,11 @@
                             <% if (page.category && page.category.trim() !== '') { %>
                             <div class="page-thumbnail-widget mt-3">
                                 <div class="card">
-                                    <div class="card-header">
+                                    <div class="card-header px-0">
                                         <h6 class="mb-0">Page Thumbnail</h6>
                                         <small class="text-muted">Select a thumbnail image for this page</small>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body px-0">
                                         <!-- Current Thumbnail Preview -->
                                         <% if (page.thumbnail) { %>
                                         <div class="current-thumbnail-preview mb-3">
@@ -612,29 +612,30 @@
                                             </div>
                                         </div>
                                         <% } %>
+                                        <div class="thumbnail-buttons">
+                                            <!-- Thumbnail Selection Button -->
+                                            <button type="button" 
+                                                    class="btn btn-outline-primary btn-sm select-thumbnail-btn"
+                                                    data-current-thumbnail="<%= page.thumbnail || '' %>">
+                                                <!-- <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon> -->
+                                                <%= page.thumbnail ? 'Change Thumbnail' : 'Select Thumbnail' %>
+                                            </button>
 
-                                        <!-- Thumbnail Selection Button -->
-                                        <button type="button" 
-                                                class="btn btn-outline-primary btn-sm w-100 select-thumbnail-btn"
-                                                data-current-thumbnail="<%= page.thumbnail || '' %>">
-                                            <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>
-                                            <%= page.thumbnail ? 'Change Thumbnail' : 'Select Thumbnail' %>
-                                        </button>
+                                            <!-- Hidden input to store selected thumbnail URL -->
+                                            <input type="hidden" 
+                                                name="pageThumbnail" 
+                                                id="pageThumbnail" 
+                                                value="<%= page.thumbnail || '' %>">
 
-                                        <!-- Hidden input to store selected thumbnail URL -->
-                                        <input type="hidden" 
-                                               name="pageThumbnail" 
-                                               id="pageThumbnail" 
-                                               value="<%= page.thumbnail || '' %>">
-
-                                        <!-- Remove Thumbnail Button -->
-                                        <% if (page.thumbnail) { %>
-                                        <button type="button" 
-                                                class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
-                                            <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
-                                            Remove Thumbnail
-                                        </button>
-                                        <% } %>
+                                            <!-- Remove Thumbnail Button -->
+                                            <% if (page.thumbnail) { %>
+                                            <button type="button" 
+                                                    class="btn btn-outline-danger btn-sm mt-2 remove-thumbnail-btn">
+                                                <!-- <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon> -->
+                                                Remove Thumbnail
+                                            </button>
+                                            <% } %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1018,7 +1019,7 @@ window.ckEditorFallback = function() {
     window.mediaData = <%-JSON.stringify(media || [])%>;
     
     // Debug: Show what section data is being passed
-    console.log('🔍 Server-side section data loaded');
+    // console.log('🔍 Server-side section data loaded');
 </script>
 
 <% script=`<script>
@@ -1428,29 +1429,49 @@ window.ckEditorFallback = function() {
             return;
         }
         
-        const {
-            ClassicEditor,
-            Essentials,
-            Bold,
-            Italic,
-            Underline,
-            Paragraph,
-            List,
-            Link,
-            Heading,
-            Image,
-            ImageCaption,
-            ImageResize,
-            ImageStyle,
-            ImageToolbar,
-            ImageUpload,
-            FileRepository,
-            Table,
-            TableToolbar,
-            TableProperties,
-            TableCellProperties,
-            SourceEditing
-        } = CKEDITOR;
+        // console.log('Available CKEditor properties:', Object.keys(CKEDITOR));
+        
+        // Try to destructure plugins safely
+        let ClassicEditor, Essentials, Bold, Italic, Underline, Paragraph, List, Link, Heading;
+        let Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, ImageUpload, FileRepository;
+        let Table, TableToolbar, TableProperties, TableCellProperties, SourceEditing;
+        
+        try {
+            ({
+                ClassicEditor,
+                Essentials,
+                Bold,
+                Italic,
+                Underline,
+                Paragraph,
+                List,
+                Link,
+                Heading,
+                Image,
+                ImageCaption,
+                ImageResize,
+                ImageStyle,
+                ImageToolbar,
+                ImageUpload,
+                FileRepository,
+                Table,
+                TableToolbar,
+                TableProperties,
+                TableCellProperties,
+                SourceEditing
+            } = CKEDITOR);
+        } catch (destructureError) {
+            console.error('Error destructuring CKEditor plugins:', destructureError);
+            console.log('Trying alternative access methods...');
+            
+            // Try alternative access
+            ClassicEditor = CKEDITOR.ClassicEditor;
+            Essentials = CKEDITOR.Essentials;
+            Bold = CKEDITOR.Bold;
+            Italic = CKEDITOR.Italic;
+            Paragraph = CKEDITOR.Paragraph;
+            List = CKEDITOR.List;
+        }
         
         // Check which plugins are actually available
         const availablePlugins = {
@@ -1472,7 +1493,7 @@ window.ckEditorFallback = function() {
             SourceEditing: !!SourceEditing
         };
         
-        // console.log('Available CKEditor plugins:', availablePlugins);
+        //console.log('Available CKEditor plugins:', availablePlugins);
         
         // Find all textareas with ckeditor-paragraph class
         document.querySelectorAll('.ckeditor-paragraph').forEach(function(textarea) {
@@ -1487,7 +1508,9 @@ window.ckEditorFallback = function() {
             }
             
             // Build dynamic configuration based on available plugins
-            const plugins = [Essentials, Paragraph];
+            const plugins = [];
+            if (Essentials) plugins.push(Essentials);
+            if (Paragraph) plugins.push(Paragraph);
             const toolbarItems = [];
             
             // Add plugins and toolbar items only if available
@@ -1535,7 +1558,11 @@ window.ckEditorFallback = function() {
             
             // Add Image display plugins (without upload functionality)
             if (Image) {
-                plugins.push(Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar);
+                plugins.push(Image);
+                if (ImageCaption) plugins.push(ImageCaption);
+                if (ImageResize) plugins.push(ImageResize);
+                if (ImageStyle) plugins.push(ImageStyle);
+                if (ImageToolbar) plugins.push(ImageToolbar);
                 // Note: No uploadImage button - users must use media library
             }
             
@@ -1547,8 +1574,40 @@ window.ckEditorFallback = function() {
             
             toolbarItems.push('|', 'undo', 'redo');
             
-            console.log('Using plugins:', plugins.map(p => p.pluginName || p.name || 'Unknown'));
-            console.log('Using toolbar items:', toolbarItems);
+            // console.log('Using plugins:', plugins.map(p => p ? (p.pluginName || p.name || 'Unknown') : 'Undefined'));
+            // console.log('Using toolbar items:', toolbarItems);
+            
+            // Check if we have essential plugins
+            if (plugins.length === 0) {
+                console.error('No plugins available for CKEditor initialization');
+                // console.log('Trying fallback initialization with ClassicEditor.create()...');
+                
+                // Try simple initialization without specifying plugins
+                if (ClassicEditor) {
+                    ClassicEditor
+                        .create(textarea)
+                        .then(editor => {
+                            console.log('Fallback CKEditor initialized successfully for:', textarea.id);
+                            editorInstances[textarea.id] = editor;
+                            
+                            // Add media library button
+                            try {
+                                addMediaLibraryButton(textarea, editor);
+                            } catch (e) {
+                                console.log('Media library button not added:', e);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Fallback CKEditor initialization failed:', error);
+                            // Try CKEditor 4 as last resort
+                            initCKEditor4ForTextarea(textarea);
+                        });
+                } else {
+                    console.error('ClassicEditor not available, trying CKEditor 4...');
+                    initCKEditor4ForTextarea(textarea);
+                }
+                return;
+            }
             
             const editorConfig = {
                 plugins: plugins,
@@ -1638,9 +1697,14 @@ window.ckEditorFallback = function() {
                     
                     // Try with minimal configuration if full config fails
                     console.log('Retrying with minimal configuration...');
+                    const minimalPlugins = [];
+                    if (Essentials) minimalPlugins.push(Essentials);
+                    if (Paragraph) minimalPlugins.push(Paragraph);
+                    if (Bold) minimalPlugins.push(Bold);
+                    
                     ClassicEditor
                         .create(textarea, {
-                            plugins: [Essentials, Paragraph].concat(Bold ? [Bold] : []),
+                            plugins: minimalPlugins,
                             toolbar: {
                                 items: Bold ? ['bold'] : []
                             }
@@ -2193,12 +2257,12 @@ window.ckEditorFallback = function() {
                     const adData = adImageInput.val();
                     
                     // Save the ad object
-                    console.log('📋 Processing ad data for form submission:', adData);
+                    // console.log('📋 Processing ad data for form submission:', adData);
                     if (adData && adData.trim() !== '') {
                         try {
                             const adObject = JSON.parse(adData);
                             sectionData.heroSection.ad = adObject;
-                            console.log('✅ Ad object saved to section:', adObject);
+                            // console.log('✅ Ad object saved to section:', adObject);
                         } catch (e) {
                             console.error('❌ Error parsing ad data:', e);
                             // Fallback for old format (just image URL)
@@ -2415,8 +2479,8 @@ window.ckEditorFallback = function() {
                 pageThumbnail: pageThumbnail || null
             };
             
-            console.log('Complete payload being sent:', payload);
-            console.log('🔍 Hero section data being sent:', payload.sections.find(s => s.sectionType === 'hero-section'));
+            // console.log('Complete payload being sent:', payload);
+            // console.log('🔍 Hero section data being sent:', payload.sections.find(s => s.sectionType === 'hero-section'));
 
             // Single AJAX call to update everything
             $.ajax({
@@ -2822,12 +2886,25 @@ window.ckEditorFallback = function() {
         
         $container.append(ctaHtml);
         updateCtaNumbers($container);
+        
+        // Disable add button if we've reached the limit
+        const newCtaCount = $container.find('.cta-item').length;
+        if (newCtaCount >= 3) {
+            $(this).attr("disabled", true);
+        }
     });
 
     $(document).on('click', '.remove-cta-btn', function() {
         const $container = $(this).closest('.cta-container');
+        const $addBtn = $container.siblings('.add-cta-btn');
         $(this).closest('.cta-item').remove();
         updateCtaNumbers($container);
+        
+        // Re-enable add button if count is less than 3
+        const ctaCount = $container.find('.cta-item').length;
+        if (ctaCount < 3) {
+            $addBtn.attr("disabled", false);
+        }
     });
 
     function updateCtaNumbers($container) {
@@ -2877,8 +2954,17 @@ window.ckEditorFallback = function() {
         // Hide "No tabs found" message if it exists
         $container.find('.text-muted').hide();
         
-        // Initialize CKEditor for the new textarea
-        setTimeout(initCKEditor, 300);
+        // Disable add button if we've reached the limit
+        const newTabCount = $container.find('.tab-item').length;
+        if (newTabCount >= 8) {
+            $(this).attr("disabled", true);
+        }
+        
+        // Initialize CKEditor for the new textarea using existing function
+        setTimeout(() => {
+            // Call the existing initCKEditor function which will find and initialize all uninitialized textareas
+            initCKEditor();
+        }, 300);
     });
 
     $(document).on('click', '.remove-tab-btn', function() {
@@ -2923,8 +3009,15 @@ window.ckEditorFallback = function() {
         $tabItem.remove();
         updateTabNumbers($container);
         
+        // Re-enable add button if count is less than 8
+        const $addBtn = $container.siblings('.add-tab-btn');
+        const tabCount = $container.find('.tab-item').length;
+        if (tabCount < 8) {
+            $addBtn.attr("disabled", false);
+        }
+        
         // Show "No tabs found" message if no tabs left
-        if ($container.find('.tab-item').length === 0) {
+        if (tabCount === 0) {
             $container.append('<p class="text-muted">No tabs found. Click "Add Tab" to create one.</p>');
         }
     });
@@ -3365,7 +3458,7 @@ window.ckEditorFallback = function() {
         function loadAdsForDropdown() {
             // Load ads from server-side data instead of AJAX
             const adsData = window.adsData || [];
-            console.log('Ads loaded from server:', adsData);
+            // console.log('Ads loaded from server:', adsData);
             populateAdDropdowns(adsData);
             
             // Show previews for already selected ads after population
@@ -3378,7 +3471,7 @@ window.ckEditorFallback = function() {
                         const description = selectedOption.data('description');
                         const imageUrl = selectedOption.data('image');
                         if (title && imageUrl) {
-                            console.log('Showing preview for selected ad:', title);
+                            // console.log('Showing preview for selected ad:', title);
                             showAdPreview($select, title, description, imageUrl);
                         }
                     }
@@ -3388,13 +3481,13 @@ window.ckEditorFallback = function() {
         
         // Populate all AD dropdowns
         function populateAdDropdowns(ads) {
-            console.log('Populating ad dropdowns with:', ads);
+            // console.log('Populating ad dropdowns with:', ads);
             $('.ad-image-select').each(function() {
                 const $select = $(this);
                 const currentValue = $select.data('current-value');
                 const dropdownAdId = $select.data('id');
-                console.log('Current value for dropdown:', currentValue);
-                console.log('Type of current value:', typeof currentValue);
+                // console.log('Current value for dropdown:', currentValue);
+                // console.log('Type of current value:', typeof currentValue);
                 
                 // Clear existing options except the first one
                 $select.find('option:not(:first)').remove();
@@ -3404,13 +3497,13 @@ window.ckEditorFallback = function() {
                 
                 // Add ads as options
                 ads.forEach(function(ad, index) {
-                    console.log('Processing ad ' + (index + 1) + ':', {
-                        id: ad._id,
-                        title: ad.title,
-                        media_url: ad.media_url,
-                        link_url: ad.link_url,
-                        link_target: ad.link_target
-                    });
+                    // console.log('Processing ad ' + (index + 1) + ':', {
+                    //     id: ad._id,
+                    //     title: ad.title,
+                    //     media_url: ad.media_url,
+                    //     link_url: ad.link_url,
+                    //     link_target: ad.link_target
+                    // });
                     if (ad.media_url) {
                         const fullUrl = ad.media_url.startsWith('http') ? ad.media_url : window.location.origin + ad.media_url;
                         const adObject = {
@@ -3419,7 +3512,7 @@ window.ckEditorFallback = function() {
                             link: ad.link_url || '',
                             target: ad.link_target || '_self'
                         };
-                        console.log('Created ad object:', adObject);
+                        // console.log('Created ad object:', adObject);
                         
                         const option = $('<option></option>')
                             .attr('value', ad._id)
@@ -3506,11 +3599,11 @@ window.ckEditorFallback = function() {
                 
                 // If no match was found and we have a current value, log it
                 if (currentValue && currentValue.trim() !== '' && !$select.data('match-found')) {
-                    console.log('⚠️ No match found for current value:', currentValue);
-                    console.log('⚠️ Available ads:', ads.map(ad => ({
-                        title: ad.title,
-                        media_url: ad.media_url
-                    })));
+                    // console.log('⚠️ No match found for current value:', currentValue);
+                    // console.log('⚠️ Available ads:', ads.map(ad => ({
+                    //     title: ad.title,
+                    //     media_url: ad.media_url
+                    // })));
                 }
             });
         }
@@ -3642,14 +3735,13 @@ window.ckEditorFallback = function() {
                         // Create preview container if it doesn't exist
                         previewContainer = $(\`
                             <div class="current-thumbnail-preview mb-3">
-                                // <label class="form-label text-sm">Current Thumbnail:</label>
                                 <div class="thumbnail-preview-container">
                                     <img src="" alt="Current Thumbnail" class="img-thumbnail current-thumbnail-img" 
                                          style="max-width: 150px; max-height: 100px; object-fit: cover;">
                                 </div>
                             </div>
                         \`);
-                        button.parent().prepend(previewContainer);
+                        button.parent().parent().prepend(previewContainer);
                     }
                     
                     // Update preview image
@@ -3657,14 +3749,14 @@ window.ckEditorFallback = function() {
                     previewContainer.show();
                     
                     // Update button text
-                    button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Change Thumbnail');
+                    // button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Change');
+                    button.html('Change Thumbnail');
                     
                     // Add remove button if it doesn't exist
                     let removeBtn = $('.remove-thumbnail-btn');
                     if (removeBtn.length === 0) {
                         removeBtn = $(\`
-                            <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-2 remove-thumbnail-btn">
-                                <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="me-2"></iconify-icon>
+                            <button type="button" class="btn btn-outline-danger btn-sm  remove-thumbnail-btn">
                                 Remove Thumbnail
                             </button>
                         \`);

@@ -135,9 +135,9 @@ body:has(#editContentForm) footer.d-footer {
 .swal2-icon-content {
     font-size: 40px !important;
 }
-.pagination {
+/* .pagination {
     display: none !important;
-}
+} */
 div#menuStructurePanel .d-flex.align-items-center.justify-content-between.px-3 {
     text-transform: capitalize;
 }
@@ -515,6 +515,19 @@ table.custom-table {
     width: 100%;
     object-fit: contain;
 }
+.modal-body .tab-content {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.thumbnail-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+.thumbnail-buttons button {
+    width: 50%;
+}
 @media (min-width:992px){
 .pagemaster-media-popup  .media-picker-grid .col {
     flex: 0 0 20%;
@@ -525,6 +538,11 @@ table.custom-table {
     .sidebar-menu li  a i {
     padding-right: 0px;
 }
+}
+@media (max-width:1590px){
+    .thumbnail-buttons button {
+        font-size: 13px !important;
+    }
 }
 
 
