@@ -81,10 +81,10 @@
                                             <iconify-icon icon="material-symbols:refresh"></iconify-icon> Refresh
                                         </button>
                                         
-                                        <select id="adFilterType" class="form-select form-select-sm w-auto">
+                                        <!-- <select id="adFilterType" class="form-select form-select-sm w-auto">
                                             <option value="all">All images</option>
                                             <option value="image">Images only</option>
-                                        </select>
+                                        </select> -->
 
                                         <div class="ms-auto">
                                             <div class="input-group input-group-sm">
@@ -349,7 +349,7 @@
     function renderAdMediaGrid() {
         const grid = document.getElementById('adMediaGrid');
         const searchTerm = document.getElementById('adSearchInput').value.toLowerCase();
-        const typeFilter = document.getElementById('adFilterType').value;
+        // const typeFilter = document.getElementById('adFilterType').value;
         
         let filteredItems = adMediaItems.filter(item => {
             const matchesSearch = item.originalName.toLowerCase().includes(searchTerm);
@@ -546,7 +546,7 @@
         this.searchTimeout = setTimeout(renderAdMediaGrid, 300);
     });
 
-    document.getElementById('adFilterType').addEventListener('change', renderAdMediaGrid);
+    // document.getElementById('adFilterType').addEventListener('change', renderAdMediaGrid);
 
     // Refresh media library
     document.getElementById('refreshAdMedia').addEventListener('click', function() {
@@ -558,10 +558,16 @@
     console.log('Initializing ad media library...');
     fetchAdMedia();
 
-    // Set minimum date to today
+    // Set minimum date to today and maximum date to 2 years from now
     const today = new Date().toISOString().split('T')[0];
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() + 5);
+    const maxDateStr = maxDate.toISOString().split('T')[0];
+    
     document.getElementById('start_date').setAttribute('min', today);
+    document.getElementById('start_date').setAttribute('max', maxDateStr);
     document.getElementById('end_date').setAttribute('min', today);
+    document.getElementById('end_date').setAttribute('max', maxDateStr);
 
     // Update end date minimum when start date changes
     document.getElementById('start_date').addEventListener('change', function() {
@@ -589,6 +595,20 @@
 
         if (new Date(endDate) <= new Date(startDate)) {
             showToast('End date must be after start date', 'error');
+            return;
+        }
+
+        // Validate dates are not more than 2 years in the future
+        const maxDate = new Date();
+        maxDate.setFullYear(maxDate.getFullYear() + 5);
+        
+        if (new Date(startDate) > maxDate) {
+            showToast('Start date cannot be more than 5 years in the future', 'error');
+            return;
+        }
+        
+        if (new Date(endDate) > maxDate) {
+            showToast('End date cannot be more than 5 years in the future', 'error');
             return;
         }
 

@@ -164,6 +164,17 @@ router.put('/:id', isAuthenticated, async (req, res) => {
             if (!page) {
                 return res.status(404).json({ success: false, message: 'Page not found' });
             }
+            
+            //if status changed save the status
+            if(page.status != status){
+                const pageStatus = await Page.findByIdAndUpdate(
+                    pageId,
+                    {
+                        status,
+                    },
+                    { new: true }
+                );
+            }
 
             // Fetch existing sections for this page
             const existing = await Content.find({ page: pageId }).lean();

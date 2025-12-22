@@ -89,6 +89,24 @@ const contentSchema = new mongoose.Schema({
                 trim: true,
                 default: '_self'
             }
+        },
+        form: {
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Form'
+            },
+            title: {
+                type: String,
+                trim: true
+            },
+            description: {
+                type: String,
+                trim: true
+            },
+            formType: {
+                type: String,
+                trim: true
+            }
         }
     },
     // Three column info section

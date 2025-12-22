@@ -160,26 +160,40 @@
                                                     <button type="button" class="btn btn-sm btn-primary mt-3 add-cta-btn">Add CTA Button</button>
                                                 </div>
                                                 
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-bold text-neutral-900">AD Image</label>
-                                                    <p class="text-muted small mb-3">Select an advertisement to display</p>
+                                                <!-- Form Selection Section - Only show for query template -->
+                                                <div class="mb-3 form-selection-section" style="display: none;">
+                                                    <label class="form-label fw-bold text-neutral-900">Contact Form</label>
+                                                    <p class="text-muted small mb-3">Select a form to display on this page</p>
                                                     
-                                                    <!-- AD Image Dropdown with Preview -->
-                                                    <select class="form-control border border-neutral-200 radius-8 ad-image-select" 
-                                                            name="adImage" data-id="<%= section.heroSection?.ad?.id %>"
-                                                            data-current-value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
-                                                        <option value="">-- Select Advertisement --</option>
+                                                    <!-- Form Dropdown -->
+                                                    <select class="form-control border border-neutral-200 radius-8 form-select-contact" 
+                                                            name="selectedForm" data-id="<%= section.heroSection?.form?.id %>"
+                                                            data-current-value="<%= section.heroSection?.form ? JSON.stringify(section.heroSection.form).replace(/"/g, '&quot;') : '' %>">
+                                                        <option value="">-- Select Form --</option>
+                                                        <% if (typeof forms !== 'undefined' && forms.length > 0) { %>
+                                                            <% forms.forEach(function(form) { %>
+                                                                <option value="<%= form._id %>" 
+                                                                        data-title="<%= form.title %>" 
+                                                                        data-description="<%= form.description || '' %>"
+                                                                        data-type="<%= form.formType %>">
+                                                                    <%= form.title %>
+                                                                </option>
+                                                            <% }) %>
+                                                        <% } %>
                                                     </select>
 
-                                                    <!-- AD Preview -->
-                                                    <div class="ad-preview-container mt-3" style="display: none;">
+                                                    <!-- Form Preview -->
+                                                    <div class="form-preview-container mt-3" style="display: none;">
                                                         <div class="card">
                                                             <div class="card-body p-3">
                                                                 <div class="d-flex align-items-center gap-3">
-                                                                    <img class="ad-preview-image" src="" alt="AD Preview" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
-                                                                    <div class="ad-preview-details">
-                                                                        <h6 class="ad-preview-title mb-1"></h6>
-                                                                        <p class="ad-preview-description text-muted small mb-0"></p>
+                                                                    <div class="form-icon bg-primary-100 text-primary-600 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                        <iconify-icon icon="material-symbols:contact-mail-outline" class="text-xl"></iconify-icon>
+                                                                    </div>
+                                                                    <div class="form-preview-details">
+                                                                        <h6 class="form-preview-title mb-1"></h6>
+                                                                        <p class="form-preview-description text-muted small mb-1"></p>
+                                                                        <span class="badge bg-info-100 text-info-600 form-preview-type"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -187,13 +201,13 @@
                                                     </div>
                                                     
                                                     <input type="hidden" 
-                                                           class="ad-image-input" 
-                                                           name="adImage" 
-                                                           value="<%= section.heroSection?.ad ? JSON.stringify(section.heroSection.ad).replace(/"/g, '&quot;') : '' %>">
+                                                           class="form-input" 
+                                                           name="selectedForm" 
+                                                           value="<%= section.heroSection?.form ? JSON.stringify(section.heroSection.form).replace(/"/g, '&quot;') : '' %>">
                                                     
-                                                    <!-- Debug button to check ad data -->
-                                                    <!-- <button type="button" class="btn btn-sm btn-info mt-2 debug-ad-btn">Debug Ad Data</button> -->
+
                                                 </div>
+
                                             </div>
                                         <% } else if (section.sectionType==='three-column-info' ) { %>
                                             <!-- <pre><%# JSON.stringify(section) %></pre> -->
@@ -1017,6 +1031,7 @@ window.ckEditorFallback = function() {
 <script>
     window.adsData = <%-JSON.stringify(ads || [])%>;
     window.mediaData = <%-JSON.stringify(media || [])%>;
+    window.formsData = <%-JSON.stringify(forms || [])%>;
     
     // Debug: Show what section data is being passed
     // console.log('🔍 Server-side section data loaded');
@@ -1361,13 +1376,18 @@ window.ckEditorFallback = function() {
                         selectedImages.forEach(media => {
                             let imageUrl = media.src;
                             
-                            // Ensure URL starts with / for absolute path
-                            if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-                                imageUrl = '/' + imageUrl;
+                            // Get the full original URL - check if it's already a full URL
+                            let fullOriginalUrl;
+                            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                                // Already a full URL, use as is
+                                fullOriginalUrl = imageUrl;
+                            } else {
+                                // Relative URL, make it absolute
+                                if (!imageUrl.startsWith('/')) {
+                                    imageUrl = '/' + imageUrl;
+                                }
+                                fullOriginalUrl = window.location.origin + imageUrl;
                             }
-                            
-                            // Get the full original URL
-                            const fullOriginalUrl = window.location.origin + imageUrl;
                             
                             // Generate image HTML with size styling
                             const imgTag = getImageWithSizeStyle(fullOriginalUrl, sizeKey, media.alt || media.name || '', media.id || '');
@@ -2254,7 +2274,7 @@ window.ckEditorFallback = function() {
                     sectionData.heroSection.paragraph = editorInstances[editorId] ? editorInstances[editorId].getData() : paragraphEditor.val();
                     // Get ad object from dropdown
                     const adImageInput = $section.find(".ad-image-input");
-                    const adData = adImageInput.val();
+                    const adData = adImageInput.length > 0 ? adImageInput.val() : null;
                     
                     // Save the ad object
                     // console.log('📋 Processing ad data for form submission:', adData);
@@ -2277,7 +2297,34 @@ window.ckEditorFallback = function() {
                         sectionData.heroSection.ad = null;
                         console.log('⚠️ No ad data found, setting ad to null');
                     }
+                    
+                    // Get form object from dropdown
+                    const formInput = $section.find(".form-input");
+                    const formData = formInput.length > 0 ? formInput.val() : null;
+                    
+                    // Save the form object
+                    if (formData && formData.trim() !== '') {
+                        try {
+                            const formObject = JSON.parse(formData);
+                            sectionData.heroSection.form = formObject;
+                            console.log('✅ Form object saved to section:', formObject);
+                        } catch (e) {
+                            console.error('❌ Error parsing form data:', e);
+                            sectionData.heroSection.form = null;
+                        }
+                    } else {
+                        sectionData.heroSection.form = null;
+                        console.log('⚠️ No form data found, setting form to null');
+                    }
+                    
                     sectionData.heroSection.ctas = ctas;
+                    
+                    // Clean up undefined values in heroSection
+                    Object.keys(sectionData.heroSection).forEach(key => {
+                        if (sectionData.heroSection[key] === undefined) {
+                            sectionData.heroSection[key] = null;
+                        }
+                    });
                 } else if (sectionType === "left-heading-image-right-text") {
                     // Left heading + image on left, right text
                     sectionData.customFields.leftHeading = $section.find('.lhrt-heading').val();
@@ -2574,7 +2621,7 @@ window.ckEditorFallback = function() {
                     sectionData.heroSection.paragraph = editorInstances[editorId2] ? editorInstances[editorId2].getData() : paragraphEditor2.val();
                     // Get ad object from dropdown
                     const adImageInput2 = $section.find(".ad-image-input");
-                    const adData2 = adImageInput2.val();
+                    const adData2 = adImageInput2.length > 0 ? adImageInput2.val() : null;
                     
                     // Save the ad object
                     if (adData2 && adData2.trim() !== '') {
@@ -2596,7 +2643,34 @@ window.ckEditorFallback = function() {
                         sectionData.heroSection.ad = null;
                         console.log('No ad data found (handler 2), setting ad to null');
                     }
+                    
+                    // Get form object from dropdown (handler 2)
+                    const formInput2 = $section.find(".form-input");
+                    const formData2 = formInput2.length > 0 ? formInput2.val() : null;
+                    
+                    // Save the form object
+                    if (formData2 && formData2.trim() !== '') {
+                        try {
+                            const formObject2 = JSON.parse(formData2);
+                            sectionData.heroSection.form = formObject2;
+                            console.log('✅ Form object saved to section (handler 2):', formObject2);
+                        } catch (e) {
+                            console.error('❌ Error parsing form data (handler 2):', e);
+                            sectionData.heroSection.form = null;
+                        }
+                    } else {
+                        sectionData.heroSection.form = null;
+                        console.log('⚠️ No form data found (handler 2), setting form to null');
+                    }
+                    
                     sectionData.heroSection.ctas = ctas;
+                    
+                    // Clean up undefined values in heroSection (handler 2)
+                    Object.keys(sectionData.heroSection).forEach(key => {
+                        if (sectionData.heroSection[key] === undefined) {
+                            sectionData.heroSection[key] = null;
+                        }
+                    });
                 } else if (sectionType === "three-column-info") {
                     const heading = $section.find(".tci-heading").val();
                     const subheading = $section.find(".tci-subheading").val();
@@ -3708,6 +3782,172 @@ window.ckEditorFallback = function() {
         
         // Load ads on page load
         loadAdsForDropdown();
+    });
+    
+    // Form Selection Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check page template and show/hide form section
+        function checkTemplateAndShowFormSection() {
+            const pageTemplate = document.getElementById('pageTemplate')?.value;
+            const formSections = document.querySelectorAll('.form-selection-section');
+            
+            if (pageTemplate === 'query') {
+                formSections.forEach(section => {
+                    section.style.display = 'block';
+                });
+                // Add a small delay to ensure DOM is ready
+                setTimeout(() => {
+                    loadFormsForDropdown();
+                }, 100);
+            } else {
+                formSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+            }
+        }
+        
+        // Load forms for dropdown
+        function loadFormsForDropdown() {
+            const formSelects = document.querySelectorAll('.form-select-contact');
+            
+            formSelects.forEach(select => {
+                
+                // Clear existing options except the first one
+                while (select.children.length > 1) {
+                    select.removeChild(select.lastChild);
+                }
+                
+                // Add forms from window.formsData
+                if (window.formsData && window.formsData.length > 0) {
+                    window.formsData.forEach(form => {
+                        const option = document.createElement('option');
+                        option.value = form._id;
+                        option.textContent = form.title;
+                        option.setAttribute('data-title', form.title);
+                        option.setAttribute('data-description', form.description || '');
+                        option.setAttribute('data-type', form.formType);
+                        select.appendChild(option);
+                    });
+                    
+                    // Set current value if exists
+                    const currentValue = select.getAttribute('data-current-value');
+                    
+                    if (currentValue && currentValue.trim() !== '') {
+                        try {
+                            // Decode HTML entities first
+                            const decodedValue = currentValue.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+                            const formData = JSON.parse(decodedValue);
+                            
+                            if (formData && formData.id) {
+                                // Set the select value
+                                select.value = formData.id;
+                                
+                                // Trigger change event to update UI
+                                const changeEvent = new Event('change', { bubbles: true });
+                                select.dispatchEvent(changeEvent);
+                                
+                                // Also show preview directly
+                                showFormPreview(select, formData);
+                                updateFormHiddenInput(select, formData);
+                            }
+                        } catch (e) {
+                            console.log('Error parsing form data:', e);
+                        }
+                    }
+                }
+                
+                // Fallback: try to set value using data-id attribute
+                const dataId = select.getAttribute('data-id');
+                if (dataId && dataId.trim() !== '' && select.value === '') {
+                    select.value = dataId;
+                    
+                    // Find the form data for this ID
+                    if (window.formsData) {
+                        const matchingForm = window.formsData.find(form => form._id === dataId);
+                        if (matchingForm) {
+                            showFormPreview(select, {
+                                id: matchingForm._id,
+                                title: matchingForm.title,
+                                description: matchingForm.description,
+                                formType: matchingForm.formType
+                            });
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Handle form selection change
+        $(document).on('change', '.form-select-contact', function() {
+            const select = this;
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (select.value) {
+                const formData = {
+                    id: select.value,
+                    title: selectedOption.getAttribute('data-title'),
+                    description: selectedOption.getAttribute('data-description'),
+                    formType: selectedOption.getAttribute('data-type')
+                };
+                
+                showFormPreview(select, formData);
+                updateFormHiddenInput(select, formData);
+            } else {
+                hideFormPreview(select);
+                updateFormHiddenInput(select, null);
+            }
+        });
+        
+        // Show form preview
+        function showFormPreview(select, formData) {
+            const container = select.closest('.form-selection-section');
+            const previewContainer = container.querySelector('.form-preview-container');
+            const titleElement = container.querySelector('.form-preview-title');
+            const descriptionElement = container.querySelector('.form-preview-description');
+            const typeElement = container.querySelector('.form-preview-type');
+            
+            if (titleElement) titleElement.textContent = formData.title || 'Unknown Form';
+            if (descriptionElement) descriptionElement.textContent = formData.description || 'No description available';
+            if (typeElement) {
+                const formType = formData.formType || 'unknown';
+                typeElement.textContent = formType.charAt(0).toUpperCase() + formType.slice(1);
+            }
+            
+            if (previewContainer) {
+                previewContainer.style.display = 'block';
+            }
+        }
+        
+        // Hide form preview
+        function hideFormPreview(select) {
+            const container = select.closest('.form-selection-section');
+            const previewContainer = container.querySelector('.form-preview-container');
+            
+            if (previewContainer) {
+                previewContainer.style.display = 'none';
+            }
+        }
+        
+        // Update hidden input
+        function updateFormHiddenInput(select, formData) {
+            const container = select.closest('.form-selection-section');
+            const hiddenInput = container.querySelector('.form-input');
+            
+            if (hiddenInput) {
+                hiddenInput.value = formData ? JSON.stringify(formData) : '';
+            }
+        }
+        
+        // Initialize on page load
+        checkTemplateAndShowFormSection();
+        
+        // Watch for template changes (if template can be changed dynamically)
+        const pageTemplateInput = document.getElementById('pageTemplate');
+        if (pageTemplateInput) {
+            pageTemplateInput.addEventListener('change', checkTemplateAndShowFormSection);
+        }
+        
+
     });
     
     // Thumbnail Selection Functionality

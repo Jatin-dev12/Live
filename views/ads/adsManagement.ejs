@@ -66,7 +66,7 @@
                                 <td><%= String(index + 1).padStart(2, '0') %></td>
                                 <td class="title-table"><%= ad.title %></td>
                                 <td class="desc-table"><%= ad.description.substring(0, 50) %><%= ad.description.length > 50 ? '...' : '' %></td>
-                                <td class="text-center">
+                                <td>
                                     <% if (ad.media_url) { %>
                                         <% if (ad.media_url.includes('.mp4') || ad.media_url.includes('.avi') || ad.media_url.includes('.mov')) { %>
                                             <iconify-icon icon="material-symbols:videocam" class="text-primary" title="Video"></iconify-icon>
@@ -79,7 +79,7 @@
                                     <% } %>
                                 </td>
                                 <!-- <td class="text-capitalize"><%= ad.ad_type %></td> -->
-                                <td class="text-center">
+                                <td>
                                     <% if (ad.link_url) { %>
                                         <a href="<%= ad.link_url %>" target="_blank" class="btn btn-sm btn-outline-primary" title="<%= ad.link_url %>">
                                             <iconify-icon icon="material-symbols:link"></iconify-icon>
@@ -115,8 +115,8 @@
                                 </td> -->
                                 <!-- <td class=""><%= new Date(ad.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td> -->
                                 <!-- <td class=""><%= new Date(ad.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td> -->
-                                <td class="text-center">
-                                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                                <td>
+                                    <div class="d-flex align-items-center gap-10">
                                         <button type="button" class="page-selection-btn btn btn-sm btn-outline-info" 
                                                 data-ad-id="<%= ad._id %>"
                                                 data-ad-title="<%= ad.title %>"
@@ -371,7 +371,6 @@
     }
     
     .page-item {
-        padding: 12px 16px;
         border-bottom: 1px solid #f0f0f0;
         cursor: pointer;
         transition: all 0.2s ease;
