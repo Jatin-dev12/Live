@@ -135,7 +135,11 @@ const adSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'advertiser'],
         default: 'admin'
-    }
+    },
+    selected_pages: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Page'
+    }]
 }, {
     timestamps: true
 });

@@ -10,6 +10,7 @@ router.get('/ads-management', isAuthenticated, async (req, res) => {
         const ads = await Ad.find()
             .populate('placement_id', 'placementId name pageLocation')
             .populate('created_by', 'fullName email')
+            .populate('selected_pages', '_id name slug path')
             .sort({ createdAt: -1 })
             .lean();
 

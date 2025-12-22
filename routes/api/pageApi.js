@@ -434,7 +434,7 @@ router.get('/:id/sections', async (req, res) => {
             sections.map(async (section) => {
                 const sectionObj = section.toObject();
                 
-                // For hero sections, create ad object structure
+                // For hero sections, create ad object structure and handle form field
                 if (sectionObj.heroSection) {
                     // Check if we have the new ad object structure or old image format
                     if (sectionObj.heroSection.ad) {
@@ -450,6 +450,13 @@ router.get('/:id/sections', async (req, res) => {
                     } else {
                         // No ad data
                         sectionObj.heroSection.ad = null;
+                    }
+                    
+                    // Ensure form field is included (if it exists)
+                    if (sectionObj.heroSection.form) {
+                        sectionObj.heroSection.form = sectionObj.heroSection.form;
+                    } else {
+                        sectionObj.heroSection.form = null;
                     }
                     
                     // Remove the old image key

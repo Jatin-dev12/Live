@@ -80,18 +80,26 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             .select('title description media_url link_url link_target status')
             .sort({ title: 1 });
 
+        // Get all forms for dropdown (only active forms)
+        const Form = require('../models/Form');
+        const allForms = await Form.find({ status: 'active' })
+            .select('title description formType')
+            .sort({ title: 1 });
+            
+
+
         // Get all media for thumbnail selection
         const Media = require('../models/Media');
         const allMedia = await Media.find({ type: 'image' })
             .select('filename originalName url title alt')
             .sort({ createdAt: -1 });
             
-        console.log('🔍 CMS Route - Total ads found:', allAds.length);
-        console.log('🔍 CMS Route - Ads data:', allAds.map(ad => ({
-            title: ad.title,
-            media_url: ad.media_url,
-            status: ad.status
-        })));
+        // console.log('🔍 CMS Route - Total ads found:', allAds.length);
+        // console.log('🔍 CMS Route - Ads data:', allAds.map(ad => ({
+        //     title: ad.title,
+        //     media_url: ad.media_url,
+        //     status: ad.status
+        // })));
 
         
         // Process each section to ensure all fields are present
@@ -116,7 +124,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 paragraph: section.heroSection?.paragraph || '',
                 ctas: section.heroSection?.ctas || [],
                 image: section.heroSection?.image || '',
-                ad: section.heroSection?.ad || null
+                ad: section.heroSection?.ad || null,
+                form: section.heroSection?.form || null
             },
             threeColumnInfo: {
                 heading: section.threeColumnInfo?.heading || section.customFields?.heading || '',
@@ -153,7 +162,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 paragraph: '',
                 ctas: [],
                 image: '',
-                ad: null
+                ad: null,
+                form: null
             },
             threeColumnInfo: {
                 columns: []
@@ -184,7 +194,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     paragraph: section.heroSection?.paragraph || '',
                     ctas: section.heroSection?.ctas || [],
                     image: section.heroSection?.image || '',
-                    ad: section.heroSection?.ad || null
+                    ad: section.heroSection?.ad || null,
+                    form: section.heroSection?.form || null
                 },
                 threeColumnInfo: {
                     ...section.threeColumnInfo,
@@ -210,6 +221,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
             })),
             pages: allPages,
             ads: allAds,
+            forms: allForms,
             media: allMedia,
             frontendUrl: process.env.FRONTEND_URL
         };

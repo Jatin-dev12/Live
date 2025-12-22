@@ -2,14 +2,42 @@
     <div
         class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <form class="navbar-search">
-                <input type="text" id="tableSearch" class="bg-base h-40-px w-auto" placeholder="Search">
-                <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+            <form class="navbar-search" method="GET" action="/leads/leads-management">
+                <input type="text" name="search" class="bg-base h-40-px w-auto" placeholder="Search leads..." value="<%= search %>">
+                <% if (currentFormType !== 'all') { %>
+                    <input type="hidden" name="formType" value="<%= currentFormType %>">
+                <% } %>
+                <button type="submit" class="search-btn">
+                    <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+                </button>
             </form>
+            <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 fw-semibold text-primary-light">Filter by Type:</label>
+                <select id="formTypeFilter" class="form-select form-select-sm" style="width: auto; min-width: 150px;">
+                    <option value="all" <%= currentFormType === 'all' ? 'selected' : '' %>>All Forms (<%= totalLeads %>)</option>
+                    <option value="contact" <%= currentFormType === 'contact' ? 'selected' : '' %>>
+                        Contact (<%= formTypeStats.find(stat => stat._id === 'contact')?.count || 0 %>)
+                    </option>
+                    <option value="suggestion" <%= currentFormType === 'suggestion' ? 'selected' : '' %>>
+                        Suggestion (<%= formTypeStats.find(stat => stat._id === 'suggestion')?.count || 0 %>)
+                    </option>
+                    <option value="accessibility" <%= currentFormType === 'accessibility' ? 'selected' : '' %>>
+                        Accessibility (<%= formTypeStats.find(stat => stat._id === 'accessibility')?.count || 0 %>)
+                    </option>
+                    <option value="grievance" <%= currentFormType === 'grievance' ? 'selected' : '' %>>
+                        Grievance (<%= formTypeStats.find(stat => stat._id === 'grievance')?.count || 0 %>)
+                    </option>
+                    <option value="complaint" <%= currentFormType === 'complaint' ? 'selected' : '' %>>
+                        Complaint (<%= formTypeStats.find(stat => stat._id === 'complaint')?.count || 0 %>)
+                    </option>
+                </select>
+            </div>
         </div>
         <div class="d-flex align-items-center gap-2">
             <button id="exportCsvBtn"
-                class="btn btn-sm btn-primary d-flex align-items-center gap-1">
+                class="btn btn-sm btn-primary d-flex align-items-center gap-1"
+                data-current-form-type="<%= currentFormType %>"
+                data-current-search="<%= search %>">
                 <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
                 Export CSV
             </button>
@@ -26,110 +54,190 @@
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
+                        <th scope="col">Form Type</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Phone</th>
-                        <!-- <th scope="col">Message</th> -->
-                        <th scope="col">Source</th>
-                        <th scope="col" class="text-center">View Query</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col" class="text-center">View Details</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (leads && leads.length> 0) { %>
-                        <% leads.forEach(lead=> { %>
+                    <% if (leads && leads.length > 0) { %>
+                        <% leads.forEach(lead => { %>
                             <tr>
                                 <td>
                                     <%= lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-US', {
                                         year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
                                 </td>
-                            <td>
-                                    <!-- <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1">
-                                            <span class="text-md mb-0 fw-normal text-secondary-light"> -->
-                                                <%= lead.fullName || 'N/A' %>
-                                            <!-- </span>
-                                        </div>
-                                    </div> -->
-                                </td>
                                 <td>
-                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
-                                        <%= lead.email || 'N/A' %>
-                                    <!-- </span> -->
-                                </td>
-                                <td>
-                                    <!-- <span class="text-md mb-0 fw-normal text-secondary-light"> -->
-                                        <%= lead.phone || 'N/A' %>
-                                    <!-- </span> -->
-                                </td>
-                                <!-- <td>
-                                    <span class="text-md mb-0 fw-normal text-secondary-light">
-                                        <%= lead.notes ? (lead.notes.length > 50 ? lead.notes.substring(0, 50) + '...' : lead.notes) : 'No message' %>
+                                    <% 
+                                    let formTypeDisplay = lead.formType || 'Unknown';
+                                    let badgeClass = 'bg-secondary';
+                                    switch(lead.formType) {
+                                        case 'contact': badgeClass = 'bg-primary'; break;
+                                        case 'suggestion': badgeClass = 'bg-info'; break;
+                                        case 'accessibility': badgeClass = 'bg-success'; break;
+                                        case 'grievance': badgeClass = 'bg-warning'; break;
+                                        case 'complaint': badgeClass = 'bg-danger'; break;
+                                    }
+                                    %>
+                                    <span class="badge <%= badgeClass %> text-white px-2 py-1 rounded">
+                                        <%= formTypeDisplay.charAt(0).toUpperCase() + formTypeDisplay.slice(1) %>
                                     </span>
-                                </td> -->
+                                </td>
                                 <td>
-                                    <%= lead.interestedIn || 'N/A' %>
+                                    <%= lead.fullName || lead.name || lead.complainantName || 'N/A' %>
+                                </td>
+                                <td>
+                                    <%= lead.email || lead.complainantEmail || 'N/A' %>
+                                </td>
+                                <td>
+                                    <%= lead.phone || 'N/A' %>
+                                </td>
+                                <td>
+                                    <% 
+                                    let subject = 'N/A';
+                                    if (lead.formType === 'contact') subject = lead.selectOne || lead.interestedIn || 'Contact Inquiry';
+                                    else if (lead.formType === 'suggestion') subject = 'Suggestion Box';
+                                    else if (lead.formType === 'accessibility') subject = 'Accessibility Feedback';
+                                    else if (lead.formType === 'grievance') subject = 'Grievance Report';
+                                    else if (lead.formType === 'complaint') subject = lead.complaintNature || 'Formal Complaint';
+                                    else subject = lead.interestedIn || 'General Inquiry';
+                                    %>
+                                    <%= subject %>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <button type="button"
                                             class="btn btn-sm btn-outline-success view-lead-btn"
                                             data-lead-id="<%= lead._id %>" data-lead-data='<%= JSON.stringify(lead) %>'>
-                                            <!-- <iconify-icon icon="majesticons:eye-line"
-                                                class="icon text-xl"></iconify-icon> -->
-                                                 <iconify-icon icon="majesticons:eye-line" class="icon "></iconify-icon>
+                                            <iconify-icon icon="majesticons:eye-line" class="icon"></iconify-icon>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                            <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">
-                                            <span class="text-secondary-light">No leads found</span>
-                                        </td>
-                                    </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <span class="text-secondary-light">
+                                    <% if (currentFormType !== 'all') { %>
+                                        No <%= currentFormType %> forms found
+                                    <% } else { %>
+                                        No leads found
                                     <% } %>
+                                </span>
+                            </td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-            <!-- <span>Showing 1 to 10 of 12 entries</span> -->
-            <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                        href="javascript:void(0)">
-                        <iconify-icon icon="ep:d-arrow-left" class=""></iconify-icon>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600 text-white"
-                        href="javascript:void(0)">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-                        href="javascript:void(0)">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                        href="javascript:void(0)">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                        href="javascript:void(0)">4</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                        href="javascript:void(0)">5</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                        href="javascript:void(0)">
-                        <iconify-icon icon="ep:d-arrow-right" class=""></iconify-icon>
-                    </a>
-                </li>
-            </ul>
+        <% if (pagination && pagination.totalItems > 0) { %>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-4 pt-3 border-top">
+            <div class="text-muted">
+                Showing <%= ((pagination.currentPage - 1) * pagination.limit) + 1 %> to 
+                <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> 
+                of <%= pagination.totalItems %> entries
+                <% if (currentFormType !== 'all') { %>
+                    (<%= currentFormType %> forms)
+                <% } %>
+                <% if (search) { %>
+                    for "<%= search %>"
+                <% } %>
+            </div>
+            
+            <% if (pagination.totalPages > 1) { %>
+            <nav aria-label="Page navigation">
+                <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+                    <!-- Previous Button -->
+                    <li class="page-item">
+                        <% if (pagination.hasPrev) { %>
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.prevPage %><%= currentFormType !== 'all' ? '&formType=' + currentFormType : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                                <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+                            </a>
+                        <% } else { %>
+                            <span class="page-link bg-neutral-200 text-neutral-400 fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">
+                                <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+                            </span>
+                        <% } %>
+                    </li>
+
+                    <!-- Dynamic Page Numbers -->
+                    <% 
+                        let startPage = Math.max(1, pagination.currentPage - 2);
+                        let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                        
+                        // Adjust if we're near the beginning or end
+                        if (endPage - startPage < 4) {
+                            if (startPage === 1) {
+                                endPage = Math.min(pagination.totalPages, startPage + 4);
+                            } else {
+                                startPage = Math.max(1, endPage - 4);
+                            }
+                        }
+                    %>
+
+                    <% if (startPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=1<%= currentFormType !== 'all' ? '&formType=' + currentFormType : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">1</a>
+                        </li>
+                        <% if (startPage > 2) { %>
+                            <li class="page-item">
+                                <span class="page-link bg-transparent text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">...</span>
+                            </li>
+                        <% } %>
+                    <% } %>
+
+                    <% for (let i = startPage; i <= endPage; i++) { %>
+                        <li class="page-item">
+                            <% if (i === pagination.currentPage) { %>
+                                <span class="page-link text-white fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600"><%= i %></span>
+                            <% } else { %>
+                                <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                                   href="?page=<%= i %><%= currentFormType !== 'all' ? '&formType=' + currentFormType : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+                            <% } %>
+                        </li>
+                    <% } %>
+
+                    <% if (endPage < pagination.totalPages) { %>
+                        <% if (endPage < pagination.totalPages - 1) { %>
+                            <li class="page-item">
+                                <span class="page-link bg-transparent text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">...</span>
+                            </li>
+                        <% } %>
+                        <li class="page-item">
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.totalPages %><%= currentFormType !== 'all' ? '&formType=' + currentFormType : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= pagination.totalPages %></a>
+                        </li>
+                    <% } %>
+
+                    <!-- Next Button -->
+                    <li class="page-item">
+                        <% if (pagination.hasNext) { %>
+                            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+                               href="?page=<%= pagination.nextPage %><%= currentFormType !== 'all' ? '&formType=' + currentFormType : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                                <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+                            </a>
+                        <% } else { %>
+                            <span class="page-link bg-neutral-200 text-neutral-400 fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md">
+                                <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+                            </span>
+                        <% } %>
+                    </li>
+                </ul>
+            </nav>
+            <% } %>
         </div>
+        <% } else { %>
+        <div class="d-flex align-items-center justify-content-center mt-4 pt-3 border-top">
+            <div class="text-muted">No leads found</div>
+        </div>
+        <% } %>
     </div>
 </div>
 
@@ -190,11 +298,22 @@
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <iconify-icon icon="mdi:web" class="text-info-600" style="font-size: 28px;"></iconify-icon>
-                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Interested In (Page)</label>
+                            <iconify-icon icon="mdi:form-select" class="text-info-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Form Type</label>
                         </div>
-                        <p class="text-secondary-light ms-5 mb-0" id="modal-interestedIn"
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-formType"
                             style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <iconify-icon icon="mdi:web" class="text-warning-600" style="font-size: 28px;"></iconify-icon>
+                            <label class="form-label fw-bold mb-0" style="font-size: 18px;">Subject</label>
+                        </div>
+                        <p class="text-secondary-light ms-5 mb-0" id="modal-subject"
+                            style="font-size: 17px; font-weight: 600;">-</p>
+                    </div>
+                    <div class="col-12" id="modal-formSpecificFields">
+                        <!-- Form-specific fields will be populated here -->
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-2">
@@ -218,15 +337,47 @@
     </div>
 </div>
 
-<% script=` <script src="/js/table-search.js">
+<% script=`<script src="/js/table-search.js">
     </script>
     <script>
-        // Initialize table search
-        initTableSearch('tableSearch', 'dataTable');
+        // Note: Using server-side search instead of client-side table search
+
+        // Form type filter functionality
+        $('#formTypeFilter').on('change', function() {
+            const selectedType = $(this).val();
+            const currentUrl = new URL(window.location);
+            
+            // Reset to page 1 when changing filter
+            currentUrl.searchParams.delete('page');
+            
+            if (selectedType === 'all') {
+                currentUrl.searchParams.delete('formType');
+            } else {
+                currentUrl.searchParams.set('formType', selectedType);
+            }
+            
+            window.location.href = currentUrl.toString();
+        });
 
         // Export CSV functionality
         $('#exportCsvBtn').on('click', function () {
-            window.location.href = '/leads/export-csv';
+            const currentFormType = $(this).data('current-form-type');
+            const currentSearch = $(this).data('current-search');
+            let exportUrl = '/leads/export-csv';
+            const params = [];
+            
+            if (currentFormType !== 'all') {
+                params.push('formType=' + currentFormType);
+            }
+            if (currentSearch) {
+                params.push('search=' + encodeURIComponent(currentSearch));
+            }
+            
+            if (params.length > 0) {
+                exportUrl += '?' + params.join('&');
+            }
+            
+            window.location.href = exportUrl;
         });
 
         // View Lead Details
@@ -245,14 +396,24 @@
                 $('#modal-date').text('N/A');
             }
 
-            // Populate modal with lead data (only fields shown in table)
-            $('#modal-fullName').text(leadData.fullName || 'N/A');
+            // Populate form type
+            const formType = leadData.formType || 'Unknown';
+            $('#modal-formType').text(formType.charAt(0).toUpperCase() + formType.slice(1));
 
-            // Make email clickable
+            // Populate name based on form type
+            let displayName = 'N/A';
+            if (leadData.fullName) displayName = leadData.fullName;
+            else if (leadData.name) displayName = leadData.name;
+            else if (leadData.complainantName) displayName = leadData.complainantName;
+            else if (leadData.firstName && leadData.lastName) displayName = leadData.firstName + ' ' + leadData.lastName;
+            $('#modal-fullName').text(displayName);
+
+            // Populate email based on form type
+            const email = leadData.email || leadData.complainantEmail;
             const emailElement = $('#modal-email');
-            if (leadData.email && leadData.email !== 'N/A') {
-                emailElement.text(leadData.email);
-                emailElement.attr('href', 'mailto:' + leadData.email);
+            if (email && email !== 'N/A') {
+                emailElement.text(email);
+                emailElement.attr('href', 'mailto:' + email);
                 emailElement.css('pointer-events', 'auto');
                 emailElement.removeClass('text-secondary-light').addClass('text-primary-600');
             } else {
@@ -276,8 +437,111 @@
                 phoneElement.removeClass('text-primary-600').addClass('text-secondary-light');
             }
 
-            $('#modal-interestedIn').text(leadData.interestedIn || 'N/A');
-            $('#modal-notes').text(leadData.notes || 'No message available');
+            // Populate subject based on form type
+            let subject = 'N/A';
+            switch(leadData.formType) {
+                case 'contact':
+                    subject = leadData.selectOne || leadData.interestedIn || 'Contact Inquiry';
+                    break;
+                case 'suggestion':
+                    subject = 'Suggestion Box';
+                    break;
+                case 'accessibility':
+                    subject = 'Accessibility Feedback';
+                    break;
+                case 'grievance':
+                    subject = 'Grievance Report';
+                    break;
+                case 'complaint':
+                    subject = leadData.complaintNature || 'Formal Complaint';
+                    break;
+                default:
+                    subject = leadData.interestedIn || 'General Inquiry';
+            }
+            $('#modal-subject').text(subject);
+
+            // Populate form-specific fields
+            let formSpecificHtml = '';
+            switch(leadData.formType) {
+                case 'contact':
+                    if (leadData.cityCountryTimezone) {
+                        formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                            '<iconify-icon icon="mdi:map-marker" class="text-info-600" style="font-size: 28px;"></iconify-icon>' +
+                            '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Location</label>' +
+                            '</div>' +
+                            '<p class="text-secondary-light ms-5 mb-3" style="font-size: 17px; font-weight: 600;">' + leadData.cityCountryTimezone + '</p>';
+                    }
+                    if (leadData.areasOfInterest) {
+                        formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                            '<iconify-icon icon="mdi:star" class="text-warning-600" style="font-size: 28px;"></iconify-icon>' +
+                            '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Areas of Interest</label>' +
+                            '</div>' +
+                            '<p class="text-secondary-light ms-5 mb-3" style="font-size: 17px; font-weight: 600;">' + leadData.areasOfInterest + '</p>';
+                    }
+                    break;
+                case 'suggestion':
+                    if (leadData.mood) {
+                        formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                            '<iconify-icon icon="mdi:emoticon" class="text-success-600" style="font-size: 28px;"></iconify-icon>' +
+                            '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Mood</label>' +
+                            '</div>' +
+                            '<p class="text-secondary-light ms-5 mb-3" style="font-size: 17px; font-weight: 600;">' + leadData.mood + '</p>';
+                    }
+                    break;
+                case 'accessibility':
+                    formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                        '<iconify-icon icon="mdi:wheelchair-accessibility" class="text-primary-600" style="font-size: 28px;"></iconify-icon>' +
+                        '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Conference Details</label>' +
+                        '</div>' +
+                        '<div class="ms-5 mb-3">' +
+                        '<p class="mb-1"><strong>Attended:</strong> ' + (leadData.attendedConference || 'N/A') + '</p>' +
+                        '<p class="mb-1"><strong>Had Accessibility Needs:</strong> ' + (leadData.hadAccessibilityNeeds || 'N/A') + '</p>' +
+                        '<p class="mb-1"><strong>Needs Met:</strong> ' + (leadData.needsMet || 'N/A') + '</p>' +
+                        '<p class="mb-1"><strong>Venue Rating:</strong> ' + (leadData.venueRating || 'N/A') + '/5</p>' +
+                        '<p class="mb-0"><strong>Resources Rating:</strong> ' + (leadData.resourcesRating || 'N/A') + '/5</p>' +
+                        '</div>';
+                    break;
+                case 'grievance':
+                    formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                        '<iconify-icon icon="mdi:shield-alert" class="text-warning-600" style="font-size: 28px;"></iconify-icon>' +
+                        '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Grievance Details</label>' +
+                        '</div>' +
+                        '<div class="ms-5 mb-3">' +
+                        '<p class="mb-1"><strong>Visibility:</strong> ' + (leadData.grievanceVisibility || 'N/A') + '</p>' +
+                        '<p class="mb-1"><strong>Share With:</strong> ' + (leadData.shareWith || 'N/A') + '</p>';
+                    if (leadData.incidentDate) {
+                        formSpecificHtml += '<p class="mb-1"><strong>Incident Date:</strong> ' + new Date(leadData.incidentDate).toLocaleDateString() + '</p>';
+                    }
+                    if (leadData.witnessName) {
+                        formSpecificHtml += '<p class="mb-0"><strong>Witness:</strong> ' + leadData.witnessName + '</p>';
+                    }
+                    formSpecificHtml += '</div>';
+                    break;
+                case 'complaint':
+                    formSpecificHtml += '<div class="d-flex align-items-center gap-3 mb-2">' +
+                        '<iconify-icon icon="mdi:gavel" class="text-danger-600" style="font-size: 28px;"></iconify-icon>' +
+                        '<label class="form-label fw-bold mb-0" style="font-size: 18px;">Complaint Details</label>' +
+                        '</div>' +
+                        '<div class="ms-5 mb-3">' +
+                        '<p class="mb-1"><strong>Respondent:</strong> ' + (leadData.respondentName || 'N/A') + '</p>' +
+                        '<p class="mb-1"><strong>Nature:</strong> ' + (leadData.complaintNature || 'N/A') + '</p>';
+                    if (leadData.incidentDate) {
+                        formSpecificHtml += '<p class="mb-1"><strong>Incident Date:</strong> ' + new Date(leadData.incidentDate).toLocaleDateString() + '</p>';
+                    }
+                    formSpecificHtml += '<p class="mb-0"><strong>Acknowledged:</strong> ' + (leadData.acknowledgement ? 'Yes' : 'No') + '</p>' +
+                        '</div>';
+                    break;
+            }
+            $('#modal-formSpecificFields').html(formSpecificHtml);
+
+            // Populate notes/message based on form type
+            let message = 'No message available';
+            if (leadData.notes) message = leadData.notes;
+            else if (leadData.suggestion) message = leadData.suggestion;
+            else if (leadData.incidentDescription) message = leadData.incidentDescription;
+            else if (leadData.detailedDescription) message = leadData.detailedDescription;
+            
+            $('#modal-notes').text(message);
 
             // Show modal
             $('#leadDetailsModal').modal('show');
