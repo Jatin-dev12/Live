@@ -9,10 +9,17 @@
                             <iconify-icon icon="ion:search-outline"></iconify-icon>
                         </button>
                     </div>
+                    <!-- Status Filter Dropdown -->
+                    <select name="status" id="statusFilter" class="form-select" style="width: 150px;">
+                        <option value="">All Status</option>
+                        <option value="active" <%= statusFilter === 'active' ? 'selected' : '' %>>Published</option>
+                        <option value="inactive" <%= statusFilter === 'inactive' ? 'selected' : '' %>>Draft</option>
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Filter</button>
                 </form>
-                <% if (search) { %>
-                    <a href="/page-master/web-page-master" class="btn btn-sm btn-outline-danger">
-                        <iconify-icon icon="material-symbols:close"></iconify-icon>
+                <% if (search || statusFilter) { %>
+                    <a href="/page-master/web-page-master" class="btn btn-outline-primary">
+                        <!-- <iconify-icon icon="material-symbols:close"></iconify-icon> -->
                         Clear
                     </a>
                 <% } %>
@@ -111,6 +118,11 @@
                 Showing <%= ((pagination.currentPage - 1) * pagination.limit) + 1 %> to 
                 <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> 
                 of <%= pagination.totalItems %> entries
+                <% if (search || statusFilter) { %>
+                    <span class="text-primary">
+                        (filtered<% if (search) { %> by "<%= search %>"<% } %><% if (statusFilter) { %> - <%= statusFilter === 'active' ? 'Published' : 'Draft' %> only<% } %>)
+                    </span>
+                <% } %>
             </div>
             
 
@@ -124,7 +136,7 @@
                     <li class="page-item">
                         <% if (pagination.hasPrev) { %>
                             <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
-                               href="?page=<%= pagination.prevPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                               href="?page=<%= pagination.prevPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>">
                                 <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
                             </a>
                         <% } else { %>
@@ -152,7 +164,7 @@
                     <% if (startPage > 1) { %>
                         <li class="page-item">
                             <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
-                               href="?page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %>">1</a>
+                               href="?page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>">1</a>
                         </li>
                         <% if (startPage > 2) { %>
                             <li class="page-item">
@@ -167,7 +179,7 @@
                                 <span class="page-link text-white fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600"><%= i %></span>
                             <% } else { %>
                                 <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
-                                   href="?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+                                   href="?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>"><%= i %></a>
                             <% } %>
                         </li>
                     <% } %>
@@ -180,7 +192,7 @@
                         <% } %>
                         <li class="page-item">
                             <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
-                               href="?page=<%= pagination.totalPages %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= pagination.totalPages %></a>
+                               href="?page=<%= pagination.totalPages %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>"><%= pagination.totalPages %></a>
                         </li>
                     <% } %>
 
@@ -188,7 +200,7 @@
                     <li class="page-item">
                         <% if (pagination.hasNext) { %>
                             <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
-                               href="?page=<%= pagination.nextPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+                               href="?page=<%= pagination.nextPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>">
                                 <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
                             </a>
                         <% } else { %>
@@ -214,6 +226,11 @@
             $(this).closest('form').submit();
         }
     });
+
+    // Auto-submit form when status filter changes
+    /* $('#statusFilter').on('change', function() {
+        $(this).closest('form').submit();
+    }); */
 
     // Delete page functionality
     $(document).on('click', '.delete-page-btn', async function () {

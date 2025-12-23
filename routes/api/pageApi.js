@@ -462,6 +462,9 @@ router.get('/:id/sections', async (req, res) => {
                     // Remove the old image key
                     delete sectionObj.heroSection.image;
                 }
+                if (sectionObj.customFields instanceof Map) {
+                    sectionObj.customFields = Object.fromEntries(sectionObj.customFields);
+                }
                 
                 if (section.sectionType === 'community-groups' && section.communityGroups?.selectedPages) {
                     // Get images for each selected page

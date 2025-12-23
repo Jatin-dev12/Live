@@ -17,7 +17,11 @@
                                 <div class="section-block border border-neutral-300 radius-8 p-5 bg-neutral-50 mb-3" data-id="<%= section._id %>">
                                   
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="badge custom-badge badge-primary">Template Section</span>
+                                        <% if (section.sectionType === 'custom-image-text') { %>
+                                            <span class="badge bg-success">Custom Section</span>
+                                        <% } else { %>
+                                            <span class="badge custom-badge badge-primary">Template Section</span>
+                                        <% } %>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" class="original-section-type"
@@ -25,15 +29,18 @@
                                         <!-- <label class="form-label">Section Type: <span -->
                                                 <!-- class="text-danger-600">*</span></label> -->
                                         <select class="form-control border border-neutral-200 radius-8 section-type section-type-select"
-                                            disabled>
+                                            <%= section.sectionType !== 'custom-image-text' ? 'disabled' : '' %>>
                                             <option value="" <%= !section.sectionType ? 'selected' : '' %>>-- Please Select Section --</option>
-
-                                            <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section</option>
-                                            <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Header Section</option>
-                                            <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
-                                            <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
-                                            <option value="community-groups" <%= section.sectionType === 'community-groups' ? 'selected' : '' %>>Community Groups</option>
-                                            <option value="contact-section" <%= section.sectionType === 'contact-section' ? 'selected' : '' %>>Contact Section</option>
+                                            <% if (section.sectionType === 'custom-image-text') { %>
+                                                <option value="custom-image-text" selected>Custom Image + Text Section</option>
+                                            <% } else { %>
+                                                <option value="hero-section" <%= section.sectionType === 'hero-section' ? 'selected' : '' %>>Hero Section</option>
+                                                <option value="three-column-info" <%= section.sectionType === 'three-column-info' ? 'selected' : '' %>>Header Section</option>
+                                                <option value="call-out-cards" <%= section.sectionType === 'call-out-cards' ? 'selected' : '' %>>Call Out Section</option>
+                                                <option value="tabs-section" <%= section.sectionType === 'tabs-section' ? 'selected' : '' %>>Tabs Section</option>
+                                                <option value="community-groups" <%= section.sectionType === 'community-groups' ? 'selected' : '' %>>Community Groups</option>
+                                                <option value="contact-section" <%= section.sectionType === 'contact-section' ? 'selected' : '' %>>Contact Section</option>
+                                            <% } %>
                                         </select>
                                     </div>
 
@@ -529,6 +536,61 @@
                                                         <button type="button" class="btn btn-sm btn-primary mt-2 add-helpful-link-btn">Add Helpful Link</button>
                                                     </div>
                                                 </div>
+                                        <% } else if (section.sectionType==='custom-image-text' ) { %>
+                                            <div class="custom-image-text-fields active">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <span class="badge bg-success">Custom Section</span>
+                                                    <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
+                                                        <!-- <iconify-icon icon="material-symbols:delete-outline"></iconify-icon> -->
+                                                        Remove Section
+                                                    </button>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Heading:</label>
+                                                    <input type="text" class="form-control border border-neutral-200 radius-8 cit-heading"
+                                                        value="<%= section.customFields?.heading || '' %>" placeholder="Section Heading">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Layout:</label>
+                                                    <select class="form-control border border-neutral-200 radius-8 cit-layout">
+                                                        <option value="image-left" <%= (section.customFields?.layout || 'image-left') === 'image-left' ? 'selected' : '' %>>Image Left + Text Right</option>
+                                                        <option value="image-right" <%= section.customFields?.layout === 'image-right' ? 'selected' : '' %>>Text Left + Image Right</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Paragraph:</label>
+                                                    <textarea id="cit-content-<%= section._id %>" class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."><%= section.customFields?.content || '' %></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold text-neutral-900">Select Image</label>
+                                                    <div class="upload-image-wrapper mt-2">
+                                                        <% if (section.customFields?.image) { %>
+                                                            <div class="uploaded-img-cit position-relative w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 mb-3">
+                                                                <button type="button" class="uploaded-img-cit__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                                </button>
+                                                                <img class="uploaded-img-cit__preview w-100 h-200-px object-fit-cover" src="<%= section.customFields.image %>" alt="image">
+                                                            </div>
+                                                            <button type="button" class="btn btn-outline-primary select-image-cit w-100">
+                                                                <!-- <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon> -->
+                                                                Change Image
+                                                            </button>
+                                                        <% } else { %>
+                                                            <div class="uploaded-img-cit d-none position-relative w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 mb-3">
+                                                                <button type="button" class="uploaded-img-cit__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                                </button>
+                                                                <img class="uploaded-img-cit__preview w-100 h-200-px object-fit-cover" src="/images/user.png" alt="image">
+                                                            </div>
+                                                            <button type="button" class="btn btn-outline-primary select-image-cit w-100">
+                                                                <!-- <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon> -->
+                                                                Select Image from Media Gallery
+                                                            </button>
+                                                        <% } %>
+                                                        <input type="hidden" class="cit-image-url" value="<%= section.customFields?.image || '' %>">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <% } else if (section.sectionType==='left-heading-image-right-text' ) { %>
                                             <div class="left-heading-image-right-text-fields active">
                                                 <div class="mb-3">
@@ -571,6 +633,14 @@
                             <div class="alert alert-warning">No sections found for this page. Add a new
                                 section below.</div>
                         <% } %>
+                        
+                        <!-- Add Custom Section Button -->
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-outline-primary-600 radius-8" id="addCustomSectionBtn">
+                                <!-- <iconify-icon icon="material-symbols:add" class="me-2"></iconify-icon> -->
+                                Add Custom Section
+                            </button>
+                        </div>
                     </div>
                         </div>
                         <div class="col-lg-4">
@@ -712,7 +782,7 @@
                                     <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
                                     <select class="form-control border border-neutral-200 radius-8 section-type-select" >
                                         <option value="">-- Please Select Section --</option>
-
+                                        <option value="custom-image-text">Custom Image + Text Section</option>
                                         <option value="hero-section">Hero Section</option>
                                         <option value="three-column-info">Header Section</option>
                                         <option value="call-out-cards">Call Out Section</option>
@@ -726,6 +796,41 @@
                                     <div class="mb-3"><label class="form-label">Text:</label><textarea class="form-control border border-neutral-200 radius-8 iwt-text" rows="4" placeholder="Description"></textarea></div>
                                     <div class="form-check mb-3"><input class="form-check-input iwt-left" type="checkbox" checked><label class="form-check-label">Image on Left</label></div>
                                     <div class="mb-3"><label class="form-label fw-bold text-neutral-900">Upload Image</label><div class="upload-image-wrapper mt-5"><div class="uploaded-img-iwt d-none position-relative h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50"><button type="button" class="uploaded-img-iwt__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle"><iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon></button><img class="uploaded-img-iwt__preview w-100 h-100 object-fit-cover" src="/images/user.png" alt="image"></div><label class="upload-file-iwt h-200-px w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1"><iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon><span class="fw-semibold text-secondary-light">Upload Image</span><input type="file" class="upload-file-iwt-input" hidden accept="image/*"></label></div></div>
+                                </div>
+                                
+                                <!-- Custom Image + Text Section Fields -->
+                                <div class="custom-image-text-fields" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Heading:</label>
+                                        <input type="text" class="form-control border border-neutral-200 radius-8 cit-heading" placeholder="Section Heading">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Layout:</label>
+                                        <select class="form-control border border-neutral-200 radius-8 cit-layout">
+                                            <option value="image-left">Image Left + Text Right</option>
+                                            <option value="image-right">Text Left + Image Right</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Paragraph:</label>
+                                        <textarea class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-neutral-900">Select Image</label>
+                                        <div class="upload-image-wrapper mt-2">
+                                            <div class="uploaded-img-cit d-none position-relative w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 mb-3">
+                                                <button type="button" class="uploaded-img-cit__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                                    <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                                                </button>
+                                                <img class="uploaded-img-cit__preview w-100 h-200-px object-fit-cover" src="/images/user.png" alt="image">
+                                            </div>
+                                            <button type="button" class="btn btn-outline-primary select-image-cit w-100">
+                                                <!-- <iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon> -->
+                                                Select Image from Media Gallery
+                                            </button>
+                                            <input type="hidden" class="cit-image-url" value="">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="image-with-list-fields" style="display: none;">
                                     <div class="mb-3"><label class="form-label">Heading:</label><input type="text" class="form-control border border-neutral-200 radius-8 iwl-heading" placeholder="Heading"></div>
@@ -1828,6 +1933,7 @@ window.ckEditorFallback = function() {
         $section.find('.three-column-fields').hide();
         $section.find('.call-out-cards-fields').hide();
         $section.find('.tabs-section-fields').hide();
+        $section.find('.custom-image-text-fields').hide();
 
         // Show only the relevant fields based on section type
         if (sectionType === 'image-with-text') {
@@ -1878,7 +1984,193 @@ window.ckEditorFallback = function() {
             }
             // Initialize CKEditor for tab textareas (both existing and newly created)
             setTimeout(initCKEditor, 300);
+        } else if (sectionType === 'custom-image-text') {
+            $section.find('.custom-image-text-fields').show();
+            // Initialize CKEditor for the rich text content
+            setTimeout(initCKEditor, 300);
         }
+    }
+
+    // Function to add a new custom section
+    function addCustomSection(id) {
+        const uniqueId = 'cit-content-' + Math.random().toString(36).substr(2, 9);
+        const sectionHtml = \`
+        <div class="section-block border border-neutral-300 radius-8 p-5 mb-4 bg-neutral-50" data-section-id="\${id}">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="text-lg mb-0">Custom Section #\${id}</h6>
+                    <span class="badge bg-success">Custom Section</span>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
+                    Remove Section
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Section Type: <span class="text-danger-600">*</span></label>
+                <select class="form-control border border-neutral-200 radius-8 section-type-select" required>
+                    <option value="">-- Please Select Section --</option>
+                    <option value="custom-image-text">Custom Image + Text Section</option>
+                </select>
+            </div>
+
+            <!-- Custom Image + Text Section Fields -->
+            <div class="custom-image-text-fields" style="display: none;">
+                <div class="mb-3">
+                    <label class="form-label">Heading:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 cit-heading" placeholder="Section Heading">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Layout:</label>
+                    <select class="form-control border border-neutral-200 radius-8 cit-layout">
+                        <option value="image-left">Image Left + Text Right</option>
+                        <option value="image-right">Text Left + Image Right</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Paragraph:</label>
+                    <textarea id="\${uniqueId}" class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-neutral-900">Select Image</label>
+                    <div class="upload-image-wrapper mt-2">
+                        <div class="uploaded-img-cit d-none position-relative w-100 border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 mb-3">
+                            <button type="button" class="uploaded-img-cit__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex bg-danger-600 w-40-px h-40-px justify-content-center align-items-center rounded-circle">
+                                <iconify-icon icon="radix-icons:cross-2" class="text-2xl text-white"></iconify-icon>
+                            </button>
+                            <img class="uploaded-img-cit__preview w-100 h-200-px object-fit-cover" src="/images/user.png" alt="image">
+                        </div>
+                        <button type="button" class="btn btn-outline-primary select-image-cit w-100">
+                            Select Image from Media Gallery
+                        </button>
+                        <input type="hidden" class="cit-image-url" value="">
+                    </div>
+                </div>
+            </div>
+        </div>\`;
+
+        // $('#sectionsContainer').append(sectionHtml);
+        $('#sectionsContainer .section-block').last().after(sectionHtml);
+        
+        // Automatically select the section type and show fields
+        const $newSection = $('#sectionsContainer .section-block').last();
+        $newSection.find('.section-type-select').val('custom-image-text');
+        toggleSectionFields($newSection);
+        
+        console.log('New section added, section type set to:', $newSection.find('.section-type-select').val());
+        
+        // Initialize CKEditor for the new section with a longer delay to ensure DOM is ready
+        setTimeout(function() {
+            console.log('Initializing CKEditor for new section with ID:', uniqueId);
+            
+            // Get the specific textarea
+            const textarea = document.getElementById(uniqueId);
+            if (!textarea) {
+                console.error('Textarea not found with ID:', uniqueId);
+                return;
+            }
+            
+            // Try direct initialization first
+            initCKEditorForTextarea(textarea);
+            
+            // Also try the general initialization as backup
+            setTimeout(function() {
+                if (!editorInstances[uniqueId]) {
+                    console.log('Direct initialization failed, trying general initialization');
+                    initCKEditor();
+                }
+                
+                // Final check
+                setTimeout(function() {
+                    if (editorInstances[uniqueId]) {
+                        console.log('✅ CKEditor successfully initialized for:', uniqueId);
+                    } else {
+                        console.error('❌ CKEditor failed to initialize for:', uniqueId);
+                        console.log('Available editor instances:', Object.keys(editorInstances));
+                        
+                        // Try one more time with a simple approach
+                        if (window.CKEDITOR && window.CKEDITOR.ClassicEditor) {
+                            window.CKEDITOR.ClassicEditor.create(textarea)
+                                .then(editor => {
+                                    console.log('✅ Simple CKEditor initialization successful for:', uniqueId);
+                                    editorInstances[uniqueId] = editor;
+                                })
+                                .catch(error => {
+                                    console.error('❌ Simple CKEditor initialization failed:', error);
+                                });
+                        }
+                    }
+                }, 1500);
+            }, 1000);
+        }, 500);
+        
+        showToast('Custom section added successfully', 'success');
+    }
+
+    // Helper function to initialize CKEditor for a specific textarea
+    function initCKEditorForTextarea(textarea) {
+        if (!textarea.id) {
+            textarea.id = 'editor_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Check if already initialized
+        if (editorInstances[textarea.id]) {
+            console.log('CKEditor already initialized for:', textarea.id);
+            return;
+        }
+        
+        console.log('Initializing CKEditor for specific textarea:', textarea.id);
+        
+        // Try to get CKEditor
+        const CKEDITOR = window.CKEDITOR;
+        if (!CKEDITOR || !CKEDITOR.ClassicEditor) {
+            console.error('CKEditor not available');
+            return;
+        }
+        
+        const ClassicEditor = CKEDITOR.ClassicEditor;
+        
+        // Simple configuration for custom sections
+        const config = {
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'link', '|',
+                    'insertTable', '|',
+                    'undo', 'redo'
+                ]
+            },
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                ]
+            }
+        };
+        
+        ClassicEditor
+            .create(textarea, config)
+            .then(editor => {
+                console.log('CKEditor initialized successfully for:', textarea.id);
+                editorInstances[textarea.id] = editor;
+                
+                // Add media library button
+                try {
+                    addMediaLibraryButton(textarea, editor);
+                } catch (e) {
+                    console.log('Media library button not added:', e);
+                }
+            })
+            .catch(error => {
+                console.error('CKEditor initialization failed for:', textarea.id, error);
+                
+                // Try CKEditor 4 fallback
+                initCKEditor4ForTextarea(textarea);
+            });
     }
 
     // Template sections have fixed structure - no dynamic item management
@@ -1955,10 +2247,18 @@ window.ckEditorFallback = function() {
 
         // Template sections are read-only - prevent structure changes
         $("#sectionsContainer").on("change", ".section-type-select", function () {
-            showToast('Section types are fixed by the page template. Change the template in Page Master to modify structure.', 'warning');
-            // Revert to original value
-            const originalType = $(this).closest('.section-block').find('.original-section-type').val();
-            $(this).val(originalType);
+            const $section = $(this).closest('.section-block');
+            const isCustomSection = $(this).val() === 'custom-image-text' || !$(this).prop('disabled');
+            
+            if (!isCustomSection) {
+                showToast('Section types are fixed by the page template. Change the template in Page Master to modify structure.', 'warning');
+                // Revert to original value
+                const originalType = $section.find('.original-section-type').val();
+                $(this).val(originalType);
+            } else {
+                // Handle custom section type changes
+                toggleSectionFields($section);
+            }
         });
 
         // Initialize all image upload handlers
@@ -1967,6 +2267,99 @@ window.ckEditorFallback = function() {
         handleImageUpload(".upload-file-lhrt-input", ".uploaded-img-lhrt__preview", ".uploaded-img-lhrt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-rhlt-input", ".uploaded-img-rhlt__preview", ".uploaded-img-rhlt__remove", ".upload-image-wrapper", "section");
         handleImageUpload(".upload-file-hero-input", ".uploaded-img-hero__preview", ".uploaded-img-hero__remove", ".upload-image-wrapper", "hero");
+
+        // Add Custom Section Button Handler
+        $('#addCustomSectionBtn').on('click', function() {
+            const currentSectionCount = $('.section-block').length + 1;
+            addCustomSection(currentSectionCount);
+        });
+
+        // Custom Image-Text Section Media Gallery Handler
+        $(document).on('click', '.select-image-cit', function() {
+            const $button = $(this);
+            const $section = $button.closest('.section-block');
+            
+            console.log('Media picker button clicked');
+            
+            // Check if MediaPicker is available
+            if (typeof MediaPicker === 'undefined') {
+                console.error('MediaPicker is not available');
+                showToast('Media picker is not available. Please refresh the page.', 'error');
+                return;
+            }
+            
+            // Create media picker instance
+            const mediaPicker = new MediaPicker({
+                allowedTypes: ['image'],
+                multiple: false,
+                title: 'Select Image',
+                buttonText: 'Select Image',
+                onSelect: function(selectedMedia) {
+                    console.log('Media selected:', selectedMedia);
+                    if (selectedMedia && selectedMedia.src) {
+                        const $wrapper = $button.closest('.upload-image-wrapper');
+                        
+                        console.log('Updating preview with:', selectedMedia.src);
+                        
+                        // Update preview
+                        $wrapper.find('.uploaded-img-cit__preview').attr('src', selectedMedia.src);
+                        $wrapper.find('.uploaded-img-cit').removeClass('d-none');
+                        $wrapper.find('.cit-image-url').val(selectedMedia.src);
+                        
+                        console.log('Image URL set to:', $wrapper.find('.cit-image-url').val());
+                        
+                        // Update button text
+                        $button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Change Image');
+                        
+                        showToast('Image selected successfully', 'success');
+                    } else {
+                        console.error('No media selected or invalid media object:', selectedMedia);
+                    }
+                }
+            });
+            
+            mediaPicker.open();
+        });
+
+        // Remove custom image handler
+        $(document).on('click', '.uploaded-img-cit__remove', function() {
+            const $wrapper = $(this).closest('.upload-image-wrapper');
+            const $button = $wrapper.find('.select-image-cit');
+            
+            $wrapper.find('.uploaded-img-cit').addClass('d-none');
+            $wrapper.find('.cit-image-url').val('');
+            $button.html('<iconify-icon icon="solar:gallery-outline" class="me-2"></iconify-icon>Select Image from Media Gallery');
+        });
+
+        // Remove custom section handler
+        $(document).on('click', '.remove-section-btn', function() {
+            if (confirm('Are you sure you want to remove this section?')) {
+                $(this).closest('.section-block').remove();
+                showToast('Section removed successfully', 'success');
+            }
+        });
+
+        // Test CKEditor content button
+        $(document).on('click', '.test-ckeditor-btn', function() {
+            const editorId = $(this).data('editor-id');
+            console.log('Testing CKEditor content for ID:', editorId);
+            console.log('Available editor instances:', Object.keys(editorInstances));
+            
+            if (editorInstances[editorId]) {
+                const content = editorInstances[editorId].getData();
+                console.log('CKEditor content:', content);
+                alert('CKEditor content: ' + content);
+            } else {
+                console.log('No editor instance found for ID:', editorId);
+                const textarea = document.getElementById(editorId);
+                if (textarea) {
+                    console.log('Textarea value:', textarea.value);
+                    alert('Textarea value: ' + textarea.value);
+                } else {
+                    alert('No editor or textarea found for ID: ' + editorId);
+                }
+            }
+        });
 
         // Helpful links add/remove handlers (for contact-section)
         $(document).on('click', '.add-helpful-link-btn', function() {
@@ -2217,7 +2610,10 @@ window.ckEditorFallback = function() {
                     sectionType = $section.find(".original-section-type").val();
                 }
 
+                console.log('Processing section:', index, 'Type:', sectionType, 'Section element:', $section);
+
                 if (!sectionType) {
+                    console.log('No section type found for section:', index);
                     showToast("Please select a section type for all sections.", "warning");
                     isValid = false;
                     return false; // Break the loop
@@ -2335,6 +2731,66 @@ window.ckEditorFallback = function() {
                     sectionData.customFields.rightHeading = $section.find('.rhlt-heading').val();
                     sectionData.customFields.rightImage = $section.find('.upload-file-rhlt-input').data('server-url') || $section.find('.uploaded-img-rhlt__preview').attr('src');
                     sectionData.customFields.leftText = $section.find('.rhlt-left-text').val();
+                } else if (sectionType === "custom-image-text") {
+                    // Custom Image + Text Section
+                    console.log('Processing custom-image-text section');
+                    
+                    sectionData.customFields.heading = $section.find('.cit-heading').val();
+                    sectionData.customFields.layout = $section.find('.cit-layout').val();
+                    
+                    // Get CKEditor content for rich text
+                    const contentEditor = $section.find(".cit-content");
+                    const editorId = contentEditor.attr('id');
+                    
+                    console.log('Content editor element:', contentEditor);
+                    console.log('Editor ID:', editorId);
+                    console.log('Available editor instances:', Object.keys(editorInstances));
+                    console.log('Editor instance for this ID:', editorInstances[editorId]);
+                    
+                    if (editorInstances[editorId]) {
+                        sectionData.customFields.content = editorInstances[editorId].getData();
+                        console.log('Got content from CKEditor:', sectionData.customFields.content);
+                    } else {
+                        sectionData.customFields.content = contentEditor.val();
+                        console.log('Got content from textarea fallback:', sectionData.customFields.content);
+                    }
+                    
+                    // Get image URL from media gallery selection
+                    const imageUrlInput = $section.find('.cit-image-url');
+                    sectionData.customFields.image = imageUrlInput.val();
+                    
+                    console.log('Custom section data:', {
+                        heading: sectionData.customFields.heading,
+                        layout: sectionData.customFields.layout,
+                        content: sectionData.customFields.content,
+                        image: sectionData.customFields.image
+                    });
+                    console.log('Image URL input element:', imageUrlInput);
+                    console.log('Image URL found:', sectionData.customFields.image);
+                    
+                    // Validate required fields
+                    if (!sectionData.customFields.heading || !sectionData.customFields.heading.trim()) {
+                        const $headingField = $section.find(".cit-heading");
+                        focusFieldWithScroll($headingField, 'Section heading is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    if (!sectionData.customFields.content || !sectionData.customFields.content.trim()) {
+                        const $contentField = $section.find(".cit-content");
+                        focusFieldWithScroll($contentField, 'Content is required');
+                        isValid = false;
+                        return false;
+                    }
+                    
+                    if (!sectionData.customFields.image || !sectionData.customFields.image.trim()) {
+                        console.log('Image validation failed. Image value:', sectionData.customFields.image);
+                        console.log('Available image inputs in section:', $section.find('input[type="hidden"]').map(function() { return $(this).attr('class') + ': ' + $(this).val(); }).get());
+                        const $imageField = $section.find(".select-image-cit");
+                        focusFieldWithScroll($imageField, 'Image is required');
+                        isValid = false;
+                        return false;
+                    }
                 } else if (sectionType === "three-column-info") {
                     const $tciInput = $section.find(".upload-file-tci-input");
                     const newImageUrl = $tciInput.data("server-url");

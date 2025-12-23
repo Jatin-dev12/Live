@@ -116,7 +116,8 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 heading: section.customFields?.heading || '',
                 subheading: section.customFields?.subheading || '',
                 alignCenter: section.customFields?.alignCenter !== false,
-                image: section.customFields?.image || ''
+                image: section.customFields?.image || '',
+                content: section.customFields?.content || ''
             },
             heroSection: {
                 ...section.heroSection,
@@ -188,6 +189,7 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     image: section.customFields?.image || section.customFields?.leftImage || '',
                     imageOnLeft: section.customFields?.imageOnLeft === true,
                     rightText: section.customFields?.rightText || '',
+                    content: section.customFields?.content || ''
                 },
                 heroSection: {
                     heading: section.heroSection?.heading || '',
