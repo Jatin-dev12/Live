@@ -81,51 +81,13 @@ router.get('/ads/media', isAuthenticated, async (req, res) => {
 
 // ============ PUBLIC ADS API ============
 
-// Get all active ads with pages (public endpoint for frontend display)
+// Get all active ads grouped by pages (public endpoint for frontend slider display)
 router.get('/ads/active', async (req, res) => {
     try {
         const currentDate = new Date();
         console.log('Current date for filtering:', currentDate);
         
-        // First, let's check all ads to debug
-        const allAds = await Ad.find({}).select('_id title status start_date end_date selected_pages').lean();
-        console.log('All ads in database:');
-        allAds.forEach(ad => {
-            console.log(`- ${ad.title}: status=${ad.status}, start=${ad.start_date}, end=${ad.end_date}, pages=${ad.selected_pages ? ad.selected_pages.length : 0}`);
-        });
-        
-        // Check each filter step by step
-        console.log('\n=== FILTERING STEPS ===');
-        
-        // Step 1: Status filter
-        const statusFiltered = await Ad.find({ status: 'active' }).select('_id title status').lean();
-        console.log(`Step 1 - Status 'active': ${statusFiltered.length} ads`);
-        
-        // Step 2: Start date filter
-        const startDateFiltered = await Ad.find({ 
-            status: 'active',
-            start_date: { $lte: currentDate }
-        }).select('_id title start_date').lean();
-        console.log(`Step 2 - Start date <= now: ${startDateFiltered.length} ads`);
-        
-        // Step 3: End date filter
-        const endDateFiltered = await Ad.find({ 
-            status: 'active',
-            start_date: { $lte: currentDate },
-            end_date: { $gt: currentDate }
-        }).select('_id title end_date').lean();
-        console.log(`Step 3 - End date > now: ${endDateFiltered.length} ads`);
-        
-        // Step 4: Pages filter
-        const pagesFiltered = await Ad.find({ 
-            status: 'active',
-            start_date: { $lte: currentDate },
-            end_date: { $gt: currentDate },
-            selected_pages: { $exists: true, $not: { $size: 0 } }
-        }).select('_id title selected_pages').lean();
-        console.log(`Step 4 - Has selected pages: ${pagesFiltered.length} ads`);
-        
-        // Final query with population
+        // Get active ads with populated pages
         const activeAds = await Ad.find({
             status: 'active',
             start_date: { $lte: currentDate },
@@ -136,40 +98,66 @@ router.get('/ads/active', async (req, res) => {
         .select('_id title description media_url ad_type link_url link_target start_date end_date selected_pages')
         .lean();
 
-        // Transform the data to include page information
-        const adsWithPages = activeAds.map(ad => ({
-            id: ad._id,
-            title: ad.title,
-            description: ad.description,
-            media_url: toAbsoluteUrl(ad.media_url),
-            ad_type: ad.ad_type,
-            link_url: ad.link_url,
-            link_target: ad.link_target || '_blank',
-            start_date: ad.start_date,
-            end_date: ad.end_date,
-            pages: ad.selected_pages.map(page => ({
-                id: page._id,
-                name: page.name,
-                slug: page.slug,
-                path: page.path
-            }))
-        }));
+        console.log(`Found ${activeAds.length} active ads with pages`);
 
-        console.log(`Final result: ${adsWithPages.length} active ads with pages`);
+        // Group ads by page and ad_type for slider functionality
+        const adsByPage = {};
+        let totalAdsCount = 0;
+
+        activeAds.forEach(ad => {
+            const transformedAd = {
+                id: ad._id,
+                title: ad.title,
+                description: ad.description,
+                media_url: toAbsoluteUrl(ad.media_url),
+                ad_type: ad.ad_type,
+                link_url: ad.link_url,
+                link_target: ad.link_target || '_blank',
+                start_date: ad.start_date,
+                end_date: ad.end_date
+            };
+
+            // Add this ad to each page it's assigned to
+            ad.selected_pages.forEach(page => {
+                const pageKey = page._id.toString();
+                
+                if (!adsByPage[pageKey]) {
+                    adsByPage[pageKey] = {
+                        page: {
+                            id: page._id,
+                            name: page.name,
+                            slug: page.slug,
+                            path: page.path
+                        },
+                        ad_types: {}
+                    };
+                }
+                
+                // Group by ad_type within each page
+                const adType = ad.ad_type || 'default';
+                if (!adsByPage[pageKey].ad_types[adType]) {
+                    adsByPage[pageKey].ad_types[adType] = [];
+                }
+                
+                adsByPage[pageKey].ad_types[adType].push(transformedAd);
+                totalAdsCount++;
+            });
+        });
+
+        // Convert to array format for easier frontend consumption
+        const groupedAds = Object.values(adsByPage).map(pageData => ({
+            page: pageData.page,
+            ad_types: pageData.ad_types
+        }));
+        
+        console.log(`Grouped into ${groupedAds.length} pages with total ${totalAdsCount} ad placements`);
 
         res.json({
             success: true,
-            count: adsWithPages.length,
-            data: adsWithPages,
-            timestamp: currentDate.toISOString(),
-            debug: {
-                currentDate: currentDate,
-                totalAds: allAds.length,
-                statusFiltered: statusFiltered.length,
-                startDateFiltered: startDateFiltered.length,
-                endDateFiltered: endDateFiltered.length,
-                pagesFiltered: pagesFiltered.length
-            }
+            pages_count: groupedAds.length,
+            total_ad_placements: totalAdsCount,
+            data: groupedAds,
+            timestamp: currentDate.toISOString()
         });
 
     } catch (error) {
