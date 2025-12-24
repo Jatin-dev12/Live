@@ -117,7 +117,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                 subheading: section.customFields?.subheading || '',
                 alignCenter: section.customFields?.alignCenter !== false,
                 image: section.customFields?.image || '',
-                content: section.customFields?.content || ''
+                content: section.customFields?.content || '',
+                layout: section.customFields?.layout || 'image-left',
+                ctas: section.customFields?.ctas || []
             },
             heroSection: {
                 ...section.heroSection,
@@ -189,7 +191,9 @@ router.get('/edit-content-management/:pageId', isAuthenticated, async (req, res)
                     image: section.customFields?.image || section.customFields?.leftImage || '',
                     imageOnLeft: section.customFields?.imageOnLeft === true,
                     rightText: section.customFields?.rightText || '',
-                    content: section.customFields?.content || ''
+                    content: section.customFields?.content || '',
+                    layout: section.customFields?.layout || 'image-left',
+                    ctas: section.customFields?.ctas || []
                 },
                 heroSection: {
                     heading: section.heroSection?.heading || '',

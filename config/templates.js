@@ -223,6 +223,12 @@ const templates = {
         }
       }
     ]
+  },
+  custom: {
+    name: 'Custom Template',
+    description: 'Empty template with custom section functionality - add your own sections',
+    previewImage: '/images/templates/custom-template-preview.svg',
+    sections: []
   }
 };
 

@@ -39,13 +39,13 @@ const pageSchema = new mongoose.Schema({
     template: {
         type: String,
         trim: true,
-        enum: ['', 'home', 'about', 'newsletter', 'legislation', 'membership', 'query', 'contact'],
+        enum: ['', 'home', 'about', 'newsletter', 'legislation', 'membership', 'query', 'contact','custom'],
         default: ''
     },
     category: {
         type: String,
         trim: true,
-        enum: ['', 'community', 'news', 'events', 'resources'],
+        enum: ['', 'community', 'news', 'events', 'resources', 'blog'],
         default: ''
     },
     thumbnail: {
@@ -89,5 +89,15 @@ pageSchema.pre('save', function(next) {
     
     next();
 });
+
+pageSchema.virtual('content', {
+  ref: 'Content',
+  localField: '_id',
+  foreignField: 'page',
+  justOne: true
+});
+
+pageSchema.set('toJSON', { virtuals: true });
+pageSchema.set('toObject', { virtuals: true });
 
 module.exports = mongoose.model('Page', pageSchema);

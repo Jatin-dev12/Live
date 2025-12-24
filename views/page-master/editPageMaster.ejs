@@ -28,6 +28,7 @@
                                     <option value="query" <%= page.template === 'query' ? 'selected' : '' %>>Query Template - Hero with 3 CTA Buttons</option>
                                     <option value="membership" <%= page.template === 'membership' ? 'selected' : '' %>>Membership Template - Hero with Buttons + Community Groups</option>
                                     <option value="contact" <%= page.template === 'contact' ? 'selected' : '' %>>Contact Template - Contact blocks + Helpful Links</option>
+                                    <option value="custom" <%= page.template === 'custom' ? 'selected' : '' %>>Custom Template - Empty template with custom sections</option>
                                 </select>
                                 <small class="text-muted">
                                     <i class="fas fa-lock me-1"></i>
@@ -151,6 +152,17 @@
                                 </div>
                             </label>
                         </div> -->
+                        <div class="category-checkbox-item mb-3">
+                            <input type="checkbox" value="blog" id="category-blog" name="categories" class="category-checkbox-input" <%= page.category === 'blog' ? 'checked' : '' %>>
+                            <label class="category-checkbox-label" for="category-blog">
+                                <div class="category-checkbox-content">
+                                    <div class="category-checkbox-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span class="category-checkbox-text">Blog</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
                     <small class="text-muted">Select categories to group related pages (required for community groups display)</small>
                 </div>

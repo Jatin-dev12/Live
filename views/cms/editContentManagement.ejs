@@ -561,6 +561,34 @@
                                                     <label class="form-label">Paragraph:</label>
                                                     <textarea id="cit-content-<%= section._id %>" class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."><%= section.customFields?.content || '' %></textarea>
                                                 </div>
+                                                
+                                                <!-- CTA Buttons Section -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Call To Action Buttons:</label>
+                                                    <div class="cit-cta-container">
+                                                        <% if (section.customFields?.ctas && section.customFields.ctas.length > 0) { %>
+                                                            <% section.customFields.ctas.forEach(function(cta, index) { %>
+                                                                <div class="cit-cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                        <span class="fw-semibold text-sm">CTA Button #<%= index + 1 %></span>
+                                                                        <button type="button" class="btn btn-sm btn-danger-600 remove-cit-cta-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label text-sm">Button Text:</label>
+                                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cit-cta-text"
+                                                                            value="<%= cta.text || '' %>" placeholder="e.g., Learn More">
+                                                                    </div>
+                                                                    <div class="mb-2 position-relative">
+                                                                        <label class="form-label text-sm">Button Link:</label>
+                                                                        <input type="text" class="form-control border border-neutral-200 radius-8 cit-cta-link"
+                                                                            value="<%= cta.link || '' %>" placeholder="e.g., /about">
+                                                                    </div>
+                                                                </div>
+                                                            <% }) %>
+                                                        <% } %>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-3 add-cit-cta-btn">Add CTA Button</button>
+                                                </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold text-neutral-900">Select Image</label>
                                                     <div class="upload-image-wrapper mt-2">
@@ -635,12 +663,17 @@
                         <% } %>
                         
                         <!-- Add Custom Section Button -->
+                        <!-- Debug: Page template = <%= page.template %> -->
+                        <% if (page.template === 'custom') { %>
                         <div class="text-center mt-4">
                             <button type="button" class="btn btn-outline-primary-600 radius-8" id="addCustomSectionBtn">
                                 <!-- <iconify-icon icon="material-symbols:add" class="me-2"></iconify-icon> -->
                                 Add Custom Section
                             </button>
                         </div>
+                        <% } else { %>
+                        <!-- Debug: Template is '<%= page.template %>', not 'custom' -->
+                        <% } %>
                     </div>
                         </div>
                         <div class="col-lg-4">
@@ -814,6 +847,15 @@
                                     <div class="mb-3">
                                         <label class="form-label">Paragraph:</label>
                                         <textarea class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."></textarea>
+                                    </div>
+                                    
+                                    <!-- CTA Buttons Section -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Call To Action Buttons:</label>
+                                        <div class="cit-cta-container">
+                                            <!-- CTA buttons will be added dynamically -->
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-primary mt-3 add-cit-cta-btn">Add CTA Button</button>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-bold text-neutral-900">Select Image</label>
@@ -1998,7 +2040,7 @@ window.ckEditorFallback = function() {
         <div class="section-block border border-neutral-300 radius-8 p-5 mb-4 bg-neutral-50" data-section-id="\${id}">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center gap-2">
-                    <h6 class="text-lg mb-0">Custom Section #\${id}</h6>
+                    <h6 class="text-lg mb-0">Custom Section</h6>
                     <span class="badge bg-success">Custom Section</span>
                 </div>
                 <button type="button" class="btn btn-sm btn-danger-600 remove-section-btn">
@@ -2031,6 +2073,16 @@ window.ckEditorFallback = function() {
                     <label class="form-label">Paragraph:</label>
                     <textarea id="\${uniqueId}" class="form-control border border-neutral-200 radius-8 cit-content ckeditor-paragraph" rows="6" placeholder="Enter your content here..."></textarea>
                 </div>
+                
+                <!-- CTA Buttons Section -->
+                <div class="mb-3">
+                    <label class="form-label">Call To Action Buttons:</label>
+                    <div class="cit-cta-container">
+                        <!-- CTA buttons will be added dynamically -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary mt-3 add-cit-cta-btn">Add CTA Button</button>
+                </div>
+                
                 <div class="mb-3">
                     <label class="form-label fw-bold text-neutral-900">Select Image</label>
                     <div class="upload-image-wrapper mt-2">
@@ -2050,7 +2102,7 @@ window.ckEditorFallback = function() {
         </div>\`;
 
         // $('#sectionsContainer').append(sectionHtml);
-        $('#sectionsContainer .section-block').last().after(sectionHtml);
+        $('#addCustomSectionBtn').parent().before(sectionHtml);
         
         // Automatically select the section type and show fields
         const $newSection = $('#sectionsContainer .section-block').last();
@@ -2237,6 +2289,12 @@ window.ckEditorFallback = function() {
 
     // Main document ready function
     $(document).ready(function () {
+        // Debug: Check page template value and button existence
+        const pageTemplate = $('#pageTemplate').val();
+        console.log('Page template value:', pageTemplate);
+        console.log('Add Custom Section button exists:', $('#addCustomSectionBtn').length > 0);
+        console.log('Page template === "custom":', pageTemplate === 'custom');
+        
         // Initialize existing sections (only real sections inside the container)
         $("#sectionsContainer .section-block").each(function () {
             toggleSectionFields($(this));
@@ -2759,6 +2817,21 @@ window.ckEditorFallback = function() {
                     const imageUrlInput = $section.find('.cit-image-url');
                     sectionData.customFields.image = imageUrlInput.val();
                     
+                    // Collect CTA buttons data
+                    const ctas = [];
+                    $section.find('.cit-cta-item').each(function() {
+                        const ctaText = $(this).find('.cit-cta-text').val();
+                        const ctaLink = $(this).find('.cit-cta-link').val();
+                        
+                        if (ctaText && ctaText.trim()) {
+                            ctas.push({
+                                text: ctaText.trim(),
+                                link: ctaLink || ''
+                            });
+                        }
+                    });
+                    sectionData.customFields.ctas = ctas;
+                    
                     console.log('Custom section data:', {
                         heading: sectionData.customFields.heading,
                         layout: sectionData.customFields.layout,
@@ -2783,14 +2856,14 @@ window.ckEditorFallback = function() {
                         return false;
                     }
                     
-                    if (!sectionData.customFields.image || !sectionData.customFields.image.trim()) {
+                    /* if (!sectionData.customFields.image || !sectionData.customFields.image.trim()) {
                         console.log('Image validation failed. Image value:', sectionData.customFields.image);
                         console.log('Available image inputs in section:', $section.find('input[type="hidden"]').map(function() { return $(this).attr('class') + ': ' + $(this).val(); }).get());
                         const $imageField = $section.find(".select-image-cit");
                         focusFieldWithScroll($imageField, 'Image is required');
                         isValid = false;
                         return false;
-                    }
+                    } */
                 } else if (sectionType === "three-column-info") {
                     const $tciInput = $section.find(".upload-file-tci-input");
                     const newImageUrl = $tciInput.data("server-url");
@@ -2985,26 +3058,60 @@ window.ckEditorFallback = function() {
             // console.log('Complete payload being sent:', payload);
             // console.log('🔍 Hero section data being sent:', payload.sections.find(s => s.sectionType === 'hero-section'));
 
-            // Single AJAX call to update everything
+            // Use page sections API for bulk updates
+            // pageId is already declared above
+            
+            if (!pageId) {
+                showToast("Page ID is missing.", "error");
+                return;
+            }
+
+            // First update page status and thumbnail, then update sections
+            const pageUpdatePayload = {
+                status: status
+            };
+            
+            // Only include thumbnail if it has a value
+            if (pageThumbnail) {
+                pageUpdatePayload.thumbnail = pageThumbnail;
+            }
+
+            // Update page status first
             $.ajax({
-                url: \`/api/content/\${contentId}\`,
+                url: \`/api/pages/\${pageId}\`,
                 type: "PUT",
                 contentType: "application/json",
-                data: JSON.stringify(payload),
-                success: function (response) {
-                    if (response.success) {
-                        showToast("Content updated successfully!", "success");
-                        // Redirect after a short delay
-                        setTimeout(() => {
-                            // window.location.href = "/page-master/web-page-master";
-                            window.location.reload();
-                        }, 1000);
+                data: JSON.stringify(pageUpdatePayload),
+                success: function(pageResponse) {
+                    if (pageResponse.success) {
+                        // Now update sections
+                        $.ajax({
+                            url: \`/api/pages/\${pageId}/sections\`,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(payload),
+                            success: function (response) {
+                                if (response.success) {
+                                    showToast("Content updated successfully!", "success");
+                                    // Redirect after a short delay
+                                    setTimeout(() => {
+                                        // window.location.href = "/page-master/web-page-master";
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    showToast(response.message || "An error occurred.", "error");
+                                }
+                            },
+                            error: function (xhr) {
+                                showToast(xhr.responseJSON?.message || "An error occurred updating sections.", "error");
+                            }
+                        });
                     } else {
-                        showToast(response.message || "An error occurred.", "error");
+                        showToast(pageResponse.message || "An error occurred updating page status.", "error");
                     }
                 },
                 error: function (xhr) {
-                    showToast(xhr.responseJSON?.message || "An error occurred.", "error");
+                    showToast(xhr.responseJSON?.message || "An error occurred updating page.", "error");
                 }
             });
         });
@@ -3285,54 +3392,82 @@ window.ckEditorFallback = function() {
                 return;
             }
 
-            // Update content first, then redirect to SEO
+            // Get thumbnail data
+            const pageThumbnail = $("#pageThumbnail").val();
+
+            // Consolidate sections data
             const payload = {
-                pageId: pageId,
-                status: status,
                 sections: sectionsData
             };
 
+            // Update page status and thumbnail first, then sections, then redirect to SEO
+            const pageUpdatePayload = {
+                status: status
+            };
+            
+            // Only include thumbnail if it has a value
+            if (pageThumbnail) {
+                pageUpdatePayload.thumbnail = pageThumbnail;
+            }
+
+            // Update page status first
             $.ajax({
-                url: \`/api/content/\${contentId}\`,
+                url: \`/api/pages/\${pageId}\`,
                 type: "PUT",
                 contentType: "application/json",
-                data: JSON.stringify(payload),
-                success: function (response) {
-                    if (response.success) {
-                        showToast("Content updated successfully! Redirecting to SEO management...", "success");
-                        setTimeout(() => {
-                            // Check if SEO exists for this page via API, then redirect appropriately
-                            $.ajax({
-                                url: \`/api/seo/check-page/\${pageId}\`,
-                                type: 'GET',
-                                success: function(seoResponse) {
-                                    if (seoResponse.success && seoResponse.seoExists) {
-                                        // SEO exists, go to edit
-                                        window.location.href = \`/seo/edit-seo-content/\${seoResponse.seoId}?from=content\`;
-                                    } else {
-                                        // No SEO, go to add with page pre-selected
-                                        window.location.href = \`/seo/add-seo-content?pageId=\${pageId}&from=content\`;
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error("SEO check failed:", error);
-                                    // Fallback to SEO management page
-                                    window.location.href = '/seo/seo-management';
+                data: JSON.stringify(pageUpdatePayload),
+                success: function(pageResponse) {
+                    if (pageResponse.success) {
+                        // Now update sections
+                        $.ajax({
+                            url: \`/api/pages/\${pageId}/sections\`,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(payload),
+                            success: function (response) {
+                                if (response.success) {
+                                    showToast("Content updated successfully! Redirecting to SEO management...", "success");
+                                    setTimeout(() => {
+                                        // Check if SEO exists for this page via API, then redirect appropriately
+                                        $.ajax({
+                                            url: \`/api/seo/check-page/\${pageId}\`,
+                                            type: 'GET',
+                                            success: function(seoResponse) {
+                                                if (seoResponse.success && seoResponse.seoExists) {
+                                                    // SEO exists, go to edit
+                                                    window.location.href = \`/seo/edit-seo-content/\${seoResponse.seoId}?from=content\`;
+                                                } else {
+                                                    // No SEO, go to add with page pre-selected
+                                                    window.location.href = \`/seo/add-seo-content?pageId=\${pageId}&from=content\`;
+                                                }
+                                            },
+                                            error: function(xhr, status, error) {
+                                                console.error("SEO check failed:", error);
+                                                // Fallback to SEO management page
+                                                window.location.href = '/seo/seo-management';
+                                            }
+                                        });
+                                    }, 1000);
+                                } else {
+                                    showToast(response.message || "An error occurred.", "error");
                                 }
-                            });
-                        }, 1000);
+                            },
+                            error: function (xhr) {
+                                console.error("Content update failed:", xhr.responseJSON?.message || xhr.statusText);
+                                showToast(xhr.responseJSON?.message || "An error occurred updating sections.", "error");
+                            }
+                        });
                     } else {
-                        showToast(response.message || "An error occurred.", "error");
+                        showToast(pageResponse.message || "An error occurred updating page status.", "error");
                     }
                 },
                 error: function (xhr) {
-                    console.error("Content update failed:", xhr.responseJSON?.message || xhr.statusText);
-                    showToast(xhr.responseJSON?.message || "An error occurred.", "error");
+                    showToast(xhr.responseJSON?.message || "An error occurred updating page.", "error");
                 }
             });
         });
     });
-    $(document).on('input', '.callout-link,.column-btn-link,.cta-link', function() {
+    $(document).on('input', '.callout-link,.column-btn-link,.cta-link,.cit-cta-link', function() {
         const $input = $(this);
         const query = $input.val().trim();
 
@@ -3378,7 +3513,7 @@ window.ckEditorFallback = function() {
     });
 
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('.callout-link, .column-btn-link, .cta-link, .autocomplete-list').length) {
+        if (!$(e.target).closest('.callout-link, .column-btn-link, .cta-link, .cit-cta-link, .autocomplete-list').length) {
             $('.autocomplete-list').remove();
         }
     });
@@ -3439,6 +3574,65 @@ window.ckEditorFallback = function() {
 
     function updateCtaNumbers($container) {
         $container.find('.cta-item').each(function(index) {
+            $(this).find('.fw-semibold').text(\`CTA Button #\${index + 1}\`);
+        });
+    }
+
+    // Custom Image-Text CTA Button Handlers
+    $(document).on('click', '.add-cit-cta-btn', function() {
+        const $container = $(this).siblings('.cit-cta-container');
+        const ctaCount = $container.find('.cit-cta-item').length;
+        
+        if (ctaCount >= 3) {
+            $(this).attr("disabled", true);
+            showToast('Maximum 3 CTA buttons allowed', 'warning');
+            return;
+        }
+        
+        const ctaHtml = \`
+            <div class="cit-cta-item border border-neutral-200 radius-8 p-3 mb-2 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold text-sm">CTA Button #\${ctaCount + 1}</span>
+                    <button type="button" class="btn btn-sm btn-danger-600 remove-cit-cta-btn"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></button>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-sm">Button Text:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 cit-cta-text"
+                        placeholder="e.g., Learn More">
+                </div>
+                <div class="mb-2 position-relative">
+                    <label class="form-label text-sm">Button Link:</label>
+                    <input type="text" class="form-control border border-neutral-200 radius-8 cit-cta-link"
+                        placeholder="e.g., /about">
+                </div>
+            </div>
+        \`;
+        
+        $container.append(ctaHtml);
+        updateCitCtaNumbers($container);
+        
+        // Disable add button if we've reached the limit
+        const newCtaCount = $container.find('.cit-cta-item').length;
+        if (newCtaCount >= 3) {
+            $(this).attr("disabled", true);
+        }
+    });
+
+    $(document).on('click', '.remove-cit-cta-btn', function() {
+        const $container = $(this).closest('.cit-cta-container');
+        const $addBtn = $container.siblings('.add-cit-cta-btn');
+        $(this).closest('.cit-cta-item').remove();
+        updateCitCtaNumbers($container);
+        
+        // Re-enable add button if count is less than 3
+        const ctaCount = $container.find('.cit-cta-item').length;
+        if (ctaCount < 3) {
+            $addBtn.attr("disabled", false);
+        }
+    });
+
+    function updateCitCtaNumbers($container) {
+        $container.find('.cit-cta-item').each(function(index) {
             $(this).find('.fw-semibold').text(\`CTA Button #\${index + 1}\`);
         });
     }

@@ -52,6 +52,7 @@
                                         <option value="query">Query Template - Hero with 3 CTA Buttons</option>
                                         <option value="membership">Membership Template - Hero with Buttons + Community Groups</option>
                                         <option value="contact">Contact Template - Contact blocks + Helpful Links</option>
+                                        <option value="custom">Custom Template - Empty template with custom sections</option>
                                     </select>
                                     <small class="text-muted">Select a template to auto-create page sections</small>
                                 </div>
@@ -167,6 +168,17 @@
                                     </div>
                                 </label>
                             </div> -->
+                            <div class="category-checkbox-item mb-3">
+                                <input type="checkbox" value="blog" id="category-blog" name="categories" class="category-checkbox-input">
+                                <label class="category-checkbox-label" for="category-blog">
+                                    <div class="category-checkbox-content">
+                                        <div class="category-checkbox-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span class="category-checkbox-text">Blog</span>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                         <small class="text-muted">Select categories to group related pages (required for community groups display)</small>
                     </div>
@@ -209,6 +221,10 @@
         contact: {
             description: 'This template includes:<br>• Contact section (email, call, general contact form)<br>• Helpful links list (dynamic)',
             image: '/images/templates/contact-template-preview.jpg'
+        },
+        custom: {
+            description: 'This template includes:<br>• Empty template - no predefined sections<br>• Add custom sections with flexible content<br>• Perfect for unique page layouts',
+            image: '/images/templates/custom-template-preview.svg'
         }
     };
     //default template selection preview
@@ -324,6 +340,9 @@
             metaDescription: $('#metaDescription').val()
         };
         
+        console.log('Draft form data being sent:', formData);
+        console.log('Draft template value:', $('#template').val());
+        
         $.ajax({
             url: '/api/pages',
             type: 'POST',
@@ -436,6 +455,9 @@
             metaTitle: $('#metaTitle').val(),
             metaDescription: $('#metaDescription').val()
         };
+
+        console.log('Form data being sent:', formData);
+        console.log('Template value:', $('#template').val());
 
         $.ajax({
             url: '/api/pages',

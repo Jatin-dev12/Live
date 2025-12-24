@@ -373,6 +373,95 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Get blog & community pages
+/* router.get('/blogs', async (req, res) => {
+    try {
+        const pages = await Page.find({
+            category: 'blog',
+            status: 'active'
+        })
+        .select('_id name slug path category thumbnail createdAt')
+        .sort({ createdAt: -1 })
+        .lean();
+
+        const formattedPages = pages.map(page => ({
+            ...page,
+            date: new Date(page.createdAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: '2-digit',
+                year: 'numeric'
+            })
+        }));
+
+        res.json({
+            success: true,
+            data: formattedPages
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pages',
+            error: error.message
+        });
+    }
+}); */
+
+
+router.get('/blogs', async (req, res) => {
+    try {
+        const pages = await Page.find({
+            category: 'blog',
+            status: 'active'
+        })
+        .select('name path slug thumbnail template createdAt')
+        .sort({ createdAt: -1 })
+        .populate({
+            path: 'content',
+            select: 'heroSection contactSection'
+        })
+        .lean({ virtuals: true });
+
+        const response = pages.map(page => {
+            let heading = '';
+            let subheading = '';
+
+            if (page.template === 'contact') {
+                heading = page.content?.contactSection?.heading || '';
+                subheading = page.content?.contactSection?.subheading || '';
+            } else {
+                heading = page.content?.heroSection?.heading || '';
+                subheading = page.content?.heroSection?.paragraph || '';
+            }
+
+            return {
+                name: page.name,
+                path: page.path,
+                slug: page.slug,
+                thumbnail: page.thumbnail,
+                date: new Date(page.createdAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: '2-digit',
+                    year: 'numeric'
+                }),
+                heading,
+                subheading
+            };
+        });
+
+        res.json({
+            success: true,
+            data: response
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pages',
+            error: error.message
+        });
+    }
+});
+
+
 // Get single page by ID with sections
 router.get('/:id', isAuthenticated, async (req, res) => {
     try {
@@ -653,6 +742,9 @@ router.post('/', isAuthenticated, async (req, res) => {
     try {
         const { name, path, status, metaTitle, metaDescription, metaKeywords, template, category, thumbnail } = req.body;
         
+        console.log('API received template value:', template);
+        console.log('API received full body:', req.body);
+        
         // Validate required fields
         if (!name) {
             return res.status(400).json({
@@ -680,12 +772,14 @@ router.post('/', isAuthenticated, async (req, res) => {
             metaTitle,
             metaDescription,
             metaKeywords,
-            template: template || '',
+            template: template || '', // Keep template as-is, including 'custom'
             category: category || '',
             thumbnail: thumbnail || null,
             createdBy: req.user ? req.user._id : null,
             updatedBy: req.user ? req.user._id : null
         });
+        
+        console.log('Creating page with template:', page.template);
         
         await page.save();
         
@@ -833,21 +927,23 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         // Check if template is changing
         const templateChanged = template !== undefined && template !== oldPage.template;
         
+        const updateFields = {
+            ...(name !== undefined && { name }),
+            ...(slug !== undefined && { slug }),
+            ...(path !== undefined && { path }),
+            ...(status !== undefined && { status }),
+            ...(metaTitle !== undefined && { metaTitle }),
+            ...(metaDescription !== undefined && { metaDescription }),
+            ...(metaKeywords !== undefined && { metaKeywords }),
+            ...(template !== undefined && { template: template || '' }),
+            ...(category !== undefined && { category: category || '' }),
+            ...(thumbnail !== undefined && { thumbnail: thumbnail || null }),
+            updatedBy: req.user ? req.user._id : null
+        };
+        
         const page = await Page.findByIdAndUpdate(
             req.params.id,
-            {
-                name,
-                slug,
-                path,
-                status,
-                metaTitle,
-                metaDescription,
-                metaKeywords,
-                template: template || '',
-                category: category || '',
-                thumbnail: thumbnail || null,
-                updatedBy: req.user ? req.user._id : null
-            },
+            updateFields,
             { new: true, runValidators: true }
         );
 
@@ -1059,6 +1155,8 @@ router.get('/by-category/:category', isAuthenticated, async (req, res) => {
         });
     }
 });
+
+
 
 // Test endpoint to get community groups data
 router.get('/test/community-groups', async (req, res) => {
