@@ -1349,3 +1349,7 @@ html {
     border-color: #ce1126;
     color: white;
 }
+
+.rotate-color{
+    filter: hue-rotate(130deg);
+}

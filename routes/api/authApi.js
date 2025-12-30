@@ -187,10 +187,13 @@ router.post('/logout', isAuthenticated, (req, res) => {
                 });
             }
 
+            // Use secret login path from environment variable
+            const SECRET_LOGIN_PATH = process.env.SECRET_LOGIN_PATH || '/hgyi57ohdtr96';
+
             res.json({
                 success: true,
                 message: 'Logout successful',
-                redirectUrl: '/authentication/sign-in'
+                redirectUrl: SECRET_LOGIN_PATH
             });
         });
     } catch (error) {

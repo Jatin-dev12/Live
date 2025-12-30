@@ -11,7 +11,12 @@ exports.isAuthenticated = async (req, res, next) => {
                     message: 'Authentication required. Please login.'
                 });
             }
-            return res.redirect('/authentication/sign-in');
+            // Show 404 instead of redirecting to login for security
+            return res.status(404).render('notFound', {
+                title: '404 - Page Not Found',
+                subTitle: '404',
+                layout: '../views/layout/layout2'
+            });
         }
 
         // Get user with role and permissions
@@ -32,7 +37,11 @@ exports.isAuthenticated = async (req, res, next) => {
                     message: 'User not found. Please login again.'
                 });
             }
-            return res.redirect('/authentication/sign-in');
+            return res.status(404).render('notFound', {
+                title: '404 - Page Not Found',
+                subTitle: '404',
+                layout: '../views/layout/layout2'
+            });
         }
 
         if (!user.isActive) {
@@ -43,7 +52,11 @@ exports.isAuthenticated = async (req, res, next) => {
                     message: 'Your account has been deactivated.'
                 });
             }
-            return res.redirect('/authentication/sign-in?error=account_deactivated');
+            return res.status(404).render('notFound', {
+                title: '404 - Page Not Found',
+                subTitle: '404',
+                layout: '../views/layout/layout2'
+            });
         }
 
         req.user = user;
