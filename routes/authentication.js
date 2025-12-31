@@ -42,20 +42,37 @@ router.get("/forgot-password", preventCache, redirectIfAuthenticated, (req, res)
   res.render("authentication/forgotPassword", { title: "Forgot Password", subTitle: "Reset Password", layout: "../views/layout/layout2" });
 });
 
-router.get("/signin", preventCache, redirectIfAuthenticated, (req, res) => {
-  res.render("authentication/signin", { title: "Sign In", subTitle: "Login", layout: "../views/layout/layout2" });
+// Block the default signin routes - return 404
+router.get("/signin", preventCache, (req, res) => {
+  res.status(404).render("notFound", { 
+    title: "404 - Page Not Found", 
+    subTitle: "404",
+    layout: "../views/layout/layout2"
+  });
 });
 
-router.get("/sign-in", preventCache, redirectIfAuthenticated, (req, res) => {
-  res.render("authentication/signin", { title: "Sign In", subTitle: "Login", layout: "../views/layout/layout2" });
+router.get("/sign-in", preventCache, (req, res) => {
+  res.status(404).render("notFound", { 
+    title: "404 - Page Not Found", 
+    subTitle: "404",
+    layout: "../views/layout/layout2"
+  });
 });
 
 router.get("/signup", preventCache, redirectIfAuthenticated, (req, res) => {
-  res.render("authentication/signup", { title: "Sign Up", subTitle: "Register", layout: "../views/layout/layout2" });
+  res.status(404).render("notFound", { 
+    title: "404 - Page Not Found", 
+    subTitle: "404",
+    layout: "../views/layout/layout2"
+  });
 });
 
 router.get("/sign-up", preventCache, redirectIfAuthenticated, (req, res) => {
-  res.render("authentication/signup", { title: "Sign Up", subTitle: "Register", layout: "../views/layout/layout2" });
+  res.status(404).render("notFound", { 
+    title: "404 - Page Not Found", 
+    subTitle: "404",
+    layout: "../views/layout/layout2"
+  });
 });
 
 module.exports = router;

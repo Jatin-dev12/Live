@@ -36,9 +36,10 @@
                                 <!-- <i class="ri-phone-line me-2"></i> -->
                                 Contact Number
                             </label>
-                            <input type="text" class="form-control radius-8" id="contactNumber" name="contactNumber"
-                                placeholder="" value="<%= settings.contactNumber || '' %>">
-                            <!-- <small class="text-muted">Enter with country code (e.g., +1234567890)</small> -->
+                            <input type="tel" class="form-control radius-8" id="contactNumber" name="contactNumber"
+                                placeholder="" value="<%= settings.contactNumber || '' %>" 
+                                minlength="6" maxlength="15" pattern="[0-9]{6,15}">
+                            <small class="text-muted">6 to 15 digits only</small>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -47,9 +48,10 @@
                                 <!-- <i class="ri-whatsapp-line text-success-600 me-2"></i> -->
                                 WhatsApp Number
                             </label>
-                            <input type="text" class="form-control radius-8" id="whatsappNumber" name="whatsappNumber"
-                                placeholder="" value="<%= settings.whatsappNumber || '' %>">
-                            <!-- <small class="text-muted">Enter with country code (e.g., +1234567890)</small> -->
+                            <input type="tel" class="form-control radius-8" id="whatsappNumber" name="whatsappNumber"
+                                placeholder="" value="<%= settings.whatsappNumber || '' %>"
+                                minlength="6" maxlength="15" pattern="[0-9]{6,15}">
+                            <small class="text-muted">6 to 15 digits only</small>
                         </div>
                     </div>
                     <!-- <div class="col-sm-6">
@@ -259,6 +261,15 @@
 </div>
 
 <script>
+    // Block non-numeric input for phone fields
+    document.getElementById('contactNumber').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
+    document.getElementById('whatsappNumber').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
     // Upload Logo
     document.getElementById('uploadLogoBtn').addEventListener('click', async function () {
         const fileInput = document.getElementById('logoInput');
@@ -316,6 +327,20 @@
 
     document.getElementById('siteSettingsForm').addEventListener('submit', async function (e) {
         e.preventDefault();
+
+        // Validate phone numbers
+        const contactNumber = document.getElementById('contactNumber').value;
+        const whatsappNumber = document.getElementById('whatsappNumber').value;
+        
+        if (contactNumber && !/^[0-9]{6,15}$/.test(contactNumber)) {
+            showToast('error', 'Contact Number must be 6 to 15 digits only');
+            return;
+        }
+        
+        if (whatsappNumber && !/^[0-9]{6,15}$/.test(whatsappNumber)) {
+            showToast('error', 'WhatsApp Number must be 6 to 15 digits only');
+            return;
+        }
 
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());

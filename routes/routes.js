@@ -28,7 +28,61 @@ const media = require("./media");
 const roles = require("./roles");
 const urlRedirect = require("./urlRedirect");
 
-router.get("/", isAuthenticated, async (req, res) => {
+// Secret login URL configuration
+const SECRET_LOGIN_PATH = process.env.SECRET_LOGIN_PATH || '/hgyi57ohdtr96';
+
+// Middleware to prevent caching of authentication pages
+const preventCache = (req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  next();
+};
+
+// Middleware to redirect already authenticated users
+const redirectIfAuthenticated = async (req, res, next) => {
+  try {
+    if (req.session && req.session.userId) {
+      const User = require('../models/User');
+      const user = await User.findById(req.session.userId).select('isActive');
+      
+      if (user && user.isActive) {
+        return res.redirect('/index');
+      } else {
+        req.session.destroy();
+      }
+    }
+    next();
+  } catch (error) {
+    console.error('Error checking authentication status:', error);
+    if (req.session) {
+      req.session.destroy();
+    }
+    next();
+  }
+};
+
+// SECRET LOGIN ROUTE - Register this FIRST before other routes
+router.get(SECRET_LOGIN_PATH, preventCache, redirectIfAuthenticated, (req, res) => {
+  res.render("authentication/signin", { 
+    title: "Sign In", 
+    subTitle: "Login", 
+    layout: "../views/layout/layout2" 
+  });
+});
+
+router.get("/", async (req, res) => {
+  // If not authenticated, show 404 instead of redirecting to login
+  if (!req.session || !req.session.userId) {
+    return res.status(404).render("notFound", { 
+      title: "404 - Page Not Found", 
+      subTitle: "404",
+      layout: "../views/layout/layout2"
+    });
+  }
+
   try {
     const Lead = require('../models/Lead');
     const ContactQuery = require('../models/ContactQuery');
